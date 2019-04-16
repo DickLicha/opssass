@@ -1,0 +1,89 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		// 		{
+		// 			"path": "pages/index/index",
+		// 			"style": {
+		// 				"navigationBarTitleText": "地图"
+		// 			}
+		// 		}
+		// 	    ,
+		{
+			"path": "pages/tabbar/index/index",
+			"style": {
+				"navigationBarTitleText": "首页"
+			}
+		}, {
+			"path": "pages/tabbar/mine/mine",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/map/map",
+			"style": {
+				"navigationBarTitleText": "地图"
+			}
+		}
+	    ,{
+            "path" : "pages/test/test",
+            "style" : {
+				"navigationBarTitleText": "测试"
+			}
+        }
+        ,{
+            "path" : "pages/mine/mineye/mineye",
+            "style" : {
+				"navigationBarTitleText": "余额"
+			}
+        }
+        ,{
+            "path" : "pages/mine/mineyhq/mineyhq",
+            "style" : {
+				"navigationBarTitleText": "优惠券"
+			}
+        }
+        ,{
+            "path" : "pages/mine/minecard/minecard",
+            "style" : {
+				"navigationBarTitleText": "我的卡"
+			}
+        }
+        ,{
+            "path" : "pages/mine/mineyj/mineyj",
+            "style" : {
+				"navigationBarTitleText": "押金"
+			}
+        }
+        ,{
+            "path" : "pages/mine/minezhmx/minezhmx",
+            "style" : {
+				"navigationBarTitleText": "账户明细"
+			}
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"borderStyle": "white",
+		"backgroundColor": "#FFFFFF",
+		"color": "#8F8F94",
+		"selectedColor": "#F6C700",
+		"list": [{
+				"pagePath": "pages/tabbar/index/index",
+				"iconPath": "static/image/0.png",
+				"selectedIconPath": "static/image/8.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/tabbar/mine/mine",
+				"iconPath": "static/image/4.png",
+				"selectedIconPath": "static/image/10.png",
+				"text": "我的"
+			}
+		]
+	}
+}
