@@ -10,54 +10,75 @@
 		{
 			"path": "pages/tabbar/index/index",
 			"style": {
-				"navigationBarTitleText": "首页"
+				"navigationBarTitleText": "共享电单车运维版"
+				// 				"titleNView": false,
+				// 				"scrollIndicator": "none"
+				// 				"navigationStyle":"custom"
 			}
 		}, {
 			"path": "pages/tabbar/mine/mine",
 			"style": {
-				"navigationBarTitleText": "我的"
+				"navigationBarTitleText": "共享电单车运维版"
 			}
 		},
 		{
 			"path": "pages/map/map",
 			"style": {
-				"navigationBarTitleText": "地图"
+				"navigationBarTitleText": "地图",
+				"scrollIndicator": "none"
+//          "app-plus": {  
+//             "titleNView": {  
+//                 "buttons": [{  
+//                     "text": "\ue534",  
+//                     "fontSrc": "/static/uni.ttf",  
+//                     "fontSize": "22px"  
+//                 }]  
+//             }  
+//         }  
+				// 				"navigationStyle":"custom",
+				// 				"titleNView": false
+			}
+		}, {
+			"path": "pages/test/test",
+			"style": {
+				"navigationBarTitleText": "测试"
+			}
+		}, {
+			"path": "pages/mine/mineye/mineye",
+			"style": {
+				"navigationBarTitleText": "余额"
+			}
+		}, {
+			"path": "pages/mine/mineyhq/mineyhq",
+			"style": {
+				"navigationBarTitleText": "优惠券"
+			}
+		}, {
+			"path": "pages/mine/minecard/minecard",
+			"style": {
+				"navigationBarTitleText": "我的卡"
+			}
+		}, {
+			"path": "pages/mine/mineyj/mineyj",
+			"style": {
+				"navigationBarTitleText": "押金"
+			}
+		}, {
+			"path": "pages/mine/minezhmx/minezhmx",
+			"style": {
+				"navigationBarTitleText": "账户明细"
 			}
 		}
 	    ,{
-            "path" : "pages/test/test",
+            "path" : "pages/swapbattery/swapbattery",
             "style" : {
-				"navigationBarTitleText": "测试"
+				"navigationBarTitleText": "换电"
 			}
         }
         ,{
-            "path" : "pages/mine/mineye/mineye",
+            "path" : "pages/carcenter/carcenter",
             "style" : {
-				"navigationBarTitleText": "余额"
-			}
-        }
-        ,{
-            "path" : "pages/mine/mineyhq/mineyhq",
-            "style" : {
-				"navigationBarTitleText": "优惠券"
-			}
-        }
-        ,{
-            "path" : "pages/mine/minecard/minecard",
-            "style" : {
-				"navigationBarTitleText": "我的卡"
-			}
-        }
-        ,{
-            "path" : "pages/mine/mineyj/mineyj",
-            "style" : {
-				"navigationBarTitleText": "押金"
-			}
-        }
-        ,{
-            "path" : "pages/mine/minezhmx/minezhmx",
-            "style" : {
-				"navigationBarTitleText": "账户明细"
+				"navigationBarTitleText": "车辆编号xxx"
 			}
         }
     ],
@@ -76,7 +97,7 @@
 				"pagePath": "pages/tabbar/index/index",
 				"iconPath": "static/image/0.png",
 				"selectedIconPath": "static/image/8.png",
-				"text": "首页"
+				"text": "任务"
 			},
 			{
 				"pagePath": "pages/tabbar/mine/mine",

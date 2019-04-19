@@ -7,7 +7,6 @@
 				<i class="iconfont iconjiantou"></i>
 			</view>
 			<view class='mine-body'>
-				<!-- <view class="uni-padding-wrap uni-common-mt"> -->
 					<view class="uni-flex uni-column">
 						<view class="flex-item-mine"  v-for="item in mineitem"  :class="{'mine-border-top':item.margintop}" @click='go(item.gopage)'>
 							<i class="iconfont flexone" :class='item.icon'></i>
@@ -33,7 +32,8 @@
 					{title:'我的卡',icon:'iconqia',info:'0张',margintop:true,gopage:'/pages/mine/minecard/minecard'},
 					{title:'押金',icon:'iconyajin',info:'0元',margintop:true,gopage:'/pages/mine/mineyj/mineyj'},
 					{title:'账户明细',icon:'iconzhanghu',info:'未缴纳',margintop:true,gopage:'/pages/mine/minezhmx/minezhmx'},
-										]
+					{title:'test',icon:'iconzhanghu',info:'未缴纳',margintop:true,gopage:'/pages/swapbattery/swapbattery'},
+					{title:'testitemcell',icon:'iconzhanghu',info:'未缴纳',margintop:true,gopage:'/pages/test/test'},									]
 			};
 		},
 		methods:{

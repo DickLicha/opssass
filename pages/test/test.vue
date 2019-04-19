@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<page-head title="scroll-view,区域滚动视图"></page-head>
+		<itemcellview :type='4' :itemdata="carcenterdata3"></itemcellview>
 		<view class="uni-padding-wrap uni-common-mt">
 			<view class="uni-title uni-common-mt">
 				Vertical Scroll
@@ -33,14 +33,28 @@
 	</view>
 </template>
 <script>
+	import itemcellview from '@/components/itemcell/itemcell.vue'
 	export default {
 		data() {
 			return {
 				scrollTop: 0,
 				old: {
 					scrollTop: 0
-				}
+				},
+				carcenterdata3:[
+					{name:'订单',val:'',img:'iconmima'},
+					{name:'开关锁记录',val:'',img:'iconyonghu'},
+					{name:'换电记录',val:'',img:'iconzhanghu'},
+					{name:'维修记录',val:'',img:'iconzhanghu'},
+					{name:'车辆轨迹',val:'',img:'iconzhanghu'},
+					{name:'最后一次扫码时手机位置',val:'',img:'iconzhanghu'},
+					{name:'ECU',val:'',img:'iconzhanghu'},
+					{name:'333',val:'',img:'iconzhanghu'},
+				],
 			}
+		},
+		components:{
+			itemcellview
 		},
 		methods: {
 			upper: function(e) {

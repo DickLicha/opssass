@@ -3,11 +3,9 @@
 		<!-- <view style='background: #09BB07;height: 50px;width:100%;'>hello</view> -->
 		<view style='height: 80upx;width:100%;background-color:#555555;'>
 			<baseheader title="餐厅" @show='showMapSelect'></baseheader>
-		</view>
-		
+		</view>	
 		<view class="page-body">
 			<view class="page-section page-section-gap">
-				<!-- <basemapview></basemapview> -->
 				<map class='map-base-view' :scale="scale" id='firstmap' :latitude="latitude" :longitude="longitude" :markers="covers"
 				 :show-location='showLocation' :circles='circles' @regionchange="functionName" @end="functionName" @begin="functionName">
 					<cover-view v-if="showmapselect" class='map-select-view' >
@@ -16,7 +14,7 @@
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
-					<cover-view class='map-cover-view' @click="scanCode">扫码换电</cover-view>
+					<cover-view class='map-cover-view' @click="scanCode">扫码用车</cover-view>
 				</map>
 			</view>
 		</view>
@@ -25,9 +23,8 @@
 
 <script>
 	import scanbutton from '@/components/scanbutton.vue'
+	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import baseheader from '@/components/baseheadview/baseheadview.vue'
-	// import basemapview from '@/components/basemapview/basemapview.vue'
-
 	export default {
 		components: {
 			scanbutton,baseheader
@@ -38,7 +35,7 @@
 				latitude: 26.0527,
 				showmapselect:false,
 				longitude: 119.31414,
-				mapinfo:null,
+				mapinfo:'',
 				scale: '12', //缩放级别5-18
 				showLocation: true,
 				selectcoverdata:[
@@ -58,15 +55,6 @@
 						iconPath: '../../static/image/icon-small.png', //显示的图标			
 						title: '阿打算', //标注点名
 						label: { //为标记点旁边增加标签
-							// 						content: '文本1', //文本
-							// 						color: '#F76350', //文本颜色
-							// 						anchorX: 0, //label的坐标，原点是 marker 对应的经纬度
-							// 						anchorY: -80, //label的坐标，原点是 marker 对应的经纬度 
-							// 						bgColor: '#fff', //背景色
-							// 						padding: 5, //文本边缘留白
-							// 						borderWidth: 1, //边框宽度
-							// 						borderColor: '#D84C29', //边框颜色							
-							// 						textAlign: 'right' //文本对齐方式。
 						},
 						callout: { //自定义标记点上方的气泡窗口 点击有效
 							content: '地点1',
@@ -124,11 +112,8 @@
 
 			};
 		},
-		onLoad(e) {
+		onLoad() {
 			let self = this
-			wx.setNavigationBarTitle({
-				title:e.name
-			})
 			// uni.nav
 			console.log('this', self, this)
 			uni.getLocation({ //获取当前的位置坐标
@@ -145,20 +130,11 @@
 						mask: false,
 						duration: 1500,
 					});
-
 				}
 			});
 		},
-		onShow(e){
-			
-		},
 		onReady(){
-			if(this.mapinfo==null){
-				this.mapinfo=uni.createMapContext('firstmap')
-			}		
-		},
-		onUnload(){
-			this.mapinfo=null
+			this.mapinfo=uni.createMapContext('firstmap')
 		},
 		methods: {
 			showMapSelect(){
@@ -218,9 +194,6 @@
 				success: function(res) {
 					console.log('条码类型：' + res.scanType);
 					console.log('条码内容：' + res.result);
-					uni.navigateTo({
-						url:'/pages/swapbattery/swapbattery'
-					})
 				},
 				fail: function(res) {
 		
