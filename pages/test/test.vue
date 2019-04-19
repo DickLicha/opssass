@@ -1,7 +1,8 @@
 <template>
-	<view>
-		<itemcellview :type='4' :itemdata="carcenterdata3"></itemcellview>
-		<view class="uni-padding-wrap uni-common-mt">
+	<view style='background-color: gray;'>
+		<itemcellview :type='4' :itemdata="carcenterdata3" @itemclick='itemclick'></itemcellview>
+		<view>helloword</view>
+		<!-- <view class="uni-padding-wrap uni-common-mt" style='margin-top: 30upx;background-color: white;'>
 			<view class="uni-title uni-common-mt">
 				Vertical Scroll
 				<text>\n纵向滚动</text>
@@ -29,7 +30,7 @@
 					<view id="demo3" class="scroll-view-item_H uni-bg-blue">C</view>
 				</scroll-view>
 			</view>
-		</view>
+		</view> -->
 	</view>
 </template>
 <script>
@@ -57,6 +58,9 @@
 			itemcellview
 		},
 		methods: {
+			itemclick(){
+				console.log(4444)
+			},
 			upper: function(e) {
 				console.log(e)
 			},

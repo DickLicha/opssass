@@ -81,6 +81,26 @@
 				"navigationBarTitleText": "车辆编号xxx"
 			}
         }
+        ,{
+            "path" : "pages/carorder/carorder",
+            "style" : {
+				"navigationBarTitleText": "订单中心"
+			}
+        }
+        ,{
+            "path" : "pages/switchloockinfo/switchloockinfo",
+            "style" : {
+				"navigationBarTitleText": "开关锁记录（xxx）"
+			}
+        }
+        ,{
+            "path" : "pages/batteriesrecord/batteriesrecord",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/carorbit/carorbit",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
