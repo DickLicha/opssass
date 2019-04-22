@@ -1,18 +1,18 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<itemcell :itemdata="carcenterdata1" :type='2' :border='true' ></itemcell>
-			<itemcell :itemdata="carcenterdata2" :type='2' :border='true' ></itemcell>
-			<itemcell :itemdata="carcenterdata3" :type='4' :border='true' @itemclick='gocarcenter'></itemcell>			
+			<item-cell :itemdata="carcenterdata1" :type='2' :border='true' ></item-cell>
+			<item-cell :itemdata="carcenterdata2" :type='2' :border='true' ></item-cell>
+			<item-cell :itemdata="carcenterdata3" :type='4' :border='true' @itemclick='gocarcenter'></item-cell>			
 		</view>
 	</view>
 </template>
 
 <script>
-	import itemcell from '@/components/itemcell/itemcell.vue'
+	import itemCell from '@/components/item-cell/item-cell.vue'
 	export default {
 		components:{
-			itemcell
+			itemCell
 		},
 		data() {
 			return {
@@ -34,19 +34,17 @@
 				carcenterdata3:[
 					{name:'订单',val:'',url:'/pages/carorder/carorder'},
 					{name:'开关锁记录',val:'',url:'/pages/switchloockinfo/switchloockinfo'},
-					{name:'换电记录',val:''},
-					{name:'维修记录',val:''},
-					{name:'车辆轨迹',val:''},
-					{name:'最后一次扫码时手机位置',val:''},
-					{name:'ECU',val:''},
-					{name:'电池',val:''},
-				],
-				
+					{name:'换电记录',val:'',url:'/pages/batteriesrecord/batteriesrecord'},
+					{name:'维修记录',val:'',url:'/pages/carorbit/carorbit'},
+					{name:'车辆轨迹',val:'',url:'/pages/map/map?type=0.1'},
+					{name:'最后一次扫码时手机位置',val:'',url:'/pages/map/map?type=0.2'},
+					{name:'ECU',val:'',url:'/pages/ecuview/ecuview'},
+					{name:'电池',val:'',url:'/pages/batteryview/batteryview'},
+				],				
 			}
 		},
 		methods: {
 			gocarcenter(item){
-				console.log('33',item)
 				uni.navigateTo({
 					url: item.url,
 					success: res => {},
@@ -58,7 +56,7 @@
 	}
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 	.wrap{
 		background-color: rgb(245,245,245);		
 		padding-top: 1upx;

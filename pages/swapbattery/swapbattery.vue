@@ -1,15 +1,15 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<itemcell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></itemcell>
-			<itemcell :itemdata="swapbatterydata" type='2' :border='borders' ></itemcell>
+			<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell>
+			<item-cell :itemdata="swapbatterydata" type='2' :border='borders' ></item-cell>
 		</view>
 
 	</view>
 </template>
 
 <script>
-	import itemcell from '@/components/itemcell/itemcell.vue'
+	import itemCell from '@/components/item-cell/item-cell.vue'
 	export default {
 		data() {
 			return {
@@ -54,7 +54,7 @@
 			}
 		},
 		components: {
-			itemcell
+			itemCell
 		},
 		methods: {
 			gocarcenter() {
@@ -69,7 +69,7 @@
 	}
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 	.wrap {
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;

@@ -7,7 +7,7 @@
 						<view class='flex-item-left' @click="itemclick(item)">
 							<i v-if='type==3 || type==4' class="iconfont flewfour" :class='item.img'></i>
 							<text class='flextwo'>{{item.name}}</text>
-							<text class='flextree'>{{item.val}}</text>
+							<text class='flextree' :class="{'click-text':item.click==true}">{{item.val}}</text>
 						</view>
 						<view>
 							<i v-if='type==1 || type==4' class="iconfont iconjiantou flewfour"></i>
@@ -46,7 +46,7 @@
 	}
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 	$true:false;
 
 	.wrap {
@@ -92,9 +92,11 @@
 					}
 
 					.flextwo {}
-
+                    .click-text{
+                    	color:#F6C700
+                    }
 					.flextree {
-						margin-left: 20upx;
+						margin-left: 20upx;						
 					}
 
 					.flexfour {

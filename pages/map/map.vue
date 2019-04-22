@@ -1,22 +1,22 @@
 <template>
 	<view>
 		<!-- <view style='background: #09BB07;height: 50px;width:100%;'>hello</view> -->
-		<view style='height: 80upx;width:100%;background-color:#555555;'>
-			<baseheader title="餐厅" @show='showMapSelect'></baseheader>
+		<view v-if="showcorverview.head" style='height: 80upx;width:100%;background-color:rgba(100,100,100,.5);'>
+			<baseheader  :title="headviewtext" @show='showMapSelect' ></baseheader>
 		</view>
 		
 		<view class="page-body">
 			<view class="page-section page-section-gap">
 				<!-- <basemapview></basemapview> -->
 				<map class='map-base-view' :scale="scale" id='firstmap' :latitude="latitude" :longitude="longitude" :markers="covers"
-				 :show-location='showLocation' :circles='circles' @regionchange="functionName" @end="functionName" @begin="functionName">
+				 :show-location='showLocation' :circles='circles' :polyline="polyline" @regionchange="functionName" @end="functionName" @begin="functionName">
 					<cover-view v-if="showmapselect" class='map-select-view' >
 						<cover-view class='select-list'>
 							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i)"  :class="{'borderrights':item.active}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
-					<cover-view class='map-cover-view' @click="scanCode">扫码换电</cover-view>
+					<cover-view v-if="showcorverview.bottom" class='map-cover-view' @click="scanCode">扫码换电</cover-view>
 				</map>
 			</view>
 		</view>
@@ -25,7 +25,7 @@
 
 <script>
 	import scanbutton from '@/components/scanbutton.vue'
-	import baseheader from '@/components/baseheadview/baseheadview.vue'
+	import baseheader from '@/components/basehead/basehead.vue'
 	// import basemapview from '@/components/basemapview/basemapview.vue'
 
 	export default {
@@ -35,6 +35,8 @@
 		data() {
 			return {
 				title: 'map',
+				headviewtext:'',
+				showcorverview:{head:true,bottom:true},
 				latitude: 26.0527,
 				showmapselect:false,
 				longitude: 119.31414,
@@ -58,15 +60,6 @@
 						iconPath: '../../static/image/icon-small.png', //显示的图标			
 						title: '阿打算', //标注点名
 						label: { //为标记点旁边增加标签
-							// 						content: '文本1', //文本
-							// 						color: '#F76350', //文本颜色
-							// 						anchorX: 0, //label的坐标，原点是 marker 对应的经纬度
-							// 						anchorY: -80, //label的坐标，原点是 marker 对应的经纬度 
-							// 						bgColor: '#fff', //背景色
-							// 						padding: 5, //文本边缘留白
-							// 						borderWidth: 1, //边框宽度
-							// 						borderColor: '#D84C29', //边框颜色							
-							// 						textAlign: 'right' //文本对齐方式。
 						},
 						callout: { //自定义标记点上方的气泡窗口 点击有效
 							content: '地点1',
@@ -107,14 +100,8 @@
 					strokeWidth: 2 //描边的宽度
 				}],
 				polyline: [{ //指定一系列坐标点，从数组第一项连线至最后一项
-					points: [{
-							latitude: 26.0528,
-							longitude: 119.31414
-						},
-						{
-							latitude: 26.053,
-							longitude: 119.315
-						},
+					points: [
+						
 					],
 					color: "#0000AA", //线的颜色
 					width: 5, //线的宽度
@@ -125,19 +112,46 @@
 			};
 		},
 		onLoad(e) {
-			let self = this
+			console.log('ee',e)
+			this.headviewtext=e.text
+			switch(e.type){
+				case '0':
+				break;
+				case '0.1':
+				    // 设置corver初始状态
+				    this.showcorverview={head:false,bottom:false},
+					// 多边形
+					this.polyline[0].points=[
+						{
+							latitude: 26.0528,
+							longitude: 119.31414
+						},
+						{
+							latitude: 26.063,
+							longitude: 119.325
+						},
+						{
+							latitude: 26.059,
+							longitude: 119.385
+						},
+						{
+							latitude: 26.0528,
+							longitude: 119.31414
+						},
+					]
+					this.covers=[]
+					break;
+			}
 			wx.setNavigationBarTitle({
 				title:e.name
 			})
-			// uni.nav
-			console.log('this', self, this)
 			uni.getLocation({ //获取当前的位置坐标
 				type: 'wgs84',
 				success: function(res) {
-					self.latitude = res.latitude
-					self.longitude = res.longitude
-					self.covers[0].latitude = res.latitude
-					self.covers[0].longitude = res.longitude
+					this.latitude = res.latitude
+					this.longitude = res.longitude
+					this.covers[0].latitude = res.latitude
+					this.covers[0].longitude = res.longitude
 					console.log('当前位置的经度：' + res.longitude);
 					console.log('当前位置的纬度：' + res.latitude);
 					uni.showToast({
@@ -145,7 +159,6 @@
 						mask: false,
 						duration: 1500,
 					});
-
 				}
 			});
 		},
@@ -172,7 +185,6 @@
 					this.selectcoverdata[i].active=false
 				}
 				this.selectcoverdata[index].active=true
-				// console.log('this.selectcoverdata',this.selectcoverdata)
 			},
 			functionName() {
 				let self = this		
@@ -189,28 +201,8 @@
 						fail:(res)=>{
 							console.log('当前位置的经度2：' + res.longitude);
 							console.log('当前位置的纬度2：' + res.latitude);
-
 						}
 					})
-					
-// 			uni.getLocation({ //获取当前的位置坐标
-// 				type: 'wgs84',
-// 				success: function(res) {
-// 					self.latitude = res.latitude
-// 					self.longitude = res.longitude
-// 					self.covers[0].latitude = res.latitude
-// 					self.covers[0].longitude = res.longitude
-// 					console.log('当前位置的经度：' + res.longitude);
-// 					console.log('当前位置的纬度：' + res.latitude);
-// 					uni.showToast({
-// 						title: res.longitude.toString(),
-// 						mask: false,
-// 						duration: 1500,
-// 					});
-// 
-// 				}
-// 			});
-
 		},
 		scanCode() {
 			uni.scanCode({

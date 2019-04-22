@@ -2,7 +2,7 @@
 	<view>
 		<view class="base-header" @click='showmapcoverview'>
 			<i v-if="hasBack" class="iconfont iconjiantou" @click="goback" style="float: left;margin-top: 5px"></i>
-			<text>{{title}}</text>
+			<text class='text-view'>{{title}}</text>
 			<text v-if="hasright" @click="messagecenter">{{rightTitle}}</text>
 		</view>
 	</view>
@@ -54,7 +54,9 @@
 		// background-color: #f5f5f5;
 		background-color: #555555;
 		text-align: center;
-
+        .text-view{
+			color:white
+		}
 		span:nth-child(1) {
 			text-align: center;
 		}

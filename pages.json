@@ -90,7 +90,8 @@
         ,{
             "path" : "pages/switchloockinfo/switchloockinfo",
             "style" : {
-				"navigationBarTitleText": "开关锁记录（xxx）"
+				"navigationBarTitleText": "开关锁记录（xxx）",
+				"scrollIndicator": "none"
 			}
         }
         ,{
@@ -100,6 +101,18 @@
         ,{
             "path" : "pages/carorbit/carorbit",
             "style" : {}
+        }
+        ,{
+            "path" : "pages/ecuview/ecuview",
+            "style" : {
+				"navigationBarTitleText": "ECU"
+			}
+        }
+        ,{
+            "path" : "pages/batteryview/batteryview",
+            "style" : {
+				"navigationBarTitleText": "电池"
+			}
         }
     ],
 	"globalStyle": {

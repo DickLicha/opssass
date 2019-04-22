@@ -1,7 +1,7 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<item-cell :itemdata="carcenterdata1" :type='2' :border='true' ></item-cell>
+			<item-cell :itemdata="carcenterdata1" :type='2' :border='true' @itemclick='callphone' ></item-cell>
 		</view>
 	</view>
 </template>
@@ -15,13 +15,8 @@
 		data() {
 			return {
 				carcenterdata1:[
-					{name:'订单编号:',val:'T1904194644548'},
-					{name:'用户姓名:',val:'XXX'},
-					{name:'手机号码:',val:'130435xxxx'},
-					{name:'订单开始:',val:'2019-04-19：12:55:44'},
-					{name:'订单结束:',val:'2019-04-19：12:55:44'},
-					{name:'订单状态:',val:'已结束'},
-					{name:'订单轨迹:',val:'查看'},
+					{name:'SIM卡号码:',val:'1440323872857'},
+					{name:'ECUsn产品码:',val:'777039046'},
 				]		
 			}
 		},
@@ -33,6 +28,24 @@
 // 					fail: () => {},
 // 					complete: () => {}
 // 				});
+			},
+			callphone(item){
+				if(item.name=='手机号码:'){
+					uni.showModal({
+						title: '',
+						content: item.val,
+						// showCancel: false,
+						cancelText: '取消',
+						confirmText: '拨打',
+						success: res => {
+							uni.makePhoneCall({
+								phoneNumber:item.val
+							})
+						},
+						fail: () => {},
+						complete: () => {}
+					});
+				}			
 			}
 		}
 	}

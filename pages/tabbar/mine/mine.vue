@@ -47,7 +47,7 @@
 	
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.wrap {
 		position: relative;
 		height: calc(100vh);

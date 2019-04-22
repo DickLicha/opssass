@@ -14,7 +14,7 @@
 	}
 </script>
 
-<style>
+<style scoped lang='scss'>
  	.map-cover-view{
  	width: 50%;
  	height: 100upx;

@@ -1,17 +1,7 @@
 <template>
 	<view class='wrap'>
-		<!-- <baseheader title="餐厅"></baseheader> -->
-		<!-- <view class='map-view-button'>
-			<text @click='goMap'>请勿骑出服务区，否则会断电</text>
-		</view>
-		<view class='scan-code' @click='scanCode'>
-			<view class='scan-code-view'><text>扫码用车</text></view>
-		</view>
-		<view class='scan-code' @click='test'>
-			<view class='scan-code-view'><text>test</text></view>
-		</view> -->
 		<view class='common-base-view'>
-			<view class='task-view' v-for="item in taskdata" @click='go(item.url,item.name)'>
+			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item.url,item.name,item.text,i)'>
 				<view class='task-view-img'><i class="iconfont icondanche"></i></view>
 				<view class='task-view-text'><text>{{item.name}}</text></view>
 			</view>
@@ -21,11 +11,7 @@
 </template>
 
 <script>
-	import baseheader from '@/components/baseheadview/baseheadview.vue'
 	export default {
-		components: {
-			baseheader
-		},
 		onLoad(){
 			this.getconfinfo()
 			},
@@ -34,88 +20,98 @@
 				taskdata: [{
 						name: '换电',
 						img: '',
-						url: ''
+						url: '',
+						text:'全部待换电'
 					},
 					{
 						name: '维修',
 						img: '',
-						url: ''
+						url: '',
+						text:'全部故障车辆'
 					},
 					{
 						name: '保养',
 						img: '',
-						url: ''
+						url: '',
+						text:'待保养车辆'
 					},
 					{
 						name: '单个挪车',
 						img: '',
-						url: ''
+						url: '',
+						text:'全部车站'
 					},
 					{
 						name: '批量挪车',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: 'ECU换绑',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: 'ECU绑定',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: '换电批次',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: '找不到车',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: '批量开关锁',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: '库存管理',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: '车站',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: '违章',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: '车辆排查',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 					{
 						name: '车辆换绑',
 						img: '',
-						url: ''
+						url: '',
+						text:''
 					},
 				]
 
 			};
 		},
 		methods: {
-			goMap(url, name) {
-				uni.navigateTo({
-					url: '/pages/map/map'
-				});
-			},
 			scanCode() {
 				uni.scanCode({
 					onlyFromCamera: true, //只允许相机扫码
@@ -131,9 +127,10 @@
 					}
 				});
 			},
-			go(url, name) {
+			go(url,name,text,i) {
 				uni.navigateTo({
-					url: '/pages/map/map?name=' + name
+					// url: '/pages/map/map?name=' + name
+					url: `/pages/map/map?name= ${name}&type= ${i}&text= ${text}`
 				});
 			},
 			test() {
@@ -141,7 +138,6 @@
 					name: 'qhs',
 					age: 18
 				}
-				console.log(33333, nameinfo)
 				// #ifdef APP-PLUS
 				// 监听plusready事件  
 				// document.addEventListener("plusready", function() {
@@ -187,7 +183,7 @@
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('用户信息', res)
+					console.log('用户信息', typeof(res),res)
 					if (res.status) {
 						this.setsoftconf(res.data)
 					}
@@ -200,7 +196,7 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.wrap {
 		position: relative;
 		height: calc(200vh);

@@ -96,7 +96,7 @@
 		}
 	};
 </script>
-<style>
+<style scoped lang='scss'>
 	.uni-mask {
 		position: fixed;
 		z-index: 998;
