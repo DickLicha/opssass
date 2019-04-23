@@ -114,6 +114,10 @@
 				"navigationBarTitleText": "电池"
 			}
         }
+        ,{
+            "path" : "pages/searchview/searchview",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

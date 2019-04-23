@@ -1,8 +1,8 @@
 <template>
 	<view>
-		<view class="base-header" @click='showmapcoverview'>
-			<i v-if="hasBack" class="iconfont iconjiantou" @click="goback" style="float: left;margin-top: 5px"></i>
-			<text class='text-view'>{{title}}</text>
+		<view class="base-header" >
+			<i v-if="hasBack" class="iconfont iconsousuo sousuo-view" @click='gosuchview'></i>
+			<text class='text-view' @click='showmapcoverview'>{{title}}</text>
 			<text v-if="hasright" @click="messagecenter">{{rightTitle}}</text>
 		</view>
 	</view>
@@ -38,6 +38,14 @@
 				uni.navigateBack({
 					delta: 1
 				});
+			},
+			gosuchview(){
+				uni.navigateTo({
+					url: '../searchview/searchview',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
 			}
 		},
 	}
@@ -54,6 +62,10 @@
 		// background-color: #f5f5f5;
 		background-color: #555555;
 		text-align: center;
+		.sousuo-view{
+			position: absolute;
+			right:18upx;
+		}
         .text-view{
 			color:white
 		}

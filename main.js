@@ -3,6 +3,7 @@ import App from './App'
 import './static/iconfont/iconfont.css';
 import store from './store'
 import request from './common/request.js'
+import './common/gobel.css';
 // import './static/iconfont'
 
 Vue.config.productionTip = false

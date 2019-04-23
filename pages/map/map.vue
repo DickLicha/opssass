@@ -2,7 +2,7 @@
 	<view>
 		<!-- <view style='background: #09BB07;height: 50px;width:100%;'>hello</view> -->
 		<view v-if="showcorverview.head" style='height: 80upx;width:100%;background-color:rgba(100,100,100,.5);'>
-			<baseheader  :title="headviewtext" @show='showMapSelect' ></baseheader>
+			<baseheader  :title="headviewtext" @show='showMapSelect' hasBack='true' ></baseheader>
 		</view>
 		
 		<view class="page-body">
