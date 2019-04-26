@@ -2,21 +2,22 @@
 	<view>
 		<!-- <view style='background: #09BB07;height: 50px;width:100%;'>hello</view> -->
 		<view v-if="showcorverview.head" style='height: 80upx;width:100%;background-color:rgba(100,100,100,.5);'>
-			<baseheader  :title="headviewtext" @show='showMapSelect' hasBack='true' ></baseheader>
+			<baseheader :title="headviewtext" @show='showMapSelect' :hasBack='true' :xialajiantou='true'></baseheader>
 		</view>
-		
+
 		<view class="page-body">
 			<view class="page-section page-section-gap">
 				<!-- <basemapview></basemapview> -->
 				<map class='map-base-view' :scale="scale" id='firstmap' :latitude="latitude" :longitude="longitude" :markers="covers"
-				 :show-location='showLocation' :circles='circles' :polyline="polyline" @regionchange="functionName" @end="functionName" @begin="functionName">
-					<cover-view v-if="showmapselect" class='map-select-view' >
+				 :show-location='showLocation' :circles='circles' :polyline="polyline" @regionchange="functionName" @end="functionName"
+				 @begin="functionName">
+					<cover-view v-if="showmapselect" class='map-select-view'>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i)"  :class="{'borderrights':item.active}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i)" :class="{'borderrights':item.active}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
-					<cover-view v-if="showcorverview.bottom" class='map-cover-view' @click="scanCode">扫码换电</cover-view>
+					<cover-view v-if="showcorverview.bottom" class='map-cover-view' @click="scanCode">{{scanbuttonname}}</cover-view>
 				</map>
 			</view>
 		</view>
@@ -30,28 +31,60 @@
 
 	export default {
 		components: {
-			scanbutton,baseheader
+			scanbutton,
+			baseheader
 		},
 		data() {
 			return {
 				title: 'map',
-				headviewtext:'',
-				showcorverview:{head:true,bottom:true},
+				type: '0',
+				scanbuttonname: '扫一扫',
+				headviewtext: '',
+				showcorverview: {
+					head: true,
+					bottom: true
+				},
 				latitude: 26.0527,
-				showmapselect:false,
+				showmapselect: false,
 				longitude: 119.31414,
-				mapinfo:null,
+				mapinfo: null,
 				scale: '12', //缩放级别5-18
 				showLocation: true,
-				selectcoverdata:[
-					{name:'全部换电',id:'0',active:true},
-					{name:'所有35%以下',id:'1',active:false},
-					{name:'所有30%以下',id:'2',active:false},
-					{name:'所有20%以下',id:'3',active:false},
-					{name:'所有10%以下',id:'4',active:false},
-					{name:'低于可用里程',id:'5',active:false},
-					// {name:'欠压车辆',id:'6'},
-// 					{name:'',id:'6'},
+				selectcoverdata: [{
+						name: '全部换电',
+						id: '0',
+						active: true
+					},
+					{
+						name: '所有35%以下',
+						id: '1',
+						active: false
+					},
+					{
+						name: '所有30%以下',
+						id: '2',
+						active: false
+					},
+					{
+						name: '所有20%以下',
+						id: '3',
+						active: false
+					},
+					{
+						name: '所有10%以下',
+						id: '4',
+						active: false
+					},
+					{
+						name: '低于可用里程',
+						id: '5',
+						active: false
+					},
+					{
+						name: '欠压车辆',
+						id: '6',
+						active: false
+					},
 				],
 				covers: [{
 						id: 0,
@@ -101,7 +134,7 @@
 				}],
 				polyline: [{ //指定一系列坐标点，从数组第一项连线至最后一项
 					points: [
-						
+
 					],
 					color: "#0000AA", //线的颜色
 					width: 5, //线的宽度
@@ -112,38 +145,140 @@
 			};
 		},
 		onLoad(e) {
-			console.log('ee',e)
-			this.headviewtext=e.text
-			switch(e.type){
+			this.headviewtext = e.text
+			this.type = e.type
+			switch (e.type) {
 				case '0':
-				break;
+					this.scanbuttonname = '扫码换电'
+					break;
 				case '0.1':
-				    // 设置corver初始状态
-				    this.showcorverview={head:false,bottom:false},
-					// 多边形
-					this.polyline[0].points=[
-						{
-							latitude: 26.0528,
-							longitude: 119.31414
+					// 设置corver初始状态
+					this.showcorverview = {
+							head: false,
+							bottom: false
+						},
+						// 多边形
+						this.polyline[0].points = [{
+								latitude: 26.0528,
+								longitude: 119.31414
+							},
+							{
+								latitude: 26.063,
+								longitude: 119.325
+							},
+							{
+								latitude: 26.059,
+								longitude: 119.385
+							},
+							{
+								latitude: 26.0528,
+								longitude: 119.31414
+							},
+						]
+					this.covers = []
+					break;
+				case '3.1':
+					this.scanbuttonname = '扫码挪车'
+					this.selectcoverdata = [{
+							name: '全部车站',
+							id: '0',
+							active: true
 						},
 						{
-							latitude: 26.063,
-							longitude: 119.325
+							name: '供给不足车站',
+							id: '1',
+							active: false
 						},
 						{
-							latitude: 26.059,
-							longitude: 119.385
+							name: '供给过量车站',
+							id: '2',
+							active: false
 						},
 						{
-							latitude: 26.0528,
-							longitude: 119.31414
+							name: '预警车站',
+							id: '3',
+							active: false
+						},
+						{
+							name: '车效（中）车辆',
+							id: '4',
+							active: false
+						},
+						{
+							name: '车效（差）车辆',
+							id: '5',
+							active: false
+						},
+						{
+							name: '车效（极差）车辆',
+							id: '6',
+							active: false
+						},
+						{
+							name: '故障-维修入库',
+							id: '7',
+							active: false
+						},
+						{
+							name: '故障-未入库',
+							id: '8',
+							active: false
+						},
+						{
+							name: '12h+无人扫码车辆',
+							id: '9',
+							active: false
+						},
+						{
+							name: '24h+无人扫码车辆',
+							id: '10',
+							active: false
+						},
+						{
+							name: '1+不动车辆',
+							id: '11',
+							active: false
+						},
+						{
+							name: '2+不动车辆',
+							id: '12',
+							active: false
+						},
+						{
+							name: '3+不动车辆',
+							id: '13',
+							active: false
+						},
+						{
+							name: '7+不动车辆',
+							id: '14',
+							active: false
+						}
+					]
+					break;
+				case '1.1':
+					this.scanbuttonname = '扫码入库'
+					this.selectcoverdata = [{
+							name: '全部故障车辆',
+							id: '0',
+							active: true
+						},
+						{
+							name: '未入库故障车辆',
+							id: '1',
+							active: false
+						},
+						{
+							name: '已入库故障车辆',
+							id: '2',
+							active: false
 						},
 					]
-					this.covers=[]
 					break;
+
 			}
 			wx.setNavigationBarTitle({
-				title:e.name
+				title: e.name
 			})
 			uni.getLocation({ //获取当前的位置坐标
 				type: 'wgs84',
@@ -162,67 +297,83 @@
 				}
 			});
 		},
-		onShow(e){
-			
+		onShow(e) {
+
 		},
-		onReady(){
-			if(this.mapinfo==null){
-				this.mapinfo=uni.createMapContext('firstmap')
-			}		
+		onReady() {
+			if (this.mapinfo == null) {
+				this.mapinfo = uni.createMapContext('firstmap')
+			}
 		},
-		onUnload(){
-			this.mapinfo=null
+		onUnload() {
+			this.mapinfo = null
 		},
 		methods: {
-			showMapSelect(){
-				this.showmapselect=!this.showmapselect
+			showMapSelect() {
+				this.showmapselect = !this.showmapselect
 			},
-			selectsure(){
-				this.showmapselect=false
+			selectsure() {
+				this.showmapselect = false
 			},
-			active(index){
-				for(let i=0;i<this.selectcoverdata.length;i++){
-					this.selectcoverdata[i].active=false
+			active(index) {
+				for (let i = 0; i < this.selectcoverdata.length; i++) {
+					this.selectcoverdata[i].active = false
 				}
-				this.selectcoverdata[index].active=true
+				this.selectcoverdata[index].active = true
 			},
 			functionName() {
-				let self = this		
+				let self = this
 				this.mapinfo.getCenterLocation({
-						success:(res)=> {
-							console.log('当前位置的经度1：' + res.longitude);
-							console.log('当前位置的纬度1：' + res.latitude);
-							uni.showToast({
-								title: res.longitude.toString(),
-								mask: false,
-								duration: 1500,
-							});
-						},
-						fail:(res)=>{
-							console.log('当前位置的经度2：' + res.longitude);
-							console.log('当前位置的纬度2：' + res.latitude);
-						}
-					})
-		},
-		scanCode() {
-			uni.scanCode({
-				onlyFromCamera: true, //只允许相机扫码
-				success: function(res) {
-					console.log('条码类型：' + res.scanType);
-					console.log('条码内容：' + res.result);
-					uni.navigateTo({
-						url:'/pages/swapbattery/swapbattery'
-					})
-				},
-				fail: function(res) {
-		
-				},
-				complete: function(res) {
-		
+					success: (res) => {
+						console.log('当前位置的经度1：' + res.longitude);
+						console.log('当前位置的纬度1：' + res.latitude);
+						uni.showToast({
+							title: res.longitude.toString(),
+							mask: false,
+							duration: 1500,
+						});
+					},
+					fail: (res) => {
+						console.log('当前位置的经度2：' + res.longitude);
+						console.log('当前位置的纬度2：' + res.latitude);
+					}
+				})
+			},
+			scanCode() {
+				let url = this.dowhat().url
+				uni.scanCode({
+					onlyFromCamera: true, //只允许相机扫码
+					success: function(res) {
+						console.log('条码类型：' + res.scanType);
+						console.log('条码内容：' + res.result);
+						uni.navigateTo({
+							url: url
+						})
+					},
+					fail: function(res) {
+
+					},
+					complete: function(res) {
+
+					}
+				});
+			},
+			dowhat() {
+				let data = {}
+				switch (this.type) {
+					case '0':
+						data.url = '/pages/swapbattery/swapbattery'
+						break;
+					case '1.3':
+						data.url = '/pages/repaircar/repaircar'
+						break;
+					case '3.1':
+						data.url = '/pages/checkupcar/checkupcar'
+						break;
 				}
-			});
-		},
-	}
+				return data
+			}
+		}
 	}
 </script>
 
@@ -230,6 +381,7 @@
 	.map-base-view {
 		height: calc(100vh - 80upx);
 		width: 100%;
+
 		// margin-top: 100px;
 		.map-cover-view {
 			width: 50%;
@@ -243,20 +395,19 @@
 			text-align: center;
 			font-size: 40upx
 		}
-		.map-select-view{
+
+		.map-select-view {
 			width: 100%;
-			height: 420upx;
+			// height: 420upx;
 			position: absolute;
 			left: 0;
-			// bottom: 60upx;
 			background-color: white;
-			// border-radius: 20upx;
-			// line-height: 100upx;
 			text-align: center;
 			font-size: 40upx;
-			background-color:#efeff2;
+			background-color: #efeff2;
 			font-size: 14px;
-			.select-sure{
+
+			.select-sure {
 				margin-top: 30upx;
 				height: 90upx;
 				line-height: 80upx;
@@ -265,19 +416,21 @@
 				border-radius: 8upx;
 				margin-left: 5%;
 			}
-			.select-list{
+
+			.select-list {
 				display: flex;
-				justify-content: space-around;
+				// justify-content: space-around;
 				flex-wrap: wrap;
 				background-color: white;
-				cover-view{
+
+				cover-view {
 					width: calc(50% - 4upx);
-					border: 1upx solid rgba(245,245,245,1);
+					border: 1upx solid rgba(245, 245, 245, 1);
 					height: 80upx;
 					line-height: 80upx;
-					// text-decoration:underline 
 				}
-				.borderrights{
+
+				.borderrights {
 					// border-right: 1upx solid gray;
 					color: #F6C700;
 					border: 1upx solid #F6C700;

@@ -3,6 +3,8 @@
 		<view class="base-header" >
 			<i v-if="hasBack" class="iconfont iconsousuo sousuo-view" @click='gosuchview'></i>
 			<text class='text-view' @click='showmapcoverview'>{{title}}</text>
+			<img v-if='xialajiantou' src="/static/image/xiala.png" class='base-img'  alt="">
+			<!-- <img src="/static/image/shangla.png" style='width:20upx;height:auto' alt=""> -->
 			<text v-if="hasright" @click="messagecenter">{{rightTitle}}</text>
 		</view>
 	</view>
@@ -24,6 +26,9 @@
 			rightTitle: {
 				default: ''
 			},
+			xialajiantou:{
+				default:false
+			}
 		},
 		methods: {
 			messagecenter() {
@@ -62,9 +67,14 @@
 		// background-color: #f5f5f5;
 		background-color: #555555;
 		text-align: center;
+		.base-img{
+			width:18upx;height:auto
+		}
 		.sousuo-view{
 			position: absolute;
 			right:18upx;
+			font-size: 40upx;
+			color:white;
 		}
         .text-view{
 			color:white

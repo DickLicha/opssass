@@ -7,7 +7,8 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		loginProvider: "",
-		openid: null
+		openid: null,
+		faultinfo:'',
 	},
 	mutations: {
 		login(state, provider) {
@@ -20,7 +21,10 @@ const store = new Vuex.Store({
 		},
 		setOpenid(state, openid) {
 			state.openid = openid
-		}
+		},
+		setFaultinfo(state, faultinfo) {
+			state.faultinfo = faultinfo
+		},
 	},
 	actions: {
 		// lazy loading openid

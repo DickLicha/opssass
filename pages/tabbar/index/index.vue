@@ -1,8 +1,8 @@
 <template>
 	<view class='wrap'>
 		<view class='common-base-view'>
-			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item.url,item.name,item.text,i)'>
-				<view class='task-view-img'><i class="iconfont icondanche"></i></view>
+			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item,i)'>
+				<view class='task-view-img'><i class="iconfont icondanche" style='font-size: 70upx;'></i></view>
 				<view class='task-view-text'><text>{{item.name}}</text></view>
 			</view>
 		</view>
@@ -20,91 +20,91 @@
 				taskdata: [{
 						name: '换电',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:'全部待换电'
 					},
 					{
 						name: '维修',
 						img: '',
-						url: '',
+						url: '/pages/repairlist/repairlist',
 						text:'全部故障车辆'
 					},
 					{
 						name: '保养',
 						img: '',
-						url: '',
+						url: '/pages/repairlist/repairlist',
 						text:'待保养车辆'
 					},
 					{
 						name: '单个挪车',
 						img: '',
-						url: '',
+						url: '/pages/repairlist/repairlist',
 						text:'全部车站'
 					},
 					{
 						name: '批量挪车',
 						img: '',
-						url: '',
+						url: '/pages/repairlist/repairlist',
 						text:''
 					},
 					{
 						name: 'ECU换绑',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: 'ECU绑定',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: '换电批次',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: '找不到车',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: '批量开关锁',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: '库存管理',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: '车站',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: '违章',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: '车辆排查',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 					{
 						name: '车辆换绑',
 						img: '',
-						url: '',
+						url: '/pages/map/map',
 						text:''
 					},
 				]
@@ -127,10 +127,10 @@
 					}
 				});
 			},
-			go(url,name,text,i) {
+			go(item,i) {
 				uni.navigateTo({
 					// url: '/pages/map/map?name=' + name
-					url: `/pages/map/map?name= ${name}&type= ${i}&text= ${text}`
+					url: `${item.url}?name=${item.name}&type=${i}&text=${item.text}`
 				});
 			},
 			test() {

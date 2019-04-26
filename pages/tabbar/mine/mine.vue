@@ -1,110 +1,108 @@
 <template>
 	<view class='wrap'>
-		<view class='mine-common'>
-			<view class='mine-title'>
-				<view class='mine-img-view'></view>
-				<text class='mine-phone'>13043**7040</text>
-				<i class="iconfont iconjiantou"></i>
-			</view>
-			<view class='mine-body'>
-					<view class="uni-flex uni-column">
-						<view class="flex-item-mine"  v-for="item in mineitem"  :class="{'mine-border-top':item.margintop}" @click='go(item.gopage)'>
-							<i class="iconfont flexone" :class='item.icon'></i>
-							<text class='flextwo'>{{item.title}}</text>
-							<text class='flextree'>{{item.info}}</text>
-							<i class="iconfont iconjiantou flewfour"></i>
-						</view>
-					</view>
-				<!-- </view> -->
-			</view>
+		<view class='view-common'>
+			<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='go'></item-cell>
+			<item-cell :itemdata="swapbatterydata" type='4' :border='borders' @itemclick='go'></item-cell>
 		</view>
-	</view>
 	</view>
 </template>
 
 <script>
+	import itemCell from '@/components/item-cell/item-cell.vue'
 	export default {
 		data() {
 			return {
-				mineitem:[
-					{title:'余额',icon:'iconziyuan',info:'0元',margintop:false,gopage:'/pages/mine/mineye/mineye'},
-					{title:'优惠券',icon:'iconyouhuiquan',info:'3张',margintop:true,gopage:'/pages/mine/mineyhq/mineyhq'},
-					{title:'我的卡',icon:'iconqia',info:'0张',margintop:true,gopage:'/pages/mine/minecard/minecard'},
-					{title:'押金',icon:'iconyajin',info:'0元',margintop:true,gopage:'/pages/mine/mineyj/mineyj'},
-					{title:'账户明细',icon:'iconzhanghu',info:'未缴纳',margintop:true,gopage:'/pages/mine/minezhmx/minezhmx'},
-					{title:'test',icon:'iconzhanghu',info:'未缴纳',margintop:true,gopage:'/pages/swapbattery/swapbattery'},
-					{title:'testitemcell',icon:'iconzhanghu',info:'未缴纳',margintop:true,gopage:'/pages/test/test'},									]
-			};
+				borders: true,
+				swapdata: [{
+					name: '祝盛炜',
+					val: '',
+					url:'/pages/mine/minecard/minecard'
+				}],
+				swapbatterydata: [{
+						name: '预警',
+						val: '',
+						url:'/pages/mine/mineye/mineye',
+					},
+					{
+						name: '通知',
+						val: '',
+						url:'/pages/mine/mineyhq/mineyhq'
+					},
+					{
+						name: '未关电机锁车辆记录',
+						val: '',
+						url:'/pages/mine/mineyj/mineyj'
+					},
+					{
+						name: '未关电池锁车辆记录',
+						val: '',
+						url:'/pages/mine/minezhmx/minezhmx'
+					},
+					{
+						name: '员工反馈',
+						val: '',
+						url:'/pages/mine/minezhmx/minezhmx'
+					},
+					{
+						name: '当前运维城市',
+						val: '',
+						url:'/pages/swapbattery/swapbattery'
+					},
+					{
+						name: 'test',
+						val: '',
+						url:'/pages/repaircar/repaircar'
+					},
+				]
+			}
 		},
-		methods:{
-			go(urls){
+		components: {
+			itemCell
+		},
+		methods: {
+			go(item) {
 				uni.navigateTo({
-					url: urls
+					url: item.url,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			changbattery() {
+				uni.showModal({
+					title: '确认打开电池锁',
+					content: '',
+					// showCancel: false,
+					cancelText: '取消',
+					confirmText: '打开',
+					confirmColor: '#F6C700',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
 				});
 			}
 		}
 	}
-	
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss'>
 	.wrap {
-		position: relative;
-		height: calc(100vh);
 		background-color: rgb(245, 245, 245);
-		padding-top: 20upx;
+		padding-top: 1upx;
+		padding-bottom: 1upx;
+		/* height: 100vh; */
+		overflow: hidden;
 
-		.mine-common {
-			margin: 20upx 22upx;
+		/* margin-bottom: 20upx; */
+		.view-common {
+			margin: 10upx 22upx;
+			height: 98vh;
+			position: relative;
 
-			.mine-title {
-				display: flex;
-				align-items: center;
-
-				.mine-phone {
-					width: 80%;
-					margin-left: 40upx;
-				}
-
-				.mine-img-view {
-					width: 100upx;
-					height: 100upx;
-					border-radius: 50%;
-					background-color: yellow;
-				}
-			}
-
-			;
-
-			.mine-body {
-				// height: 420upx;
-				background-color: white;
-				border-radius: 20upx;
-				margin-top: 40upx;
-				.flex-item-mine{
-					display: flex;
-					height: 80upx;
-					margin:0 40upx;
-					line-height: 80upx;
-					align-items: center;
-					.flexone{
-						width:10%;
-					}
-					.flextwo{
-						width:75%;
-					}
-					.flextree{
-						width:20%;
-						text-align: right
-					}
-					.flexfour{
-						width:10%;
-						text-align: right
-					}
-				}
-				.mine-border-top{
-					border-top: 1upx solid rgb(215,215,215);
-				}
+			.change-battery-button {
+				position: fixed;
+				bottom: 3vh;
+				width: 706upx;
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 					<i class="iconfont iconsousuo search-icon"></i>
 					<input class='search-input' placeholder="地点搜索" type="text">
 				</view>
-				<text class='search-cacel'>取消</text>
+				<text class='search-cacel' @click='goback'>取消</text>
 			</view>
 			<view class='search-histroy'>
 				<!-- <item-cell :itemdata="swapdata" type='2' :border='borders'></item-cell> -->
@@ -44,7 +44,11 @@
 			itemCell
 		},
 		methods: {
-
+			goback() {
+              uni.navigateBack({
+              	delta: 1
+              });
+			}
 		}
 	}
 </script>
@@ -68,9 +72,11 @@
 					margin: 20upx 50upx;
 					height: 120upx;
 					display: flex;
-                    .history-font{
+
+					.history-font {
 						margin-left: 12upx;
 					}
+
 					.history-first {}
 
 					.history-secon {
@@ -81,7 +87,6 @@
 
 					.load-icon {
 						font-size: 12px;
-
 					}
 				}
 			}
@@ -100,11 +105,11 @@
 					height: 60upx;
 					border-radius: 8upx;
 
-
 					.search-icon {
 						height: 60upx;
-						margin-top: -10upx;
+						margin-top: -12upx;
 						margin-left: 6upx;
+						font-size: 40upx;
 					}
 
 					.search-input {

@@ -1,7 +1,7 @@
 <template>
 	<view>
-		<view class="uni-mask" v-show="show" :style="{ top: offsetTop + 'px' }" @click="hide" @touchmove.stop.prevent="moveHandle"></view>
-		<view class="uni-popup" :class="'uni-popup-' + position + ' ' + 'uni-popup-' + mode" v-show="show">
+		<view class="uni-mask" v-if="show" :style="{ top: offsetTop + 'px' }" @click="hide" @touchmove.stop.prevent="moveHandle"></view>
+		<view class="uni-popup" :class="'uni-popup-' + position + ' ' + 'uni-popup-' + mode" v-if="show">
 			{{ msg }}
 			<slot></slot>
 			<view v-if="position === 'middle' && mode === 'insert'" class=" uni-icon uni-icon-close" :class="{
@@ -84,6 +84,7 @@
 			moveHandle() {}
 		},
 		created() {
+			console.log('show',this.show)
 			let offsetTop = 0;
 			//#ifdef H5
 			if (!this.h5Top) {

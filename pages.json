@@ -1,12 +1,5 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		// 		{
-		// 			"path": "pages/index/index",
-		// 			"style": {
-		// 				"navigationBarTitleText": "地图"
-		// 			}
-		// 		}
-		// 	    ,
 		{
 			"path": "pages/tabbar/index/index",
 			"style": {
@@ -116,7 +109,39 @@
         }
         ,{
             "path" : "pages/searchview/searchview",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "搜索"
+			}
+        }
+        ,{
+            "path" : "pages/repairlist/repairlist",
+            "style" : {
+				"navigationBarTitleText": "维修"
+			}
+        }
+        ,{
+            "path" : "pages/removecarrecord/removecarrecord",
+            "style" : {
+				"navigationBarTitleText": "挪车记录"
+			}
+        }
+        ,{
+            "path" : "pages/checkupcar/checkupcar",
+            "style" : {
+				"navigationBarTitleText": "车辆安全检查"
+			}
+        }
+        ,{
+            "path" : "pages/repaircar/repaircar",
+            "style" : {
+				"navigationBarTitleText": "修车"
+			}
+        }
+        ,{
+            "path" : "pages/faulttypeview/faulttypeview",
+            "style" : {
+				"navigationBarTitleText": "故障类型"
+			}
         }
     ],
 	"globalStyle": {
@@ -132,14 +157,14 @@
 		"selectedColor": "#F6C700",
 		"list": [{
 				"pagePath": "pages/tabbar/index/index",
-				"iconPath": "static/image/0.png",
-				"selectedIconPath": "static/image/8.png",
+				"iconPath": "static/image/renwu0.png",
+				"selectedIconPath": "static/image/renwu1.png",
 				"text": "任务"
 			},
 			{
 				"pagePath": "pages/tabbar/mine/mine",
-				"iconPath": "static/image/4.png",
-				"selectedIconPath": "static/image/10.png",
+				"iconPath": "static/image/mine0.png",
+				"selectedIconPath": "static/image/mine1.png",
 				"text": "我的"
 			}
 		]
