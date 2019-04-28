@@ -4,7 +4,7 @@
 			<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell>
 			<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
 			<view class='change-battery-button'>
-				<button class='share-button-default' @click='changbattery'>更换电池</button>
+				<button class='share-button-default' @click='changbattery(buttonname)'>{{buttonname}}</button>
 			</view>
 		</view>
 	</view>
@@ -16,8 +16,9 @@
 		data() {
 			return {
 				borders: true,
+				buttonname: '更换电池',
 				swapdata: [{
-					name: '车牌型号',
+					name: '车牌型号:',
 					val: '80135654'
 				}],
 				swapbatterydata: [{
@@ -52,11 +53,22 @@
 						name: '网络状态:',
 						val: '在线'
 					},
+					{
+						name: 'GPS状态:',
+						val: '在线'
+					},
+					{
+						name: 'SIM卡状态:',
+						val: '在线'
+					},
 				]
 			}
 		},
 		components: {
 			itemCell
+		},
+		onLoad() {
+			this.getcarinfo()
 		},
 		methods: {
 			gocarcenter() {
@@ -67,19 +79,183 @@
 					complete: () => {}
 				});
 			},
-			changbattery() {
-				uni.showModal({
-					title: '确认打开电池锁',
-					content: '',
-					// showCancel: false,
-					cancelText: '取消',
-					confirmText: '打开',
-					confirmColor: '#F6C700',
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
-			}
+			changbattery(name) {
+				console.log('name',name)
+				if (name == '更换电池') {
+					uni.showModal({
+						title: '确认打开电池锁',
+						content: '',
+						// showCancel: false,
+						cancelText: '取消',
+						confirmText: '打开',
+						confirmColor: '#F6C700',
+						success: res => {
+							this.openbattery()
+						},
+						fail: () => {},
+						complete: () => {}
+					});
+				} else {
+                   this.closebattery()
+				}
+
+			},
+			// 打开电池锁
+			openbattery() {
+				var options = {
+					url: '/bike/unlock_battery', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"token": "xxxx",
+						"id": "test0001"
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('打开电池锁', res)
+					if (res.status == 0) {
+						// uni.showToast({
+						// 	title: '开锁成功!',
+						// 	duration: 2000
+						// })
+						uni.showModal({
+							title: '电池锁已打开，请更换电池',
+							content: '电池锁更换完毕后，会自动记录本次操作',
+							showCancel: false,
+							cancelText: '',
+							confirmText: '我知道了',
+							success: res => {
+								this.buttonname = '关闭电池锁'
+							},
+							fail: () => {},
+							complete: () => {}
+						});
+					} else {
+						uni.showToast.fail({
+							title: '开锁失败!',
+							duration: 2000
+						})
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 关闭电池锁完成订单
+			closebattery() {
+				var options = {
+					url: '/bcorder/submit', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"token": "xxx",
+						"city_id": "35000",
+						"bike_id": "test0001",
+						"channel": "WXMP"
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('关锁完成订单电池锁', res)
+					this.buttonname='更换电池'
+					if (res.status == 0) {
+						uni.showToast({
+							title: '开锁成功!',
+							duration: 2000
+						})
+					} else {
+						uni.showToast.fail({
+							title: res.message?res.message:'关锁失败!',
+							duration: 2000
+						})
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 获取车辆信息
+			getcarinfo() {
+				var options = {
+					url: '/bike/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"token": "xxxx",
+						"id": "test0001"
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('车辆信息', typeof(res), res)
+					if (res.status == 0) {
+						// 车辆编码
+						this.swapdata[0].val = res.info.id
+						
+						// 车型
+						this.swapbatterydata[0].val=res.info.model
+						
+						// 剩余电量
+						this.swapbatterydata[1].val=res.info.battery_level
+						
+						// 电池状态
+						let is_on_battery=''
+						if(res.info.is_on_battery==0){
+							is_on_battery='空置'
+						}else if(res.info.is_on_battery==1){
+							is_on_battery='装入'
+						}
+						this.swapbatterydata[2].val=is_on_battery
+						
+						// 电池锁状态
+						let is_battery_locked=''
+						if(res.info.is_on_battery==0){
+							is_battery_locked='开'
+						}else if(res.info.is_on_battery==1){
+							is_battery_locked='关'
+						}
+						this.swapbatterydata[3].val=is_battery_locked
+						
+						// 电池电压
+						this.swapbatterydata[4].val=res.info.battery_volt
+						
+						// 剩余容量
+						this.swapbatterydata[5].val='未接入'
+						
+						// 剩余寿命
+						this.swapbatterydata[6].val='未接入'
+						
+						// 网络状态
+						let is_online=''
+						if(res.info.is_on_battery==0){
+							is_online='在线'
+						}else if(res.info.is_on_battery==1){
+							is_online='离线'
+						}
+						this.swapbatterydata[7].val=is_online
+						
+						// gps状态
+						this.swapbatterydata[8].val='未接入'
+						
+						// sim卡状态
+						let sim_state=''
+						if(res.info.is_on_battery==0){
+							sim_state='在线'
+						}else if(res.info.is_on_battery==1){
+							sim_state='离线'
+						}
+						this.swapbatterydata[9].val=sim_state
+
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 		}
 	}
 </script>

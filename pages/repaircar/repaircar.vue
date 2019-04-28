@@ -89,18 +89,20 @@
 		computed: mapState(['faultinfo']),
 		onLoad(){
 			this.setFaultinfo('')
-			console.log('faultinfo',this.faultinfo)		
+			console.log('faultinfo',this.faultinfo.split('/'))		
+		},
+		onShow(){
+			let faultresult=''
+			for(let i=0;i<this.faultinfo.length;i++){
+				faultresult+=this.faultinfo[i]+'/'
+			}
+			this.setFaultinfo(faultresult)
+			console.log(5555,this.faultinfo)
+			this.faulttype[0].val=this.faultinfo
 		},
 		methods: {
 			...mapMutations(['setFaultinfo']),
-			getfaulttype(item){
-				// if(this.faulttypeall==''){
-				// 	this.faulttypeall=item.name
-				// }
-				// else if(this.faulttypeall.indexOf(item.name)=='-1'){
-				// 	this.faulttypeall+='/'+item.name
-				// }	
-				
+			getfaulttype(item){					
 				if(this.faultinfo==''){
 					this.setFaultinfo(item.name)
 				}
