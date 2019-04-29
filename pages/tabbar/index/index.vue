@@ -11,9 +11,11 @@
 </template>
 
 <script>
+	import {mapState,mapMutations} from 'vuex'
 	export default {
 		onLoad(){
 			this.getconfinfo()
+			this.getdirectinfo()
 			},
 		data() {
 			return {
@@ -112,6 +114,28 @@
 			};
 		},
 		methods: {
+			...mapMutations(['setDirectinfo']),
+			// 获取字典配置信息
+			getdirectinfo() {
+				var options = {
+					url: '/config/direct', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data:''
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('字典信息',res)
+					if(res.status==0){
+						this.setDirectinfo(res.direct)
+					}					
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 扫码
 			scanCode() {
 				uni.scanCode({
 					onlyFromCamera: true, //只允许相机扫码
@@ -172,7 +196,6 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"token": "xxxx",
 						"city_id": "35000",
 						// "state": -1,
 						"pno": 0,

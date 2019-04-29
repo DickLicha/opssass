@@ -4,7 +4,7 @@ import './static/iconfont/iconfont.css';
 import store from './store'
 import request from './common/request.js'
 import './common/gobel.css';
-import {eums} from './common/conf.js'
+import {eums,parkstate,invstate} from './common/conf.js'
 // import './static/iconfont'
 
 Vue.config.productionTip = false
@@ -12,6 +12,34 @@ Vue.config.productionTip = false
 App.mpType = 'app'
 Vue.prototype.$httpReq = request
 Vue.prototype.$store = store
+Vue.prototype.$parkstate = function(type){
+	let place_name=''
+	if (type == parkstate.BIKE_PARK_STAT_FREE) {
+		place_name = '自由停放'
+	} else if (type == parkstate.BIKE_PARK_STAT_PARK) {
+		place_name = '站点停放'
+	} else if (type == parkstate.BIKE_PARK_STAT_NPA) {
+		place_name = '禁停区停放'
+	}else if (type == parkstate.BIKE_PARK_STAT_OSA) {
+		place_name = '服务区外'
+	}
+	return place_name	
+}
+Vue.prototype.$invstate = function(type){
+	let inv_name=''
+	if (type == invstate.BIKE_INV_STATE_IN_MARKET) {
+		inv_name = '投入市场'
+	} else if (type == invstate.BIKE_INV_STATE_IN_WAREHOUSE ) {
+		inv_name = '入库'
+	} else if (type == invstate.BIKE_INV_STATE_RECALL) {
+		inv_name = '入库维修'
+	}else if (type == invstate.BIKE_INV_STATE_SCRAPED) {
+		inv_name = '报废'
+	}else if (type == invstate.BIKE_INV_STATE_DEPOT_REPAIRED) {
+		inv_name = '返厂维修'
+	}
+	return inv_name	
+}
 Vue.prototype.$faulttype = function(type){
 	let health_state=''
 	if (type == eums.BIKE_FAULT_HEALTH) {

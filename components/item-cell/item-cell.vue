@@ -89,6 +89,7 @@
 
 					.flex-item-left {
 						width: 97%;
+						font-size: 13px;
 					}
 
 					.flextwo {}

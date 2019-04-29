@@ -18,7 +18,7 @@
 				borders: true,
 				buttonname: '更换电池',
 				swapdata: [{
-					name: '车牌型号:',
+					name: '车辆编号:',
 					val: '80135654'
 				}],
 				swapbatterydata: [{
@@ -46,15 +46,11 @@
 						val: '4.93Ah'
 					},
 					{
-						name: '剩余寿命:',
-						val: '96%'
-					},
-					{
 						name: '网络状态:',
 						val: '在线'
 					},
 					{
-						name: 'GPS状态:',
+						name: 'GPS更新时间:',
 						val: '在线'
 					},
 					{
@@ -107,8 +103,6 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"token": "xxxx",
-						"id": "test0001"
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -150,9 +144,7 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"token": "xxx",
 						"city_id": "35000",
-						"bike_id": "test0001",
 						"channel": "WXMP"
 					}
 				}
@@ -184,8 +176,6 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"token": "xxxx",
-						"id": "test0001"
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -224,10 +214,8 @@
 						this.swapbatterydata[4].val=res.info.battery_volt
 						
 						// 剩余容量
-						this.swapbatterydata[5].val='未接入'
+						this.swapbatterydata[5].val=res.info.battery_capacity
 						
-						// 剩余寿命
-						this.swapbatterydata[6].val='未接入'
 						
 						// 网络状态
 						let is_online=''
@@ -236,10 +224,10 @@
 						}else if(res.info.is_on_battery==1){
 							is_online='离线'
 						}
-						this.swapbatterydata[7].val=is_online
+						this.swapbatterydata[6].val=is_online
 						
-						// gps状态
-						this.swapbatterydata[8].val='未接入'
+						// gps更新时间
+						this.swapbatterydata[7].val=res.info.gps_update_time
 						
 						// sim卡状态
 						let sim_state=''
@@ -248,7 +236,7 @@
 						}else if(res.info.is_on_battery==1){
 							sim_state='离线'
 						}
-						this.swapbatterydata[9].val=sim_state
+						this.swapbatterydata[8].val=sim_state
 
 					}
 				}).catch((err) => {

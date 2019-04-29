@@ -32,7 +32,7 @@
 				}],
 			}
 		},
-		computed: mapState(['faultinfo']),
+		computed: mapState(['faultinfo','directinfo']),
 		onLoad(){
 			console.log('faultinfo',this.faultinfo)
 		},

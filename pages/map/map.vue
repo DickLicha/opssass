@@ -48,7 +48,7 @@
 				showmapselect: false,
 				longitude: 119.31414,
 				mapinfo: null,
-				scale: '12', //缩放级别5-18
+				scale: '13', //缩放级别5-18
 				showLocation: true,
 				selectcoverdata: [{
 						name: '全部换电',

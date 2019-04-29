@@ -9,6 +9,8 @@ const store = new Vuex.Store({
 		loginProvider: "",
 		openid: null,
 		faultinfo:'',
+		// 全局字典配置信息
+		directinfo:{},
 	},
 	mutations: {
 		login(state, provider) {
@@ -25,6 +27,10 @@ const store = new Vuex.Store({
 		setFaultinfo(state, faultinfo) {
 			state.faultinfo = faultinfo
 		},
+		setDirectinfo(state, directinfo) {
+			state.directinfo = directinfo
+		},
+		
 	},
 	actions: {
 		// lazy loading openid
