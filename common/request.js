@@ -12,6 +12,8 @@ export default function(obj) {
 	  Object.assign(obj.data, {
 	    id: 'test0001',
 	    token: 'xxxx',
+		bike_id:'test0001',
+		city_id: "35000",
 	  })
 
 	console.log('data', obj.data)

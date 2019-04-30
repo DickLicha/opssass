@@ -136,6 +136,12 @@
 				"navigationBarTitleText": "故障类型"
 			}
         }
+        ,{
+            "path" : "pages/breakdowncar/breakdowncar",
+            "style" : {
+				"navigationBarTitleText": "报修"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

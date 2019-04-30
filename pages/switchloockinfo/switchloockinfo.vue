@@ -49,9 +49,8 @@
 				type:'',
 				list:[1,2,3,4],
 				itemcells:[
-					{name:'时间:',val:'2019-04-30 07:49:50'},
+					{name:'时间:',val:''},
 					{name:'网络状态:',val:''},
-					{name:'用户状态:',val:''},
 					{name:'用户姓名:',val:''},
 					{name:'用户手机:',val:''},
 					{name:'失败原因:',val:''},
@@ -64,9 +63,15 @@
 		methods: {
 			togglePopup(type) {
 				this.type = type
+				
 			},
 			detilpop(item,i,type){
 				this.type=type
+				this.itemcells[0].val=item.time
+				this.itemcells[1].val=item.netstatus
+				this.itemcells[2].val=item.username
+				this.itemcells[3].val=item.phone
+				this.itemcells[4].val=item.errormsg
 			},
 			loadMore() {
 				if (this.resquestState < 2) {
@@ -111,6 +116,10 @@
 							datainfo.action = (res.list[i].type==10)?'开锁':'关锁'
 							datainfo.qudao = res.list[i].channel?res.list[i].channel:'无'
 							datainfo.status = (res.list[i].success==0)?'成功':'失败'
+							datainfo.netstatus = (res.list[i].is_online==0)?'在线':'离线'
+							datainfo.username = res.list[i].user_name
+							datainfo.phone = res.list[i].user_phone
+							datainfo.errormsg = res.list[i].error_msg
 							this.switchloockdata.push(datainfo)
 						}
 					} else {
@@ -175,7 +184,7 @@
 			}
 			.center-box {
 				width: 500upx;
-				height: 400upx;
+				height: 350upx;
 				text-align: left;
 				margin: 40upx;
 				.list-item{

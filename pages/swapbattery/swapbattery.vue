@@ -21,6 +21,7 @@
 					name: '车辆编号:',
 					val: '80135654'
 				}],
+				orderid: '',
 				swapbatterydata: [{
 						name: '车型:',
 						val: '6.0'
@@ -76,7 +77,7 @@
 				});
 			},
 			changbattery(name) {
-				console.log('name',name)
+				console.log('name', name)
 				if (name == '更换电池') {
 					uni.showModal({
 						title: '确认打开电池锁',
@@ -92,17 +93,19 @@
 						complete: () => {}
 					});
 				} else {
-                   this.closebattery()
+					this.closebattery()
 				}
 
 			},
 			// 打开电池锁
 			openbattery() {
 				var options = {
-					url: '/bike/unlock_battery', //请求接口
+					url: '/bcorder/submit', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
+						"city_id": "35000",
+						"channel": "WXMP"
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -114,6 +117,7 @@
 						// 	title: '开锁成功!',
 						// 	duration: 2000
 						// })
+						this.orderid = res.info.id
 						uni.showModal({
 							title: '电池锁已打开，请更换电池',
 							content: '电池锁更换完毕后，会自动记录本次操作',
@@ -140,27 +144,26 @@
 			// 关闭电池锁完成订单
 			closebattery() {
 				var options = {
-					url: '/bcorder/submit', //请求接口
+					url: '/bcorder/finish', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
-					data: {
-						"city_id": "35000",
-						"channel": "WXMP"
-					}
+					data: {						
+						"order_id": this.orderid
+					},					
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('关锁完成订单电池锁', res)
-					this.buttonname='更换电池'
 					if (res.status == 0) {
+						this.buttonname = '更换电池'
 						uni.showToast({
 							title: '开锁成功!',
 							duration: 2000
 						})
 					} else {
 						uni.showToast.fail({
-							title: res.message?res.message:'关锁失败!',
+							title: res.message ? res.message : '关锁失败!',
 							duration: 2000
 						})
 					}
@@ -175,8 +178,7 @@
 					url: '/bike/info', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
-					data: {
-					}
+					data: {}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
@@ -185,58 +187,58 @@
 					if (res.status == 0) {
 						// 车辆编码
 						this.swapdata[0].val = res.info.id
-						
+
 						// 车型
-						this.swapbatterydata[0].val=res.info.model
-						
+						this.swapbatterydata[0].val = res.info.model
+
 						// 剩余电量
-						this.swapbatterydata[1].val=res.info.battery_level
-						
+						this.swapbatterydata[1].val = res.info.battery_level + '%'
+
 						// 电池状态
-						let is_on_battery=''
-						if(res.info.is_on_battery==0){
-							is_on_battery='空置'
-						}else if(res.info.is_on_battery==1){
-							is_on_battery='装入'
+						let is_on_battery = ''
+						if (res.info.is_on_battery == 0) {
+							is_on_battery = '空置'
+						} else if (res.info.is_on_battery == 1) {
+							is_on_battery = '装入'
 						}
-						this.swapbatterydata[2].val=is_on_battery
-						
+						this.swapbatterydata[2].val = is_on_battery
+
 						// 电池锁状态
-						let is_battery_locked=''
-						if(res.info.is_on_battery==0){
-							is_battery_locked='开'
-						}else if(res.info.is_on_battery==1){
-							is_battery_locked='关'
+						let is_battery_locked = ''
+						if (res.info.is_on_battery == 0) {
+							is_battery_locked = '开'
+						} else if (res.info.is_on_battery == 1) {
+							is_battery_locked = '关'
 						}
-						this.swapbatterydata[3].val=is_battery_locked
-						
+						this.swapbatterydata[3].val = is_battery_locked
+
 						// 电池电压
-						this.swapbatterydata[4].val=res.info.battery_volt
-						
+						this.swapbatterydata[4].val = res.info.battery_volt / 1000 + 'V'
+
 						// 剩余容量
-						this.swapbatterydata[5].val=res.info.battery_capacity
-						
-						
+						this.swapbatterydata[5].val = res.info.battery_capacity / 1000 + 'Ah'
+
+
 						// 网络状态
-						let is_online=''
-						if(res.info.is_on_battery==0){
-							is_online='在线'
-						}else if(res.info.is_on_battery==1){
-							is_online='离线'
+						let is_online = ''
+						if (res.info.is_on_battery == 0) {
+							is_online = '在线'
+						} else if (res.info.is_on_battery == 1) {
+							is_online = '离线'
 						}
-						this.swapbatterydata[6].val=is_online
-						
+						this.swapbatterydata[6].val = is_online
+
 						// gps更新时间
-						this.swapbatterydata[7].val=res.info.gps_update_time
-						
+						this.swapbatterydata[7].val = res.info.gps_update_time
+
 						// sim卡状态
-						let sim_state=''
-						if(res.info.is_on_battery==0){
-							sim_state='在线'
-						}else if(res.info.is_on_battery==1){
-							sim_state='离线'
+						let sim_state = ''
+						if (res.info.is_on_battery == 0) {
+							sim_state = '在线'
+						} else if (res.info.is_on_battery == 1) {
+							sim_state = '离线'
 						}
-						this.swapbatterydata[8].val=sim_state
+						this.swapbatterydata[8].val = sim_state
 
 					}
 				}).catch((err) => {
