@@ -19,17 +19,6 @@
 			"style": {
 				"navigationBarTitleText": "地图",
 				"scrollIndicator": "none"
-//          "app-plus": {  
-//             "titleNView": {  
-//                 "buttons": [{  
-//                     "text": "\ue534",  
-//                     "fontSrc": "/static/uni.ttf",  
-//                     "fontSize": "22px"  
-//                 }]  
-//             }  
-//         }  
-				// 				"navigationStyle":"custom",
-				// 				"titleNView": false
 			}
 		}, {
 			"path": "pages/test/test",
@@ -83,17 +72,21 @@
         ,{
             "path" : "pages/switchloockinfo/switchloockinfo",
             "style" : {
-				"navigationBarTitleText": "开关锁记录（xxx）",
+				"navigationBarTitleText": "开关锁记录",
 				"scrollIndicator": "none"
 			}
         }
         ,{
             "path" : "pages/batteriesrecord/batteriesrecord",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "换电记录"
+			}
         }
         ,{
             "path" : "pages/carorbit/carorbit",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "维修记录"
+			}
         }
         ,{
             "path" : "pages/ecuview/ecuview",
