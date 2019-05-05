@@ -15,11 +15,11 @@
 		data() {
 			return {
 				carcenterdata1:[
-					{name:'换电时间:',val:'2019-04-22 12：59：02'},
-					{name:'换电人:',val:'彭惠红'},
-					{name:'手机号码:',val:'13705059627',click:true},
-					{name:'换电前电量:',val:'31%'},
-					{name:'换点后电量:',val:'100%'},
+					{name:'换电时间:',val:''},
+					{name:'换电人:',val:''},
+					{name:'手机号码:',val:'',click:true},
+					{name:'换电前电量:',val:''},
+					{name:'换点后电量:',val:''},
 				]		
 			}
 		},

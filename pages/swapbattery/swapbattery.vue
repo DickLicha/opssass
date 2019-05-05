@@ -19,44 +19,44 @@
 				buttonname: '更换电池',
 				swapdata: [{
 					name: '车辆编号:',
-					val: '80135654'
+					val: ''
 				}],
 				orderid: '',
 				swapbatterydata: [{
 						name: '车型:',
-						val: '6.0'
+						val: ''
 					},
 					{
 						name: '剩余电量:',
-						val: '39%'
+						val: ''
 					},
 					{
 						name: '电池状态:',
-						val: '装入'
+						val: ''
 					},
 					{
 						name: '电池锁状态:',
-						val: '关闭'
+						val: ''
 					},
 					{
 						name: '电池电压:',
-						val: '49.23v'
+						val: ''
 					},
 					{
 						name: '剩余容量:',
-						val: '4.93Ah'
+						val: ''
 					},
 					{
 						name: '网络状态:',
-						val: '在线'
+						val: ''
 					},
 					{
 						name: 'GPS更新时间:',
-						val: '在线'
+						val: ''
 					},
 					{
 						name: 'SIM卡状态:',
-						val: '在线'
+						val: ''
 					},
 				]
 			}
@@ -158,11 +158,11 @@
 					if (res.status == 0) {
 						this.buttonname = '更换电池'
 						uni.showToast({
-							title: '开锁成功!',
+							title: '关成功!',
 							duration: 2000
 						})
 					} else {
-						uni.showToast.fail({
+						uni.showToast({
 							title: res.message ? res.message : '关锁失败!',
 							duration: 2000
 						})

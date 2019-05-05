@@ -15,12 +15,12 @@
 		data() {
 			return {
 				carcenterdata1:[
-					{name:'剩余电量:',val:'100%'},
-					{name:'电池电压:',val:'55.5V'},
-					{name:'剩余容量:',val:'3.9Ah'},
-					{name:'型号编码:',val:'XH480-14J'},
-					{name:'电池状态:',val:'装入'},
-					{name:'电池锁状态:',val:'关闭'},
+					{name:'剩余电量:',val:''},
+					{name:'电池电压:',val:''},
+					{name:'剩余容量:',val:''},
+					{name:'型号编码:',val:''},
+					{name:'电池状态:',val:''},
+					{name:'电池锁状态:',val:''},
 				]		
 			}
 		},

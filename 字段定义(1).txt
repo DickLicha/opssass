@@ -1,4 +1,4 @@
-﻿
+
 const EB_TYPE_BIKE = 'BIKE';
 const EB_TYPE_SERVICE_AREA = 'SVC_AREA';
 const EB_TYPE_PARK = 'PARK';
@@ -173,7 +173,7 @@ const BIKE_FAULT_TYPE_X_SHA_CHE_DIAO_JIE = 1204; //刹车-不能调节
         "park_name": null,
         "npa_id": null,
         "npa_name": null, //禁停区停放时, 禁停区ID和名字
-        "inv_state": 0, 
+        "inv_state": 0, //库存状态
         "warehouse_id":  "350000000137", //仓库iD
         "warehouse_name": "fuzhou", //仓库名
         "bus_state": 11, //业务状态, 0=空闲, 其他=用户订单-骑行, 用户骑行-临时停车等, 参见字段定义

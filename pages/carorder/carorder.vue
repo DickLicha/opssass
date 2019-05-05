@@ -15,11 +15,11 @@
 		data() {
 			return {
 				carcenterdata1:[
-					{name:'订单编号:',val:'T1904194644548'},
-					{name:'用户姓名:',val:'XXX'},
-					{name:'手机号码:',val:'130435xxxx',click:true},
-					{name:'订单开始:',val:'2019-04-19：12:55:44'},
-					{name:'订单结束:',val:'2019-04-19：12:55:44'},
+					{name:'订单编号:',val:''},
+					{name:'用户姓名:',val:''},
+					{name:'手机号码:',val:'',click:true},
+					{name:'订单开始:',val:''},
+					{name:'订单结束:',val:''},
 					{name:'订单状态:',val:'已结束'},
 					{name:'订单轨迹:',val:'查看',click:true},
 				]		

@@ -2,15 +2,21 @@
 	<view class='wrap'>
 		<view class='view-common'>
 			<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell>
-			<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
-			<view class='check-bottom-view'>
-				<view class='checkup-text'><text>安全检查项目:</text></view>
-				<view class='checkup-text' v-for="(item,i) in checkupdata"><text>{{item}}</text></view>
+			<view v-if="showdetil">
+				<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
+				<view class='check-bottom-view'>
+					<view class='checkup-text'><text>安全检查项目:</text></view>
+					<view class='checkup-text' v-for="(item,i) in checkupdata"><text>{{item}}</text></view>
+				</view>
+				<view class='change-battery-button'>
+					<button class='share-button-default checkup-button' @click='changbattery(0)'>车辆故障</button>
+					<button class='share-button-default checkup-button' @click='changbattery(1)'>车辆正常</button>
+				</view>
 			</view>
-			<view class='change-battery-button'>
-				<button class='share-button-default checkup-button' @click='changbattery'>车辆故障</button>
-				<button class='share-button-default checkup-button' @click='changbattery'>车辆正常</button>
+			<view v-if="!showdetil" class='end-move-button'>
+				<button class='share-button-default' @click='endmovecar'>完成挪车</button>
 			</view>
+
 		</view>
 	</view>
 </template>
@@ -20,7 +26,9 @@
 	export default {
 		data() {
 			return {
+				showdetil: true,
 				borders: true,
+				orderid: '',
 				swapdata: [{
 					name: '车辆编号',
 					val: '80135654'
@@ -38,8 +46,8 @@
 						val: '3天19小时19分21秒'
 					}
 				],
-				checkupdata:[
-					'1、转把','2、转把','3、转把','4、转把','5、转把','6、转把'
+				checkupdata: [
+					'1、转把', '2、', '', '4、', '5、', '6、'
 				]
 			}
 		},
@@ -55,18 +63,81 @@
 					complete: () => {}
 				});
 			},
-			changbattery() {
-				uni.showModal({
-					title: '确认打开电池锁',
-					content: '',
-					// showCancel: false,
-					cancelText: '取消',
-					confirmText: '打开',
-					confirmColor: '#F6C700',
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
+			endmovecar(){
+				this.endmovecar()
+			},
+			// 开始挪车
+			startmovecar() {
+				var options = {
+					url: '/rporder/submit', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"city_id": "35000",
+						"channel": "xxx"
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('开始订单', res)
+					if (res.status == 0) {
+						this.orderid = res.info.id
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 结束挪车
+			endmovecar() {
+				var options = {
+					url: '/rporder/finish', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"city_id": "0591",
+						"order_id": this.orderid
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('挪车', res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: '挪车提交成功',
+							mask: false,
+							duration: 3000
+						});
+					}else{
+						uni.showToast({
+							title: res.message?res.message:'挪车失败',
+							mask: false,
+							duration: 3000
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			changbattery(type) {
+				if (type == 1) {
+					this.showdetil = false
+					this.startmovecar()
+				}
+				// uni.showModal({
+				// 	title: '确认打开电池锁',
+				// 	content: '',
+				// showCancel: false,
+				// 	cancelText: '取消',
+				// 	confirmText: '打开',
+				// 	confirmColor: '#F6C700',
+				// 	success: res => {},
+				// 	fail: () => {},
+				// 	complete: () => {}
+				// });
 			}
 		}
 	}
@@ -80,6 +151,12 @@
 		/* height: 100vh; */
 		overflow: hidden;
 
+		.end-move-button {
+			position: absolute;
+			width: 100%;
+			bottom: 40upx;
+		}
+
 		/* margin-bottom: 20upx; */
 		.view-common {
 			margin: 10upx 22upx;
@@ -91,16 +168,19 @@
 				bottom: 3vh;
 				width: 706upx;
 				display: flex;
-				.checkup-button{
-					width:50%;
-					margin:0 30upx;
+
+				.checkup-button {
+					width: 50%;
+					margin: 0 30upx;
 				}
 			}
-			.check-bottom-view{
+
+			.check-bottom-view {
 				margin-top: 20upx;
 				background-color: white;
 				border-radius: 20upx;
-				.checkup-text{
+
+				.checkup-text {
 					margin: 18upx 40upx;
 				}
 			}

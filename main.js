@@ -6,7 +6,6 @@ import request from './common/request.js'
 import './common/gobel.css';
 import {eums,parkstate,invstate} from './common/conf.js'
 // import './static/iconfont'
-
 Vue.config.productionTip = false
 
 App.mpType = 'app'

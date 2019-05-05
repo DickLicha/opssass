@@ -9,19 +9,19 @@
 					<text>{{item.name}}</text>
 				</view>
 			</view>
-			<uni-popup  :show="type ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
+			<uni-popup :show="type ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
 				<!-- <view class='cancel-view'><img src="/static/image/quxiao.png" alt="" class='pop-cancels' @click="togglePopup('')"></view>			 -->
-				<view class='cancel-view'><text class='pop-cancels' @click="togglePopup('')">取消</text></view>			
+				<view class='cancel-view'><text class='pop-cancels' @click="togglePopup('')">取消</text></view>
 				<scroll-view :scroll-y="true" class="uni-center center-box">
 					<view v-for="(item, index) in list" :key="index" @click="getfaulttype(item)" class="uni-list-item">
 						{{ item.name }}
 					</view>
 				</scroll-view>
 			</uni-popup>
-			
+
 			<view class='change-battery-button'>
-				<button class='share-button-default bottom-button' @click='changbattery'>误报</button>
-				<button class='share-button-default bottom-button' @click='changbattery'>处理完成</button>
+				<button class='share-button-default bottom-button' @click='changbattery(0)'>误报</button>
+				<button class='share-button-default bottom-button' @click='changbattery(1)'>处理完成</button>
 			</view>
 		</view>
 	</view>
@@ -30,11 +30,14 @@
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
-	import {mapState,mapMutations} from 'vuex'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		data() {
 			return {
-				type:'',
+				type: '',
 				list: [],
 				borders: true,
 				swapdata: [{
@@ -50,108 +53,111 @@
 						val: '使用'
 					},
 				],
-				faulttype:[{
+				faulttype: [{
 					name: '故障类型:',
 					val: '请在下面选择'
 				}],
-				faulttypeall:'',
-				faultdata:[
-					{
-						name:'控制器故障',id:1
+				faulttypeall: '',
+				faultdata: [{
+						name: '控制器故障',
+						id: 1
 					},
 					{
-						name:'电机故障',id:2
+						name: '电机故障',
+						id: 2
 					},
 					{
-						name:'刹车故障',id:3
+						name: '刹车故障',
+						id: 3
 					},
 					{
-						name:'车灯故障',id:4
+						name: '车灯故障',
+						id: 4
 					},
 					{
-						name:'刹把断电',id:5
+						name: '刹把断电',
+						id: 5
 					},
 					{
-						name:'转把故障',id:6
+						name: '转把故障',
+						id: 6
 					},
 					{
-						name:'车把故障',id:7
+						name: '车把故障',
+						id: 7
 					},
 					{
-						name:'控制器故障',id:8
+						name: '控制器故障',
+						id: 8
 					},
 				]
 			}
 		},
 		components: {
-			itemCell,uniPopup
+			itemCell,
+			uniPopup
 		},
 		computed: mapState(['faultinfo']),
-		onLoad(){
+		onLoad() {
 			this.setFaultinfo('')
-			console.log('faultinfo',this.faultinfo.split('/'))		
+			console.log('faultinfo', this.faultinfo.split('/'))
 		},
-		onShow(){
-			let faultresult=''
-			for(let i=0;i<this.faultinfo.length;i++){
-				faultresult+=this.faultinfo[i]+'/'
+		onShow() {
+			let faultresult = ''
+			for (let i = 0; i < this.faultinfo.length; i++) {
+				faultresult += this.faultinfo[i] + '/'
 			}
 			this.setFaultinfo(faultresult)
-			console.log(5555,this.faultinfo)
-			this.faulttype[0].val=this.faultinfo
+			console.log(5555, this.faultinfo)
+			this.faulttype[0].val = this.faultinfo
 		},
 		methods: {
 			...mapMutations(['setFaultinfo']),
-			getfaulttype(item){					
-				if(this.faultinfo==''){
+			getfaulttype(item) {
+				if (this.faultinfo == '') {
 					this.setFaultinfo(item.name)
-				}
-				else if(this.faultinfo.indexOf(item.name)=='-1'){
-					let temp=this.faultinfo					
-					temp+='/'+item.name
+				} else if (this.faultinfo.indexOf(item.name) == '-1') {
+					let temp = this.faultinfo
+					temp += '/' + item.name
 					this.setFaultinfo(temp)
-				}						
-				this.faulttype[0].val=this.faultinfo
-				this.type=''
+				}
+				this.faulttype[0].val = this.faultinfo
+				this.type = ''
 			},
-			faultpop(types,item){
-				this.type=types
-				switch(item.id){
+			faultpop(types, item) {
+				this.type = types
+				switch (item.id) {
 					case 1:
-					this.list=[
-						{
-						name:'进水短路',
-						val:1
-					},
-					{
-						name:'功能故障',
-						val:2
-					},
-					]
-					break;
+						this.list = [{
+								name: '进水短路',
+								val: 1
+							},
+							{
+								name: '功能故障',
+								val: 2
+							},
+						]
+						break;
 					case 2:
-					this.list=[
-						{
-						name:'电机线被剪',
-						val:1
-					},
-					{
-						name:'电机端盖裂',
-						val:2
-					},
-					{
-						name:'功能故障',
-						val:3
-					},
-					]
-					break;
+						this.list = [{
+								name: '电机线被剪',
+								val: 1
+							},
+							{
+								name: '电机端盖裂',
+								val: 2
+							},
+							{
+								name: '功能故障',
+								val: 3
+							},
+						]
+						break;
 					default:
-					this.list=[
-						{
-						name:'其他',
-						val:1
-					},
-					]		
+						this.list = [{
+							name: '其他',
+							val: 1
+						}, ]
 				}
 			},
 			gocarcenter() {
@@ -165,30 +171,59 @@
 			togglePopup(type) {
 				this.type = type
 			},
-			gofaultinfo(){
-				if(this.faultinfo==''){
+			gofaultinfo() {
+				if (this.faultinfo == '') {
 					return
 				}
 				this.setFaultinfo(this.faultinfo.split('/'))
-			    uni.navigateTo({
-			    	url: '/pages/faulttypeview/faulttypeview',
-			    	success: res => {},
-			    	fail: () => {},
-			    	complete: () => {}
-			    });	
-			},
-			changbattery() {
-				uni.showModal({
-					title: '确认打开电池锁',
-					content: '',
-					// showCancel: false,
-					cancelText: '取消',
-					confirmText: '打开',
-					confirmColor: '#F6C700',
+				uni.navigateTo({
+					url: '/pages/faulttypeview/faulttypeview',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
 				});
+			},
+			changbattery(type) {
+				// fault_type=0代表误报
+				let faultType=''
+				let faultDesc=''
+				if(type==0){
+					faultType=0
+					faultDesc='误报'
+				}else{
+					faultType=1
+				}
+				let options = {
+					url: '/brorder/repair', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"bike_id": "test0001",
+						"order_id": "",
+						"fault_type": faultType,
+						"fault_subtype": 1,
+						"fault_desc": faultDesc
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					if(res.status==0){
+						uni.showToast({
+							title: '处理成功',
+							mask: false,
+							duration: 3000
+						});
+					}else{
+						uni.showToast({
+							title: res.message?res.message:'处理失败',
+							mask: false,
+							duration: 3000
+						});
+					}					
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+
 			}
 		}
 	}
@@ -201,31 +236,35 @@
 		padding-bottom: 1upx;
 		/* height: 100vh; */
 		overflow: hidden;
+
 		.center-box {
 			width: 500upx;
 			height: 500upx;
 		}
-		.cancel-view{
+
+		.cancel-view {
 			position: relative;
 			text-align: left;
-			width:100%;
-			.pop-cancels{
+			width: 100%;
+
+			.pop-cancels {
 				width: 30upx;
 				height: auto;
 				position: relative;
 				/* right:50upx; */
+			}
+
 		}
-		
-		}
+
 		.uni-list-item {
 			text-align: center;
 			line-height: 70upx;
 			/* border-bottom: 1px #f5f5f5 solid; */
-			background-color: rgb(222,222,222);
+			background-color: rgb(222, 222, 222);
 			margin-bottom: 20upx;
 			margin-top: 10upx;
 		}
-		
+
 		.uni-list-item:last-child {
 			border: none;
 		}
@@ -235,13 +274,15 @@
 			margin: 10upx 22upx;
 			height: 98vh;
 			position: relative;
-            .fault-view{
-				margin:20upx 0;
+
+			.fault-view {
+				margin: 20upx 0;
 				display: flex;
 				justify-content: space-between;
 				flex-wrap: wrap;
 				align-items: center;
-				.fault-list-view{
+
+				.fault-list-view {
 					background-color: white;
 					width: calc(50% - 50upx);
 					margin-bottom: 20upx;
@@ -250,17 +291,19 @@
 					text-align: center;
 				}
 			}
+
 			.change-battery-button {
 				position: fixed;
 				bottom: 3vh;
 				width: 706upx;
 				display: flex;
-				.bottom-button{
+
+				.bottom-button {
 					margin: 0 40upx;
-					width:50%
+					width: 50%
 				}
 			}
-			
+
 		}
 	}
 </style>

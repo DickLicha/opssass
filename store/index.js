@@ -11,6 +11,8 @@ const store = new Vuex.Store({
 		faultinfo:'',
 		// 全局字典配置信息
 		directinfo:{},
+		sn:'',
+		bikeid:'',
 	},
 	mutations: {
 		login(state, provider) {
@@ -29,6 +31,12 @@ const store = new Vuex.Store({
 		},
 		setDirectinfo(state, directinfo) {
 			state.directinfo = directinfo
+		},
+		setSn(state, sn){
+			state.sn = sn
+		},
+		setBikeid(state, bikeid){
+			state.bikeid = bikeid
 		},
 		
 	},

@@ -27,7 +27,8 @@
 <script>
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
-	// import basemapview from '@/components/basemapview/basemapview.vue'
+	import {mapState,mapMutations} from 'vuex'
+
 
 	export default {
 		components: {
@@ -309,6 +310,7 @@
 			this.mapinfo = null
 		},
 		methods: {
+			...mapMutations(['setSn','setBikeid']),
 			showMapSelect() {
 				this.showmapselect = !this.showmapselect
 			},
@@ -343,18 +345,19 @@
 				let url = this.dowhat().url
 				uni.scanCode({
 					onlyFromCamera: true, //只允许相机扫码
-					success: function(res) {
+					success: res => {
 						console.log('条码类型：' + res.scanType);
 						console.log('条码内容：' + res.result);
+						console.log('sn',res.result)
+						this.setSn(res.result)
+						this.getcarinfo()
 						uni.navigateTo({
 							url: url
 						})
 					},
-					fail: function(res) {
-
-					},
-					complete: function(res) {
-
+					fail: res => {},
+					complete: res =>{
+						
 					}
 				});
 			},
@@ -372,7 +375,27 @@
 						break;
 				}
 				return data
-			}
+			},
+			// 获取车辆信息
+			getcarinfo() {
+				var options = {
+					url: '/bike/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {						
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					if (res.status == 0) {
+						this.setBikeid(res.id)		             
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 		}
 	}
 </script>

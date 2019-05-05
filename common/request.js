@@ -1,22 +1,22 @@
 import store from '@/store'
 export default function(obj) {
 	// if (obj.method === 'GET') {
-	let sid;
+	let sn,id;
 	//#ifndef H5
-	sid = store.state.sid || ""
+	sn = store.state.sn || ""
+	id = store.state.bikeid || ""
 	// #endif
 	// #ifdef H5
-	sid = sessionStorage.getItem('etf_sid') || ""
 	// #endif
 	obj.header = obj.header || {}
 	  Object.assign(obj.data, {
-	    id: 'test0001',
-	    token: 'xxxx',
-		bike_id:'test0001',
+	    id: id,
+		bike_id:id,
+	    token: 'xxxx',		
 		city_id: "35000",
+		bike_sn:sn,
 	  })
 
-	console.log('data', obj.data)
 	let baseUrl = 'http://www.fishors.com:8086'
 	let p = new Promise((resolve, reject) => {
 		uni.request({

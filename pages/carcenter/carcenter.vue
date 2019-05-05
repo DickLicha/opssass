@@ -23,44 +23,44 @@
 			return {
 				carcenterdata1: [{
 						name: '车型:',
-						val: '6.0'
+						val: ''
 					},
 					{
 						name: '库存状态:',
-						val: '已投放'
+						val: ''
 					},
 					{
 						name: '车辆状态:',
-						val: '正常'
+						val: ''
 					},
 					{
 						name: '车辆位置:',
-						val: '车站外'
+						val: ''
 					},
 				],
 				carcenterdata2: [{
 						name: '使用状态:',
-						val: '空闲'
+						val: ''
 					},
 					{
 						name: '运行状态:',
-						val: '禁止不止10分钟'
+						val: ''
 					},
 					{
 						name: '网络状态:',
-						val: '在线'
+						val: ''
 					},
 					{
 						name: 'GPS状态:',
-						val: '可用'
+						val: ''
 					},
 					{
 						name: 'SIM卡状态:',
-						val: '可用'
+						val: ''
 					},
 					{
 						name: '车锁状态:',
-						val: '关闭'
+						val: ''
 					},
 				],
 				carcenterdata3: [{
@@ -117,7 +117,7 @@
 			},
 			// 获取车辆信息
 			getcarinfo() {
-				var options = {
+				let options = {
 					url: '/bike/info', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
@@ -127,13 +127,14 @@
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('车辆信息',res)
+					console.log('车辆信息2',res)
+					console.log('direct',this.directinfo)
 					if (res.status == 0) {
 						// 车型
 						this.carcenterdata1[0].val = res.info.model
 
 						// 库存状态
-						this.carcenterdata1[1].val = res.info.model
+						this.carcenterdata1[1].val = this.$invstate(res.info.inv_state)
                          
 						// 车辆状态
 						let health_state =''
@@ -148,9 +149,10 @@
 						this.carcenterdata1[3].val = this.$parkstate(res.info.park_state)
 						
 						// 车辆业务状态
-						this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[res.info.bus_state]				
-						
-                        
+						if(res.info.bus_state){
+							this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[res.info.bus_state]
+						}
+																 
 						// 车辆运行状态
 						let is_battery_locked = ''
 						if (res.info.is_on_battery == 0) {
