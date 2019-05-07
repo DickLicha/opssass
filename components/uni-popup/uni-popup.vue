@@ -84,7 +84,6 @@
 			moveHandle() {}
 		},
 		created() {
-			console.log('show',this.show)
 			let offsetTop = 0;
 			//#ifdef H5
 			if (!this.h5Top) {

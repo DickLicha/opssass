@@ -38,6 +38,7 @@
 		data() {
 			return {
 				type: '',
+				temparr: [],
 				list: [],
 				borders: true,
 				swapdata: [{
@@ -58,6 +59,7 @@
 					val: '请在下面选择'
 				}],
 				faulttypeall: '',
+				// selectfaultobj:[],
 				faultdata: [{
 						name: '控制器故障',
 						id: 1
@@ -97,10 +99,10 @@
 			itemCell,
 			uniPopup
 		},
-		computed: mapState(['faultinfo']),
-		onLoad() {
+		computed: mapState(['faultinfo', 'orderfirstid', 'selectfaultobj']),
+		onLoad(e) {
 			this.setFaultinfo('')
-			console.log('faultinfo', this.faultinfo.split('/'))
+			console.log('this.orderfirstid', this.orderfirstid)
 		},
 		onShow() {
 			let faultresult = ''
@@ -108,12 +110,13 @@
 				faultresult += this.faultinfo[i] + '/'
 			}
 			this.setFaultinfo(faultresult)
-			console.log(5555, this.faultinfo)
 			this.faulttype[0].val = this.faultinfo
 		},
 		methods: {
-			...mapMutations(['setFaultinfo']),
+			...mapMutations(['setFaultinfo', 'setSelectfaultobj']),
 			getfaulttype(item) {
+				this.temparr.push(item)
+				this.setSelectfaultobj(this.temparr)
 				if (this.faultinfo == '') {
 					this.setFaultinfo(item.name)
 				} else if (this.faultinfo.indexOf(item.name) == '-1') {
@@ -130,33 +133,33 @@
 					case 1:
 						this.list = [{
 								name: '进水短路',
-								val: 1
+								val: 1001
 							},
 							{
 								name: '功能故障',
-								val: 2
+								val: 1002
 							},
 						]
 						break;
 					case 2:
 						this.list = [{
 								name: '电机线被剪',
-								val: 1
+								val: 2001
 							},
 							{
 								name: '电机端盖裂',
-								val: 2
+								val: 2002
 							},
 							{
 								name: '功能故障',
-								val: 3
+								val: 3000
 							},
 						]
 						break;
 					default:
 						this.list = [{
 							name: '其他',
-							val: 1
+							val: 9000
 						}, ]
 				}
 			},
@@ -185,45 +188,68 @@
 			},
 			changbattery(type) {
 				// fault_type=0代表误报
-				let faultType=''
-				let faultDesc=''
-				if(type==0){
-					faultType=0
-					faultDesc='误报'
-				}else{
-					faultType=1
-				}
-				let options = {
-					url: '/brorder/repair', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						"bike_id": "test0001",
-						"order_id": "",
-						"fault_type": faultType,
-						"fault_subtype": 1,
-						"fault_desc": faultDesc
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					if(res.status==0){
-						uni.showToast({
-							title: '处理成功',
-							mask: false,
-							duration: 3000
-						});
-					}else{
-						uni.showToast({
-							title: res.message?res.message:'处理失败',
-							mask: false,
-							duration: 3000
-						});
-					}					
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
-
+				console.log(55, this.faultinfo)
+				uni.showModal({
+					title: '确认操作',
+					content: '提交信息',
+					showCancel: true,
+					cancelText: '取消',
+					confirmText: '确认',
+					success: res => {
+						let faultType = []
+						let faultDesc = []
+						let faultSubtype = []
+						if (type == 0) {
+							faultType = [0]
+							faultDesc = ['误报']
+							faultSubtype = []
+						} else {
+							faultType = [1]
+							for (let i = 0; i < this.selectfaultobj.length; i++) {
+								faultSubtype.push(this.selectfaultobj[i].val)
+								faultDesc.push(this.selectfaultobj[i].name)
+							}
+						}
+						let options = {
+							url: '/brorder/repair', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"bike_id": "test0001",
+								"order_id": this.orderfirstid,
+								"fault_types": faultType,
+								"fault_subtypes": faultSubtype,
+								"fault_descs": faultDesc
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							if (res.status == 0) {
+								uni.showToast({
+									title: '处理成功',
+									mask: false,
+									duration: 3000
+								});
+								setTimeout(()=>{
+									uni.switchTab({
+										url: '/pages/tabbar/index/index'
+									});
+								},2500)
+								
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '处理失败',
+									mask: false,
+									duration: 3000
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: () => {},
+					complete: () => {}
+				});
 			}
 		}
 	}

@@ -8,10 +8,12 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
+	import {mapState} from 'vuex'
 	export default {
 		components:{
 			itemCell
 		},
+		computed: mapState(['bikeinfo']),
 		data() {
 			return {
 				carcenterdata1:[
@@ -25,16 +27,39 @@
 			}
 		},
 		onLoad(){
-			this.getcarinfo()
+			// this.getcarinfo()
+			// 剩余电量
+			this.carcenterdata1[0].val = this.bikeinfo.battery_level+'%'
+						
+			// 电池电压V
+			this.carcenterdata1[1].val = this.bikeinfo.battery_volt/1000+'V'
+			
+			// 剩余容量
+			this.carcenterdata1[2].val = this.bikeinfo.battery_capacity/1000+'Ah'
+			
+			// 型号编码
+			this.carcenterdata1[3].val = this.bikeinfo.battery_model
+			
+			// 电池状态
+			let is_on_battery=''
+			if(this.bikeinfo.is_on_battery==0){
+				is_on_battery='空置'
+			}else if(this.bikeinfo.is_on_battery==1){
+				is_on_battery='装入'
+			}
+			this.carcenterdata1[4].val = is_on_battery
+			
+			// 电池锁状态
+			let is_battery_locked=''
+			if(this.bikeinfo.is_on_battery==0){
+				is_battery_locked='开'
+			}else if(this.bikeinfo.is_on_battery==1){
+				is_battery_locked='关'
+			}
+			this.carcenterdata1[5].val = is_battery_locked	
 		},
 		methods: {
 			gocarcenter(e){
-// 				uni.navigateTo({
-// 					url: '/pages/map/map',
-// 					success: res => {},
-// 					fail: () => {},
-// 					complete: () => {}
-// 				});
 			},
 			// 获取车辆信息
 			getcarinfo() {

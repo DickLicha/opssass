@@ -13,6 +13,11 @@ const store = new Vuex.Store({
 		directinfo:{},
 		sn:'',
 		bikeid:'',
+		// 第一笔订单id
+		orderfirstid:'',
+		selectfaultobj:[],
+		// 所有车辆信息
+		bikeinfo:{},
 	},
 	mutations: {
 		login(state, provider) {
@@ -38,6 +43,15 @@ const store = new Vuex.Store({
 		setBikeid(state, bikeid){
 			state.bikeid = bikeid
 		},
+		setOrderfirstid(state, orderfirstid){
+			state.orderfirstid = orderfirstid
+		},
+		setSelectfaultobj(state, selectfaultobj){
+			state.selectfaultobj = selectfaultobj
+		},
+		setBikeinfo(state, bikeinfo){
+			state.bikeinfo = bikeinfo
+		},
 		
 	},
 	actions: {
@@ -55,7 +69,6 @@ const store = new Vuex.Store({
 							commit('login')
 							setTimeout(function () { //模拟异步请求服务器获取 openid
 								const openid = '123456789'
-								console.log('uni.request mock openid[' + openid + ']');
 								commit('setOpenid', openid)
 								resolve(openid)
 							}, 1000)

@@ -179,7 +179,6 @@
 						preferred: true
 					}];
 					contact.save();
-					console.log('addressbook', addressbook)
 				}, function(e) {
 					console.log("Get address book failed: " + e.message);
 				});

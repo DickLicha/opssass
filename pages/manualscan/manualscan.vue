@@ -1,0 +1,119 @@
+<template>
+	<view class='wrap'>
+		<view class='view-common'>
+			<view class="uni-common-mt input-place">
+				<view class="uni-form-item uni-column">
+					<input class="uni-input letter-spacings" maxlength="9" v-model="carnum" @input="hideKeyboard" type="number"
+					 placeholder="请输入编号" />
+				</view>
+				<view @click='go'>完成</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	import {mapState,mapMutations} from 'vuex'
+	export default {
+		data() {
+			return {
+				title: 'input',
+				focus: false,
+				inputValue: '',
+				changeValue: '',
+				carnum: '',
+				urls: '',
+			}
+		},
+		methods: {
+			...mapMutations(['setBikeid','setSn','setBikeinfo']),
+			onKeyInput(){
+				this.inputValue = event.target.value
+			},
+			replaceInput(event) {
+				var value = event.target.value;
+				if (value === '11') {
+					this.changeValue = '2';
+				}
+			},
+			go(){				
+				this.carinfo()
+				// uni.navigateTo({
+				// 	url: this.urls,
+				// 	success: res => {},
+				// 	fail: () => {},
+				// 	complete: () => {}
+				// });
+			},
+			// 车辆信息
+			carinfo() {
+				var options = {
+					url: '/bike/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"bike_sn":this.carnum
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('bikeinfo', res)
+					if (res.status == 0) {
+						this.setSn(this.carnum)
+						this.setBikeid(res.info.id)
+						this.setBikeinfo(res.info)
+						uni.navigateTo({
+							url: this.urls,
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+						
+					}else{
+						uni.showToast({
+							title: '该编号不存在！',
+							mask: false,
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			hideKeyboard(event) {
+				if (this.carnum.length === 8) {					
+					uni.hideKeyboard();
+				}
+			}
+		},
+		onLoad(e) {
+			console.log('e', e)
+			this.urls = e.urls
+		}
+	}
+</script>
+
+<style lang='scss'>
+	.wrap {
+		background-color: rgb(245, 245, 245);
+		padding-top: 1upx;
+		padding-bottom: 1upx;
+		/* height: 100vh; */
+		overflow: hidden;
+
+		/* margin-bottom: 20upx; */
+		.view-common {
+			margin: 10upx 22upx;
+			height: 98vh;
+			position: relative;
+			.letter-spacings {
+				/* letter-spacing:40upx; */
+			}
+			.input-place {
+				margin: 100upx 0;
+			}
+		}
+	}
+</style>

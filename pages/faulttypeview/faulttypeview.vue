@@ -32,7 +32,7 @@
 				}],
 			}
 		},
-		computed: mapState(['faultinfo','directinfo']),
+		computed: mapState(['faultinfo','directinfo','selectfaultobj']),
 		onLoad(){
 			console.log('faultinfo',this.faultinfo)
 		},
@@ -40,6 +40,7 @@
 			...mapMutations(['setFaultinfo']),
 			bindClick(i) {
 				this.faultinfo.splice(i,1)
+				this.selectfaultobj.splice(i,1)
 			},
 			setOpened() {
 				this.isOpened = !this.isOpened

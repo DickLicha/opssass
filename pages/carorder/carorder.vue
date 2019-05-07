@@ -8,10 +8,12 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
+	import {mapState} from 'vuex'
 	export default {
 		components:{
 			itemCell
 		},
+		computed: mapState(['bikeinfo']),
 		data() {
 			return {
 				carcenterdata1:[
@@ -26,7 +28,28 @@
 			}
 		},
 		onLoad(){
-			this.getcarinfo()
+			// this.getcarinfo()
+			// 订单编号
+			this.carcenterdata1[0].val = this.bikeinfo.last_order_id
+						
+			// 用户姓名
+			this.carcenterdata1[1].val = this.bikeinfo.last_order_oper_name
+			 
+			// 手机号码
+			this.carcenterdata1[2].val = this.bikeinfo.last_order_oper_phone
+			
+			// 订单开始时间
+			this.carcenterdata1[3].val = this.bikeinfo.last_order_start_time
+			
+			// 订单结束时间
+			this.carcenterdata1[4].val = this.bikeinfo.last_order_end_time
+			
+			// 订单状态
+			if(this.bikeinfo.last_order_id!=''){
+				this.carcenterdata1[5].val = '已结束'
+			}else{
+				this.carcenterdata1[5].val = '空闲'
+			}
 		},
 		methods: {
 			gocarcenter(e){
@@ -39,7 +62,6 @@
 			},
 			go(item){
 				if(item.click){
-					console.log('item',item)
 					if(item.name=='手机号码:'){
 						uni.showModal({
 							title: '',
@@ -62,49 +84,6 @@
 						});
 					}
 				}				
-			},
-			// 获取车辆信息
-			getcarinfo() {
-				var options = {
-					url: '/bike/info', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {						
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('车辆信息',res)
-					if (res.status == 0) {
-						// 订单编号
-						this.carcenterdata1[0].val = res.info.last_order_id
-			
-						// 用户姓名
-						this.carcenterdata1[1].val = res.info.last_order_oper_name
-			             
-						// 手机号码
-						this.carcenterdata1[2].val = res.info.last_order_oper_phone
-						
-						// 订单开始时间
-						this.carcenterdata1[3].val = res.info.last_order_start_time
-						
-						// 订单结束时间
-						this.carcenterdata1[4].val = res.info.last_order_end_time
-						
-						// 订单状态
-						if(res.info.last_order_id!=''){
-							this.carcenterdata1[5].val = '已结束'
-						}else{
-							this.carcenterdata1[5].val = '空闲'
-						}
-										
-			
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
 			},
 		}
 	}

@@ -17,7 +17,10 @@
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
-					<cover-view v-if="showcorverview.bottom" class='map-cover-view' @click="scanCode">{{scanbuttonname}}</cover-view>
+					<cover-view class='map-cover-view'>
+						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
+						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view>
+					</cover-view>
 				</map>
 			</view>
 		</view>
@@ -27,13 +30,16 @@
 <script>
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
-	import {mapState,mapMutations} from 'vuex'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 
 
 	export default {
 		components: {
 			scanbutton,
-			baseheader
+			baseheader,
 		},
 		data() {
 			return {
@@ -288,8 +294,6 @@
 					this.longitude = res.longitude
 					this.covers[0].latitude = res.latitude
 					this.covers[0].longitude = res.longitude
-					console.log('当前位置的经度：' + res.longitude);
-					console.log('当前位置的纬度：' + res.latitude);
 					uni.showToast({
 						title: '当前位置的经度：' + res.longitude.toString(),
 						mask: false,
@@ -310,7 +314,7 @@
 			this.mapinfo = null
 		},
 		methods: {
-			...mapMutations(['setSn','setBikeid']),
+			...mapMutations(['setSn', 'setBikeid']),
 			showMapSelect() {
 				this.showmapselect = !this.showmapselect
 			},
@@ -341,25 +345,30 @@
 					}
 				})
 			},
-			scanCode() {
-				let url = this.dowhat().url
-				uni.scanCode({
-					onlyFromCamera: true, //只允许相机扫码
-					success: res => {
-						console.log('条码类型：' + res.scanType);
-						console.log('条码内容：' + res.result);
-						console.log('sn',res.result)
-						this.setSn(res.result)
-						this.getcarinfo()
-						uni.navigateTo({
-							url: url
-						})
-					},
-					fail: res => {},
-					complete: res =>{
-						
-					}
-				});
+			scanCode(type) {
+				var url = this.dowhat().url
+				if(type==1){
+					uni.scanCode({
+						onlyFromCamera: true, //只允许相机扫码
+						success: res => {
+							console.log('saoma',res)
+							this.setSn(res.result)
+							this.getcarinfo()
+							uni.navigateTo({
+								url: url
+							})
+						},
+						fail: res => {},
+						complete: res => {
+					
+						}
+					});
+				}else{
+					uni.navigateTo({
+						url: `/pages/manualscan/manualscan?urls=${url}`
+					})
+				}
+				
 			},
 			dowhat() {
 				let data = {}
@@ -369,6 +378,9 @@
 						break;
 					case '1.3':
 						data.url = '/pages/repaircar/repaircar'
+						break;
+					case '1.1':
+						data.url = '/pages/putstorage/putstorage'
 						break;
 					case '3.1':
 						data.url = '/pages/checkupcar/checkupcar'
@@ -382,14 +394,13 @@
 					url: '/bike/info', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
-					data: {						
-					}
+					data: {}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-						this.setBikeid(res.id)		             
+						this.setBikeid(res.id)
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -407,16 +418,24 @@
 
 		// margin-top: 100px;
 		.map-cover-view {
-			width: 50%;
+			width: 100%;
+			display: flex;
 			height: 100upx;
 			position: absolute;
-			left: 25%;
+			// left: 10%;
 			bottom: 60upx;
-			background-color: #F6C700;
-			border-radius: 20upx;
-			line-height: 100upx;
 			text-align: center;
-			font-size: 40upx
+			font-size: 40upx;
+			justify-items: center;
+
+			// justify-content: center;
+			.scan-button {
+				background-color: #F6C700;
+				border-radius: 20upx;
+				width: 50%;
+				margin: 0 30upx;
+				line-height: 100upx;
+			}
 		}
 
 		.map-select-view {

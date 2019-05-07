@@ -41,7 +41,6 @@
 			}
 		},
 		onLoad() {
-			console.log('border', this.border)
 		}
 	}
 </script>

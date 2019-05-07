@@ -12,6 +12,7 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
+	import {mapState,mapMutations} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -64,8 +65,63 @@
 		components: {
 			itemCell
 		},
+		computed: mapState(['bikeinfo','bikeid']),
 		onLoad() {
-			this.getcarinfo()
+			// this.getcarinfo()
+				// 车辆编码
+				this.swapdata[0].val = this.bikeinfo.id
+			
+				// 车型
+				this.swapbatterydata[0].val = this.bikeinfo.model
+			
+				// 剩余电量
+				this.swapbatterydata[1].val = this.bikeinfo.battery_level + '%'
+			
+				// 电池状态
+				let is_on_battery = ''
+				if (this.bikeinfo.is_on_battery == 0) {
+					is_on_battery = '空置'
+				} else if (this.bikeinfo.is_on_battery == 1) {
+					is_on_battery = '装入'
+				}
+				this.swapbatterydata[2].val = is_on_battery
+			
+				// 电池锁状态
+				let is_battery_locked = ''
+				if (this.bikeinfo.is_on_battery == 0) {
+					is_battery_locked = '开'
+				} else if (this.bikeinfo.is_on_battery == 1) {
+					is_battery_locked = '关'
+				}
+				this.swapbatterydata[3].val = is_battery_locked
+			
+				// 电池电压
+				this.swapbatterydata[4].val = this.bikeinfo.battery_volt / 1000 + 'V'
+			
+				// 剩余容量
+				this.swapbatterydata[5].val = this.bikeinfo.battery_capacity / 1000 + 'Ah'
+			
+			
+				// 网络状态
+				let is_online = ''
+				if (this.bikeinfo.is_on_battery == 0) {
+					is_online = '在线'
+				} else if (this.bikeinfo.is_on_battery == 1) {
+					is_online = '离线'
+				}
+				this.swapbatterydata[6].val = is_online
+			
+				// gps更新时间
+				this.swapbatterydata[7].val = this.bikeinfo.gps_update_time
+			
+				// sim卡状态
+				let sim_state = ''
+				if (this.bikeinfo.is_on_battery == 0) {
+					sim_state = '在线'
+				} else if (this.bikeinfo.is_on_battery == 1) {
+					sim_state = '离线'
+				}
+				this.swapbatterydata[8].val = sim_state
 		},
 		methods: {
 			gocarcenter() {
@@ -105,7 +161,8 @@
 					context: '',
 					data: {
 						"city_id": "35000",
-						"channel": "WXMP"
+						"channel": "WXMP",
+						"bike_id":this.bikeid
 					}
 				}
 				this.$httpReq(options).then((res) => {

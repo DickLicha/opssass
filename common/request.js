@@ -2,22 +2,23 @@ import store from '@/store'
 export default function(obj) {
 	// if (obj.method === 'GET') {
 	let sn,id;
-	//#ifndef H5
 	sn = store.state.sn || ""
 	id = store.state.bikeid || ""
+	//#ifndef H5	
 	// #endif
 	// #ifdef H5
 	// #endif
 	obj.header = obj.header || {}
 	  Object.assign(obj.data, {
-	    id: id,
-		bike_id:id,
-	    token: 'xxxx',		
-		city_id: "35000",
+	    // id: id,
 		bike_sn:sn,
+		// bike_id:id,
+	    token: 'xxxx',		
+		city_id: "35000",	
 	  })
 
-	let baseUrl = 'http://www.fishors.com:8086'
+	// let baseUrl = 'http://www.fishors.com:8086'
+	let baseUrl = 'http://test3.fishors.com:8086'
 	let p = new Promise((resolve, reject) => {
 		uni.request({
 			url: baseUrl + obj.url,
