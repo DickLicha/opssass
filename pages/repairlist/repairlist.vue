@@ -24,32 +24,37 @@
 		methods: {
 			...mapMutations(['setOrderfirstid']),
 			go(item) {
-				console.log('order', this.order, item)
-							
-				if (item.name == '修车') {
-					let data = {
-						"is_order_finished": 0,
-						"pno": 1,
-						"psize": 100,
-					}
-					this.requestorder(data,item)
-				} else {
-					if (this.order.length) {
-						let data = {
-							"is_order_finished": 0,
-							"pno": 1,
-							"psize": 100,
-							"order_state": 0,
-						}
-						this.requestorder(data,item)					
-					} else {
-						uni.showToast({
-							title: '无报修订单',
-							mask: false,
-							duration: 2500
-						});
-					}
-				}
+				uni.navigateTo({
+					url: item.url,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+				// console.log('order', this.order, item)							
+				// if (item.name == '修车') {
+				// 	let data = {
+				// 		"is_order_finished": 0,
+				// 		"pno": 1,
+				// 		"psize": 100,
+				// 	}
+				// 	this.requestorder(data,item)
+				// } else {
+				// 	if (this.order.length) {
+				// 		let data = {
+				// 			"is_order_finished": 0,
+				// 			"pno": 1,
+				// 			"psize": 100,
+				// 			"order_state": 0,
+				// 		}
+				// 		this.requestorder(data,item)					
+				// 	} else {
+				// 		uni.showToast({
+				// 			title: '无报修订单',
+				// 			mask: false,
+				// 			duration: 2500
+				// 		});
+				// 	}
+				// }
 			},
 			requestorder(data,item) {
 				let options = {
@@ -73,7 +78,7 @@
 						}
 					}
 				})
-			}
+			},
 		},
 		onLoad(e) {
 			wx.setNavigationBarTitle({

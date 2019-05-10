@@ -13,7 +13,10 @@
 </template>
 
 <script>
-	import {mapState,mapMutations} from 'vuex'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -23,11 +26,12 @@
 				changeValue: '',
 				carnum: '',
 				urls: '',
+				type:'',
 			}
 		},
 		methods: {
-			...mapMutations(['setBikeid','setSn','setBikeinfo']),
-			onKeyInput(){
+			...mapMutations(['setBikeid', 'setSn', 'setBikeinfo','setOrderfirstid']),
+			onKeyInput() {
 				this.inputValue = event.target.value
 			},
 			replaceInput(event) {
@@ -36,14 +40,31 @@
 					this.changeValue = '2';
 				}
 			},
-			go(){				
-				this.carinfo()
-				// uni.navigateTo({
-				// 	url: this.urls,
-				// 	success: res => {},
-				// 	fail: () => {},
-				// 	complete: () => {}
-				// });
+			requestorder(data) {
+				let options = {
+					url: '/brorder/list',
+					method: 'POST',
+					data: data
+				}
+				this.$httpReq(options).then((res) => {
+					console.log('订单列表', res)
+					if (res.status == 0 && res.list.length != 0) {
+						this.setOrderfirstid(res.list[0].id)
+						uni.navigateTo({
+							url: this.urls,
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+						this.order = {
+							length: res.list.length,
+							id: res.list[0].id
+						}
+					}
+				})
+			},
+			go() {
+				this.carinfo()				
 			},
 			// 车辆信息
 			carinfo() {
@@ -52,7 +73,7 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"bike_sn":this.carnum
+						"bike_sn": this.carnum
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -63,14 +84,34 @@
 						this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
-						uni.navigateTo({
-							url: this.urls,
-							success: res => {},
-							fail: () => {},
-							complete: () => {}
-						});
-						
-					}else{
+						// 入库和维修要先请求订单信息
+						if(this.type=='1.1'||this.type=='1.3'){
+							var datas={}
+							if(this.type=='1.1'){
+								datas = {
+									"is_order_finished": 0,
+									"pno": 1,
+									"psize": 100,
+									"order_state": 0,
+								}
+							}else{
+								datas = {
+									"is_order_finished": 0,
+									"pno": 1,
+									"psize": 100,									
+								}
+							}							
+							this.requestorder(datas)
+						}
+						else{
+							uni.navigateTo({
+								url: this.urls,
+								success: res => {},
+								fail: () => {},
+								complete: () => {}
+							});
+						}
+					} else {
 						uni.showToast({
 							title: '该编号不存在！',
 							mask: false,
@@ -83,7 +124,7 @@
 				})
 			},
 			hideKeyboard(event) {
-				if (this.carnum.length === 8) {					
+				if (this.carnum.length === 8) {
 					uni.hideKeyboard();
 				}
 			}
@@ -91,6 +132,7 @@
 		onLoad(e) {
 			console.log('e', e)
 			this.urls = e.urls
+			this.type=e.type
 		}
 	}
 </script>
@@ -108,9 +150,11 @@
 			margin: 10upx 22upx;
 			height: 98vh;
 			position: relative;
+
 			.letter-spacings {
 				/* letter-spacing:40upx; */
 			}
+
 			.input-place {
 				margin: 100upx 0;
 			}

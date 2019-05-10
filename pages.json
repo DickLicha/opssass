@@ -154,6 +154,12 @@
 				"navigationBarTitleText": "输入编号扫码入库"
 			}
         }
+        ,{
+            "path" : "pages/warehoselist/warehoselist",
+            "style" : {
+				"navigationBarTitleText": "选择仓库"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

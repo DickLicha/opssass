@@ -43,12 +43,12 @@
 						url: '/pages/repairlist/repairlist',
 						text:'全部车站'
 					},
-					{
-						name: '批量挪车',
-						img: '',
-						url: '/pages/repairlist/repairlist',
-						text:''
-					},
+					// {
+					// 	name: '批量挪车',
+					// 	img: '',
+					// 	url: '/pages/repairlist/repairlist',
+					// 	text:''
+					// },
 					{
 						name: 'ECU换绑',
 						img: '',
@@ -61,12 +61,12 @@
 						url: '/pages/map/map',
 						text:''
 					},
-					{
-						name: '换电批次',
-						img: '',
-						url: '/pages/map/map',
-						text:''
-					},
+					// {
+					// 	name: '换电批次',
+					// 	img: '',
+					// 	url: '/pages/map/map',
+					// 	text:''
+					// },
 					{
 						name: '找不到车',
 						img: '',
@@ -89,7 +89,7 @@
 						name: '车站',
 						img: '',
 						url: '/pages/map/map',
-						text:''
+						text:'全部车站'
 					},
 					{
 						name: '违章',

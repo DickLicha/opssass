@@ -18,6 +18,8 @@ const store = new Vuex.Store({
 		selectfaultobj:[],
 		// 所有车辆信息
 		bikeinfo:{},
+		warehoselist:{},
+		putstorageindex:0,
 	},
 	mutations: {
 		login(state, provider) {
@@ -51,6 +53,12 @@ const store = new Vuex.Store({
 		},
 		setBikeinfo(state, bikeinfo){
 			state.bikeinfo = bikeinfo
+		},
+		setWarehoselist(state, warehoselist){
+			state.warehoselist = warehoselist
+		},
+		setPutstorageindex(state, putstorageindex){
+			state.putstorageindex = putstorageindex
 		},
 		
 	},

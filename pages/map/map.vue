@@ -8,9 +8,9 @@
 		<view class="page-body">
 			<view class="page-section page-section-gap">
 				<!-- <basemapview></basemapview> -->
-				<map class='map-base-view' :scale="scale" id='firstmap' :latitude="latitude" :longitude="longitude" :markers="covers"
-				 :show-location='showLocation' :circles='circles' :polyline="polyline" @regionchange="functionName" @end="functionName"
-				 @begin="functionName">
+				<map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
+				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
+				 @regionchange="functionName" @end="functionName" @begin="functionName">
 					<cover-view v-if="showmapselect" class='map-select-view'>
 						<cover-view class='select-list'>
 							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i)" :class="{'borderrights':item.active}">{{item.name}}</cover-view>
@@ -20,8 +20,36 @@
 					<cover-view class='map-cover-view'>
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view>
+						<cover-view v-if="!showcorverview.bottom&&!actives" class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
 					</cover-view>
 				</map>
+				<view v-if="actives">
+					<view class='scroll-viewy'>
+						<base-img></base-img>
+						<view class='border-view'>
+							<input class='normal-input' v-model="stopName" type="text" placeholder="车站名称">
+						</view>
+						<view class='border-view'>
+							<view class='normal-input' @click="choseStopLev('middle-list')">{{defaultLev}}</view>
+						</view>
+						<view class='border-view'>
+							<input class='normal-input' v-model="stopRadius" type="text" placeholder="半径">
+						</view>
+						<view class='border-view'>
+							<input class='normal-input' v-model="stopDesc" type="text" placeholder="描述(限50字)">
+						</view>
+						<view>
+							<button type='primary' class='share-button-default' @click="finshCreat">提交</button>
+						</view>
+					</view>
+					<uni-popup :show="poptype ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
+						<view :scroll-y="true" class="uni-center center-box">
+							<view v-for="(item, index) in itemcells" :key="index" @click="selectLev(item)" style="width:180upx;height: 70upx;">
+								<text>{{item}}</text>
+							</view>
+						</view>
+					</uni-popup>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -30,6 +58,8 @@
 <script>
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
+	import baseImg from '@/components/image/image.vue'
+	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import {
 		mapState,
 		mapMutations
@@ -40,9 +70,19 @@
 		components: {
 			scanbutton,
 			baseheader,
+			baseImg,
+			uniPopup
 		},
 		data() {
 			return {
+				stopName: '',
+				defaultLev: '选择等级',
+				stopRadius: '',
+				stopDesc: '',
+				poptype: '',
+				itemcells: ['1级', '2级', '3级'],
+				actives: false,
+				urls: '',
 				title: 'map',
 				type: '0',
 				scanbuttonname: '扫一扫',
@@ -282,6 +322,27 @@
 						},
 					]
 					break;
+				case '9':
+					this.showcorverview.bottom = false
+					this.scanbuttonname = '创建车站'
+					this.selectcoverdata = [{
+							name: '全部车站',
+							id: '0',
+							active: true
+						},
+						{
+							name: '已开启车站',
+							id: '0',
+							active: false
+						},
+						{
+							name: '已关闭车站',
+							id: '0',
+							active: false
+						},
+					]
+					break;
+
 
 			}
 			wx.setNavigationBarTitle({
@@ -318,8 +379,31 @@
 			showMapSelect() {
 				this.showmapselect = !this.showmapselect
 			},
+			choseStopLev(type) {
+				this.poptype = type
+			},
+			togglePopup(type) {
+				this.poptype = type
+			},
+			selectLev(item) {
+				this.defaultLev = item
+				this.poptype = ''
+			},
 			selectsure() {
 				this.showmapselect = false
+			},
+			// 点击创建车站
+			creatStop() {
+				this.actives = true
+			},
+			// 提交创建车站
+			finshCreat() {
+				var level = parseInt(this.defaultLev.replace('级', ''))
+				console.log('level', level)
+				this.creatStopurl(level)
+				setTimeout(() => {
+					this.actives = false
+				}, 2000)
 			},
 			active(index) {
 				for (let i = 0; i < this.selectcoverdata.length; i++) {
@@ -346,47 +430,71 @@
 				})
 			},
 			scanCode(type) {
-				var url = this.dowhat().url
-				if(type==1){
+				this.dowhat()
+				if (type == 1) {
 					uni.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
-							console.log('saoma',res)
+							console.log('saoma', res)
 							this.setSn(res.result)
 							this.getcarinfo()
+							// 入库和维修要先请求订单信息
+							if (this.type == '1.1' || this.type == '1.3') {
+								var datas = {}
+								if (this.type == '1.1') {
+									datas = {
+										"is_order_finished": 0,
+										"pno": 1,
+										"psize": 100,
+										"order_state": 0,
+									}
+								} else {
+									datas = {
+										"is_order_finished": 0,
+										"pno": 1,
+										"psize": 100,
+									}
+								}
+								this.requestorder(datas)
+							} else {
+								uni.navigateTo({
+									url: this.urls,
+									success: res => {},
+									fail: () => {},
+									complete: () => {}
+								});
+							}
 							uni.navigateTo({
-								url: url
+								url: this.urls
 							})
 						},
 						fail: res => {},
 						complete: res => {
-					
+
 						}
 					});
-				}else{
+				} else {
 					uni.navigateTo({
-						url: `/pages/manualscan/manualscan?urls=${url}`
+						url: `/pages/manualscan/manualscan?urls=${this.urls}&&type=${this.type}`
 					})
 				}
-				
+
 			},
 			dowhat() {
-				let data = {}
 				switch (this.type) {
 					case '0':
-						data.url = '/pages/swapbattery/swapbattery'
+						this.urls = '/pages/swapbattery/swapbattery'
 						break;
 					case '1.3':
-						data.url = '/pages/repaircar/repaircar'
+						this.urls = '/pages/repaircar/repaircar'
 						break;
 					case '1.1':
-						data.url = '/pages/putstorage/putstorage'
+						this.urls = '/pages/putstorage/putstorage'
 						break;
 					case '3.1':
-						data.url = '/pages/checkupcar/checkupcar'
+						this.urls = '/pages/checkupcar/checkupcar'
 						break;
 				}
-				return data
 			},
 			// 获取车辆信息
 			getcarinfo() {
@@ -407,16 +515,104 @@
 					console.error(err, '捕捉')
 				})
 			},
+			// 获取车辆信息
+			creatStopurl(level) {
+				var options = {
+					url: '/park/add', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"name": this.stopName,
+						"remark": this.stopDesc,
+						"coordinate": [
+							1,
+							2
+						],
+						"radius": 1000,
+						"capacity": 10,
+						"state": 0,
+						"type": "SCHOOL",
+						"grade": level
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					if (res.status == 0) {
+						uni.showToast({
+							title: '创建车站成功',
+							mask: false,
+							duration: 2500
+						});
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '创建车站失败',
+							mask: false,
+							duration: 2500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			requestorder(data, item) {
+				let options = {
+					url: '/brorder/list',
+					method: 'POST',
+					data: data
+				}
+				this.$httpReq(options).then((res) => {
+					console.log('订单列表', res)
+					if (res.status == 0 && res.list.length != 0) {
+						this.setOrderfirstid(res.list[0].id)
+						uni.navigateTo({
+							url: this.urls,
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+						this.order = {
+							length: res.list.length,
+							id: res.list[0].id
+						}
+					}
+				})
+			},
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+	.activemap {
+		height: 35vh !important;
+	}
+
+	.scroll-viewy {
+		height: 65vh;
+		overflow-y: auto;
+		margin: 0 22upx;
+
+		.border-view {
+			border: 1upx bolid black;
+			background-color: rgba(225, 225, 225, .7);
+			margin: 20upx 0;
+			height: 70upx;
+			line-height: 70upx;
+
+			.normal-input {
+				line-height: 70upx;
+				height: 70upx;
+				padding-left: 30upx;
+				// background: yellow;
+			}
+		}
+	}
+
 	.map-base-view {
 		height: calc(100vh - 80upx);
 		width: 100%;
 
-		// margin-top: 100px;
 		.map-cover-view {
 			width: 100%;
 			display: flex;
@@ -428,11 +624,24 @@
 			font-size: 40upx;
 			justify-items: center;
 
+			.center-box {
+				height: 200upx;
+				width: 140upx;
+			}
+
 			// justify-content: center;
 			.scan-button {
 				background-color: #F6C700;
 				border-radius: 20upx;
 				width: 50%;
+				margin: 0 30upx;
+				line-height: 100upx;
+			}
+
+			.scan-button-big {
+				background-color: #F6C700;
+				border-radius: 20upx;
+				width: 100%;
 				margin: 0 30upx;
 				line-height: 100upx;
 			}
