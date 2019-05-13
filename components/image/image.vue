@@ -3,42 +3,6 @@
 		<page-head :title="title"></page-head>
 		<view class="uni-common-mt">
 			<form>
-				<!-- <view class="uni-list">
-					<view class="uni-list-cell">
-						<view class="uni-list-cell-left">
-							<view class="uni-label">图片来源</view>
-						</view>
-						<view class="uni-list-cell-right">
-							<picker :range="sourceType" @change="sourceTypeChange" :value="sourceTypeIndex" mode="selector">
-								<view class="uni-input">{{sourceType[sourceTypeIndex]}}</view>
-							</picker>
-						</view>
-					</view>
-
-					<view class="uni-list-cell">
-						<view class="uni-list-cell-left">
-							<view class="uni-label">图片质量</view>
-						</view>
-						<view class="uni-list-cell-right">
-							<picker :range="sizeType" @change="sizeTypeChange" :value="sizeTypeIndex" mode="selector">
-								<view class="uni-input">{{sizeType[sizeTypeIndex]}}</view>
-							</picker>
-						</view>
-					</view>
-
-					<view class="uni-list-cell">
-						<view class="uni-list-cell-left">
-							<view class="uni-label">数量限制</view>
-						</view>
-						<view class="uni-list-cell-right">
-							<picker :range="count" @change="countChange" mode="selector">
-								<view class="uni-input">{{count[countIndex]}}</view>
-							</picker>
-						</view>
-					</view>
-				</view> -->
-
-
 				<view class="uni-list list-pd">
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
@@ -87,7 +51,8 @@
 				sizeTypeIndex: 2,
 				sizeType: ['压缩', '原图', '压缩或原图'],
 				countIndex: 8,
-				count: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+				count: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+				imgArr:[]
 			}
 		},
 		onUnload() {
@@ -108,22 +73,6 @@
 			countChange: function(e) {
 				this.countIndex = e.target.value;
 			},
-			// 图片路径转base64
-			convertImgToBase64(url, callback, outputFormat) {
-				var canvas = document.createElement('CANVAS'),
-					ctx = canvas.getContext('2d'),
-					img = new Image;
-				img.crossOrigin = 'Anonymous';
-				img.onload = function() {
-					canvas.height = img.height;
-					canvas.width = img.width;
-					ctx.drawImage(img, 0, 0);
-					var dataURL = canvas.toDataURL(outputFormat || 'image/png');
-					callback.call(this, dataURL);
-					canvas = null;
-				};
-				img.src = url;
-			},
 			chooseImage: async function() {
 				if (this.imageList.length === 9) {
 					let isContinue = await this.isFullImg();
@@ -134,18 +83,14 @@
 				}
 				uni.chooseImage({
 					sourceType: sourceType[this.sourceTypeIndex],
-					sizeType: sizeType[this.sizeTypeIndex],
+					// sizeType: sizeType[this.sizeTypeIndex],
+					sizeType: ['compressed'],
 					count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length : this.count[this.countIndex],
 					success: (res) => {
 						this.imageList = this.imageList.concat(res.tempFilePaths);
-						// console.log('img',this.imageList)
-						//  this.convertImgToBase64(res.tempFilePaths, (base64img) => {
-						// 	 this.base64Img=base64img
-						// })
-						// console.log('base64',this.base64Img)
 						console.log('path', res.tempFilePaths)
 						uni.uploadFile({
-							url: this.$resourcesurl+'/upload', //仅为示例，非真实的接口地址
+							url: this.$resourcesurl()+'/upload',
 							filePath: res.tempFilePaths[0],
 							// method: 'POST',
 							header: {
@@ -156,8 +101,21 @@
 							formData: {
 								'scheme': 2
 							},
-							success: (res) => {
-								console.log('文件上传结果', res);
+							success: (res) => {					
+								var parsedata=JSON.parse(res.data)
+								console.log('数据类型', typeof(parsedata),parsedata);
+								console.log('数据类型1', parsedata.data);
+								if(parsedata.status==0){
+									this.imgArr.push(parsedata.data.oss_name)
+									console.log('图片list', this.imgArr);
+								}else{
+									uni.showToast({
+										title: parsedata.msg?parsedata.msg:'文件上传失败',
+										mask: false,
+										duration: 1500
+									});
+								}
+								
 							}
 						});
 					}

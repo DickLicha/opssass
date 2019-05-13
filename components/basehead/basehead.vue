@@ -3,7 +3,7 @@
 		<view class="base-header" >
 			<i v-if="hasBack" class="iconfont iconsousuo sousuo-view" @click='gosuchview'></i>
 			<text class='text-view' @click='showmapcoverview'>{{title}}</text>
-			<img v-if='xialajiantou' src="/static/image/xiala.png" class='base-img'  alt="">
+			<img v-if='xialajiantou' src="../../static/image/xiala.png" class='base-img'  alt="">
 			<!-- <img src="/static/image/shangla.png" style='width:20upx;height:auto' alt=""> -->
 			<text v-if="hasright" @click="messagecenter">{{rightTitle}}</text>
 		</view>
@@ -38,8 +38,6 @@
 				this.$emit("show")
 			},
 			goback() {
-				// this.$emit('goBack')
-				// this.$router.goBack()
 				uni.navigateBack({
 					delta: 1
 				});
@@ -68,7 +66,8 @@
 		background-color: #555555;
 		text-align: center;
 		.base-img{
-			width:18upx;height:auto
+			width:18upx;
+			height:18upx;
 		}
 		.sousuo-view{
 			position: absolute;

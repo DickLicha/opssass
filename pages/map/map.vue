@@ -7,13 +7,16 @@
 
 		<view class="page-body">
 			<view class="page-section page-section-gap">
-				<!-- <basemapview></basemapview> -->
 				<map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
-				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
-				 @regionchange="functionName" @end="functionName" @begin="functionName">
+				 :longitude="longitude" :markers="covers" :show-location='showLocation' :polyline="polyline" @markertap='markclick'
+				 @regionchange="functionNames" @end="functionName">
+				 <!-- <map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
+				  :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
+				  @regionchange="functionName" @end="functionName" @begin="functionName"> -->
+					<cover-image src='../../static/image/center.png' class='cover-imgs'></cover-image>
 					<cover-view v-if="showmapselect" class='map-select-view'>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i)" :class="{'borderrights':item.active}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i,item)" :class="{'borderrights':item.active}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
@@ -73,8 +76,10 @@
 			baseImg,
 			uniPopup
 		},
+		computed:mapState(['longitude','latitude']),
 		data() {
 			return {
+				selectvals:100,
 				stopName: '',
 				defaultLev: '选择等级',
 				stopRadius: '',
@@ -91,82 +96,61 @@
 					head: true,
 					bottom: true
 				},
-				latitude: 26.0527,
+				// latitude: 26.0527,
 				showmapselect: false,
-				longitude: 119.31414,
+				// longitude: 119.31414,
 				mapinfo: null,
 				scale: '13', //缩放级别5-18
-				showLocation: true,
+				showLocation: false,
 				selectcoverdata: [{
 						name: '全部换电',
 						id: '0',
+						val:100,
 						active: true
 					},
 					{
 						name: '所有35%以下',
 						id: '1',
+						val:35,
 						active: false
 					},
 					{
 						name: '所有30%以下',
 						id: '2',
+						val:30,
 						active: false
 					},
 					{
 						name: '所有20%以下',
 						id: '3',
+						val:20,
 						active: false
 					},
 					{
 						name: '所有10%以下',
 						id: '4',
+						val:10,
 						active: false
 					},
-					{
-						name: '低于可用里程',
-						id: '5',
-						active: false
-					},
+					// {
+					// 	name: '低于可用里程',
+					// 	id: '5',
+					// 	active: false
+					// },
 					{
 						name: '欠压车辆',
 						id: '6',
+						val:0,
 						active: false
 					},
 				],
-				covers: [{
-						id: 0,
-						latitude: 26.0528, //纬度
-						longitude: 119.31416, //经度
-						iconPath: '../../static/image/icon-small.png', //显示的图标			
-						title: '阿打算', //标注点名
-						label: { //为标记点旁边增加标签
-						},
-						callout: { //自定义标记点上方的气泡窗口 点击有效
-							content: '地点1',
-							color: '#F76350',
-							fontSize: 12,
-							borderRadius: 5,
-						},
-					},
-					{
-						id: 1,
-						latitude: 26.0628, //纬度
-						longitude: 119.31416, //经度
-						iconPath: '../../static/image/4-small.png', //显示的图标		
-					},
-					{
-						id: 2,
-						latitude: 26.0328, //纬度
-						longitude: 119.31446, //经度
-						iconPath: '../../static/image/10-small.png', //显示的图标		
-					},
-				],
+				covers: [],
 				controls: [{ //在地图上显示控件，控件不随着地图移动
 					id: 1, //控件id
-					iconPath: '../../static/image/timg.png', //显示的图标	
+					iconPath: '../../static/image/center.png', //显示的图标	
 					position: { //控件在地图的位置
-						left: 15,
-						top: 15,
+						left: 186,
+						top: 250,
 						width: 50,
 						height: 50
 					},
@@ -194,6 +178,9 @@
 		onLoad(e) {
 			this.headviewtext = e.text
 			this.type = e.type
+			if (this.mapinfo == null) {
+				this.mapinfo = uni.createMapContext('firstmap')
+			}
 			switch (e.type) {
 				case '0':
 					this.scanbuttonname = '扫码换电'
@@ -226,6 +213,7 @@
 					break;
 				case '3.1':
 					this.scanbuttonname = '扫码挪车'
+					this.nearbycarinfo(2)
 					this.selectcoverdata = [{
 							name: '全部车站',
 							id: '0',
@@ -349,17 +337,19 @@
 				title: e.name
 			})
 			uni.getLocation({ //获取当前的位置坐标
-				type: 'wgs84',
-				success: function(res) {
-					this.latitude = res.latitude
-					this.longitude = res.longitude
+				type: 'gcj02',
+				success: (res)=> {
+					console.log('位置信息',res.longitude,res.latitude)
+					// this.latitude = res.latitude
+					// this.longitude = res.longitude
+					this.setLatitude(res.latitude)
+					this.setLongitude(res.longitude)
 					this.covers[0].latitude = res.latitude
 					this.covers[0].longitude = res.longitude
-					uni.showToast({
-						title: '当前位置的经度：' + res.longitude.toString(),
-						mask: false,
-						duration: 1500,
-					});
+					// this.nearbyshortpower(100)
+				},
+				fail:(res)=>{
+					console.log('fail',res)
 				}
 			});
 		},
@@ -367,15 +357,13 @@
 
 		},
 		onReady() {
-			if (this.mapinfo == null) {
-				this.mapinfo = uni.createMapContext('firstmap')
-			}
+			
 		},
 		onUnload() {
 			this.mapinfo = null
 		},
 		methods: {
-			...mapMutations(['setSn', 'setBikeid']),
+			...mapMutations(['setSn', 'setBikeid','setBikeinfo','setLongitude','setLatitude']),
 			showMapSelect() {
 				this.showmapselect = !this.showmapselect
 			},
@@ -391,6 +379,12 @@
 			},
 			selectsure() {
 				this.showmapselect = false
+				this.nearbyshortpower(this.selectvals,this.longitude,this.latitude)
+			},
+			markclick(e){
+				console.log(666,e)
+				this.setBikeid(e.markerId)
+				this.getcarinfo()
 			},
 			// 点击创建车站
 			creatStop() {
@@ -405,28 +399,64 @@
 					this.actives = false
 				}, 2000)
 			},
-			active(index) {
+			active(index,item) {
+				this.selectvals=item.val
 				for (let i = 0; i < this.selectcoverdata.length; i++) {
 					this.selectcoverdata[i].active = false
 				}
 				this.selectcoverdata[index].active = true
 			},
+			functionNames(){
+				
+			},
+			// 移动地图获取中心点坐标trytr
 			functionName() {
 				let self = this
 				this.mapinfo.getCenterLocation({
 					success: (res) => {
-						console.log('当前位置的经度1：' + res.longitude);
-						console.log('当前位置的纬度1：' + res.latitude);
-						uni.showToast({
-							title: res.longitude.toString(),
-							mask: false,
-							duration: 1500,
-						});
+						// self.longitude = res.longitude
+						// self.latitude = res.latitude
+						// self.nearbycarinfo(2)
+						self.nearbyshortpower(100,res.longitude,res.latitude)
 					},
 					fail: (res) => {
-						console.log('当前位置的经度2：' + res.longitude);
-						console.log('当前位置的纬度2：' + res.latitude);
+						console.log('fail' + res);
 					}
+				})
+			},
+			// 附近需要换电的车辆
+			nearbyshortpower(max,longitude,latitude) {
+				var options = {
+					url: '/bike/list_to_change_battery_nearby', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"coordinate": [
+							longitude,
+							latitude
+						],
+						"battery_level_max": max,
+						// "is_under_volt": 1
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('附近缺电车辆', res)
+					if (res.status == 0) {
+						this.covers=[]
+						for(let i=0;i<res.list.length;i++){
+							let tmpObj={}
+							tmpObj.id=res.list[i].id
+							tmpObj.latitude=res.list[i].coordinate[1]
+							tmpObj.longitude=res.list[i].coordinate[0]
+							tmpObj.iconPath='../../static/image/icon-small.png'
+							this.covers.push(tmpObj)
+						}					
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
 				})
 			},
 			scanCode(type) {
@@ -508,7 +538,47 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-						this.setBikeid(res.id)
+						this.setSn(this.carnum)
+						this.setBikeid(res.info.id)
+						this.setBikeinfo(res.info)
+						uni.navigateTo({
+							url: '/pages/swapbattery/swapbattery',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+					}else{
+						uni.showToast({
+							title: res.message?res.message:'获取车辆信息失败',
+							mask: false,
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 车站列表
+			nearbycarinfo(flag) {
+				var options = {
+					url: '/city/city_object_nearby', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"coordinate": [
+							this.longitude,
+							this.latitude
+						],
+						"flag": flag //1服务区，2车站
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('附近车辆信息', res)
+					if (res.status == 0) {
+
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -525,14 +595,17 @@
 						"name": this.stopName,
 						"remark": this.stopDesc,
 						"coordinate": [
-							1,
-							2
+							this.longitude,
+							this.latitude
 						],
 						"radius": 1000,
 						"capacity": 10,
 						"state": 0,
 						"type": "SCHOOL",
-						"grade": level
+						"grade": level,
+						"imgs": [
+							"www.baidu.com"
+						],
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -613,6 +686,14 @@
 		height: calc(100vh - 80upx);
 		width: 100%;
 
+		.cover-imgs {
+			position: absolute;
+			left: 46%;
+			top: 38%;
+			width: 100upx;
+			height: auto;
+		}
+
 		.map-cover-view {
 			width: 100%;
 			display: flex;
@@ -628,6 +709,8 @@
 				height: 200upx;
 				width: 140upx;
 			}
+
+
 
 			// justify-content: center;
 			.scan-button {

@@ -10,7 +10,7 @@ export default function(obj) {
 	// #endif
 	obj.header = obj.header || {}
 	  Object.assign(obj.data, {
-	    // id: id,
+	    id: id,
 		bike_sn:sn,
 		// bike_id:id,
 	    token: 'xxxx',		

@@ -20,6 +20,8 @@ const store = new Vuex.Store({
 		bikeinfo:{},
 		warehoselist:{},
 		putstorageindex:0,
+		longitude:'119',
+		latitude:'28'
 	},
 	mutations: {
 		login(state, provider) {
@@ -59,6 +61,12 @@ const store = new Vuex.Store({
 		},
 		setPutstorageindex(state, putstorageindex){
 			state.putstorageindex = putstorageindex
+		},
+		setLongitude(state, longitude){
+			state.longitude = longitude
+		},
+		setLatitude(state, latitude){
+			state.latitude = latitude
 		},
 		
 	},

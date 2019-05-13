@@ -24,6 +24,9 @@ Vue.prototype.$parkstate = function(type){
 	}
 	return place_name	
 }
+Vue.prototype.$resourcesurl=function(){
+	return 'http://www.fishors.com:9030'
+}
 Vue.prototype.$invstate = function(type){
 	let inv_name=''
 	if (type == invstate.BIKE_INV_STATE_IN_MARKET) {
