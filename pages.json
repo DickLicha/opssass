@@ -160,6 +160,12 @@
 				"navigationBarTitleText": "选择仓库"
 			}
         }
+        ,{
+            "path" : "pages/repairPage/repairenter/repairenter",
+            "style" : {
+				"navigationBarTitleText": "修车"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

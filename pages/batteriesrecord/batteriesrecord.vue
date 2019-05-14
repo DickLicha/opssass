@@ -41,9 +41,14 @@
 						cancelText: '取消',
 						confirmText: '拨打',
 						success: res => {
-							uni.makePhoneCall({
-								phoneNumber:item.val
-							})
+							if (res.confirm) {
+								uni.makePhoneCall({
+									phoneNumber:item.val
+								})
+							} else if (res.cancel) {
+								console.log('用户点击取消');
+							}
+							
 						},
 						fail: () => {},
 						complete: () => {}

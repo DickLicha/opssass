@@ -10,7 +10,7 @@
 				<map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
 				 :longitude="longitude" :markers="covers" :show-location='showLocation' :polyline="polyline" @markertap='markclick'
 				 @regionchange="functionNames" @end="functionName">
-				 <!-- <map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
+					<!-- <map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
 				  :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				  @regionchange="functionName" @end="functionName" @begin="functionName"> -->
 					<cover-image src='../../static/image/center.png' class='cover-imgs'></cover-image>
@@ -76,10 +76,10 @@
 			baseImg,
 			uniPopup
 		},
-		computed:mapState(['longitude','latitude']),
+		computed: mapState(['longitude', 'latitude']),
 		data() {
 			return {
-				selectvals:100,
+				selectvals: 100,
 				stopName: '',
 				defaultLev: '选择等级',
 				stopRadius: '',
@@ -105,31 +105,31 @@
 				selectcoverdata: [{
 						name: '全部换电',
 						id: '0',
-						val:100,
+						val: 100,
 						active: true
 					},
 					{
 						name: '所有35%以下',
 						id: '1',
-						val:35,
+						val: 35,
 						active: false
 					},
 					{
 						name: '所有30%以下',
 						id: '2',
-						val:30,
+						val: 30,
 						active: false
 					},
 					{
 						name: '所有20%以下',
 						id: '3',
-						val:20,
+						val: 20,
 						active: false
 					},
 					{
 						name: '所有10%以下',
 						id: '4',
-						val:10,
+						val: 10,
 						active: false
 					},
 					// {
@@ -140,7 +140,7 @@
 					{
 						name: '欠压车辆',
 						id: '6',
-						val:0,
+						val: 0,
 						active: false
 					},
 				],
@@ -178,6 +178,7 @@
 		onLoad(e) {
 			this.headviewtext = e.text
 			this.type = e.type
+			this.dowhat()
 			if (this.mapinfo == null) {
 				this.mapinfo = uni.createMapContext('firstmap')
 			}
@@ -338,18 +339,16 @@
 			})
 			uni.getLocation({ //获取当前的位置坐标
 				type: 'gcj02',
-				success: (res)=> {
-					console.log('位置信息',res.longitude,res.latitude)
-					// this.latitude = res.latitude
-					// this.longitude = res.longitude
-					this.setLatitude(res.latitude)
+				success: (res) => {
+					console.log('位置信息', res.longitude, res.latitude)
 					this.setLongitude(res.longitude)
-					this.covers[0].latitude = res.latitude
-					this.covers[0].longitude = res.longitude
+					this.setLatitude(res.latitude)
+					// this.covers[0].latitude = res.latitude
+					// this.covers[0].longitude = res.longitude
 					// this.nearbyshortpower(100)
 				},
-				fail:(res)=>{
-					console.log('fail',res)
+				fail: (res) => {
+					console.log('fail', res)
 				}
 			});
 		},
@@ -357,13 +356,15 @@
 
 		},
 		onReady() {
-			
+
 		},
 		onUnload() {
 			this.mapinfo = null
 		},
 		methods: {
-			...mapMutations(['setSn', 'setBikeid','setBikeinfo','setLongitude','setLatitude']),
+			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
+				'setOrderinfo'
+			]),
 			showMapSelect() {
 				this.showmapselect = !this.showmapselect
 			},
@@ -377,14 +378,76 @@
 				this.defaultLev = item
 				this.poptype = ''
 			},
+			// 结束挪车
+			endmovecars() {
+				var options = {
+					url: '/rporder/finish', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"city_id": "0591",
+						"order_id": this.orderid
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('挪车', res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: '挪车提交成功',
+							mask: false,
+							duration: 3000
+						});
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '挪车失败',
+							mask: false,
+							duration: 3000
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			selectsure() {
 				this.showmapselect = false
-				this.nearbyshortpower(this.selectvals,this.longitude,this.latitude)
+				switch (this.type) {
+					case '0':
+						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude)
+						break;
+					case '1.1':
+						this.nearbyfaultcar(this.longitude, this.latitude)
+						break;
+				}
+
 			},
-			markclick(e){
-				console.log(666,e)
-				this.setBikeid(e.markerId)
-				this.getcarinfo()
+			markclick(e) {
+				// switch(this.type){
+				// 	case '0':
+				// }
+				if (this.type == '3.1') {
+					uni.showModal({
+						title: '确定挪到以下车站吗？',
+						content: '亚都国际酒店',
+						showCancel: true,
+						cancelText: '取消',
+						confirmText: '确定',
+						success: res => {
+							if (res.confirm) {
+								this.endmovecars()
+							} else if (res.cancel) {
+								console.log('用户点击取消');
+							}						
+						},
+						fail: () => {},
+						complete: () => {}
+					});
+				} else {
+					this.setBikeid(e.markerId)
+					this.getcarinfo()
+				}
 			},
 			// 点击创建车站
 			creatStop() {
@@ -399,15 +462,15 @@
 					this.actives = false
 				}, 2000)
 			},
-			active(index,item) {
-				this.selectvals=item.val
+			active(index, item) {
+				this.selectvals = item.val
 				for (let i = 0; i < this.selectcoverdata.length; i++) {
 					this.selectcoverdata[i].active = false
 				}
 				this.selectcoverdata[index].active = true
 			},
-			functionNames(){
-				
+			functionNames() {
+
 			},
 			// 移动地图获取中心点坐标trytr
 			functionName() {
@@ -417,15 +480,68 @@
 						// self.longitude = res.longitude
 						// self.latitude = res.latitude
 						// self.nearbycarinfo(2)
-						self.nearbyshortpower(100,res.longitude,res.latitude)
+						switch (self.type) {
+							case '0':
+								self.nearbyshortpower(100, res.longitude, res.latitude)
+								break
+							case '1.1':
+								self.nearbyfaultcar(res.longitude, res.latitude)
+								break
+							case '3.1':
+								self.nearbymovecar(res.longitude, res.latitude)
+								break
+						}
 					},
 					fail: (res) => {
 						console.log('fail' + res);
 					}
 				})
 			},
+			// 附近需要挪的车
+			nearbymovecar(longitude, latitude) {
+				var options = {
+					url: '/bike/list_to_repark_nearby', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"coordinate": [
+							longitude,
+							latitude
+						],
+						"repark_index": 4,
+						"flag": 1
+						// "is_under_volt": 1
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('挪车列表', res)
+					if (res.status == 0) {
+						this.covers = []
+						for (let i = 0; i < res.list.length; i++) {
+							let tmpObj = {}
+							tmpObj.id = res.list[i].id
+							tmpObj.latitude = res.list[i].coordinate[1]
+							tmpObj.longitude = res.list[i].coordinate[0]
+							tmpObj.iconPath = '../../static/image/0-small.png'
+							this.covers.push(tmpObj)
+						}
+						var ss = {
+							id: 2333,
+							latitude: 26.0527,
+							longitude: 119.3144,
+							iconPath: '../../static/image/carstop.png'
+						}
+						this.covers.push(ss)
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			// 附近需要换电的车辆
-			nearbyshortpower(max,longitude,latitude) {
+			nearbyshortpower(max, longitude, latitude) {
 				var options = {
 					url: '/bike/list_to_change_battery_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -444,15 +560,50 @@
 					// res为服务端返回数据的根对象
 					console.log('附近缺电车辆', res)
 					if (res.status == 0) {
-						this.covers=[]
-						for(let i=0;i<res.list.length;i++){
-							let tmpObj={}
-							tmpObj.id=res.list[i].id
-							tmpObj.latitude=res.list[i].coordinate[1]
-							tmpObj.longitude=res.list[i].coordinate[0]
-							tmpObj.iconPath='../../static/image/icon-small.png'
+						this.covers = []
+						for (let i = 0; i < res.list.length; i++) {
+							let tmpObj = {}
+							tmpObj.id = res.list[i].id
+							tmpObj.latitude = res.list[i].coordinate[1]
+							tmpObj.longitude = res.list[i].coordinate[0]
+							tmpObj.iconPath = '../../static/image/icon-small.png'
 							this.covers.push(tmpObj)
-						}					
+						}
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 附近故障的车辆
+			nearbyfaultcar(longitude, latitude) {
+				var options = {
+					url: '/bike/list_to_repair_nearby', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"coordinate": [
+							longitude,
+							latitude
+						],
+						"inv_state": 2
+						// "is_under_volt": 1
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('故障车辆', res)
+					if (res.status == 0) {
+						this.covers = []
+						for (let i = 0; i < res.list.length; i++) {
+							let tmpObj = {}
+							tmpObj.id = res.list[i].id
+							tmpObj.latitude = res.list[i].coordinate[1]
+							tmpObj.longitude = res.list[i].coordinate[0]
+							tmpObj.iconPath = '../../static/image/0-small.png'
+							this.covers.push(tmpObj)
+						}
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -460,7 +611,7 @@
 				})
 			},
 			scanCode(type) {
-				this.dowhat()
+				// this.dowhat()
 				if (type == 1) {
 					uni.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
@@ -542,14 +693,15 @@
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						uni.navigateTo({
-							url: '/pages/swapbattery/swapbattery',
+							// url: '/pages/swapbattery/swapbattery',
+							url: this.urls,
 							success: res => {},
 							fail: () => {},
 							complete: () => {}
 						});
-					}else{
+					} else {
 						uni.showToast({
-							title: res.message?res.message:'获取车辆信息失败',
+							title: res.message ? res.message : '获取车辆信息失败',
 							mask: false,
 							duration: 1500
 						});
@@ -576,9 +728,9 @@
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('附近车辆信息', res)
+					console.log('附近车站信息', res)
 					if (res.status == 0) {
-
+						this.covers.push()
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -639,6 +791,7 @@
 					console.log('订单列表', res)
 					if (res.status == 0 && res.list.length != 0) {
 						this.setOrderfirstid(res.list[0].id)
+						this.setOrderinfo(res.list[0])
 						uni.navigateTo({
 							url: this.urls,
 							success: res => {},

@@ -70,9 +70,11 @@
 							cancelText: '取消',
 							confirmText: '拨打',
 							success: res => {
-								uni.makePhoneCall({
-									phoneNumber:item.val
-								})
+								if(res.confirm){
+									uni.makePhoneCall({
+										phoneNumber:item.val
+									})
+								}							
 							},
 							fail: () => {},
 							complete: () => {}

@@ -143,7 +143,9 @@
 						confirmText: '打开',
 						confirmColor: '#F6C700',
 						success: res => {
-							this.openbattery()
+							if(res.confirm){
+								this.openbattery()
+							}						
 						},
 						fail: () => {},
 						complete: () => {}

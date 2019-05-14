@@ -3,7 +3,7 @@
 		<view class='view-common'>
 			<view class="uni-common-mt input-place">
 				<view class="uni-form-item uni-column">
-					<input class="uni-input letter-spacings" maxlength="9" v-model="carnum" @input="hideKeyboard" type="number"
+					<input class="uni-input letter-spacings" maxlength="8" v-model="carnum" @input="hideKeyboard" type="number"
 					 placeholder="请输入编号" />
 				</view>
 				<view @click='go'>完成</view>
@@ -30,7 +30,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(['setBikeid', 'setSn', 'setBikeinfo','setOrderfirstid']),
+			...mapMutations(['setBikeid', 'setSn', 'setBikeinfo','setOrderfirstid','setOrderinfo']),
 			onKeyInput() {
 				this.inputValue = event.target.value
 			},
@@ -50,6 +50,7 @@
 					console.log('订单列表', res)
 					if (res.status == 0 && res.list.length != 0) {
 						this.setOrderfirstid(res.list[0].id)
+						this.setOrderinfo(res.list[0])
 						uni.navigateTo({
 							url: this.urls,
 							success: res => {},
@@ -89,16 +90,17 @@
 							var datas={}
 							if(this.type=='1.1'){
 								datas = {
-									"is_order_finished": 0,
+									"is_order_finished": 0,//车子处于报修状态包括入库和未入库
 									"pno": 1,
 									"psize": 100,
-									"order_state": 0,
+									"order_state": 0,//刚报修未入库，没有这个值表示已入库
 								}
 							}else{
 								datas = {
 									"is_order_finished": 0,
 									"pno": 1,
-									"psize": 100,									
+									"psize": 100,
+									
 								}
 							}							
 							this.requestorder(datas)
@@ -126,6 +128,7 @@
 			hideKeyboard(event) {
 				if (this.carnum.length === 8) {
 					uni.hideKeyboard();
+					this.carinfo()
 				}
 			}
 		},

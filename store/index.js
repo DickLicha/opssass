@@ -8,20 +8,21 @@ const store = new Vuex.Store({
 		hasLogin: false,
 		loginProvider: "",
 		openid: null,
-		faultinfo:'',
+		faultinfo: '',
 		// 全局字典配置信息
-		directinfo:{},
-		sn:'',
-		bikeid:'',
+		directinfo: {},
+		sn: '',
+		bikeid: '',
 		// 第一笔订单id
-		orderfirstid:'',
-		selectfaultobj:[],
+		orderfirstid: '',
+		orderinfo:{},
+		selectfaultobj: [],
 		// 所有车辆信息
-		bikeinfo:{},
-		warehoselist:{},
-		putstorageindex:0,
-		longitude:'119',
-		latitude:'28'
+		bikeinfo: {},
+		warehoselist: {},
+		putstorageindex: 0,
+		longitude: '119',
+		latitude: '28'
 	},
 	mutations: {
 		login(state, provider) {
@@ -41,38 +42,41 @@ const store = new Vuex.Store({
 		setDirectinfo(state, directinfo) {
 			state.directinfo = directinfo
 		},
-		setSn(state, sn){
+		setSn(state, sn) {
 			state.sn = sn
 		},
-		setBikeid(state, bikeid){
+		setBikeid(state, bikeid) {
 			state.bikeid = bikeid
 		},
-		setOrderfirstid(state, orderfirstid){
+		setOrderfirstid(state, orderfirstid) {
 			state.orderfirstid = orderfirstid
 		},
-		setSelectfaultobj(state, selectfaultobj){
+		setOrderinfo(state, orderinfo) {
+			state.orderinfo = orderinfo
+		},
+		setSelectfaultobj(state, selectfaultobj) {
 			state.selectfaultobj = selectfaultobj
 		},
-		setBikeinfo(state, bikeinfo){
+		setBikeinfo(state, bikeinfo) {
 			state.bikeinfo = bikeinfo
 		},
-		setWarehoselist(state, warehoselist){
+		setWarehoselist(state, warehoselist) {
 			state.warehoselist = warehoselist
 		},
-		setPutstorageindex(state, putstorageindex){
+		setPutstorageindex(state, putstorageindex) {
 			state.putstorageindex = putstorageindex
 		},
-		setLongitude(state, longitude){
+		setLongitude(state, longitude) {
 			state.longitude = longitude
 		},
-		setLatitude(state, latitude){
+		setLatitude(state, latitude) {
 			state.latitude = latitude
 		},
-		
+
 	},
 	actions: {
 		// lazy loading openid
-		getUserOpenId: async function ({
+		getUserOpenId: async function({
 			commit,
 			state
 		}) {
@@ -83,7 +87,7 @@ const store = new Vuex.Store({
 					uni.login({
 						success: (data) => {
 							commit('login')
-							setTimeout(function () { //模拟异步请求服务器获取 openid
+							setTimeout(function() { //模拟异步请求服务器获取 openid
 								const openid = '123456789'
 								commit('setOpenid', openid)
 								resolve(openid)

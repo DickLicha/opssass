@@ -34,15 +34,15 @@
 				}],
 				swapbatterydata2: [{
 						name: '时间:',
-						val: 'xxx',
+						val: '',
 					},
 					{
 						name: '故障现象:',
-						val: '其他',
+						val: '',
 					},
 					{
 						name: '提交:',
-						val: 'xxx',
+						val: '',
 					},
 				],
 			}
@@ -50,16 +50,21 @@
 		components: {
 			itemCell
 		},
-		// computed:mapState(['orderfirstid']),
-		computed: mapState(['bikeinfo', 'bikeid', 'orderfirstid', 'putstorageindex', 'warehoselist']),
+		computed: mapState(['bikeinfo', 'bikeid', 'orderfirstid', 'putstorageindex', 'warehoselist','orderinfo']),
 		onLoad() {
 			// this.getcarinfo()
 			// 车辆编码
 			this.swapdata[0].val = this.bikeinfo.id
+			this.swapbatterydata2[0].val = this.orderinfo.create_time
+			var desc=''
+			for(let i=0;i<this.orderinfo.report_fault_descs.length;i++){
+				desc+=this.orderinfo.report_fault_descs[i]
+			}
+			this.swapbatterydata2[1].val = desc
+			this.swapbatterydata2[2].val = this.orderinfo.creator_name
 			this.warehostlist()
 		},
 		onShow() {
-			console.log(33, this.warehoselist[this.putstorageindex])
 			this.swapbatterydata1[0].val = this.warehoselist[this.putstorageindex].name
 		},
 		methods: {

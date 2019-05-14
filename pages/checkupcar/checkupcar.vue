@@ -23,6 +23,7 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
+	import {mapState} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -31,7 +32,7 @@
 				orderid: '',
 				swapdata: [{
 					name: '车辆编号',
-					val: '80135654'
+					val: ''
 				}],
 				swapbatterydata: [{
 						name: '最近一次检查时间:',
@@ -47,12 +48,19 @@
 					}
 				],
 				checkupdata: [
-					'1、转把', '2、', '', '4、', '5、', '6、'
+					'1、转把', '2、车把', '3、刹车', '4、车灯', '5、喇叭', '6、挡泥板'
 				]
 			}
 		},
 		components: {
 			itemCell
+		},
+		computed:mapState(['bikeinfo']),
+		onLoad(){
+			this.swapdata[0].val=this.bikeinfo.id
+			this.swapbatterydata[0].val=this.bikeinfo.last_repark_order_end_time
+			this.swapbatterydata[1].val='xxx'
+			this.swapbatterydata[2].val='xxx'
 		},
 		methods: {
 			gocarcenter() {
@@ -64,7 +72,13 @@
 				});
 			},
 			endmovecar(){
-				this.endmovecar()
+				uni.navigateTo({
+					url: `/pages/map/map?type=3.1&&name=挪车&&text=全部车站`,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+				// this.endmovecars()
 			},
 			// 开始挪车
 			startmovecar() {
@@ -90,7 +104,7 @@
 				})
 			},
 			// 结束挪车
-			endmovecar() {
+			endmovecars() {
 				var options = {
 					url: '/rporder/finish', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
