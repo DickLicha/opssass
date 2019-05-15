@@ -173,7 +173,7 @@
 			},
 			gocarcenter() {
 				uni.navigateTo({
-					url: '/pages/carcenter/carcenter',
+					url: '/pages/carBigCenter/carcenter/carcenter',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -188,7 +188,7 @@
 				}
 				this.setFaultinfo(this.faultinfo.split('/'))
 				uni.navigateTo({
-					url: '/pages/faulttypeview/faulttypeview',
+					url: '/pages/repairPage/faulttypeview/faulttypeview',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

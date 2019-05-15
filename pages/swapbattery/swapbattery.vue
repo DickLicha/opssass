@@ -126,7 +126,7 @@
 		methods: {
 			gocarcenter() {
 				uni.navigateTo({
-					url: '/pages/carcenter/carcenter',
+					url: '/pages/carBigCenter/carcenter/carcenter',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

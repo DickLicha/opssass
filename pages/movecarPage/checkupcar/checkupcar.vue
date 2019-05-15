@@ -14,7 +14,8 @@
 				</view>
 			</view>
 			<view v-if="!showdetil" class='end-move-button'>
-				<button class='share-button-default' @click='endmovecar'>完成挪车</button>
+				<button class='share-button-default margin-topbtn' @click='endmovecar'>完成挪车</button>
+				<button class='share-button-default margin-topbtn' @click='cantmovecar'>无法挪车</button>
 			</view>
 
 		</view>
@@ -65,7 +66,7 @@
 		methods: {
 			gocarcenter() {
 				uni.navigateTo({
-					url: '/pages/carcenter/carcenter',
+					url: '/pages/carBigCenter/carcenter/carcenter',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -140,6 +141,13 @@
 				if (type == 1) {
 					this.showdetil = false
 					this.startmovecar()
+				}else{
+					uni.navigateTo({
+						url: '/pages/carBigCenter/breakdowncar/breakdowncar',
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
 				}
 				// uni.showModal({
 				// 	title: '确认打开电池锁',
@@ -187,6 +195,9 @@
 					width: 50%;
 					margin: 0 30upx;
 				}
+			}
+			.margin-topbtn{
+				margin: 20upx 0 0 0;
 			}
 
 			.check-bottom-view {

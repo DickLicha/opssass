@@ -51,7 +51,7 @@
 					{
 						name: 'test',
 						val: '',
-						url:'/pages/repaircar/repaircar'
+						url:'/pages/repairPage/repaircar/repaircar'
 					},
 				]
 			}

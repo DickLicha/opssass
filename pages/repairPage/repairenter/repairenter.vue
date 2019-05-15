@@ -18,7 +18,7 @@
 				repairlist: [{
 						name: '手动输入',
 						val: '0',
-						url: '/pages/manualscan/manualscan?type=1.3&&urls=/pages/repaircar/repaircar'
+						url: '/pages/manualscan/manualscan?type=1.3&&urls=/pages/repairPage/repaircar/repaircar'
 					},
 					{
 						name: '扫码输入',
@@ -32,7 +32,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(['setSn','setOrderfirstid','setOrderinfo']),
+			...mapMutations(['setSn', 'setOrderfirstid', 'setOrderinfo']),
 			requestorder(data) {
 				let options = {
 					url: '/brorder/list',
@@ -52,7 +52,7 @@
 						});
 					}
 				})
-			},
+			},			
 			getcarinfo() {
 				var options = {
 					url: '/bike/info', //请求接口
@@ -68,11 +68,11 @@
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						var datas = {
-								"is_order_finished": 0,
-								"pno": 1,
-								"psize": 100,									
-							}							
-						this.requestorder(datas)						
+							"is_order_finished": 0,
+							"pno": 1,
+							"psize": 100,
+						}
+						this.requestorder(datas)
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',

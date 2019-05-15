@@ -2,11 +2,14 @@
 	<view class='wrap'>
 		<view class='view-common'>
 			<view>
-				<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell>
+				<item-cell :itemdata="swapdata" type='4' :border='true' @itemclick='gocarcenter'></item-cell>
+			</view>
+			<view class='result-fault'>
+				<view class='result-fault-view' v-for="(item,i) in faultdata" :key="i" >{{item.name}}</view>
 			</view>
 			<view>
-				<view v-for="(item,i) in faultdata" :key="i" >{{item.name}}</view>
-			</view>	
+				<button class='share-button-default submit-btn'>提交报修</button>
+			</view>
 			</view>
 	</view>
 </template>
@@ -64,6 +67,25 @@
 			margin: 30upx 22upx;
 			height: 98vh;
 			position: relative;
+			.submit-btn{
+				position: fixed;
+				bottom: 20upx;
+				width: calc(100% - 44upx)
+			}
+			.result-fault{
+				margin-top: 20upx;
+				display: flex;
+				flex-wrap: wrap;
+				.result-fault-view{
+					width: 40%;
+					margin-left: 40upx;
+					text-align: center;
+					margin-top: 20upx;
+					background-color: white;
+					height: 80upx;
+					line-height: 80upx;
+				}
+			}
 
 		}
 	}

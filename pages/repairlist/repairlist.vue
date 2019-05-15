@@ -91,15 +91,15 @@
 							val: '',
 							url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
 						},
-						{
-							name: '机动挪车',
-							val: '',
-							url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
-						},
+						// {
+						// 	name: '机动挪车',
+						// 	val: '',
+						// 	url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
+						// },
 						{
 							name: '挪车记录',
 							val: '',
-							url: '/pages/removecarrecord/removecarrecord',
+							url: '/pages/movecarPage/removecarrecord/removecarrecord',
 						}
 					]
 					break;

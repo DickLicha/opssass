@@ -19,6 +19,13 @@ export default function(obj) {
 
 	// let baseUrl = 'http://www.fishors.com:8086'
 	let baseUrl = 'http://test3.fishors.com:8086'
+	for(const key in obj.data){
+		const element = obj.data[key]
+		 // 全选
+		if (element === '*' || undefined === element || element === null) {
+		  delete obj.data[key]
+		}
+	}
 	let p = new Promise((resolve, reject) => {
 		uni.request({
 			url: baseUrl + obj.url,

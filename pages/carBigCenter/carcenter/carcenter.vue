@@ -127,7 +127,7 @@
 				carcenterdata3: [{
 						name: '订单',
 						val: '',
-						url: '/pages/carorder/carorder'
+						url: '/pages/carBigCenter/carorder/carorder'
 					},
 					{
 						name: '开关锁记录',
@@ -137,12 +137,12 @@
 					{
 						name: '换电记录',
 						val: '',
-						url: '/pages/batteriesrecord/batteriesrecord'
+						url: '/pages/carBigCenter/batteriesrecord/batteriesrecord'
 					},
 					{
 						name: '维修记录',
 						val: '',
-						url: '/pages/carorbit/carorbit'
+						url: '/pages/carBigCenter/carorbit/carorbit'
 					},
 					{
 						name: '车辆轨迹',
@@ -157,12 +157,12 @@
 					{
 						name: 'ECU',
 						val: '',
-						url: '/pages/ecuview/ecuview'
+						url: '/pages/carBigCenter/ecuview/ecuview'
 					},
 					{
 						name: '电池',
 						val: '',
-						url: '/pages/batteryview/batteryview'
+						url: '/pages/carBigCenter/batteryview/batteryview'
 					},
 				],
 			}

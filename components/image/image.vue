@@ -30,6 +30,7 @@
 	</view>
 </template>
 <script>
+	import {mapState,mapMutations} from 'vuex'
 	var sourceType = [
 		['camera'],
 		['album'],
@@ -56,6 +57,7 @@
 			}
 		},
 		onUnload() {
+			this.setImgarr([])
 			this.imageList = [],
 				this.sourceTypeIndex = 2,
 				this.sourceType = ['拍照', '相册', '拍照或相册'],
@@ -63,7 +65,9 @@
 				this.sizeType = ['压缩', '原图', '压缩或原图'],
 				this.countIndex = 8;
 		},
+		computed:mapState(['directinfo']),
 		methods: {
+			...mapMutations(['setImgarr']),
 			sourceTypeChange: function(e) {
 				this.sourceTypeIndex = e.target.value
 			},
@@ -106,8 +110,11 @@
 								console.log('数据类型', typeof(parsedata),parsedata);
 								console.log('数据类型1', parsedata.data);
 								if(parsedata.status==0){
-									this.imgArr.push(parsedata.data.oss_name)
-									console.log('图片list', this.imgArr);
+									console.log('this.directinfo',this.directinfo)
+									var imgs=this.directinfo.res_server_url+'/'+parsedata.data.oss_name
+									console.log('imgs',imgs)
+									this.imgArr.push(imgs)
+									this.setImgarr(this.imgArr)
 								}else{
 									uni.showToast({
 										title: parsedata.msg?parsedata.msg:'文件上传失败',

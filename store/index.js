@@ -22,7 +22,9 @@ const store = new Vuex.Store({
 		warehoselist: {},
 		putstorageindex: 0,
 		longitude: '119',
-		latitude: '28'
+		latitude: '28',
+		mapcovers:[],
+		imgarr:[],
 	},
 	mutations: {
 		login(state, provider) {
@@ -71,6 +73,12 @@ const store = new Vuex.Store({
 		},
 		setLatitude(state, latitude) {
 			state.latitude = latitude
+		},
+		setMapcovers(state, mapcovers) {
+			state.mapcovers = mapcovers
+		},
+		setImgarr(state, imgarr) {
+			state.imgarr = imgarr
 		},
 
 	},

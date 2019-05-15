@@ -58,13 +58,13 @@
 			}
         }
         ,{
-            "path" : "pages/carcenter/carcenter",
+            "path" : "pages/carBigCenter/carcenter/carcenter",
             "style" : {
 				"navigationBarTitleText": "车辆编号xxx"
 			}
         }
         ,{
-            "path" : "pages/carorder/carorder",
+            "path" : "pages/carBigCenter/carorder/carorder",
             "style" : {
 				"navigationBarTitleText": "订单中心"
 			}
@@ -77,25 +77,25 @@
 			}
         }
         ,{
-            "path" : "pages/batteriesrecord/batteriesrecord",
+            "path" : "pages/carBigCenter/batteriesrecord/batteriesrecord",
             "style" : {
 				"navigationBarTitleText": "换电记录"
 			}
         }
         ,{
-            "path" : "pages/carorbit/carorbit",
+            "path" : "pages/carBigCenter/carorbit/carorbit",
             "style" : {
 				"navigationBarTitleText": "维修记录"
 			}
         }
         ,{
-            "path" : "pages/ecuview/ecuview",
+            "path" : "pages/carBigCenter/ecuview/ecuview",
             "style" : {
 				"navigationBarTitleText": "ECU"
 			}
         }
         ,{
-            "path" : "pages/batteryview/batteryview",
+            "path" : "pages/carBigCenter/batteryview/batteryview",
             "style" : {
 				"navigationBarTitleText": "电池"
 			}
@@ -113,37 +113,37 @@
 			}
         }
         ,{
-            "path" : "pages/removecarrecord/removecarrecord",
+            "path" : "pages/movecarPage/removecarrecord/removecarrecord",
             "style" : {
 				"navigationBarTitleText": "挪车记录"
 			}
         }
         ,{
-            "path" : "pages/checkupcar/checkupcar",
+            "path" : "pages/movecarPage/checkupcar/checkupcar",
             "style" : {
 				"navigationBarTitleText": "车辆安全检查"
 			}
         }
         ,{
-            "path" : "pages/repaircar/repaircar",
+            "path" : "pages/repairPage/repaircar/repaircar",
             "style" : {
 				"navigationBarTitleText": "修车"
 			}
         }
         ,{
-            "path" : "pages/faulttypeview/faulttypeview",
+            "path" : "pages/repairPage/faulttypeview/faulttypeview",
             "style" : {
 				"navigationBarTitleText": "故障类型"
 			}
         }
         ,{
-            "path" : "pages/breakdowncar/breakdowncar",
+            "path" : "pages/carBigCenter/breakdowncar/breakdowncar",
             "style" : {
 				"navigationBarTitleText": "报修"
 			}
         }
         ,{
-            "path" : "pages/putstorage/putstorage",
+            "path" : "pages/repairPage/putstorage/putstorage",
             "style" : {
 				"navigationBarTitleText": "维修入库"
 			}
@@ -155,7 +155,7 @@
 			}
         }
         ,{
-            "path" : "pages/warehoselist/warehoselist",
+            "path" : "pages/repairPage/warehoselist/warehoselist",
             "style" : {
 				"navigationBarTitleText": "选择仓库"
 			}
@@ -165,6 +165,28 @@
             "style" : {
 				"navigationBarTitleText": "修车"
 			}
+        },
+		 {
+		    "path" : "pages/movecarPage/stopdetilview/stopdetilview",
+		    "style" : {
+				"navigationBarTitleText": "挪车站内车辆"
+			}
+		}
+        ,{
+            "path" : "pages/movecarPage/stopdetilview1/stopdetilview1",
+            "style" : {
+				"navigationBarTitleText": "车站信息"
+			}
+        }
+        ,{
+            "path" : "pages/movecarPage/cantmovecar/cantmovecar",
+            "style" : {
+				"navigationBarTitleText": "无法挪车"
+			}
+        }
+        ,{
+            "path" : "pages/repairPage/onlinerepair/onlinerepair",
+            "style" : {}
         }
     ],
 	"globalStyle": {
@@ -180,14 +202,14 @@
 		"selectedColor": "#F6C700",
 		"list": [{
 				"pagePath": "pages/tabbar/index/index",
-				"iconPath": "static/image/renwu0.png",
-				"selectedIconPath": "static/image/renwu1.png",
+				"iconPath": "static/image/renwu@2x(1).png",
+				"selectedIconPath": "static/image/renwu@2x.png",
 				"text": "任务"
 			},
 			{
 				"pagePath": "pages/tabbar/mine/mine",
-				"iconPath": "static/image/mine0.png",
-				"selectedIconPath": "static/image/mine1.png",
+				"iconPath": "static/image/wode (1)@2x.png",
+				"selectedIconPath": "static/image/wode (1)@2x(1).png",
 				"text": "我的"
 			}
 		]

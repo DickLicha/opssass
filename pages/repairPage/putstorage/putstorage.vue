@@ -71,7 +71,7 @@
 			...mapMutations(['setWarehoselist']),
 			gocarcenter() {
 				uni.navigateTo({
-					url: '/pages/carcenter/carcenter',
+					url: '/pages/carBigCenter/carcenter/carcenter',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -112,7 +112,7 @@
 			},
 			chosestorage() {
 				uni.navigateTo({
-					url: '/pages/warehoselist/warehoselist',
+					url: '/pages/repairPage/warehoselist/warehoselist',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
