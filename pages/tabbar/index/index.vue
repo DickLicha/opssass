@@ -9,7 +9,6 @@
 				<view class='task-view-text'><text>{{item.name}}</text></view>
 			</view>
 		</view>
-
 	</view>
 </template>
 
@@ -27,28 +26,32 @@
 						img: '',
 						url: '/pages/map/map',
 						text:'全部待换电',
-						src:'../../../static/image/huan_dian.png'
+						src:'../../../static/image/huan_dian.png',
+						index:0
 					},
 					{
 						name: '维修',
 						img: '',
 						url: '/pages/repairlist/repairlist',
 						text:'全部故障车辆',
-						src:'../../../static/image/wei_xiu.png'
+						src:'../../../static/image/wei_xiu.png',
+						index:1
 					},
 					{
 						name: '保养',
 						img: '',
 						url: '/pages/repairlist/repairlist',
 						text:'待保养车辆',
-						src:'../../../static/image/bao_yang.png'
+						src:'../../../static/image/bao_yang.png',
+						index:2
 					},
 					{
 						name: '单个挪车',
 						img: '',
 						url: '/pages/repairlist/repairlist',
 						text:'全部车站',
-						src:'../../../static/image/nuo_che.png'
+						src:'../../../static/image/nuo_che.png',
+						index:3
 					},
 					// {
 					// 	name: '批量挪车',
@@ -61,14 +64,16 @@
 						img: '',
 						url: '/pages/map/map',
 						text:'',
-						src:'../../../static/image/ecu_huanban.png'
+						src:'../../../static/image/ecu_huanban.png',
+						index:4
 					},
 					{
 						name: 'ECU绑定',
 						img: '',
 						url: '/pages/map/map',
 						text:'',
-						src:'../../../static/image/ban_ding.png'
+						src:'../../../static/image/ban_ding.png',
+						index:5,
 					},
 					// {
 					// 	name: '换电批次',
@@ -81,49 +86,56 @@
 						img: '',
 						url: '/pages/map/map',
 						text:'',
-						src:'../../../static/image/zhao_budao.png'
+						src:'../../../static/image/zhao_budao.png',
+						index:6
 					},
 					{
 						name: '批量开关锁',
 						img: '',
 						url: '/pages/map/map',
 						text:'',
-						src:'../../../static/image/kai_guan.png'
+						src:'../../../static/image/kai_guan.png',
+						index:7
 					},
 					{
 						name: '库存管理',
 						img: '',
 						url: '/pages/map/map',
 						text:'',
-						src:'../../../static/image/ku_cun.png'
+						src:'../../../static/image/ku_cun.png',
+						index:8
 					},
 					{
 						name: '车站',
 						img: '',
 						url: '/pages/map/map',
 						text:'全部车站',
-						src:'../../../static/image/che_zhan.png'
+						src:'../../../static/image/che_zhan.png',
+						index:9
 					},
 					{
 						name: '违章',
 						img: '',
 						url: '/pages/map/map',
 						text:'',
-						src:'../../../static/image/wei_zhang.png'
+						src:'../../../static/image/wei_zhang.png',
+						index:10
 					},
 					{
 						name: '车辆排查',
 						img: '',
 						url: '/pages/map/map',
 						text:'',
-						src:'../../../static/image/pai_cha.png'
+						src:'../../../static/image/pai_cha.png',
+						index:11
 					},
 					{
 						name: '车辆换绑',
 						img: '',
 						url: '/pages/map/map',
 						text:'',
-						src:'../../../static/image/huan_ban.png'
+						src:'../../../static/image/huan_ban.png',
+						index:12
 					},
 				]
 
@@ -170,7 +182,7 @@
 			go(item,i) {
 				uni.navigateTo({
 					// url: '/pages/map/map?name=' + name
-					url: `${item.url}?name=${item.name}&type=${i}&text=${item.text}`
+					url: `${item.url}?name=${item.name}&type=${item.index}&text=${item.text}`
 				});
 			},
 			test() {
