@@ -24,6 +24,7 @@
 		methods: {
 			...mapMutations(['setOrderfirstid','setOrderinfo']),
 			go(item) {
+				console.log(item);
 				uni.navigateTo({
 					url: item.url,
 					success: res => {},
@@ -100,6 +101,23 @@
 							name: '挪车记录',
 							val: '',
 							url: '/pages/movecarPage/removecarrecord/removecarrecord',
+						}
+					]
+					break;
+				case '10':
+					this.repairlist = [{
+							name: '违章骑行',
+							val: '',
+						},
+						{
+							name: '举报',
+							val: '', 
+							url: '/pages/violations/reportViolations/reportViolations',
+						},
+						{
+							name: '处理',
+							val: '',
+							url: '/pages/violations/reportViolationsList/reportViolationsList',
 						}
 					]
 					break;

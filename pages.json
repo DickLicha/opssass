@@ -188,6 +188,18 @@
             "path" : "pages/repairPage/onlinerepair/onlinerepair",
             "style" : {}
         }
+        ,{
+            "path" : "pages/violations/reportViolations/reportViolations",
+            "style" : {
+				"navigationBarTitleText": "违章举报"
+			}
+        }
+        ,{
+            "path" : "pages/violations/reportViolationsList/reportViolationsList",
+            "style" : {
+				"navigationBarTitleText": "违章举报列表"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

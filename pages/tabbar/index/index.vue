@@ -116,7 +116,7 @@
 					{
 						name: '违章',
 						img: '',
-						url: '/pages/map/map',
+						url: '/pages/repairlist/repairlist',
 						text:'',
 						src:'../../../static/image/wei_zhang.png',
 						index:10
