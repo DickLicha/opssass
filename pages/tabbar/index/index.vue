@@ -142,7 +142,7 @@
 			};
 		},
 		methods: {
-			...mapMutations(['setDirectinfo']),
+			...mapMutations(['setDirectinfo','setSoftconf']),
 			// 获取字典配置信息
 			getdirectinfo() {
 				var options = {
@@ -234,8 +234,8 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('用户信息', typeof(res),res)
-					if (res.status) {
-						this.setsoftconf(res.data)
+					if (res.status==0) {
+						this.setSoftconf(res.data)
 					}
 				}).catch((err) => {
 					// 请求失败的回调

@@ -13,10 +13,10 @@
 					<!-- <map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
 				  :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				  @regionchange="functionName" @end="functionName" @begin="functionName"> -->
-					<cover-image src='../../static/image/center.png' class='cover-imgs'></cover-image>
+					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
 					<cover-view v-if="showmapselect" class='map-select-view'>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i,item)" :class="{'borderrights':item.active}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i,item)" :class="{'borderrights':i==isActive}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
@@ -79,6 +79,8 @@
 		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr']),
 		data() {
 			return {
+				endmove: false,
+				isActive: -1,
 				selectvals: 100,
 				stopName: '',
 				defaultLev: '选择等级',
@@ -106,31 +108,26 @@
 						name: '全部换电',
 						id: '0',
 						val: 100,
-						active: true
 					},
 					{
 						name: '所有35%以下',
 						id: '1',
 						val: 35,
-						active: false
 					},
 					{
 						name: '所有30%以下',
 						id: '2',
 						val: 30,
-						active: false
 					},
 					{
 						name: '所有20%以下',
 						id: '3',
 						val: 20,
-						active: false
 					},
 					{
 						name: '所有10%以下',
 						id: '4',
 						val: 10,
-						active: false
 					},
 					// {
 					// 	name: '低于可用里程',
@@ -141,20 +138,9 @@
 						name: '欠压车辆',
 						id: '6',
 						val: 0,
-						active: false
 					},
 				],
 				covers: [],
-				controls: [{ //在地图上显示控件，控件不随着地图移动
-					id: 1, //控件id
-					iconPath: '../../static/image/center.png', //显示的图标	
-					position: { //控件在地图的位置
-						left: 186,
-						top: 250,
-						width: 50,
-						height: 50
-					},
-				}],
 				circles: [{ //在地图上显示圆
 					latitude: 26.0627,
 					longitude: 119.31414,
@@ -174,9 +160,12 @@
 				}],
 				tempjindu: '',
 				tempweidu: '',
+				orderid:'',
 			};
 		},
 		onLoad(e) {
+			this.orderid=e.orderid
+			this.endmove = e.endmove
 			this.headviewtext = e.text
 			this.type = e.type
 			this.dowhat()
@@ -233,17 +222,14 @@
 					this.selectcoverdata = [{
 							name: '全部故障车辆',
 							id: '0',
-							active: true
 						},
 						{
 							name: '未入库故障车辆',
 							id: '1',
-							active: false
 						},
 						{
 							name: '已入库故障车辆',
 							id: '2',
-							active: false
 						},
 					]
 					break;
@@ -254,77 +240,62 @@
 					this.selectcoverdata = [{
 							name: '全部车站',
 							id: '0',
-							active: true
 						},
 						{
 							name: '供给不足车站',
 							id: '1',
-							active: false
 						},
 						{
 							name: '供给过量车站',
 							id: '2',
-							active: false
 						},
 						{
 							name: '预警车站',
 							id: '3',
-							active: false
 						},
 						{
 							name: '车效（中）车辆',
 							id: '4',
-							active: false
 						},
 						{
 							name: '车效（差）车辆',
 							id: '5',
-							active: false
 						},
 						{
 							name: '车效（极差）车辆',
 							id: '6',
-							active: false
 						},
 						{
 							name: '故障-维修入库',
 							id: '7',
-							active: false
 						},
 						{
 							name: '故障-未入库',
 							id: '8',
-							active: false
 						},
 						{
 							name: '12h+无人扫码车辆',
 							id: '9',
-							active: false
 						},
 						{
 							name: '24h+无人扫码车辆',
 							id: '10',
-							active: false
 						},
 						{
 							name: '1+不动车辆',
 							id: '11',
-							active: false
 						},
 						{
 							name: '2+不动车辆',
 							id: '12',
-							active: false
 						},
 						{
 							name: '3+不动车辆',
 							id: '13',
-							active: false
 						},
 						{
 							name: '7+不动车辆',
 							id: '14',
-							active: false
 						}
 					]
 					break;
@@ -334,17 +305,14 @@
 					this.selectcoverdata = [{
 							name: '全部车站',
 							id: '0',
-							active: true
 						},
 						{
 							name: '已开启车站',
 							id: '0',
-							active: false
 						},
 						{
 							name: '已关闭车站',
 							id: '0',
-							active: false
 						},
 					]
 					break;
@@ -394,39 +362,6 @@
 				this.defaultLev = item
 				this.poptype = ''
 			},
-			// 结束挪车
-			endmovecars() {
-				var options = {
-					url: '/rporder/finish', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						"city_id": "0591",
-						"order_id": this.orderid
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('挪车', res)
-					if (res.status == 0) {
-						uni.showToast({
-							title: '挪车提交成功',
-							mask: false,
-							duration: 3000
-						});
-					} else {
-						uni.showToast({
-							title: res.message ? res.message : '挪车失败',
-							mask: false,
-							duration: 3000
-						});
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
-			},
 			selectsure() {
 				this.showmapselect = false
 				switch (this.type) {
@@ -462,37 +397,35 @@
 				}
 				if (this.type == '3.1') {
 					if (pointtype == 'stop') {
-						// uni.showModal({
-						// 	title: '确定挪到以下车站吗？',
-						// 	content: pointname,
-						// 	showCancel: true,
-						// 	cancelText: '取消',
-						// 	confirmText: '确定',
-						// 	success: res => {
-						// 		if (res.confirm) {
-						// 			this.endmovecars()
-						// 		} else if (res.cancel) {
-						// 			console.log('用户点击取消');
-						// 		}						
-						// 	},
-						// 	fail: () => {},
-						// 	complete: () => {}
-						// });
-						uni.navigateTo({
-							url: `/pages/movecarPage/stopdetilview/stopdetilview?name=${pointname}&&bickcount=${bickcount}&&allcount=${allkcount}&&id=${e.markerId}`,
-							success: res => {},
-							fail: () => {},
-							complete: () => {}
-						});
+						if (this.endmove) {
+							uni.showModal({
+								title: '确定挪到以下车站吗？',
+								content: pointname,
+								showCancel: true,
+								cancelText: '取消',
+								confirmText: '确定',
+								success: res => {
+									if (res.confirm) {
+										this.endmovecars()
+									} else if (res.cancel) {
+										console.log('用户点击取消');
+									}
+								},
+								fail: () => {},
+								complete: () => {}
+							});
+						} else {
+							uni.navigateTo({
+								url: `/pages/movecarPage/stopdetilview/stopdetilview?name=${pointname}&&bickcount=${bickcount}&&allcount=${allkcount}&&id=${e.markerId}`,
+								success: res => {},
+								fail: () => {},
+								complete: () => {}
+							});
+						}
 					} else {
-						uni.navigateTo({
-							url: '/pages/movecarPage/checkupcar/checkupcar',
-							success: res => {},
-							fail: () => {},
-							complete: () => {}
-						});
+						this.setBikeid(e.markerId)
+						this.getcarinfo()
 					}
-
 				} else {
 					this.setBikeid(e.markerId)
 					this.getcarinfo()
@@ -501,6 +434,49 @@
 			// 点击创建车站
 			creatStop() {
 				this.actives = true
+			},
+			// 结束挪车
+			endmovecars() {
+				uni.getLocation({ //获取当前的位置坐标
+						type: 'gcj02',
+						success: (res) => {
+							var options = {
+								url: '/rporder/finish', //请求接口
+								method: 'POST', //请求方法全部大写，默认GET
+								context: '',
+								data: {
+									"order_id": this.orderid,
+									"user_coordinate": [
+										res.longitude, res.latitude
+									]
+								}
+							}
+							this.$httpReq(options).then((res) => {
+								// 请求成功的回调
+								// res为服务端返回数据的根对象
+								console.log('挪车', res)
+								if (res.status == 0) {
+									uni.showToast({
+										title: '挪车成功',
+										mask: false,
+										duration: 3000
+									});
+								} else {
+									uni.showToast({
+										title: res.message ? res.message : '挪车失败',
+										mask: false,
+										duration: 3000
+									});
+								}
+							}).catch((err) => {
+								// 请求失败的回调
+								console.error(err, '捕捉')
+							})
+						},
+						fail: (res) => {
+
+						},
+					})			
 			},
 			// 提交创建车站
 			finshCreat() {
@@ -512,11 +488,12 @@
 				}, 2000)
 			},
 			active(index, item) {
+				this.isActive = index
 				this.selectvals = item.val
-				for (let i = 0; i < this.selectcoverdata.length; i++) {
-					this.selectcoverdata[i].active = false
-				}
-				this.selectcoverdata[index].active = true
+				// for (let i = 0; i < this.selectcoverdata.length; i++) {
+				// 	this.selectcoverdata[i].active = false
+				// }
+				// this.selectcoverdata[index].active = true
 			},
 			functionNames() {
 
@@ -568,7 +545,7 @@
 					console.log('挪车列表', res)
 					if (res.status == 0) {
 						this.covers = []
-						var temparr=[]
+						var temparr = []
 						for (let i = 0; i < res.list.length; i++) {
 							let tmpObj = {}
 							tmpObj.id = res.list[i].id
@@ -577,10 +554,10 @@
 								tmpObj.longitude = res.list[i].coordinate[0]
 							}
 							tmpObj.name = res.list[i].name
-							tmpObj.iconPath = '../../static/image/0-small.png'
+							tmpObj.iconPath = '../../static/mapicon/car_normal.png'
 							tmpObj.type = 'car'
-							tmpObj.width = 40
-							tmpObj.height = 40
+							tmpObj.width = 39
+							tmpObj.height = 48
 							temparr.push(tmpObj)
 							// this.covers.push(tmpObj)
 						}
@@ -592,7 +569,7 @@
 								tmpObjs.longitude = res.parks[j].coordinate[0]
 							}
 							tmpObjs.name = res.parks[j].name
-							tmpObjs.iconPath = '../../static/image/carstop.png'
+							tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
 							tmpObjs.type = 'stop'
 							tmpObjs.bickcount = res.parks[j].bike_count
 							tmpObjs.allkcount = res.parks[j].capacity
@@ -600,12 +577,12 @@
 							tmpObjs.remark = res.parks[j].remark
 							tmpObjs.grade = res.parks[j].grade
 							// tmpObjs.allkcount = res.parks[j].capacity
-							tmpObjs.width = 40
-							tmpObjs.height = 40
+							tmpObjs.width = 39
+							tmpObjs.height = 48
 							temparr.push(tmpObjs)
 							// this.covers.push(tmpObjs)
 						}
-						this.covers=temparr
+						this.covers = temparr
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -638,7 +615,9 @@
 							tmpObj.id = res.list[i].id
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
-							tmpObj.iconPath = '../../static/image/icon-small.png'
+							tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+							tmpObj.width = 39
+							tmpObj.height = 48
 							this.covers.push(tmpObj)
 						}
 					}
@@ -689,37 +668,29 @@
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
 							console.log('saoma', res)
-							this.setSn(res.result)
+							var bikesn=res.result.match(/\?bikesn=(.*)/)[1]
+							this.setSn(bikesn)
 							this.getcarinfo()
 							// 入库和维修要先请求订单信息
-							if (this.type == '1.1' || this.type == '1.3') {
-								var datas = {}
-								if (this.type == '1.1') {
-									datas = {
-										"is_order_finished": 0,
-										"pno": 1,
-										"psize": 100,
-										"order_state": 0,
-									}
-								} else {
-									datas = {
-										"is_order_finished": 0,
-										"pno": 1,
-										"psize": 100,
-									}
-								}
-								this.requestorder(datas)
-							} else {
-								uni.navigateTo({
-									url: this.urls,
-									success: res => {},
-									fail: () => {},
-									complete: () => {}
-								});
-							}
-							uni.navigateTo({
-								url: this.urls
-							})
+							// if (this.type == '1.1' || this.type == '1.3') {
+							// 	var datas = {}
+							// 	if (this.type == '1.1') {
+							// 		datas = {
+							// 			"is_order_finished": 0,
+							// 			"pno": 1,
+							// 			"psize": 100,
+							// 			"order_state": 0,
+							// 		}
+							// 	} else {
+							// 		datas = {
+							// 			"is_order_finished": 0,
+							// 			"pno": 1,
+							// 			"psize": 100,
+							// 		}
+							// 	}
+							// 	this.requestorder(datas)
+							// } else {
+							// }
 						},
 						fail: res => {},
 						complete: res => {
@@ -771,6 +742,22 @@
 							fail: () => {},
 							complete: () => {}
 						});
+						// if (this.type == '3.1') {
+						// 	uni.navigateTo({
+						// 		url: '/pages/movecarPage/checkupcar/checkupcar',
+						// 		success: res => {},
+						// 		fail: () => {},
+						// 		complete: () => {}
+						// 	});
+						// } else {
+						// 	uni.navigateTo({
+						// 		// url: '/pages/swapbattery/swapbattery',
+						// 		url: this.urls,
+						// 		success: res => {},
+						// 		fail: () => {},
+						// 		complete: () => {}
+						// 	});
+						// }
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
@@ -913,7 +900,7 @@
 			position: absolute;
 			left: 46%;
 			top: 38%;
-			width: 100upx;
+			width: 50upx;
 			height: auto;
 		}
 

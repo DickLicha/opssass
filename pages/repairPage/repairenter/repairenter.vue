@@ -32,7 +32,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(['setSn', 'setOrderfirstid', 'setOrderinfo']),
+			...mapMutations(['setSn', 'setOrderfirstid', 'setOrderinfo','setBikeid','setBikeinfo']),
 			requestorder(data) {
 				let options = {
 					url: '/brorder/list',
@@ -45,7 +45,7 @@
 						this.setOrderfirstid(res.list[0].id)
 						this.setOrderinfo(res.list[0])
 						uni.navigateTo({
-							url: `/pages/repaircar/repaircar`,
+							url: `/pages/repairPage/repaircar/repaircar`,
 							success: res => {},
 							fail: () => {},
 							complete: () => {}
@@ -64,7 +64,7 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-						this.setSn(this.carnum)
+						// this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						var datas = {
@@ -97,7 +97,9 @@
 					uni.scanCode({
 						onlyFromCamera: true,
 						success: (res) => {
-							this.setSn(res.result)
+							var bikesn=res.result.match(/\?bikesn=(.*)/)[1]
+							this.setSn(bikesn)
+							// this.setSn(res.result)
 							this.getcarinfo()
 						},
 						fail: (res) => {

@@ -99,18 +99,18 @@
 			itemCell,
 			uniPopup
 		},
-		computed: mapState(['faultinfo', 'orderfirstid', 'selectfaultobj','bikeinfo']),
+		computed: mapState(['faultinfo', 'orderfirstid', 'selectfaultobj', 'bikeinfo']),
 		onLoad(e) {
 			this.setFaultinfo('')
-			this.swapdata[0].val=this.bikeinfo.id
-			this.swapdata[1].val=this.$invstate(this.bikeinfo.inv_state)
+			this.swapdata[0].val = this.bikeinfo.id
+			this.swapdata[1].val = this.$invstate(this.bikeinfo.inv_state)
 			let sim_state = ''
 			if (this.bikeinfo.is_on_battery == 0) {
 				sim_state = '在线'
 			} else if (this.bikeinfo.is_on_battery == 1) {
 				sim_state = '离线'
 			}
-			this.swapdata[2].val=sim_state
+			this.swapdata[2].val = sim_state
 		},
 		onShow() {
 			let faultresult = ''
@@ -204,58 +204,67 @@
 					cancelText: '取消',
 					confirmText: '确认',
 					success: res => {
-						if(res.confirm){
-							let faultType = []
-							let faultDesc = []
-							let faultSubtype = []
-							if (type == 0) {
-								faultType = [0]
-								faultDesc = ['误报']
-								faultSubtype = []
-							} else {
-								faultType = [1]
-								for (let i = 0; i < this.selectfaultobj.length; i++) {
-									faultSubtype.push(this.selectfaultobj[i].val)
-									faultDesc.push(this.selectfaultobj[i].name)
-								}
-							}
-							let options = {
-								url: '/brorder/repair', //请求接口
-								method: 'POST', //请求方法全部大写，默认GET
-								context: '',
-								data: {
-									"bike_id": "test0001",
-									"order_id": this.orderfirstid,
-									"fault_types": faultType,
-									"fault_subtypes": faultSubtype,
-									"fault_descs": faultDesc
-								}
-							}
-							this.$httpReq(options).then((res) => {
-								if (res.status == 0) {
-									uni.showToast({
-										title: '处理成功',
-										mask: false,
-										duration: 3000
-									});
-									setTimeout(()=>{
-										uni.switchTab({
-											url: '/pages/tabbar/index/index'
-										});
-									},2500)
-									
-								} else {
-									uni.showToast({
-										title: res.message ? res.message : '处理失败',
-										mask: false,
-										duration: 3000
-									});
-								}
-							}).catch((err) => {
-								// 请求失败的回调
-								console.error(err, '捕捉')
+						if (res.confirm) {
+							uni.getLocation({ //获取当前的位置坐标
+								type: 'gcj02',
+								success: (res) => {
+									let faultType = []
+									let faultDesc = []
+									let faultSubtype = []
+									if (type == 0) {
+										faultType = [0]
+										faultDesc = ['误报']
+										faultSubtype = []
+									} else {
+										faultType = [1]
+										for (let i = 0; i < this.selectfaultobj.length; i++) {
+											faultSubtype.push(this.selectfaultobj[i].val)
+											faultDesc.push(this.selectfaultobj[i].name)
+										}
+									}
+									let options = {
+										url: '/brorder/repair', //请求接口
+										method: 'POST', //请求方法全部大写，默认GET
+										context: '',
+										data: {
+											"user_coordinate": [res.longitude, res.latitude],
+											"order_id": this.orderfirstid,
+											"fault_types": faultType,
+											"fault_subtypes": faultSubtype,
+											"fault_descs": faultDesc
+										}
+									}
+									this.$httpReq(options).then((res) => {
+										if (res.status == 0) {
+											uni.showToast({
+												title: '处理成功',
+												mask: false,
+												duration: 3000
+											});
+											setTimeout(() => {
+												uni.switchTab({
+													url: '/pages/tabbar/index/index'
+												});
+											}, 2500)
+
+										} else {
+											uni.showToast({
+												title: res.message ? res.message : '处理失败',
+												mask: false,
+												duration: 3000
+											});
+										}
+									}).catch((err) => {
+										// 请求失败的回调
+										console.error(err, '捕捉')
+									})
+								},
+								fail: (res) => {
+
+								},
 							})
-						}					
+
+						}
 					},
 					fail: () => {},
 					complete: () => {}

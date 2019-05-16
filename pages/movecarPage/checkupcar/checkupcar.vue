@@ -13,9 +13,14 @@
 					<button class='share-button-default checkup-button' @click='changbattery(1)'>车辆正常</button>
 				</view>
 			</view>
-			<view v-if="!showdetil" class='end-move-button'>
+			<view v-if="showshartmove" class='end-move-button'>
+				<button class='share-button-default margin-topbtn' @click='startmovecar'>开始挪车</button>
+				<!-- <button class='share-button-default margin-topbtn' @click='cantmovecar'>无法挪车</button> -->
+			</view>
+
+			<view v-if="showendmove" class='end-move-button'>
 				<button class='share-button-default margin-topbtn' @click='endmovecar'>完成挪车</button>
-				<button class='share-button-default margin-topbtn' @click='cantmovecar'>无法挪车</button>
+				<!-- <button class='share-button-default margin-topbtn' @click='cantmovecar'>无法挪车</button> -->
 			</view>
 
 		</view>
@@ -24,10 +29,14 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
-	import {mapState} from 'vuex'
+	import {
+		mapState
+	} from 'vuex'
 	export default {
 		data() {
 			return {
+				showshartmove: false,
+				showendmove: false,
 				showdetil: true,
 				borders: true,
 				orderid: '',
@@ -56,12 +65,12 @@
 		components: {
 			itemCell
 		},
-		computed:mapState(['bikeinfo']),
-		onLoad(){
-			this.swapdata[0].val=this.bikeinfo.id
-			this.swapbatterydata[0].val=this.bikeinfo.last_repark_order_end_time
-			this.swapbatterydata[1].val='xxx'
-			this.swapbatterydata[2].val='xxx'
+		computed: mapState(['bikeinfo']),
+		onLoad() {
+			this.swapdata[0].val = this.bikeinfo.id
+			this.swapbatterydata[0].val = this.bikeinfo.last_repark_order_end_time
+			this.swapbatterydata[1].val = 'xxx'
+			this.swapbatterydata[2].val = 'xxx'
 		},
 		methods: {
 			gocarcenter() {
@@ -72,76 +81,61 @@
 					complete: () => {}
 				});
 			},
-			endmovecar(){
+			endmovecar() {
 				uni.navigateTo({
-					url: `/pages/map/map?type=3.1&&name=挪车&&text=全部车站`,
+					url: `/pages/map/map?type=3.1&&name=挪车&&text=全部车站&&endmove=true&&orderid=${this.orderid}`,
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
 				});
-				// this.endmovecars()
 			},
 			// 开始挪车
 			startmovecar() {
-				var options = {
-					url: '/rporder/submit', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						"city_id": "35000",
-						"channel": "xxx"
+				this.showshartmove = false
+				this.showendmove = true
+				uni.getLocation({ //获取当前的位置坐标
+					type: 'gcj02',
+					success: (res) => {
+						console.log('位置信息', res.longitude, res.latitude)
+						var options = {
+							url: '/rporder/submit', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"bike_id": this.bikeinfo.id,
+								"user_coordinate": [res.longitude, res.latitude],
+								"channel": "xxx"
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('开始订单', res)
+							if (res.status == 0) {
+								this.orderid = res.info.id
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '该车不可挪',
+									mask: false,
+									duration: 1500
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: (res) => {
+						console.log('fail', res)
 					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('开始订单', res)
-					if (res.status == 0) {
-						this.orderid = res.info.id
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
-			},
-			// 结束挪车
-			endmovecars() {
-				var options = {
-					url: '/rporder/finish', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						"city_id": "0591",
-						"order_id": this.orderid
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('挪车', res)
-					if (res.status == 0) {
-						uni.showToast({
-							title: '挪车提交成功',
-							mask: false,
-							duration: 3000
-						});
-					}else{
-						uni.showToast({
-							title: res.message?res.message:'挪车失败',
-							mask: false,
-							duration: 3000
-						});
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
+				});
 			},
 			changbattery(type) {
 				if (type == 1) {
 					this.showdetil = false
-					this.startmovecar()
-				}else{
+					this.showshartmove = true
+					// this.startmovecar()
+				} else {
 					uni.navigateTo({
 						url: '/pages/carBigCenter/breakdowncar/breakdowncar',
 						success: res => {},
@@ -196,7 +190,8 @@
 					margin: 0 30upx;
 				}
 			}
-			.margin-topbtn{
+
+			.margin-topbtn {
 				margin: 20upx 0 0 0;
 			}
 

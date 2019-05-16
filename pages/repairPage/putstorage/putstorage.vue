@@ -50,15 +50,15 @@
 		components: {
 			itemCell
 		},
-		computed: mapState(['bikeinfo', 'bikeid', 'orderfirstid', 'putstorageindex', 'warehoselist','orderinfo']),
+		computed: mapState(['bikeinfo', 'bikeid', 'orderfirstid', 'putstorageindex', 'warehoselist', 'orderinfo']),
 		onLoad() {
 			// this.getcarinfo()
 			// 车辆编码
 			this.swapdata[0].val = this.bikeinfo.id
 			this.swapbatterydata2[0].val = this.orderinfo.create_time
-			var desc=''
-			for(let i=0;i<this.orderinfo.report_fault_descs.length;i++){
-				desc+=this.orderinfo.report_fault_descs[i]
+			var desc = ''
+			for (let i = 0; i < this.orderinfo.report_fault_descs.length; i++) {
+				desc += this.orderinfo.report_fault_descs[i]
 			}
 			this.swapbatterydata2[1].val = desc
 			this.swapbatterydata2[2].val = this.orderinfo.creator_name
@@ -119,36 +119,48 @@
 				});
 			},
 			putstorage() {
-				var options = {
-					url: '/brorder/recall', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						"order_id": this.orderfirstid,
-						"warehouse_id": this.warehoselist[this.putstorageindex].id
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('入库状态', res)
-					if (res.status == 0) {
-						uni.showToast({
-							title: '入库成功！',
-							mask: false,
-							duration: 2500
-						});
-					} else {
-						uni.showToast({
-							title: res.message ? res.message : '入库失败！',
-							mask: false,
-							duration: 2500
-						});
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
+				uni.getLocation({
+					type: 'wgs84',
+					success: res => {
+						var options = {
+							url: '/brorder/recall', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"order_id": this.orderfirstid,
+								"warehouse_id": this.warehoselist[this.putstorageindex].id,
+								"user_coordinate": [
+									res.longitude, res.latitude
+								]
+
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('入库状态', res)
+							if (res.status == 0) {
+								uni.showToast({
+									title: '入库成功！',
+									mask: false,
+									duration: 2500
+								});
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '入库失败！',
+									mask: false,
+									duration: 2500
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+
 			},
 		}
 	}
