@@ -188,6 +188,32 @@
             "path" : "pages/repairPage/onlinerepair/onlinerepair",
             "style" : {}
         }
+        ,{
+            "path" : "pages/stockPage/stockmanage/stockmanage",
+            "style" : {
+				"navigationBarTitleText": "库存管理"
+			}
+        }
+        ,{
+            "path" : "pages/movecarPage/movecarinfo/movecarinfo",
+            "style" : {
+				"navigationBarTitleText": "挪车"
+			}
+        }
+        ,{
+            "path" : "pages/movecarPage/movecardetil/movecardetil",
+            "style" : {
+				"navigationBarTitleText": "挪车"
+			}
+        }
+        ,{
+            "path" : "pages/maintainPage/normalmaintain/normalmaintain",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/maintainPage/abnormalmaintain/abnormalmaintain",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -199,7 +225,7 @@
 		"borderStyle": "white",
 		"backgroundColor": "#FFFFFF",
 		"color": "#8F8F94",
-		"selectedColor": "#F6C700",
+		"selectedColor": "#F5A623",
 		"list": [{
 				"pagePath": "pages/tabbar/index/index",
 				"iconPath": "static/image/renwu@2x(1).png",

@@ -6,19 +6,20 @@
 					<view class='view-border-letf'>日期</view>
 					<view class='view-border-letf'>挪车数</view>
 					<view class='view-border-letf'>有效数</view>
-					<view>合格数</view>
+					<!-- <view>合格数</view> -->
 					<view>总绩效</view>
 				</view>
 			</view>
 			<scroll-view class='listscrow' lower-threshold='50' scroll-y @scrolltolower="loadMore">
-				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata">
-					<view>{{item.time}}</view>
-					<view class='view-border-letf'>{{item.movenum}}</view>
-					<view class='view-border-letf'>{{item.yxnum}}</view>
-					<view class='view-border-letf'>{{item.hgnum}}</view>
-					<view class='view-border-letf'>{{item.jxnum}}</view>
+				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" @click="gocarinfo(item)">
+					<view>{{item.date}}</view>
+					<view class='view-border-letf'>{{item.total_count}}</view>
+					<view class='view-border-letf'>{{item.valid_count}}</view>
+					<view class='view-border-letf'>{{item.grade_sum}}</view>
+					<!-- <view class='view-border-letf'>{{item.jxnum}}</view> -->
 				</view>
-				<uni-load-more :loadingType="resquestState" ></uni-load-more>
+				<view class='bottom-state'>无数据了！</view>
+				<!-- <uni-load-more :loadingType="resquestState" ></uni-load-more> -->
 			</scroll-view>
 
 		</view>
@@ -31,6 +32,9 @@
 		data() {
 			return {
 				switchloockdata: [],
+				pageindex:1,
+				pagenum:20,
+				allnumber:100,
 				resquestState: 0
 			}
 		},
@@ -38,34 +42,70 @@
 			UniLoadMore
 		},
 		methods: {
-			loadMore() {
-				if (this.resquestState < 2) {
-					this.pageindex += 1
-					this.getartlist(this.pageindex, 10, 'add')
-				}
+			gocarinfo(item){
+				console.log(666)
+				uni.navigateTo({
+					url: '/pages/movecarPage/movecarinfo/movecarinfo',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
 			},
-			getartlist(){
-				let datainfo = {}
-				for (let i = 0; i < 20; i++) {
-					datainfo.time = '4-20'
-					datainfo.movenum = '2'
-					datainfo.yxnum = '1'
-					datainfo.hgnum = '0'
-					datainfo.jxnum = '0'
-					this.switchloockdata.push(datainfo)
+			loadMore() {
+				// if (this.resquestState < 2) {
+				// 	console.log(33,this.pageindex,parseInt(parseInt(this.allnumber)/this.pageindex)+1)
+				// 	if(this.pageindex<parseInt(parseInt(this.allnumber)/this.pageindex)+1){
+				// 		// this.getartlist(this.pageindex, 10, 'add')
+				// 		this.openbattery(this.pageindex,this.pagenum)
+				// 		this.pageindex += 1
+				// 	}else{
+				// 		// this.resquestState = res.data.list.length == 10 ? 0 : 2
+				// 		this.resquestState=2
+				// 		console.log('到底了！！！！')
+				// 	}					
+				// }
+			},
+			// 挪车记录
+			openbattery(page,num) {
+				var options = {
+					url: '/rporder/user_monthly_stat', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"user_id": "10000"
+					}
 				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('挪车记录', res)
+					this.allnumber=res.total
+					if (res.status == 0) {
+						this.switchloockdata=res.info
+						// let datainfo = {}
+						// // this.switchloockdatathis.switchloockdata.concat(res.list)
+						// for (let i = 0; i < res.list.length; i++) {
+						// 	datainfo.time = res.list[i].start_time
+						// 	datainfo.action = (res.list[i].type==10)?'开锁':'关锁'
+						// 	datainfo.qudao = res.list[i].channel?res.list[i].channel:'无'
+						// 	datainfo.status = (res.list[i].success==0)?'成功':'失败'
+						// 	datainfo.netstatus = (res.list[i].is_online==0)?'在线':'离线'
+						// 	datainfo.username = res.list[i].user_name
+						// 	datainfo.phone = res.list[i].user_phone
+						// 	datainfo.errormsg = res.list[i].error_msg
+						// 	this.switchloockdata.push(datainfo)
+						// }
+					} else {
+						
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 		},
 		onLoad() {
-			let datainfo = {}
-			for (let i = 0; i < 20; i++) {
-				datainfo.time = '4-21'
-				datainfo.movenum = '1'
-				datainfo.yxnum = '1'
-				datainfo.hgnum = '1'
-				datainfo.jxnum = '1'
-				this.switchloockdata.push(datainfo)
-			}
+			this.openbattery(this.pageindex,this.pagenum)
 		}
 	}
 </script>
@@ -98,7 +138,12 @@
 			.flexd-posion {
 				background-color: rgb(225, 225, 225);
 			}
-
+            .bottom-state{
+				text-align: center;
+				margin-top: 10upx;
+				font-size: 30upx;
+				color: rgb(100,100,100)
+			}
 			.view-border-bottom {
 				border-bottom: 1upx solid rgb(235, 235, 235);
 			}

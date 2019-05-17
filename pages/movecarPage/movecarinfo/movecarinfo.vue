@@ -4,10 +4,10 @@
 
 			<view class='flexd-posion'>
 				<view class='view-flexs switch-head'>
-					<view>时间</view>
-					<view class='view-border-letf'>动作</view>
-					<view class='view-border-letf'>渠道</view>
-					<view class='view-border-letf'>结果</view>
+					<view>车辆编号</view>
+					<view class='view-border-letf'>是否有效</view>
+					<view class='view-border-letf'>备注</view>
+					<!-- <view class='view-border-letf'>结果</view> -->
 				</view>
 			</view>
 
@@ -16,7 +16,7 @@
 					<view>{{item.time}}</view>
 					<view class='view-border-letf'>{{item.action}}</view>
 					<view class='view-border-letf'>{{item.qudao}}</view>
-					<view class='view-border-letf' :class="{'right-view':item.status=='正常','wrong-view':item.status=='异常'}">{{item.status}}</view>
+					<!-- <view class='view-border-letf' :class="{'right-view':item.status=='正常','wrong-view':item.status=='异常'}">{{item.status}}</view> -->
 				</view>
 				<uni-load-more :loadingType="resquestState"></uni-load-more>
 			</scroll-view>
@@ -66,12 +66,18 @@
 				
 			},
 			detilpop(item,i,type){
-				this.type=type
-				this.itemcells[0].val=item.time
-				this.itemcells[1].val=item.netstatus
-				this.itemcells[2].val=item.username
-				this.itemcells[3].val=item.phone
-				this.itemcells[4].val=item.errormsg
+				// this.type=type
+				// this.itemcells[0].val=item.time
+				// this.itemcells[1].val=item.netstatus
+				// this.itemcells[2].val=item.username
+				// this.itemcells[3].val=item.phone
+				// this.itemcells[4].val=item.errormsg
+				uni.navigateTo({
+					url: '/pages/movecarPage/movecardetil/movecardetil',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
 			},
 			loadMore() {
 				if (this.resquestState < 2) {

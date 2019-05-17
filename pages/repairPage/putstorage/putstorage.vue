@@ -132,7 +132,6 @@
 								"user_coordinate": [
 									res.longitude, res.latitude
 								]
-
 							}
 						}
 						this.$httpReq(options).then((res) => {

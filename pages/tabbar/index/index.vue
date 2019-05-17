@@ -23,7 +23,6 @@
 			return {
 				taskdata: [{
 						name: '换电',
-						img: '',
 						url: '/pages/map/map',
 						text:'全部待换电',
 						src:'../../../static/image/huan_dian.png',
@@ -31,7 +30,6 @@
 					},
 					{
 						name: '维修',
-						img: '',
 						url: '/pages/repairlist/repairlist',
 						text:'全部故障车辆',
 						src:'../../../static/image/wei_xiu.png',
@@ -39,7 +37,6 @@
 					},
 					{
 						name: '保养',
-						img: '',
 						url: '/pages/repairlist/repairlist',
 						text:'待保养车辆',
 						src:'../../../static/image/bao_yang.png',
@@ -47,21 +44,13 @@
 					},
 					{
 						name: '单个挪车',
-						img: '',
 						url: '/pages/repairlist/repairlist',
 						text:'全部车站',
 						src:'../../../static/image/nuo_che.png',
 						index:3
 					},
-					// {
-					// 	name: '批量挪车',
-					// 	img: '',
-					// 	url: '/pages/repairlist/repairlist',
-					// 	text:''
-					// },
 					{
 						name: 'ECU换绑',
-						img: '',
 						url: '/pages/map/map',
 						text:'',
 						src:'../../../static/image/ecu_huanban.png',
@@ -69,21 +58,13 @@
 					},
 					{
 						name: 'ECU绑定',
-						img: '',
 						url: '/pages/map/map',
 						text:'',
 						src:'../../../static/image/ban_ding.png',
 						index:5,
 					},
-					// {
-					// 	name: '换电批次',
-					// 	img: '',
-					// 	url: '/pages/map/map',
-					// 	text:''
-					// },
 					{
 						name: '找不到车',
-						img: '',
 						url: '/pages/map/map',
 						text:'',
 						src:'../../../static/image/zhao_budao.png',
@@ -91,7 +72,6 @@
 					},
 					{
 						name: '批量开关锁',
-						img: '',
 						url: '/pages/map/map',
 						text:'',
 						src:'../../../static/image/kai_guan.png',
@@ -99,15 +79,13 @@
 					},
 					{
 						name: '库存管理',
-						img: '',
-						url: '/pages/map/map',
+						url: '/pages/repairlist/repairlist',
 						text:'',
 						src:'../../../static/image/ku_cun.png',
 						index:8
 					},
 					{
 						name: '车站',
-						img: '',
 						url: '/pages/map/map',
 						text:'全部车站',
 						src:'../../../static/image/che_zhan.png',
@@ -115,7 +93,6 @@
 					},
 					{
 						name: '违章',
-						img: '',
 						url: '/pages/map/map',
 						text:'',
 						src:'../../../static/image/wei_zhang.png',
@@ -123,7 +100,6 @@
 					},
 					{
 						name: '车辆排查',
-						img: '',
 						url: '/pages/map/map',
 						text:'',
 						src:'../../../static/image/pai_cha.png',
@@ -131,7 +107,6 @@
 					},
 					{
 						name: '车辆换绑',
-						img: '',
 						url: '/pages/map/map',
 						text:'',
 						src:'../../../static/image/huan_ban.png',

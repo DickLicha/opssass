@@ -4,7 +4,6 @@
 		<view v-if="showcorverview.head" style='height: 80upx;width:100%;background-color:rgba(100,100,100,.5);'>
 			<baseheader :title="headviewtext" @show='showMapSelect' :hasBack='true' :xialajiantou='true'></baseheader>
 		</view>
-
 		<view class="page-body">
 			<view class="page-section page-section-gap">
 				<map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
@@ -76,7 +75,7 @@
 			baseImg,
 			uniPopup
 		},
-		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr']),
+		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr','bikeinfo']),
 		data() {
 			return {
 				endmove: false,
@@ -160,11 +159,11 @@
 				}],
 				tempjindu: '',
 				tempweidu: '',
-				orderid:'',
+				orderid: '',
 			};
 		},
 		onLoad(e) {
-			this.orderid=e.orderid
+			this.orderid = e.orderid
 			this.endmove = e.endmove
 			this.headviewtext = e.text
 			this.type = e.type
@@ -191,29 +190,14 @@
 					this.nearbyshortpower(100, this.longitude, this.latitude)
 					break;
 				case '0.1':
+				    console.log('bikeinfo',this.bikeinfo)
+					this.cartrack(this.bikeinfo.last_order_id)
 					// 设置corver初始状态
 					this.showcorverview = {
 							head: false,
 							bottom: false
 						},
-						// 多边形
-						this.polyline[0].points = [{
-								latitude: 26.0528,
-								longitude: 119.31414
-							},
-							{
-								latitude: 26.063,
-								longitude: 119.325
-							},
-							{
-								latitude: 26.059,
-								longitude: 119.385
-							},
-							{
-								latitude: 26.0528,
-								longitude: 119.31414
-							},
-						]
+						// 多边形						
 					this.covers = []
 					break;
 				case '1.1':
@@ -438,45 +422,45 @@
 			// 结束挪车
 			endmovecars() {
 				uni.getLocation({ //获取当前的位置坐标
-						type: 'gcj02',
-						success: (res) => {
-							var options = {
-								url: '/rporder/finish', //请求接口
-								method: 'POST', //请求方法全部大写，默认GET
-								context: '',
-								data: {
-									"order_id": this.orderid,
-									"user_coordinate": [
-										res.longitude, res.latitude
-									]
-								}
+					type: 'gcj02',
+					success: (res) => {
+						var options = {
+							url: '/rporder/finish', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"order_id": this.orderid,
+								"user_coordinate": [
+									res.longitude, res.latitude
+								]
 							}
-							this.$httpReq(options).then((res) => {
-								// 请求成功的回调
-								// res为服务端返回数据的根对象
-								console.log('挪车', res)
-								if (res.status == 0) {
-									uni.showToast({
-										title: '挪车成功',
-										mask: false,
-										duration: 3000
-									});
-								} else {
-									uni.showToast({
-										title: res.message ? res.message : '挪车失败',
-										mask: false,
-										duration: 3000
-									});
-								}
-							}).catch((err) => {
-								// 请求失败的回调
-								console.error(err, '捕捉')
-							})
-						},
-						fail: (res) => {
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('挪车', res)
+							if (res.status == 0) {
+								uni.showToast({
+									title: '挪车成功',
+									mask: false,
+									duration: 3000
+								});
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '挪车失败',
+									mask: false,
+									duration: 3000
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: (res) => {
 
-						},
-					})			
+					},
+				})
 			},
 			// 提交创建车站
 			finshCreat() {
@@ -626,6 +610,36 @@
 					console.error(err, '捕捉')
 				})
 			},
+			// 车辆轨迹
+			cartrack(orderid) {
+				var options = {
+					url: '/urorder/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"order_id": orderid
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('车辆轨迹', res)
+					if (res.status == 0) {
+						var temparr=[]
+						for(let i=0;i<res.info.track.length;i++){
+							var jwd={
+								longitude:res.info.track[i][0],
+								latitude:res.info.track[i][1]
+							}
+							temparr.push(jwd)
+						}
+						this.polyline[0].points=temparr
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			// 附近故障的车辆
 			nearbyfaultcar(longitude, latitude) {
 				var options = {
@@ -662,13 +676,12 @@
 				})
 			},
 			scanCode(type) {
-				// this.dowhat()
 				if (type == 1) {
 					uni.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
 							console.log('saoma', res)
-							var bikesn=res.result.match(/\?bikesn=(.*)/)[1]
+							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 							this.setSn(bikesn)
 							this.getcarinfo()
 							// 入库和维修要先请求订单信息
@@ -694,7 +707,6 @@
 						},
 						fail: res => {},
 						complete: res => {
-
 						}
 					});
 				} else {
@@ -732,32 +744,15 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-						this.setSn(this.carnum)
+						// this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						uni.navigateTo({
-							// url: '/pages/swapbattery/swapbattery',
 							url: this.urls,
 							success: res => {},
 							fail: () => {},
 							complete: () => {}
 						});
-						// if (this.type == '3.1') {
-						// 	uni.navigateTo({
-						// 		url: '/pages/movecarPage/checkupcar/checkupcar',
-						// 		success: res => {},
-						// 		fail: () => {},
-						// 		complete: () => {}
-						// 	});
-						// } else {
-						// 	uni.navigateTo({
-						// 		// url: '/pages/swapbattery/swapbattery',
-						// 		url: this.urls,
-						// 		success: res => {},
-						// 		fail: () => {},
-						// 		complete: () => {}
-						// 	});
-						// }
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',

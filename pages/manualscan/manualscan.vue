@@ -65,7 +65,43 @@
 				})
 			},
 			go() {
-				this.carinfo()				
+				if(this.type=='8'){
+					this.throwin(this.carnum)
+				}else{
+					this.carinfo()
+				}								
+			},
+			// 投放市场
+			throwin(id) {
+				var options = {
+					url: '/binv/launch', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"bike_id":id 
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('投放信息',res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: '投放成功',
+							mask: false,
+							duration: 1500
+						});
+					} else {
+						uni.showToast({
+							title: res.message?res.message:'投放失败',
+							mask: false,
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 			// 车辆信息
 			carinfo() {
