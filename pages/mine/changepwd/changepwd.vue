@@ -1,9 +1,18 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<item-cell :itemdata="carcenterdata1" :type='2' :border='true'></item-cell>
-			<item-cell :itemdata="carcenterdata2" :type='4' :border='true' @itemclick='molidpwd'></item-cell>
-			<button class='share-button-default login-out' type='primary' @click="loginout">退出登录</button>
+			<view class='center-view'>
+				<view class='change-view'>
+					<input class='old-pwd' type="text" placeholder="请输入原密码">
+				</view>
+				<view class='change-view'>
+					<input class='old-pwd' type="text" placeholder="输入新密码(8-20位密码,需要包含数字,字母')">
+				</view>
+				<view class='change-view'>
+					<input class='old-pwd' type="text" placeholder="重复输入新密码">
+				</view>
+			</view>
+			<button class='share-button-default login-out' type='primary' @click="loginout">确定修改</button>
 		</view>
 	</view>
 </template>
@@ -99,14 +108,6 @@
 			}
 		},
 		methods: {
-			gocarcenter(item) {
-				uni.navigateTo({
-					url: item.url,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
-			},
 			molidpwd(){
 				uni.navigateTo({
 					url: '/pages/mine/changepwd/changepwd',
@@ -144,6 +145,18 @@
 		.view-common {
 			margin: 10upx 22upx;
 			height:100vh;
+			.center-view{
+				margin-top: 30upx;
+			}
+			.change-view{
+				margin-top: 28upx;
+				border-bottom: 1upx solid rgb(200,200,200);
+				height: 70upx;
+				/* background-color: white; */
+				.old-pwd{
+					padding-left: 20upx;
+				}
+			}
 			.login-out{
 				position: fixed;
 				bottom: 20upx;

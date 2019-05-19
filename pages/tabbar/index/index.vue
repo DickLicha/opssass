@@ -37,7 +37,8 @@
 					},
 					{
 						name: '保养',
-						url: '/pages/repairlist/repairlist',
+						// url: '/pages/repairlist/repairlist',
+						url: '/pages/map/map',
 						text:'待保养车辆',
 						src:'../../../static/image/bao_yang.png',
 						index:2

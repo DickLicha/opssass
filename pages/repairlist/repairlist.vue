@@ -96,8 +96,6 @@
 						success:res=>{
 							var bikesn=res.result.match(/\?bikesn=(.*)/)[1]
 							this.throwin(bikesn)
-							// this.setSn(bikesn)
-							// this.getcarinfo()
 						},
 						fail:res=>{
 							
@@ -148,6 +146,7 @@
 				case '1':
 					this.repairlist = [{
 							name: '维修入库',
+							val:'',
 							url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
 						},
 						// {
@@ -156,6 +155,7 @@
 						// },
 						{
 							name: '修车',
+							val:'',
 							// url: '/pages/map/map?text=全部故障车辆&type=1.3&name=维修',
 							url: '/pages/repairPage/repairenter/repairenter',
 						},
@@ -165,10 +165,12 @@
 					this.repairlist = [{
 							name: '常规保养',
 							val: '',
+							url:'',
 						},
 						{
 							name: '异常保养',
 							val: '',
+							url:''
 						}
 					]
 					break;
@@ -178,11 +180,6 @@
 							val: '',
 							url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
 						},
-						// {
-						// 	name: '机动挪车',
-						// 	val: '',
-						// 	url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
-						// },
 						{
 							name: '挪车记录',
 							val: '',

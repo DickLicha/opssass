@@ -208,11 +208,19 @@
         }
         ,{
             "path" : "pages/maintainPage/normalmaintain/normalmaintain",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "保养"
+			}
         }
         ,{
             "path" : "pages/maintainPage/abnormalmaintain/abnormalmaintain",
             "style" : {}
+        }
+        ,{
+            "path" : "pages/mine/changepwd/changepwd",
+            "style" : {
+				"navigationBarTitleText": "修改密码"
+			}
         }
     ],
 	"globalStyle": {

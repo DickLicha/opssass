@@ -190,7 +190,6 @@
 					this.nearbyshortpower(100, this.longitude, this.latitude)
 					break;
 				case '0.1':
-				    console.log('bikeinfo',this.bikeinfo)
 					this.cartrack(this.bikeinfo.last_order_id)
 					// 设置corver初始状态
 					this.showcorverview = {
@@ -217,6 +216,12 @@
 						},
 					]
 					break;
+				case '2':
+				this.showcorverview = {
+						head: false,
+						bottom: true
+					}
+					break
 				case '3.1':
 					this.scanbuttonname = '扫码挪车'
 					this.nearbymovecar(this.longitude, this.latitude, '*')
@@ -727,6 +732,9 @@
 					case '1.1':
 						this.urls = '/pages/repairPage/putstorage/putstorage'
 						break;
+					case '2':
+						this.urls = '/pages/maintainPage/normalmaintain/normalmaintain'
+						break;	
 					case '3.1':
 						this.urls = '/pages/movecarPage/checkupcar/checkupcar'
 						break;
