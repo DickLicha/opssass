@@ -25,6 +25,7 @@ const store = new Vuex.Store({
 		latitude: '28',
 		mapcovers:[],
 		imgarr:[],
+		violationsInfo:{},
 	},
 	mutations: {
 		login(state, provider) {
@@ -79,6 +80,9 @@ const store = new Vuex.Store({
 		},
 		setImgarr(state, imgarr) {
 			state.imgarr = imgarr
+		},
+		setViolationsInfo(state, violationsInfo){
+			state.violationsInfo = violationsInfo;
 		},
 
 	},

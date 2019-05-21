@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="head-view">
+		<view class="head-view" @click="headClick()">
 			<view class="head-name">{{headTitle}}</view>
 			<image class="head-arrow" src="/static/image/right_arrow.png" mode=""></image>
 		</view>
@@ -21,33 +21,47 @@
 				></ruiDataPicker>
 				<image class="cell-arrow" src="/static/image/right_arrow.png" mode=""></image>
 			</view>
-			<input class="input-view" type="text" v-model="item.content"  v-else=""/>
+			<input class="input-view" type="text" v-model="item.content" disabled="" v-else=""/>
 		</view>
 		<view class="photo-view">
-			<image 
-			class="image-content" 
-			:src="item" 
-			mode="scaleToFill" 
-			v-for="(item, index) in imageArr" 
-			:key="index" 
-			@click="imageClick(index,item)"
-			>
-				<image class="delete-image-view" src="/static/image/delete_image_icon.png" mode="" v-show="true"></image>
-			</image>
-			
+			<view class="photo-item" v-for="(item, index) in imageArr" :key="index" >
+				<image 
+				class="image-content" 
+				:src="item" 
+				mode="scaleToFill" 
+				@click="imageClick(index,item)"
+				>
+				</image>
+				<image class="delete-image-view" 
+				src="/static/image/delete_image_icon.png" 
+				mode="" 
+				v-show="item != addImagePath"
+				@click="deleteImage(index)"
+				></image>
+			</view>
 		</view>
+		<view class="remark-view">
+			<textarea class="area-view" value="" placeholder="备注" v-model="remark" />
+		</view>
+		<view class="submit-btn" @click="uploadImage()"> 提交 </view>
 	</view>
 </template>
 
 <script>
 	import ruiDataPicker from "@/components/rattenking-dtpicker/rattenking-dtpicker.vue"
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		components:{
 			ruiDataPicker,
 		},
 		data() {
 			return {
+				bikeInfo: {},
 				headTitle: "用户还车地点吻合",
+				remark: "",
 				dataList:[
 					{"content":"车辆编码：801313560"},
 					{"content":"13655999000"},
@@ -57,22 +71,173 @@
 					{"content":"江西省景德镇市乐平市名电路1号"},
 				],
 				imageArr: [
-					
+				],
+				postImageArr : [
 				],
 				addImagePath: "/static/image/add_image.png",
 			}
 		},
 		onLoad() {
+			this.getcarinfo();
 			this.dataList[4].content = this.curentTime();
 			this.imageArr.push(this.addImagePath);
 		},
+		onUnload() {
+			this.setViolationsInfo({});
+		},
+		onShow() {
+			console.log(this.violationsInfo);
+			if (this.violationsInfo.itemContent == null || this.violationsInfo.itemContent == "") {
+				console.log("选择违章类型")
+				this.dataList[3].content = "选择违章类型";
+			}else{
+				var content = "";
+				if (this.violationsInfo.tapItem == 0) {
+					content = content + this.violationsInfo.itemContent + "/" + this.violationsInfo.moreItemContent;
+					if (this.violationsInfo.moreTapItem == 0) {
+						content = content //+ "(" + this.violationsInfo.secondContent + ")"
+					}
+				}else if(this.violationsInfo.tapItem == 7){
+					content = this.violationsInfo.itemContent + "(" + this.violationsInfo.remark + ")"
+				}else{
+					content = this.violationsInfo.itemContent //+ "(" + this.violationsInfo.secondContent + ")"
+				}
+				this.dataList[3].content = content;
+			}
+		},
+		computed: mapState(['violationsInfo','sn','directinfo']),
 		methods: {
+			...mapMutations(['setViolationsInfo','setSn']),
+			// 获取车辆信息
+			getcarinfo() {
+				console.log("开始请求");
+				this.setSn("08910127");
+				var _this = this;
+				var options = {
+					url: '/bike/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('车辆信息',res)
+					if (res.status == 0) {
+						_this.bikeInfo = res.info;
+						// 剩余电量
+						_this.dataList[0].content = "车辆编号：" + res.info.sn;           
+						_this.dataList[1].content = "电话号码：" + res.info.last_order_oper_phone;
+						_this.dataList[2].content = "用户：" + res.info.last_order_oper_name;
+						_this.dataList[5].content = res.info.address;
+						
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			headClick(){
+				uni.navigateTo({
+					url: "../userUseCarMessage/userUseCarMessage?order_id=" + this.bikeInfo.last_order_id,
+				})
+			},
 			cellClick(e){
 				if (e == 3) {
-					
+					uni.navigateTo({
+						url: "../chooseViolationsType/chooseViolationsType",
+					})
 				}else{
 					
 				}
+			},
+			uploadImage(){
+				if (this.violationsInfo.itemContent == null || this.violationsInfo.itemContent == "") {
+					// console.log("选择违章类型")
+					// this.dataList[3].content = "选择违章类型";
+					uni.showToast({
+						title: "请选择类型",
+						icon: "none"
+					});
+					return;
+				}
+				// console.log(e);
+				uni.showLoading({
+					title: "正在上传图片..."
+				})
+				if (this.postImageArr.length < this.imageArr.length) {
+					if (this.imageArr[this.postImageArr.length] != this.addImagePath){
+						uni.uploadFile({
+							url: this.$resourcesurl()+'/upload',
+							filePath: this.imageArr[this.postImageArr.length],
+							header: {
+								'content-type': 'multipart/form-data',
+							},
+							name: 'uploadfile',
+							formData: {
+								'scheme': 1
+							},
+							success: (res) => {					
+								var parsedata=JSON.parse(res.data)
+								console.log('数据类型', typeof(parsedata),parsedata);
+								console.log('数据类型1', parsedata.data);
+								if(parsedata.status==0){
+									console.log('this.directinfo',this.directinfo)
+									var imgs = this.directinfo.res_server_url+'/'+parsedata.data.oss_name
+									console.log('imgs',imgs)
+									this.postImageArr.push(imgs);
+									this.uploadImage();
+								}else{
+									uni.showToast({
+										title: parsedata.msg?parsedata.msg:'文件上传失败',
+										mask: false,
+										duration: 1500
+									});
+								}
+							}
+						});
+					}else{
+						uni.hideLoading();
+						this.submitClick();
+					}
+				}else{
+					uni.hideLoading();
+					this.submitClick();
+				}
+			},
+			submitClick(){
+				var options = {
+					url: '/urviolation/submit', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"bike_id": this.bikeInfo.id,
+						"violation_type": this.violationsInfo.tapItem,
+						"violation_remark": this.remark,
+						"imgs": this.postImageArr,
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('提交：',res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: "提交成功",
+							icon: "none"
+						})
+					}else{
+						uni.showToast({
+							title: res.message,
+							icon: "none"
+						})
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 			bindChange(e){
 				this.dataList[4].content = e
@@ -88,7 +253,8 @@
 						itemList: ["拍照","从手机相册选择"],
 						success(e) {
 							var sourceType = []
-							let count = 5 - _this.imageArr.length;
+							// let count = 5 - _this.imageArr.length;
+							let count = 1;
 							console.log(e)
 							if (e.tapIndex == 0) {
 								sourceType = ["camera"]
@@ -102,6 +268,7 @@
 								sourceType: sourceType,
 								success(e) {
 									console.log(JSON.stringify(e.tempFilePaths));
+									// _this.uploadImage(e.tempFilePaths[0]);
 									var tempArr = []
 									for (var i = 0; i < _this.imageArr.length-1; i++) {
 										tempArr.push(_this.imageArr[i]);
@@ -113,11 +280,17 @@
 										tempArr.push(_this.addImagePath);
 									}
 									_this.imageArr = tempArr;
-									console.log(_this.imageArr, tempArr);
+									// console.log(_this.imageArr, tempArr);
 								}
 							})
 						}
 					}) 
+				}
+			},
+			deleteImage(e){
+				this.imageArr.splice(e,1);
+				if (this.imageArr[this.imageArr.length-1] != this.addImagePath) {
+					this.imageArr.push(this.addImagePath);
 				}
 			},
 		    curentTime(){ 
@@ -208,21 +381,56 @@
 		}
 	}
 	.photo-view{
+		position: relative;
 		display: flex;
+		align-items: flex-start;
 		margin-top: 30upx;
 		height: auto;
 		width: 100%;
-		.image-content{
-			margin-top: 20upx;
-			width: 140upx;
-			height: 140upx;
-			margin-left: 30upx;
+		// background-color: antiquewhite;
+		.photo-item{
+			position: relative;
+			.image-content{
+				margin-top: 20upx;
+				width: 140upx;
+				height: 140upx;
+				margin-left: 30upx;
+				// background-color: blanchedalmond;
+			}
 			.delete-image-view{
-				z-index: 10;
-				margin-left: 150upx;
-				width: 50upx;
-				height: 50upx;
+				// margin-top: -100upx;
+				// margin-left: -30upx;
+				position: absolute;
+				top: 10upx;
+				left: 140upx;
+				width: 40upx;
+				height: 40upx;
+				// background-color: cadetblue;
 			}
 		}
+	}
+	.remark-view{
+		margin-top: 20upx;
+		margin-left: 20upx;
+		margin-right: 20upx;
+		height: 200upx;
+		border: 2upx solid gold;
+		.area-view{
+			margin-top: 20upx;
+			margin-left: 20upx;
+			// margin-right: 20upx;
+			width: calc(100% - 40upx);
+			height: 160upx;
+			// background-color: red;
+		}
+	}
+	.submit-btn{
+		margin: 40upx 20upx 40upx 20upx;
+		height: 88upx;
+		border-radius: 6upx;
+		background-color: gold;
+		text-align: center;
+		line-height: 88upx;
+		font-size: 36upx;
 	}
 </style>
