@@ -8,85 +8,49 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
-	import {mapState,mapMutations} from 'vuex'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		components: {
 			itemCell
 		},
+		computed:mapState(['directinfo', 'bikeinfo','removecaritem']),
 		onLoad() {
-			// this.getcarinfo()
-			// 车型
-			this.carcenterdata1[0].val = this.bikeinfo.model
-			
-			// 库存状态
-			this.carcenterdata1[1].val = this.$invstate(this.bikeinfo.inv_state)
-			 
-			// 车辆状态
-			let health_state =''
-			if (this.bikeinfo.health_state == 0) {
-				health_state = '健康'
-			} else{
-				health_state = '故障'
+			console.log('this.removecaritem',this.removecaritem)
+			// 车辆编号
+			this.carcenterdata1[0].val = this.removecaritem.bike_id
+			// 挪车开始时间
+			this.carcenterdata1[1].val = this.removecaritem.create_time
+			// 挪车结束时间
+			this.carcenterdata1[2].val = this.removecaritem.end_time
+			// 挪车开始地点
+			this.carcenterdata1[3].val = this.removecaritem.start_address
+			// 挪车结束地点
+			this.carcenterdata1[4].val = this.removecaritem.end_address
+			// 是否有效
+			var status=''
+			if(this.removecaritem.grade==0 || this.removecaritem.grade==null){
+				status='无效'
+			}else{
+				status='有效'
 			}
-			this.carcenterdata1[2].val = health_state
-			
-			// 位置
-			this.carcenterdata1[3].val = this.$parkstate(this.bikeinfo.park_state)
-			
-			// 车辆业务状态
-			if(this.bikeinfo.bus_state){
-				this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[this.bikeinfo.bus_state]
-			}
-													 
-			// 车辆运行状态
-			let is_battery_locked = ''
-			if (this.bikeinfo.is_on_battery == 0) {
-				is_battery_locked = '开'
-			} else if (this.bikeinfo.is_on_battery == 1) {
-				is_battery_locked = '关'
-			}
-			this.carcenterdata2[1].val = '未接'
-			
-			// 网络状态
-			let is_online=''
-			if(this.bikeinfo.is_on_battery==0){
-				is_online='在线'
-			}else if(this.bikeinfo.is_on_battery==1){
-				is_online='离线'
-			}
-			this.carcenterdata2[2].val = is_online
-			
-			// GPS更新时间
-			this.carcenterdata2[3].val = this.bikeinfo.gps_update_time
-			
-			// SIM卡状态
-			let sim_state=''
-			if(this.bikeinfo.is_on_battery==0){
-				sim_state='在线'
-			}else if(this.bikeinfo.is_on_battery==1){
-				sim_state='离线'
-			}
-			this.carcenterdata2[4].val = sim_state
-			
-			// 车锁状态
-			let is_wheel_locked = ''
-			if (this.bikeinfo.is_wheel_locked == 0) {
-				is_wheel_locked = '开'
-			} else if (this.bikeinfo.is_wheel_locked == 1) {
-				is_wheel_locked = '关'
-			}
-			this.carcenterdata2[5].val = is_wheel_locked
+			this.carcenterdata1[5].val = status
+			// 备注
+			this.carcenterdata1[5].val = this.removecaritem.grade_info.remark
+			// // 无效原因
+			// this.carcenterdata1[6].val = this.removecaritem.create_time
+			// // 不合格原因
+			// this.carcenterdata1[7].val = this.removecaritem.create_time
+
 		},
-		computed: mapState(['directinfo','bikeinfo']),
+		// computed:mapState(['removecaritem']),
+		
 		data() {
 			return {
-				carcenterdata1: [
-					{
+				carcenterdata1: [{
 						name: '车辆编号:',
-						val: ''
-					},
-					{
-						name: '日期:',
 						val: ''
 					},
 					{
@@ -95,10 +59,6 @@
 					},
 					{
 						name: '挪车结束时间:',
-						val: ''
-					},
-						{
-						name: '挪车时长:',
 						val: ''
 					},
 					{
@@ -117,80 +77,15 @@
 						name: '备注:',
 						val: ''
 					},
-					{
-						name: '无效原因:',
-						val: ''
-					},{
-						name: '不合格原因:',
-						val: ''
-					}
+					// {
+					// 	name: '无效原因:',
+					// 	val: ''
+					// }, {
+					// 	name: '不合格原因:',
+					// 	val: ''
+					// }
 				],
-				carcenterdata2: [{
-						name: '使用状态:',
-						val: ''
-					},
-					{
-						name: '运行状态:',
-						val: ''
-					},
-					{
-						name: '网络状态:',
-						val: ''
-					},
-					{
-						name: 'GPS状态:',
-						val: ''
-					},
-					{
-						name: 'SIM卡状态:',
-						val: ''
-					},
-					{
-						name: '车锁状态:',
-						val: ''
-					},
-				],
-				carcenterdata3: [{
-						name: '订单',
-						val: '',
-						url: '/pages/carBigCenter/carorder/carorder'
-					},
-					{
-						name: '开关锁记录',
-						val: '',
-						url: '/pages/switchloockinfo/switchloockinfo'
-					},
-					{
-						name: '换电记录',
-						val: '',
-						url: '/pages/carBigCenter/batteriesrecord/batteriesrecord'
-					},
-					{
-						name: '维修记录',
-						val: '',
-						url: '/pages/carBigCenter/carorbit/carorbit'
-					},
-					{
-						name: '车辆轨迹',
-						val: '',
-						url: '/pages/map/map?type=0.1'
-					},
-					{
-						name: '最后一次扫码时手机位置',
-						val: '',
-						url: '/pages/map/map?type=0.2'
-					},
-					{
-						name: 'ECU',
-						val: '',
-						url: '/pages/carBigCenter/ecuview/ecuview'
-					},
-					{
-						name: '电池',
-						val: '',
-						url: '/pages/carBigCenter/batteryview/batteryview'
-					},
-				],
+				item: '',
 			}
 		},
 		methods: {
@@ -202,7 +97,7 @@
 					complete: () => {}
 				});
 			},
-		}
+		},
 	}
 </script>
 
@@ -214,6 +109,7 @@
 
 		.view-common {
 			margin: 10upx 22upx;
+			height: 100vh;
 		}
 	}
 </style>

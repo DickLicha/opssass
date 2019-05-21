@@ -5,7 +5,7 @@
 				<!-- <view class='task-view-img'><i class="iconfont icondanche" style='font-size: 70upx;'></i></view> -->
 				<view class='task-view-img'>
 					<image class="" style='width:120upx;height: 120upx;' :src='item.src'></image>
-					</view>
+				</view>
 				<view class='task-view-text'><text>{{item.name}}</text></view>
 			</view>
 		</view>
@@ -13,127 +13,202 @@
 </template>
 
 <script>
-	import {mapState,mapMutations} from 'vuex'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
-		onLoad(){
+		onLoad() {
+			this.taskdata=[]
+			var acl = this.userinfo.acl.children
+			console.log('user',acl)
+			var onlyid = '',
+				tempobj = {},
+				src = '',
+				name = '',
+				url='',text=''
+			for (let i = 0; i < acl.length; i++) {
+				if (acl[i].visitable == 1) {
+					onlyid = parseInt(acl[i].uri)
+					switch (onlyid) {
+						case 0:
+							src = '../../../static/image/huan_dian.png'
+							name = '换电'
+							url = '/pages/map/map'
+							text = '全部待换电'
+								break
+						case 1:
+							name = '维修'
+							url = '/pages/repairlist/repairlist'
+							text = '全部故障车辆'
+							src = '../../../static/image/wei_xiu.png'
+								break
+						case 2:
+							name='保养'
+							url='/pages/map/map'
+							text='待保养车辆'
+							src='../../../static/image/bao_yang.png'
+								break
+						case 3:
+							name='单个挪车'
+							url='/pages/repairlist/repairlist'
+							text='全部车站'
+							src='../../../static/image/nuo_che.png'
+								break
+						case 8:
+							name='库存管理'
+							url='/pages/repairlist/repairlist'
+							text=''
+							src='../../../static/image/ku_cun.png'
+								break
+						case 9:
+							name='车站'
+							url='/pages/map/map'
+							text='全部车站'
+							src='../../../static/image/che_zhan.png'
+								break
+						case 10:
+							name='违章'
+							url='/pages/map/map'
+							text=''
+							src='../../../static/image/wei_zhang.png'
+								break
+						case 11:
+							name='车辆排查'
+							url='/pages/repairlist/repairlist'
+							text=''
+							src='../../../static/image/pai_cha.png'
+								break
+					}
+					tempobj = {
+						index: onlyid,
+						src: src,
+						name:name,
+						url:url,
+						text:text
+					}
+					this.taskdata.push(tempobj)
+				}
+			}
 			this.getconfinfo()
 			this.getdirectinfo()
-			},
+			console.log('arr',this.taskdata)
+		},
+		computed: mapState(['userinfo']),
 		data() {
 			return {
 				taskdata: [{
 						name: '换电',
 						url: '/pages/map/map',
-						text:'全部待换电',
-						src:'../../../static/image/huan_dian.png',
-						index:0
+						text: '全部待换电',
+						src: '../../../static/image/huan_dian.png',
+						index: 0
 					},
 					{
 						name: '维修',
 						url: '/pages/repairlist/repairlist',
-						text:'全部故障车辆',
-						src:'../../../static/image/wei_xiu.png',
-						index:1
+						text: '全部故障车辆',
+						src: '../../../static/image/wei_xiu.png',
+						index: 1
 					},
 					{
 						name: '保养',
-						// url: '/pages/repairlist/repairlist',
 						url: '/pages/map/map',
-						text:'待保养车辆',
-						src:'../../../static/image/bao_yang.png',
-						index:2
+						text: '待保养车辆',
+						src: '../../../static/image/bao_yang.png',
+						index: 2
 					},
 					{
 						name: '单个挪车',
 						url: '/pages/repairlist/repairlist',
-						text:'全部车站',
-						src:'../../../static/image/nuo_che.png',
-						index:3
+						text: '全部车站',
+						src: '../../../static/image/nuo_che.png',
+						index: 3
 					},
-					{
-						name: 'ECU换绑',
-						url: '/pages/map/map',
-						text:'',
-						src:'../../../static/image/ecu_huanban.png',
-						index:4
-					},
-					{
-						name: 'ECU绑定',
-						url: '/pages/map/map',
-						text:'',
-						src:'../../../static/image/ban_ding.png',
-						index:5,
-					},
-					{
-						name: '找不到车',
-						url: '/pages/map/map',
-						text:'',
-						src:'../../../static/image/zhao_budao.png',
-						index:6
-					},
-					{
-						name: '批量开关锁',
-						url: '/pages/map/map',
-						text:'',
-						src:'../../../static/image/kai_guan.png',
-						index:7
-					},
+					// {
+					// 	name: 'ECU换绑',
+					// 	url: '/pages/map/map',
+					// 	text:'',
+					// 	src:'../../../static/image/ecu_huanban.png',
+					// 	index:4
+					// },
+					// {
+					// 	name: 'ECU绑定',
+					// 	url: '/pages/map/map',
+					// 	text:'',
+					// 	src:'../../../static/image/ban_ding.png',
+					// 	index:5,
+					// },
+					// {
+					// 	name: '找不到车',
+					// 	url: '/pages/map/map',
+					// 	text:'',
+					// 	src:'../../../static/image/zhao_budao.png',
+					// 	index:6
+					// },
+					// {
+					// 	name: '批量开关锁',
+					// 	url: '/pages/map/map',
+					// 	text:'',
+					// 	src:'../../../static/image/kai_guan.png',
+					// 	index:7
+					// },
 					{
 						name: '库存管理',
 						url: '/pages/repairlist/repairlist',
-						text:'',
-						src:'../../../static/image/ku_cun.png',
-						index:8
+						text: '',
+						src: '../../../static/image/ku_cun.png',
+						index: 8
 					},
 					{
 						name: '车站',
 						url: '/pages/map/map',
-						text:'全部车站',
-						src:'../../../static/image/che_zhan.png',
-						index:9
+						text: '全部车站',
+						src: '../../../static/image/che_zhan.png',
+						index: 9
 					},
 					{
 						name: '违章',
 						url: '/pages/map/map',
-						text:'',
-						src:'../../../static/image/wei_zhang.png',
-						index:10
+						text: '',
+						src: '../../../static/image/wei_zhang.png',
+						index: 10
 					},
 					{
 						name: '车辆排查',
-						url: '/pages/map/map',
-						text:'',
-						src:'../../../static/image/pai_cha.png',
-						index:11
+						url: '/pages/repairlist/repairlist',
+						text: '',
+						src: '../../../static/image/pai_cha.png',
+						index: 11
 					},
-					{
-						name: '车辆换绑',
-						url: '/pages/map/map',
-						text:'',
-						src:'../../../static/image/huan_ban.png',
-						index:12
-					},
+					// {
+					// 	name: '车辆换绑',
+					// 	url: '/pages/map/map',
+					// 	text:'',
+					// 	src:'../../../static/image/huan_ban.png',
+					// 	index:12
+					// },
 				]
 
 			};
 		},
 		methods: {
-			...mapMutations(['setDirectinfo','setSoftconf']),
+			...mapMutations(['setDirectinfo', 'setSoftconf']),
 			// 获取字典配置信息
 			getdirectinfo() {
 				var options = {
 					url: '/config/direct', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
-					data:''
+					data: ''
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('字典信息',res)
-					if(res.status==0){
+					console.log('字典信息', res)
+					if (res.status == 0) {
 						this.setDirectinfo(res.direct)
-					}					
+					}
 				}).catch((err) => {
 					// 请求失败的回调
 					console.error(err, '捕捉')
@@ -155,7 +230,7 @@
 					}
 				});
 			},
-			go(item,i) {
+			go(item, i) {
 				uni.navigateTo({
 					// url: '/pages/map/map?name=' + name
 					url: `${item.url}?name=${item.name}&type=${item.index}&text=${item.text}`
@@ -209,8 +284,8 @@
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('用户信息', typeof(res),res)
-					if (res.status==0) {
+					console.log('用户信息', typeof(res), res)
+					if (res.status == 0) {
 						this.setSoftconf(res.data)
 					}
 				}).catch((err) => {

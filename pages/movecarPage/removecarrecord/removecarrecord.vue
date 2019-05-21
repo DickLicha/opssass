@@ -43,9 +43,8 @@
 		},
 		methods: {
 			gocarinfo(item){
-				console.log(666)
 				uni.navigateTo({
-					url: '/pages/movecarPage/movecarinfo/movecarinfo',
+					url: `/pages/movecarPage/movecarinfo/movecarinfo?date=${item.date}`,
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -82,21 +81,10 @@
 					this.allnumber=res.total
 					if (res.status == 0) {
 						this.switchloockdata=res.info
-						// let datainfo = {}
-						// // this.switchloockdatathis.switchloockdata.concat(res.list)
-						// for (let i = 0; i < res.list.length; i++) {
-						// 	datainfo.time = res.list[i].start_time
-						// 	datainfo.action = (res.list[i].type==10)?'开锁':'关锁'
-						// 	datainfo.qudao = res.list[i].channel?res.list[i].channel:'无'
-						// 	datainfo.status = (res.list[i].success==0)?'成功':'失败'
-						// 	datainfo.netstatus = (res.list[i].is_online==0)?'在线':'离线'
-						// 	datainfo.username = res.list[i].user_name
-						// 	datainfo.phone = res.list[i].user_phone
-						// 	datainfo.errormsg = res.list[i].error_msg
-						// 	this.switchloockdata.push(datainfo)
-						// }
 					} else {
-						
+						uni.showToast({
+							title: res.message?res.message:"获取挪车记录失败"
+						});
 					}
 				}).catch((err) => {
 					// 请求失败的回调

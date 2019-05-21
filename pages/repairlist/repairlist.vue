@@ -19,11 +19,11 @@
 				order: {
 					length: ''
 				},
-				type:'',
+				type: '',
 			}
 		},
 		methods: {
-			...mapMutations(['setOrderfirstid', 'setOrderinfo','setSn','setBikeid','setBikeinfo']),
+			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
 			// 投放市场
 			throwin(id) {
 				var options = {
@@ -31,13 +31,13 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"bike_id":id 
+						"bike_id": id
 					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('投放信息',res)
+					console.log('投放信息', res)
 					if (res.status == 0) {
 						uni.showToast({
 							title: '投放成功',
@@ -46,7 +46,7 @@
 						});
 					} else {
 						uni.showToast({
-							title: res.message?res.message:'投放失败',
+							title: res.message ? res.message : '投放失败',
 							mask: false,
 							duration: 1500
 						});
@@ -90,19 +90,19 @@
 				})
 			},
 			go(item) {
-				if(this.type=='8' && item.name=='扫码输入'){				
+				if (this.type == '8' && item.name == '扫码输入') {
 					uni.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
-						success:res=>{
-							var bikesn=res.result.match(/\?bikesn=(.*)/)[1]
+						success: res => {
+							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 							this.throwin(bikesn)
 						},
-						fail:res=>{
-							
+						fail: res => {
+
 						}
 					})
-					
-				}else{
+
+				} else {
 					uni.navigateTo({
 						url: item.url,
 						success: res => {},
@@ -110,7 +110,7 @@
 						complete: () => {}
 					});
 				}
-				
+
 			},
 			requestorder(data, item) {
 				let options = {
@@ -141,12 +141,12 @@
 			wx.setNavigationBarTitle({
 				title: e.name
 			})
-			this.type=e.type
+			this.type = e.type
 			switch (e.type) {
 				case '1':
 					this.repairlist = [{
 							name: '维修入库',
-							val:'',
+							val: '',
 							url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
 						},
 						// {
@@ -155,7 +155,7 @@
 						// },
 						{
 							name: '修车',
-							val:'',
+							val: '',
 							// url: '/pages/map/map?text=全部故障车辆&type=1.3&name=维修',
 							url: '/pages/repairPage/repairenter/repairenter',
 						},
@@ -165,12 +165,12 @@
 					this.repairlist = [{
 							name: '常规保养',
 							val: '',
-							url:'',
+							url: '',
 						},
 						{
 							name: '异常保养',
 							val: '',
-							url:''
+							url: ''
 						}
 					]
 					break;
@@ -197,6 +197,25 @@
 							name: '扫码输入',
 							val: '',
 							url: '/pages/movecarPage/removecarrecord/removecarrecord',
+						}
+					]
+					break;
+				case '11':
+					this.repairlist = [
+						{
+							name: '车辆疑似被盗',
+							val: '',
+							url: '/pages/investCarPage/investview/investview?type=0',
+						},
+						{
+							name: '车辆疑似报修',
+							val: '',
+							url: '/pages/investCarPage/investview/investview?type=1',
+						},
+						{
+							name: '车辆疑似失联',
+							val: '',
+							url: '/pages/investCarPage/investview/investview?type=2',
 						}
 					]
 					break;

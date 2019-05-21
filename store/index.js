@@ -25,7 +25,9 @@ const store = new Vuex.Store({
 		latitude: '28',
 		mapcovers:[],
 		imgarr:[],
-		softconf:{}
+		softconf:{},
+		removecaritem:{},
+		userinfo:{},
 	},
 	mutations: {
 		login(state, provider) {
@@ -84,7 +86,12 @@ const store = new Vuex.Store({
 		setSoftconf(state, softconf) {
 			state.softconf = softconf
 		},
-
+		setRemovecaritem(state, removecaritem) {
+			state.removecaritem = removecaritem
+		},
+		setUserinfo(state, userinfo) {
+			state.userinfo = userinfo
+		},
 	},
 	actions: {
 		// lazy loading openid

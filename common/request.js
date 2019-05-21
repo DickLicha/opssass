@@ -3,7 +3,11 @@ export default function(obj) {
 	// if (obj.method === 'GET') {
 	let sn,id;
 	sn = store.state.sn || ""
-	id = store.state.bikeid || ""
+	if(obj.url=='/balert/confirm'){
+		id = obj.data.id
+	}else{
+		id = store.state.bikeid || ''
+	}
 	//#ifndef H5	
 	// #endif
 	// #ifdef H5
@@ -18,7 +22,7 @@ export default function(obj) {
 	  })
 
 	// let baseUrl = 'http://www.fishors.com:8086'
-	let baseUrl = 'http://test3.fishors.com:8086'
+	let baseUrl = 'https://dd0001.izyscp.com'
 	for(const key in obj.data){
 		const element = obj.data[key]
 		 // 全选

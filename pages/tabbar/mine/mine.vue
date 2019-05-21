@@ -53,6 +53,11 @@
 						val: '',
 						url:'/pages/repairPage/repaircar/repaircar'
 					},
+					{
+						name: 'login',
+						val: '',
+						url:'/pages/mine/loginView/loginView'
+					},
 				]
 			}
 		},

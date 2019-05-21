@@ -6,12 +6,15 @@
 			<view class='change-battery-button'>
 				<button class='share-button-default' @click='changbattery(buttonname)'>{{buttonname}}</button>
 			</view>
+			<uni-fab ref="fab" :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction"
+			 @trigger="trigger" />
 		</view>
 	</view>
 </template>
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
+	import uniFab from '@/components/uni-fab/uni-fab.vue'
 	import {
 		mapState,
 		mapMutations
@@ -19,6 +22,50 @@
 	export default {
 		data() {
 			return {
+				title: 'uni-fab',
+				directionStr: '垂直',
+				horizontal: 'right',
+				vertical: 'bottom',
+				direction: 'vertical',
+				pattern: {
+					color: '#7A7E83',
+					backgroundColor: '#fff',
+					selectedColor: '#007AFF',
+					buttonColor: '#007AFF'
+				},
+				content: [{
+						// iconPath: '/static/component.png',
+						// selectedIconPath: '/static/componentHL.png',
+						text: '关锁',
+						val: '0',
+						active: false
+					},
+					{
+						text: '寻车铃',
+						val: '1',
+						active: false
+					},
+					// {
+					// 	text: '找不到车',
+					// 	val: '2',
+					// 	active: false
+					// },
+					{
+						text: '报修',
+						val: '3',
+						active: false
+					},
+					{
+						text: '违章举报',
+						val: '4',
+						active: false
+					},
+					{
+						text: '开电池锁',
+						val: '5',
+						active: false
+					},
+				],
 				borders: true,
 				buttonname: '更换电池',
 				swapdata: [{
@@ -66,7 +113,15 @@
 			}
 		},
 		components: {
-			itemCell
+			itemCell,
+			uniFab
+		},
+		onBackPress() {
+			if (this.$refs.fab.isShow) {
+				this.$refs.fab.close()
+				return true
+			}
+			return false
 		},
 		computed: mapState(['bikeinfo', 'bikeid']),
 		onLoad() {
@@ -135,6 +190,128 @@
 					complete: () => {}
 				});
 			},
+			// 寻车铃
+			openring() {
+				var options = {
+					url: '/bike/ring', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('寻车铃', typeof(res), res)
+					if (res.status == 0) {} else {
+						uni.showToast({
+							title: res.message ? res.message : '开启寻车铃失败'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 关锁
+			closelock() {
+				uni.getLocation({
+					type: 'wgs84',
+					success: ress => {
+						var options = {
+							url: '/bike/lock', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"bike_id": this.bikeinfo.id,
+								"user_coordinate": [
+									ress.longitude,
+									ress.latitude
+								]
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							if (res.status == 0) {
+								uni.showToast({
+									title: '关锁成功',
+									duration: 2000,
+								});
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '关锁失败',
+									duration: 2000,
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+
+			},
+			trigger(e) {
+				console.log(e)
+				this.content[e.index].active = !e.item.active
+				switch (e.item.val) {
+					case '0':
+						this.closelock()
+						break
+					case '1':
+						this.openring()
+						break
+					case '3':
+						uni.navigateTo({
+							url: '/pages/movecarPage/checkupcar/checkupcar',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+						break
+					case '4':
+						break
+					case '5':
+						uni.showModal({
+							title: '确认打开电池锁',
+							content: '',
+							// showCancel: false,
+							cancelText: '取消',
+							confirmText: '打开',
+							confirmColor: '#F6C700',
+							success: res => {
+								if (res.confirm) {
+									this.openbattery()
+								}
+							},
+							fail: () => {},
+							complete: () => {}
+						});
+						break
+				}
+
+				// uni.showModal({
+				// 	title: '提示',
+				// 	content: `您${this.content[e.index].active ? '选中了' : '取消了'}${e.item.text}`,
+				// 	success: function(res) {
+				// 		if (res.confirm) {
+				// 			console.log('用户点击确定')
+				// 		} else if (res.cancel) {
+				// 			console.log('用户点击取消')
+				// 		}
+				// 	}
+				// })
+			},
+			switchBtn(hor, ver) {
+				if (hor === 0) {
+					this.direction = this.direction === 'horizontal' ? 'vertical' : 'horizontal'
+					this.directionStr = this.direction === 'horizontal' ? '垂直' : '水平'
+				} else {
+					this.horizontal = hor
+					this.vertical = ver
+				}
+				this.$forceUpdate()
+			},
 			changbattery(name) {
 				console.log('name', name)
 				if (name == '更换电池') {
@@ -198,8 +375,8 @@
 									complete: () => {}
 								});
 							} else {
-								uni.showToast.fail({
-									title: '开锁失败!',
+								uni.showToast({
+									title: res.message?res.message:'开锁失败!',
 									duration: 2000
 								})
 							}
