@@ -22,6 +22,7 @@
 			this.initData();
 		},
 		onUnload() {
+			console.log("ksldksa;jdl jj");
 			this.max = 0,
 			this.data = [],
 			this.loadMoreText = "加载更多",

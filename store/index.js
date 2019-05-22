@@ -25,7 +25,8 @@ const store = new Vuex.Store({
 		latitude: '28',
 		mapcovers:[],
 		imgarr:[],
-		softconf:{},
+		violationsInfo:{},
+softconf:{},
 		removecaritem:{},
 		userinfo:{},
 	},
@@ -92,6 +93,10 @@ const store = new Vuex.Store({
 		setUserinfo(state, userinfo) {
 			state.userinfo = userinfo
 		},
+setViolationsInfo(state, violationsInfo){
+			state.violationsInfo = violationsInfo;
+		},
+
 	},
 	actions: {
 		// lazy loading openid

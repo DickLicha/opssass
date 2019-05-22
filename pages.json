@@ -168,6 +168,7 @@
 			"style": {
 				"navigationBarTitleText": "无法挪车"
 			}
+
 		}, {
 			"path": "pages/repairPage/onlinerepair/onlinerepair",
 			"style": {}
@@ -204,6 +205,36 @@
 			"path": "pages/investCarPage/investview/investview",
 			"style": {
 				"navigationBarTitleText": "失联车辆列表"
+			}
+		}, {
+			"path": "pages/violations/reportViolations/reportViolations",
+			"style": {
+				"navigationBarTitleText": "违章举报"
+			}
+		}, {
+			"path": "pages/violations/reportViolationsList/reportViolationsList",
+			"style": {
+				"navigationBarTitleText": "违章举报列表"
+			}
+		}, {
+			"path": "pages/violations/chooseViolationsType/chooseViolationsType",
+			"style": {
+				"navigationBarTitleText": "违章举报原因"
+			}
+		}, {
+			"path": "pages/violations/chooseViolationsAffect/chooseViolationsAffect",
+			"style": {
+				"navigationBarTitleText": "违章举报影响"
+			}
+		}, {
+			"path": "pages/violations/userUseCarMessage/userUseCarMessage",
+			"style": {
+				"navigationBarTitleText": "用户用车信息"
+			}
+		}, {
+			"path": "pages/violations/reportViolationsDetail/reportViolationsDetail",
+			"style": {
+				"navigationBarTitleText": "违章举报详情"
 			}
 		}
 	],

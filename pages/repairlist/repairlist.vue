@@ -200,6 +200,23 @@
 						}
 					]
 					break;
+	case '10':
+					this.repairlist = [{
+							name: '违章骑行',
+							val: '',
+						},
+						{
+							name: '举报',
+							val: '', 
+							url: '/pages/violations/reportViolations/reportViolations',
+						},
+						{
+							name: '处理',
+							val: '',
+							url: '/pages/violations/reportViolationsList/reportViolationsList',
+						}
+					]
+					break;
 				case '11':
 					this.repairlist = [
 						{
