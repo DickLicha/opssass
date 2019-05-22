@@ -22,7 +22,6 @@
 		onLoad() {
 			this.taskdata = []
 			var acl = this.userinfo.acl.children
-			console.log('user', acl)
 			var onlyid = '',
 				tempobj = {},
 				src = '',

@@ -54,7 +54,7 @@
     "quickapp" : {},
     /* 快应用特有相关 */
     "mp-weixin" : {
-        "appid" : "wx1d12ca5a22ddf845",
+        "appid" : "wx8bf4994e6cf0d0d7",
         "setting" : {
             "urlCheck" : false
         },
@@ -63,6 +63,11 @@
             "scope.userLocation" : {
                 "desc" : "你的位置信息将用于小程序位置接口的效果展示"
             }
+        }
+    },
+    "h5" : {
+        "devServer" : {
+            "https" : false
         }
     }
 }

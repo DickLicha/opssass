@@ -18,10 +18,10 @@
 		onLoad() {
 			console.log(this.userinfo)
 			// 车型
-			this.carcenterdata1[0].val = this.userinfo.model
+			this.carcenterdata1[0].val = this.userinfo.userinfo.name
 			
 			// 库存状态
-			this.carcenterdata1[1].val = this.$invstate(this.userinfo.inv_state)
+			this.carcenterdata1[1].val = this.userinfo.userinfo.phone
 			 
 		},
 		computed: mapState(['userinfo']),
@@ -69,8 +69,17 @@
 					confirmText: '退出登录',
 					success: res => {
 						uni.showToast({
-							title: '退出登录成功！'
+							title: '退出登录成功！',
+							duration: 1500,
 						});
+						setTimeout(()=>{
+							uni.navigateTo({
+								url: '/pages/mine/loginView/loginView',
+								success: res => {},
+								fail: () => {},
+								complete: () => {}
+							});
+						},2000)
 					},
 					fail: () => {},
 					complete: () => {}

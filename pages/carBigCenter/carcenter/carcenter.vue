@@ -33,12 +33,12 @@
 			this.carcenterdata1[2].val = health_state
 			
 			// 位置
-			this.carcenterdata1[3].val = this.$parkstate(this.bikeinfo.park_state)
-			
-			// 车辆业务状态
-			if(this.bikeinfo.bus_state){
-				this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[this.bikeinfo.bus_state]
-			}
+			// this.carcenterdata1[3].val = this.$parkstate(this.bikeinfo.park_state)
+			// console.log('this.directinfo.bike_bus_state_enum',this.directinfo,this.bikeinfo.bus_state)
+			// // 车辆业务状态
+			// if(this.bikeinfo.bus_state){
+			// 	this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[this.bikeinfo.bus_state]
+			// }
 													 
 			// 车辆运行状态
 			let is_battery_locked = ''

@@ -10,7 +10,7 @@
 
 <script>
 	import {
-		mapMutations
+		mapState,mapMutations
 	} from 'vuex'
 	export default {
 		data() {
@@ -22,6 +22,7 @@
 				type: '',
 			}
 		},
+		computed: mapState(['userinfo']),
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
 			// 投放市场
@@ -55,6 +56,165 @@
 					// 请求失败的回调
 					console.error(err, '捕捉')
 				})
+			},
+			// 获取二级菜单权限
+			geturl() {
+				var templist=[]
+				var acl = this.userinfo.acl.children
+				for (let i = 0; i < acl.length; i++) {
+					var type = acl[i].uri
+					var chids = acl[i].children
+					var tempobj = {}
+					if(this.type==type){
+					switch (type) {
+						case '1':
+							for (let j = 0; j < chids.length; j++) {
+								console.log('debugger',j,this.repairlist)
+								if (chids[j].visitable == 1) {
+									tempobj={}
+									switch (chids[j].uri) {
+										case '1.0':
+											tempobj = {
+												name: '维修入库',
+												val: '',
+												url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
+											}
+											templist.push(tempobj)
+											break
+										case '1.1':
+											tempobj = {
+												name: '修车',
+												val: '',
+												// url: '/pages/map/map?text=全部故障车辆&type=1.3&name=维修',
+												url: '/pages/repairPage/repairenter/repairenter',
+											}
+											templist.push(tempobj)
+											break		
+									}
+									
+								}
+							}
+							break
+						case '3':
+							for (let j = 0; j < chids.length; j++) {
+								if (chids[j].visitable == 1) {
+									tempobj={}
+									switch (chids[j].uri) {
+										case '3.0':
+											tempobj = {
+												name: '车站挪车',
+												val: '',
+												url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
+											}
+											templist.push(tempobj)
+											break
+										case '3.1':
+											tempobj = {
+												name: '挪车记录',
+												val: '',
+												url: '/pages/movecarPage/removecarrecord/removecarrecord',
+											}
+											templist.push(tempobj)
+											break			
+									}
+									
+								}
+							}
+							break
+						case '8':
+							for (let j = 0; j < chids.length; j++) {
+								if (chids[j].visitable == 1) {
+									tempobj={}
+									switch (chids[j].uri) {
+										case '8.0':
+											tempobj = {
+												name: '手动输入',
+												val: '',
+												url: `/pages/manualscan/manualscan?urls=/pages/stockPage/stockmanage/stockmanage&&type=8`,
+											}
+											templist.push(tempobj)
+											break
+										case '8.1':
+											tempobj = {
+												name: '维修入库',
+												val: '',
+												url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
+											}
+											templist.push(tempobj)
+											break			
+									}
+								}
+							}
+							break
+						case '10':
+							for (let j = 0; j < chids.length; j++) {
+								if (chids[j].visitable == 1) {
+									tempobj={}
+									switch (chids[j].uri) {
+										case '10.0':
+											tempobj = {
+												name: '违章骑行',
+												val: '',
+											}
+											templist.push(tempobj)
+											break
+										case '10.1':
+											tempobj = {
+												name: '举报',
+												val: '',
+												url: '/pages/violations/reportViolations/reportViolations',
+											}
+											templist.push(tempobj)
+											break
+										case '10.2':
+											tempobj = {
+												name: '处理',
+												val: '',
+												url: '/pages/violations/reportViolationsList/reportViolationsList',
+											}
+											templist.push(tempobj)
+											break		
+									}
+								}
+							}
+							break
+						case '11':
+							for (let j = 0; j < chids.length; j++) {
+								if (chids[j].visitable == 1) {
+									tempobj={}
+									switch (chids[j].uri) {
+										case '11.0':
+											tempobj = {
+												name: '车辆疑似被盗',
+												val: '',
+												url: '/pages/investCarPage/investview/investview?type=0',
+											}
+											templist.push(tempobj)
+											break
+										case '11.1':
+											tempobj = {
+												name: '车辆疑似报修',
+												val: '',
+												url: '/pages/investCarPage/investview/investview?type=1',
+											}
+											templist.push(tempobj)
+											break
+										case '11.2':
+											tempobj = {
+												name: '车辆疑似失联',
+												val: '',
+												url: '/pages/investCarPage/investview/investview?type=2',
+											}
+											templist.push(tempobj)
+											break			
+									}
+								}
+							}
+							break			
+					}
+					}
+				}
+				this.repairlist=templist			
 			},
 			// 获取车辆信息
 			getcarinfo() {
@@ -161,19 +321,6 @@
 						},
 					]
 					break;
-				case '2':
-					this.repairlist = [{
-							name: '常规保养',
-							val: '',
-							url: '',
-						},
-						{
-							name: '异常保养',
-							val: '',
-							url: ''
-						}
-					]
-					break;
 				case '3':
 					this.repairlist = [{
 							name: '车站挪车',
@@ -200,14 +347,14 @@
 						}
 					]
 					break;
-	case '10':
+				case '10':
 					this.repairlist = [{
 							name: '违章骑行',
 							val: '',
 						},
 						{
 							name: '举报',
-							val: '', 
+							val: '',
 							url: '/pages/violations/reportViolations/reportViolations',
 						},
 						{
@@ -218,8 +365,7 @@
 					]
 					break;
 				case '11':
-					this.repairlist = [
-						{
+					this.repairlist = [{
 							name: '车辆疑似被盗',
 							val: '',
 							url: '/pages/investCarPage/investview/investview?type=0',
@@ -237,6 +383,9 @@
 					]
 					break;
 			}
+			
+			this.geturl()
+			console.log('this.repairlist',this.repairlist)
 		}
 	}
 </script>

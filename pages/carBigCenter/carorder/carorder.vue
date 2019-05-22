@@ -23,7 +23,7 @@
 					{name:'订单开始:',val:''},
 					{name:'订单结束:',val:''},
 					{name:'订单状态:',val:'已结束'},
-					{name:'订单轨迹:',val:'查看',click:true},
+					// {name:'订单轨迹:',val:'查看',click:true},
 				]		
 			}
 		},

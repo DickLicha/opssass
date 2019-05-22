@@ -8,6 +8,7 @@ export default function(obj) {
 	}else{
 		id = store.state.bikeid || ''
 	}
+	var token=store.state.userinfo.token
 	//#ifndef H5	
 	// #endif
 	// #ifdef H5
@@ -16,8 +17,8 @@ export default function(obj) {
 	  Object.assign(obj.data, {
 	    id: id,
 		bike_sn:sn,
-		// bike_id:id,
-	    token: 'xxxx',		
+		// bike_id:id,	
+	    token: token,		
 		city_id: "35000",	
 	  })
 
