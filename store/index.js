@@ -15,7 +15,7 @@ const store = new Vuex.Store({
 		bikeid: '',
 		// 第一笔订单id
 		orderfirstid: '',
-		orderinfo:{},
+		orderinfo: {},
 		selectfaultobj: [],
 		// 所有车辆信息
 		bikeinfo: {},
@@ -23,12 +23,12 @@ const store = new Vuex.Store({
 		putstorageindex: 0,
 		longitude: '119',
 		latitude: '28',
-		mapcovers:[],
-		imgarr:[],
-		violationsInfo:{},
-softconf:{},
-		removecaritem:{},
-		userinfo:{},
+		mapcovers: [],
+		imgarr: [],
+		violationsInfo: {},
+		softconf: {},
+		removecaritem: {},
+		userinfo: {},
 	},
 	mutations: {
 		login(state, provider) {
@@ -93,7 +93,7 @@ softconf:{},
 		setUserinfo(state, userinfo) {
 			state.userinfo = userinfo
 		},
-setViolationsInfo(state, violationsInfo){
+		setViolationsInfo(state, violationsInfo) {
 			state.violationsInfo = violationsInfo;
 		},
 
