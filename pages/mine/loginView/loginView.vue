@@ -55,7 +55,7 @@
 					this.user_phone_data = e.detail.encryptedData;
 					this.user_phone_iv = e.detail.iv;
 					var options = {
-						url: '/staff/login_by_wxmp', //请求接口
+						url: '/staff/ops_login_by_wxmp', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
 						context: '',
 						data:{
