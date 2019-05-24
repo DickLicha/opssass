@@ -9,12 +9,13 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
+	import {mapState} from 'vuex'
 	export default {
 		data() {
 			return {
 				borders: true,
 				swapdata: [{
-					name: '祝盛炜',
+					name: '',
 					val: '',
 					url:'/pages/mine/minecard/minecard'
 				}],
@@ -62,6 +63,10 @@
 				]
 			}
 		},
+		onLoad(){
+			this.swapdata[0].name=this.userinfo.userinfo.name
+		},
+		computed:mapState(['userinfo']),
 		components: {
 			itemCell
 		},

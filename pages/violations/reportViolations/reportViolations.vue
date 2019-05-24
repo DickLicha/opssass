@@ -111,7 +111,7 @@
 			// 获取车辆信息
 			getcarinfo() {
 				console.log("开始请求");
-				this.setSn("08910127");
+				// this.setSn("08910127");
 				var _this = this;
 				var options = {
 					url: '/bike/info', //请求接口

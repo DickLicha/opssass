@@ -19,7 +19,7 @@ export default function(obj) {
 		bike_sn:sn,
 		// bike_id:id,	
 	    token: token,		
-		city_id: "35000",	
+		city_id: "350001",	
 	  })
 
 	// let baseUrl = 'http://www.fishors.com:8086'

@@ -237,3 +237,98 @@ const BIKE_FAULT_TYPE_X_SHA_CHE_DIAO_JIE = 1204; //刹车-不能调节
     }
 }
  */
+
+
+			taskdata: [{
+					name: '换电',
+					url: '/pages/map/map',
+					text: '全部待换电',
+					src: '../../../static/image/huan_dian.png',
+					index: 0
+				},
+				{
+					name: '维修',
+					url: '/pages/repairlist/repairlist',
+					text: '全部故障车辆',
+					src: '../../../static/image/wei_xiu.png',
+					index: 1
+				},
+				{
+					name: '保养',
+					url: '/pages/map/map',
+					text: '待保养车辆',
+					src: '../../../static/image/bao_yang.png',
+					index: 2
+				},
+				{
+					name: '单个挪车',
+					url: '/pages/repairlist/repairlist',
+					text: '全部车站',
+					src: '../../../static/image/nuo_che.png',
+					index: 3
+				},
+				// {
+				// 	name: 'ECU换绑',
+				// 	url: '/pages/map/map',
+				// 	text:'',
+				// 	src:'../../../static/image/ecu_huanban.png',
+				// 	index:4
+				// },
+				// {
+				// 	name: 'ECU绑定',
+				// 	url: '/pages/map/map',
+				// 	text:'',
+				// 	src:'../../../static/image/ban_ding.png',
+				// 	index:5,
+				// },
+				// {
+				// 	name: '找不到车',
+				// 	url: '/pages/map/map',
+				// 	text:'',
+				// 	src:'../../../static/image/zhao_budao.png',
+				// 	index:6
+				// },
+				// {
+				// 	name: '批量开关锁',
+				// 	url: '/pages/map/map',
+				// 	text:'',
+				// 	src:'../../../static/image/kai_guan.png',
+				// 	index:7
+				// },
+				{
+					name: '库存管理',
+					url: '/pages/repairlist/repairlist',
+					text: '',
+					src: '../../../static/image/ku_cun.png',
+					index: 8
+				},
+				{
+					name: '车站',
+					url: '/pages/map/map',
+					text: '全部车站',
+					src: '../../../static/image/che_zhan.png',
+					index: 9
+				},
+				{
+					name: '违章',
+					url: '/pages/map/map',
+					text: '',
+					src: '../../../static/image/wei_zhang.png',
+					index: 10
+				},
+				{
+					name: '车辆排查',
+					url: '/pages/repairlist/repairlist',
+					text: '',
+					src: '../../../static/image/pai_cha.png',
+					index: 11
+				},
+				// {
+				// 	name: '车辆换绑',
+				// 	url: '/pages/map/map',
+				// 	text:'',
+				// 	src:'../../../static/image/huan_ban.png',
+				// 	index:12
+				// },
+			]
+			

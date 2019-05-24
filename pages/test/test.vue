@@ -2,8 +2,7 @@
 	<view>
 		<page-head :title="title"></page-head>
 		<view class="uni-padding-wrap uni-common-mt">
-			<view class="text" v-for="(num,index) in data" :key="index">list - {{num}}</view>
-			<view class="uni-loadmore" v-if="showLoadMore">{{loadMoreText}}</view>
+			<view class='test-img'></view>
 		</view>
 	</view>
 </template>
@@ -22,11 +21,7 @@
 			this.initData();
 		},
 		onUnload() {
-			console.log("ksldksa;jdl jj");
-			this.max = 0,
-			this.data = [],
-			this.loadMoreText = "加载更多",
-			this.showLoadMore = false;
+		
 		},
 		onReachBottom() {
 			console.log("onReachBottom");
@@ -40,8 +35,6 @@
 			}, 300);
 		},
 		onPullDownRefresh() {
-			console.log('onPullDownRefresh');
-			this.initData();
 		},
 		methods: {
 			initData(){
@@ -79,5 +72,10 @@
 		text-align: center;
 		color: #555;
 		border-radius: 8upx;
+	}
+	.test-img{
+		/* background: url(../../static/test.png);
+		width: 300upx;
+		height: 300upx; */
 	}
 </style>

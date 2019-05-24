@@ -29,9 +29,7 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
-	import {
-		mapState
-	} from 'vuex'
+	import {mapState,mapMutations} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -73,6 +71,7 @@
 			this.swapbatterydata[2].val = 'xxx'
 		},
 		methods: {
+			...mapMutations(['setMovecarorder']),
 			gocarcenter() {
 				uni.navigateTo({
 					url: '/pages/carBigCenter/carcenter/carcenter',
@@ -91,8 +90,14 @@
 			},
 			// 开始挪车
 			startmovecar() {
+				console.log('date', this.$formatetimes())
 				this.showshartmove = false
 				this.showendmove = true
+				var temp={
+					id: this.bikeinfo.id,
+					time: this.$formatetimes()
+				}
+				this.setMovecarorder(temp)
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {

@@ -19,6 +19,7 @@
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
+					<cover-view v-if="getorder()" class='movecar-view'>挪车中车辆：1</cover-view>
 					<cover-view class='map-cover-view'>
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view>
@@ -75,7 +76,7 @@
 			baseImg,
 			uniPopup
 		},
-		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr','bikeinfo']),
+		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo','movecarorder']),
 		data() {
 			return {
 				endmove: false,
@@ -171,19 +172,6 @@
 			if (this.mapinfo == null) {
 				this.mapinfo = uni.createMapContext('firstmap')
 			}
-
-			// switch (self.type) {
-			// 	case '0':
-			// 		self.nearbyshortpower(100, res.longitude, res.latitude)
-			// 		break
-			// 	case '1.1':
-			// 		self.nearbyfaultcar(res.longitude, res.latitude)
-			// 		break
-			// 	case '3.1':
-			// 		self.nearbymovecar(res.longitude, res.latitude,'*')
-			// 		break
-			// }
-
 			switch (e.type) {
 				case '0':
 					this.scanbuttonname = '扫码换电'
@@ -197,27 +185,30 @@
 							bottom: false
 						},
 						// 多边形						
-					this.covers = []
+						this.covers = []
 					break;
 				case '1.1':
 					this.scanbuttonname = '扫码入库'
-					this.nearbyfaultcar(this.longitude, this.latitude)
+					this.nearbyfaultcar(this.longitude, this.latitude, 0)
 					this.selectcoverdata = [{
 							name: '全部故障车辆',
 							id: '0',
+							val: '0'
 						},
 						{
 							name: '未入库故障车辆',
 							id: '1',
+							val: '0'
 						},
 						{
 							name: '已入库故障车辆',
 							id: '2',
+							val: '2'
 						},
 					]
 					break;
 				case '2':
-				this.showcorverview = {
+					this.showcorverview = {
 						head: false,
 						bottom: true
 					}
@@ -291,6 +282,7 @@
 				case '9':
 					this.showcorverview.bottom = false
 					this.scanbuttonname = '创建车站'
+					this.nearbymovecar(this.longitude, this.latitude, '*')
 					this.selectcoverdata = [{
 							name: '全部车站',
 							id: '0',
@@ -305,8 +297,6 @@
 						},
 					]
 					break;
-
-
 			}
 			wx.setNavigationBarTitle({
 				title: e.name
@@ -338,6 +328,16 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers'
 			]),
+			getorder(){
+				var test=true
+				console.log(11,this.type,this.movecarorder)
+				if(this.type==3.1 && Object.keys(this.movecarorder).length!=0){
+					test=true
+				}else{
+					test=false
+				}
+				return test
+			},			
 			showMapSelect() {
 				this.showmapselect = !this.showmapselect
 			},
@@ -358,7 +358,7 @@
 						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude)
 						break;
 					case '1.1':
-						this.nearbyfaultcar(this.longitude, this.latitude)
+						this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
 						break;
 				}
 
@@ -500,9 +500,12 @@
 								self.nearbyshortpower(100, res.longitude, res.latitude)
 								break
 							case '1.1':
-								self.nearbyfaultcar(res.longitude, res.latitude)
+								self.nearbyfaultcar(res.longitude, res.latitude, 0)
 								break
 							case '3.1':
+								self.nearbymovecar(res.longitude, res.latitude, '*')
+								break
+							case '9':
 								self.nearbymovecar(res.longitude, res.latitude, '*')
 								break
 						}
@@ -535,20 +538,22 @@
 					if (res.status == 0) {
 						this.covers = []
 						var temparr = []
-						for (let i = 0; i < res.list.length; i++) {
-							let tmpObj = {}
-							tmpObj.id = res.list[i].id
-							if (!!res.list[i].coordinate) {
-								tmpObj.latitude = res.list[i].coordinate[1]
-								tmpObj.longitude = res.list[i].coordinate[0]
+						if (this.type != '9') {
+							for (let i = 0; i < res.list.length; i++) {
+								let tmpObj = {}
+								tmpObj.id = res.list[i].id
+								if (!!res.list[i].coordinate) {
+									tmpObj.latitude = res.list[i].coordinate[1]
+									tmpObj.longitude = res.list[i].coordinate[0]
+								}
+								tmpObj.name = res.list[i].name
+								tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+								tmpObj.type = 'car'
+								tmpObj.width = 39
+								tmpObj.height = 48
+								temparr.push(tmpObj)
+								// this.covers.push(tmpObj)
 							}
-							tmpObj.name = res.list[i].name
-							tmpObj.iconPath = '../../static/mapicon/car_normal.png'
-							tmpObj.type = 'car'
-							tmpObj.width = 39
-							tmpObj.height = 48
-							temparr.push(tmpObj)
-							// this.covers.push(tmpObj)
 						}
 						for (let j = 0; j < res.parks.length; j++) {
 							let tmpObjs = {}
@@ -572,6 +577,7 @@
 							// this.covers.push(tmpObjs)
 						}
 						this.covers = temparr
+						console.log('this.covers', this.covers)
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -630,15 +636,15 @@
 					// res为服务端返回数据的根对象
 					console.log('车辆轨迹', res)
 					if (res.status == 0) {
-						var temparr=[]
-						for(let i=0;i<res.info.track.length;i++){
-							var jwd={
-								longitude:res.info.track[i][0],
-								latitude:res.info.track[i][1]
+						var temparr = []
+						for (let i = 0; i < res.info.track.length; i++) {
+							var jwd = {
+								longitude: res.info.track[i][0],
+								latitude: res.info.track[i][1]
 							}
 							temparr.push(jwd)
 						}
-						this.polyline[0].points=temparr
+						this.polyline[0].points = temparr
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -646,7 +652,7 @@
 				})
 			},
 			// 附近故障的车辆
-			nearbyfaultcar(longitude, latitude) {
+			nearbyfaultcar(longitude, latitude, type) {
 				var options = {
 					url: '/bike/list_to_repair_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -656,7 +662,7 @@
 							longitude,
 							latitude
 						],
-						"inv_state": 2
+						"inv_state": type
 						// "is_under_volt": 1
 					}
 				}
@@ -688,6 +694,7 @@
 							console.log('saoma', res)
 							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 							this.setSn(bikesn)
+							this.setBikeid('*')
 							this.getcarinfo()
 							// 入库和维修要先请求订单信息
 							// if (this.type == '1.1' || this.type == '1.3') {
@@ -711,8 +718,7 @@
 							// }
 						},
 						fail: res => {},
-						complete: res => {
-						}
+						complete: res => {}
 					});
 				} else {
 					uni.navigateTo({
@@ -734,7 +740,7 @@
 						break;
 					case '2':
 						this.urls = '/pages/maintainPage/normalmaintain/normalmaintain'
-						break;	
+						break;
 					case '3.1':
 						this.urls = '/pages/movecarPage/checkupcar/checkupcar'
 						break;
@@ -773,32 +779,6 @@
 					console.error(err, '捕捉')
 				})
 			},
-			// 车站列表
-			nearbycarinfo(flag) {
-				var options = {
-					url: '/city/city_object_nearby', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						"coordinate": [
-							this.longitude,
-							this.latitude
-						],
-						"flag": flag //1服务区，2车站
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('附近车站信息', res)
-					if (res.status == 0) {
-						this.covers.push()
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
-			},
 			// 创建车站
 			creatStopurl(level) {
 				var options = {
@@ -812,7 +792,7 @@
 							this.tempjindu,
 							this.tempweidu
 						],
-						"radius": 1000,
+						"radius": parseInt(this.stopRadius),
 						"capacity": 10,
 						"state": 0,
 						"type": "SCHOOL",
@@ -872,6 +852,14 @@
 <style lang="scss" scoped>
 	.activemap {
 		height: 35vh !important;
+	}
+	.movecar-view{
+		margin-top: 10upx;
+		background-color:#555555;
+		text-align: center;
+		color: white;
+		height: 80upx;
+		line-height: 80upx;
 	}
 
 	.scroll-viewy {

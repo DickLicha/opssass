@@ -20,7 +20,7 @@
 					{name:'剩余电量:',val:''},
 					{name:'电池电压:',val:''},
 					{name:'剩余容量:',val:''},
-					{name:'型号编码:',val:''},
+					// {name:'型号编码:',val:''},
 					{name:'电池状态:',val:''},
 					{name:'电池锁状态:',val:''},
 				]		
@@ -38,7 +38,7 @@
 			this.carcenterdata1[2].val = this.bikeinfo.battery_capacity/1000+'Ah'
 			
 			// 型号编码
-			this.carcenterdata1[3].val = this.bikeinfo.battery_model
+			// this.carcenterdata1[3].val = this.bikeinfo.battery_model
 			
 			// 电池状态
 			let is_on_battery=''
@@ -47,7 +47,7 @@
 			}else if(this.bikeinfo.is_on_battery==1){
 				is_on_battery='装入'
 			}
-			this.carcenterdata1[4].val = is_on_battery
+			this.carcenterdata1[3].val = is_on_battery
 			
 			// 电池锁状态
 			let is_battery_locked=''
@@ -56,7 +56,7 @@
 			}else if(this.bikeinfo.is_on_battery==1){
 				is_battery_locked='关'
 			}
-			this.carcenterdata1[5].val = is_battery_locked	
+			this.carcenterdata1[4].val = is_battery_locked	
 		},
 		methods: {
 			gocarcenter(e){

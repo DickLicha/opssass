@@ -6,7 +6,7 @@
 					<input class="uni-input letter-spacings" maxlength="8" v-model="carnum" @input="hideKeyboard" type="number"
 					 placeholder="请输入编号" />
 				</view>
-				<view @click='go'>完成</view>
+				<button class='share-button-default sure-btn' type='primary' @click='go'>完成</button>
 			</view>
 		</view>
 	</view>
@@ -65,11 +65,14 @@
 				})
 			},
 			go() {
-				if(this.type=='8'){
-					this.throwin(this.carnum)
-				}else{
-					this.carinfo()
-				}								
+				this.setBikeid('*')
+				this.setSn(this.carnum)
+				this.carinfo()
+				// if(this.type=='8'){
+				// 	this.throwin(this.carnum)
+				// }else{
+				// 	this.carinfo()
+				// }								
 			},
 			// 投放市场
 			throwin(id) {
@@ -78,7 +81,7 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"bike_id":id 
+						"bike_id":id,
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -117,8 +120,7 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('bikeinfo', res)
-					if (res.status == 0) {
-						this.setSn(this.carnum)
+					if (res.status == 0) {						
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						// 入库和维修要先请求订单信息
@@ -131,23 +133,36 @@
 									"psize": 100,
 									"order_state": 0,//刚报修未入库，没有这个值表示已入库
 								}
-							}else{
-								datas = {
-									"is_order_finished": 0,
-									"pno": 1,
-									"psize": 100,
-									
-								}
+							}else{							
+									datas = {
+										"is_order_finished": 0,
+										"pno": 1,
+										"psize": 100,
+										
+									}													
 							}							
 							this.requestorder(datas)
 						}
 						else{
-							uni.navigateTo({
-								url: this.urls,
-								success: res => {},
-								fail: () => {},
-								complete: () => {}
-							});
+							// 投放市场
+							if(this.type=='8'){
+								// 判断车辆是否已经投放市场
+								if(res.info.inv_state==99){
+									this.throwin(res.info.id)
+								}else{
+									uni.showToast({
+										title: '该车已经投放市场'
+									});
+								}
+								
+							}else{
+								uni.navigateTo({
+									url: this.urls,
+									success: res => {},
+									fail: () => {},
+									complete: () => {}
+								});
+							}							
 						}
 					} else {
 						uni.showToast({
@@ -163,6 +178,8 @@
 			},
 			hideKeyboard(event) {
 				if (this.carnum.length === 8) {
+					this.setBikeid('*')
+					this.setSn(this.carnum)
 					uni.hideKeyboard();
 					this.carinfo()
 				}
@@ -192,6 +209,11 @@
 
 			.letter-spacings {
 				/* letter-spacing:40upx; */
+			}
+			.sure-btn{
+				position: fixed;
+				bottom: 20upx;
+				width:calc(100% - 44upx);
 			}
 
 			.input-place {

@@ -12,7 +12,7 @@
 			</view>
 
 			<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
-				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key=i @click="detilpop(item)">
+				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key=i @click="detilpop(item)" :class="[item.order_state == '1'? 'wrong-view' : 'right-view']">
 					<view>{{item.bike_id}}</view>
 					<view class='view-border-letf'>{{item.battery_level}}</view>
 					<view class='view-border-letf'>{{item.address}}</view>

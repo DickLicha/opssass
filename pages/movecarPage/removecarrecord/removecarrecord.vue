@@ -28,6 +28,7 @@
 
 <script>
 	import UniLoadMore from '@/components/load-more.vue'
+	import {mapState} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -41,6 +42,7 @@
 		components:{
 			UniLoadMore
 		},
+		computed:mapState(['userinfo']),
 		methods: {
 			gocarinfo(item){
 				uni.navigateTo({
@@ -71,7 +73,7 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"user_id": "10000"
+						"user_id": this.userinfo.userinfo.id
 					}
 				}
 				this.$httpReq(options).then((res) => {

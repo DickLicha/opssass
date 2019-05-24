@@ -270,6 +270,12 @@
 						});
 						break
 					case '4':
+						uni.navigateTo({
+							url: '/pages/repairlist/repairlist?type=10&&name=违章骑行',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
 						break
 					case '5':
 						uni.showModal({
@@ -376,7 +382,7 @@
 								});
 							} else {
 								uni.showToast({
-									title: res.message?res.message:'开锁失败!',
+									title: res.message ? res.message : '开锁失败!',
 									duration: 2000
 								})
 							}

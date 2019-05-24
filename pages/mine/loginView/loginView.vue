@@ -3,7 +3,7 @@
 		<view class="img-view">
 			
 		</view>
-		<button class="login-view" open-type="getUserInfo" type="primary" @getuserinfo="getuserinfo">授权</button>
+		<!-- <button class="login-view" open-type="getUserInfo" type="primary" @getuserinfo="getuserinfo">授权</button> -->
 		<button class="login-view" type="primary" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信用户快速登录</button>			
 		<view class="bottom-view">
 			<view class="bottom-text">登录即代表同意</view>

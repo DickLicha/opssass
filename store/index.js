@@ -29,6 +29,7 @@ const store = new Vuex.Store({
 		softconf: {},
 		removecaritem: {},
 		userinfo: {},
+		movecarorder:{},
 	},
 	mutations: {
 		login(state, provider) {
@@ -94,7 +95,10 @@ const store = new Vuex.Store({
 			state.userinfo = userinfo
 		},
 		setViolationsInfo(state, violationsInfo) {
-			state.violationsInfo = violationsInfo;
+			state.violationsInfo = violationsInfo
+		},
+		setMovecarorder(state, movecarorder) {
+			state.movecarorder = movecarorder
 		},
 
 	},
