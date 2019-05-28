@@ -13,7 +13,7 @@
 </template>
 
 <script>
-	import {mapMutations} from 'vuex';
+	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -26,9 +26,19 @@
 				phoneNumber: "",
 			}
 		},
-		onReady() {
+		onLoad() {
 			this.getLoginData();
+			console.log('this.userinfo',this.userinfo)
+			if(this.userinfo.token){
+				uni.navigateTo({
+					url: '/pages/tabbar/index/index',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			}
 		},
+		computed:mapState(['userinfo']),
 		methods: {
 			...mapMutations(['setUserinfo']),
 			// 获取微信信息
@@ -37,7 +47,6 @@
 				uni.login({
 					provider: 'weixin',
 					success: function (loginRse){
-						console.log('login:',loginRse);
 						_this.wxLoginCode = loginRse.code;
 						uni.getUserInfo({
 							success:(res)=>{

@@ -10,7 +10,7 @@
 				</view>
 			</view>
 			<view>
-				<button class='share-button-default submit-btn' @click='submitorder'>提交报修</button>
+				<button class='share-button-default submit-btn' type='primary' @click='submitorder'>提交报修</button>
 			</view>
 		</view>
 	</view>

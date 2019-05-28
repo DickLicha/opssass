@@ -19,11 +19,11 @@
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
-					<cover-view v-if="getorder()" class='movecar-view'>挪车中车辆：1</cover-view>
+					<cover-view v-if="getorder()" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
 					<cover-view class='map-cover-view'>
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view>
-						<cover-view v-if="!showcorverview.bottom&&!actives" class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
+						<cover-view v-if="!showcorverview.bottom&&!actives&&!hidebutton" class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
 					</cover-view>
 				</map>
 				<view v-if="actives">
@@ -76,10 +76,10 @@
 			baseImg,
 			uniPopup
 		},
-		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo','movecarorder']),
+		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'userinfo','orderid','endmove']),
 		data() {
 			return {
-				endmove: false,
+				// endmove: false,
 				isActive: -1,
 				selectvals: 100,
 				stopName: '',
@@ -98,9 +98,7 @@
 					head: true,
 					bottom: true
 				},
-				// latitude: 26.0527,
 				showmapselect: false,
-				// longitude: 119.31414,
 				mapinfo: null,
 				scale: '13', //缩放级别5-18
 				showLocation: false,
@@ -160,24 +158,49 @@
 				}],
 				tempjindu: '',
 				tempweidu: '',
-				orderid: '',
+				// orderid: '',
+				hidebutton: false,
+				ingtext: '挪车中车辆：1', //正在进行中订单标题
+				inglength: 0, //是否有正在进行中的订单
 			};
 		},
 		onLoad(e) {
-			this.orderid = e.orderid
-			this.endmove = e.endmove
+			// this.orderid = e.orderid
+			// this.endmove = e.endmove
 			this.headviewtext = e.text
 			this.type = e.type
+			console.log('type', this.type)
 			this.dowhat()
 			if (this.mapinfo == null) {
 				this.mapinfo = uni.createMapContext('firstmap')
 			}
-			switch (e.type) {
+
+			wx.setNavigationBarTitle({
+				title: e.name
+			})
+			uni.getLocation({ //获取当前的位置坐标
+				type: 'gcj02',
+				success: (res) => {
+					console.log('位置信息', res.longitude, res.latitude)
+					this.setLongitude(res.longitude)
+					this.setLatitude(res.latitude)
+					this.tempjindu = res.longitude
+					this.tempweidu = res.latitude
+				},
+				fail: (res) => {
+					console.log('fail', res)
+				}
+			});
+		},
+		onShow() {
+			switch (this.type) {
 				case '0':
 					this.scanbuttonname = '扫码换电'
+					this.changeingbattery()
 					this.nearbyshortpower(100, this.longitude, this.latitude)
 					break;
 				case '0.1':
+					this.hidebutton = true
 					this.cartrack(this.bikeinfo.last_order_id)
 					// 设置corver初始状态
 					this.showcorverview = {
@@ -214,6 +237,7 @@
 					}
 					break
 				case '3.1':
+					this.movingbike()
 					this.scanbuttonname = '扫码挪车'
 					this.nearbymovecar(this.longitude, this.latitude, '*')
 					// this.nearbycarinfo(2)
@@ -298,25 +322,6 @@
 					]
 					break;
 			}
-			wx.setNavigationBarTitle({
-				title: e.name
-			})
-			uni.getLocation({ //获取当前的位置坐标
-				type: 'gcj02',
-				success: (res) => {
-					console.log('位置信息', res.longitude, res.latitude)
-					this.setLongitude(res.longitude)
-					this.setLatitude(res.latitude)
-					this.tempjindu = res.longitude
-					this.tempweidu = res.latitude
-				},
-				fail: (res) => {
-					console.log('fail', res)
-				}
-			});
-		},
-		onShow(e) {
-
 		},
 		onReady() {
 
@@ -326,18 +331,22 @@
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
-				'setOrderinfo', 'setMapcovers'
+				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
-			getorder(){
-				var test=true
-				console.log(11,this.type,this.movecarorder)
-				if(this.type==3.1 && Object.keys(this.movecarorder).length!=0){
-					test=true
-				}else{
-					test=false
+			getorder() {
+				var test = false
+				console.log(11, this.type, this.movecarorder)
+				if (this.type == 3.1) {
+					if (this.inglength > 0) {
+						test = true
+					}
+				} else if (this.type == 0 && this.inglength > 0) {
+					test = true
+				} else {
+					test = false
 				}
 				return test
-			},			
+			},
 			showMapSelect() {
 				this.showmapselect = !this.showmapselect
 			},
@@ -368,7 +377,8 @@
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
-					pointname = ''
+					pointname = '',
+					parkid = ""
 				// var pointname=''
 				// tmpObjs.bickcount=res.parks[j].bike_count
 				// tmpObjs.allkcount=res.parks[j].capacity			
@@ -379,6 +389,7 @@
 						if (pointtype == 'stop') {
 							bickcount = this.covers[k].bickcount
 							allkcount = this.covers[k].allkcount
+							parkid = this.covers[k].parkid
 							this.setMapcovers(this.covers[k])
 						}
 						break
@@ -395,7 +406,7 @@
 								confirmText: '确定',
 								success: res => {
 									if (res.confirm) {
-										this.endmovecars()
+										this.endmovecars(parkid)
 									} else if (res.cancel) {
 										console.log('用户点击取消');
 									}
@@ -425,7 +436,7 @@
 				this.actives = true
 			},
 			// 结束挪车
-			endmovecars() {
+			endmovecars(parkid) {
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {
@@ -435,6 +446,7 @@
 							context: '',
 							data: {
 								"order_id": this.orderid,
+								"park_id": parkid,
 								"user_coordinate": [
 									res.longitude, res.latitude
 								]
@@ -445,6 +457,7 @@
 							// res为服务端返回数据的根对象
 							console.log('挪车', res)
 							if (res.status == 0) {
+								this.movingbike()
 								uni.showToast({
 									title: '挪车成功',
 									mask: false,
@@ -573,6 +586,7 @@
 							// tmpObjs.allkcount = res.parks[j].capacity
 							tmpObjs.width = 39
 							tmpObjs.height = 48
+							tmpObjs.parkid = res.parks[j].id
 							temparr.push(tmpObjs)
 							// this.covers.push(tmpObjs)
 						}
@@ -645,6 +659,7 @@
 							temparr.push(jwd)
 						}
 						this.polyline[0].points = temparr
+						console.log('this.polyline', this.polyline)
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -845,6 +860,62 @@
 					}
 				})
 			},
+			// 换电中的订单列表
+			changeingbattery() {
+				this.setBikeid('*')
+				let options = {
+					url: '/bcorder/list',
+					method: 'POST',
+					data: {
+						"user_id": this.userinfo.userinfo.id,
+						"pno": 1,
+						"psize": 100,
+						"is_order_finished": 0,
+						"sk": '',
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					console.log('换电中的订单', res)
+					if (res.status == 0) {
+						this.ingtext = '换电中的车辆' + res.list.length
+						this.inglength = res.list.length
+						this.setInginfo(res.list)
+					}
+				})
+			},
+			// 挪车中的订单列表
+			movingbike() {
+				this.setBikeid('*')
+				let options = {
+					url: '/rporder/list',
+					method: 'POST',
+					data: {
+						"user_id": this.userinfo.userinfo.id,
+						"pno": 1,
+						"psize": 100,
+						"sk": '',
+						"is_order_finished": 0
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					console.log('挪车中的订单', res)
+					this.inglength = res.list.length
+					this.setInginfo(res.list)
+					if (res.status == 0) {
+						this.ingtext = '挪车中的车辆' + res.list.length
+						this.inglength = res.list.length
+						this.setInginfo(res.list)
+					}
+				})
+			},
+			goingview() {
+				uni.navigateTo({
+					url: `/pages/ingview/ingview?type=${this.type}`,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			}
 		}
 	}
 </script>
@@ -853,9 +924,10 @@
 	.activemap {
 		height: 35vh !important;
 	}
-	.movecar-view{
+
+	.movecar-view {
 		margin-top: 10upx;
-		background-color:#555555;
+		background-color: #555555;
 		text-align: center;
 		color: white;
 		height: 80upx;
@@ -884,7 +956,8 @@
 	}
 
 	.map-base-view {
-		height: calc(100vh - 80upx);
+		// height: calc(100vh - 80upx);
+		height: calc(100vh);
 		width: 100%;
 
 		.cover-imgs {
@@ -901,7 +974,7 @@
 			height: 100upx;
 			position: absolute;
 			// left: 10%;
-			bottom: 60upx;
+			bottom: 100upx;
 			text-align: center;
 			font-size: 40upx;
 			justify-items: center;

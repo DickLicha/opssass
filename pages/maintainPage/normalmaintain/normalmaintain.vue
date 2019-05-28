@@ -10,7 +10,7 @@
 					<view v-for="(item,i) in maintain">{{item.name}}</view>
 				</view>
 			</view>
-			<button type='button' class='share-button-default bottom-button' @click='maintainsuccess'>保养完成</button>
+			<button type='primary' class='share-button-default bottom-button' @click='maintainsuccess'>保养完成</button>
 		</view>
 	</view>
 </template>

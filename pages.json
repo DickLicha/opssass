@@ -64,7 +64,7 @@
 		}, {
 			"path": "pages/carBigCenter/carcenter/carcenter",
 			"style": {
-				"navigationBarTitleText": "车辆编号xxx"
+				"navigationBarTitleText": "车辆详细"
 			}
 		}, {
 			"path": "pages/carBigCenter/carorder/carorder",
@@ -241,6 +241,18 @@
             "path" : "pages/mine/chosecity/chosecity",
             "style" : {
 				"navigationBarTitleText": "选择城市"
+			}
+        }
+        ,{
+            "path" : "pages/ingview/ingview",
+            "style" : {
+				"navigationBarTitleText": "挪车"
+			}
+        }
+        ,{
+            "path" : "pages/endingview/endingview",
+            "style" : {
+				"navigationBarTitleText": "结束订单"
 			}
         }
     ],

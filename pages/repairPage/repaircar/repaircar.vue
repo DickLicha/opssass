@@ -20,8 +20,8 @@
 			</uni-popup>
 
 			<view class='change-battery-button'>
-				<button class='share-button-default bottom-button' @click='changbattery(0)'>误报</button>
-				<button class='share-button-default bottom-button' @click='changbattery(1)'>处理完成</button>
+				<button class='share-button-default bottom-button' type='primary' @click='changbattery(0)'>误报</button>
+				<button class='share-button-default bottom-button' type='primary' @click='changbattery(1)'>处理完成</button>
 			</view>
 		</view>
 	</view>

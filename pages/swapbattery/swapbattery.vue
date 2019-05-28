@@ -4,7 +4,7 @@
 			<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell>
 			<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
 			<view class='change-battery-button'>
-				<button class='share-button-default' @click='changbattery(buttonname)'>{{buttonname}}</button>
+				<button type='primary' class='share-button-default' @click='changbattery(buttonname)'>{{buttonname}}</button>
 			</view>
 			<uni-fab ref="fab" :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction"
 			 @trigger="trigger" />
@@ -182,6 +182,7 @@
 			this.swapbatterydata[8].val = sim_state
 		},
 		methods: {
+			...mapMutations(['setSn']),
 			gocarcenter() {
 				uni.navigateTo({
 					url: '/pages/carBigCenter/carcenter/carcenter',
@@ -400,6 +401,7 @@
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
+						this.setSn('*')
 						var options = {
 							url: '/bcorder/finish', //请求接口
 							method: 'POST', //请求方法全部大写，默认GET

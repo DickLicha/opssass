@@ -29,7 +29,9 @@ const store = new Vuex.Store({
 		softconf: {},
 		removecaritem: {},
 		userinfo: {},
-		movecarorder:{},
+		inginfo:{},//未结束的订单
+		endmove:false,
+		orderid:'',
 	},
 	mutations: {
 		login(state, provider) {
@@ -97,10 +99,15 @@ const store = new Vuex.Store({
 		setViolationsInfo(state, violationsInfo) {
 			state.violationsInfo = violationsInfo
 		},
-		setMovecarorder(state, movecarorder) {
-			state.movecarorder = movecarorder
+		setInginfo(state, inginfo) {
+			state.inginfo = inginfo
 		},
-
+		setEndmove(state, endmove) {
+			state.endmove = endmove
+		},
+		setOrderid(state, orderid) {
+			state.orderid = orderid
+		},
 	},
 	actions: {
 		// lazy loading openid

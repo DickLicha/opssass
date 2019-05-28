@@ -7,7 +7,7 @@
 			<view class='title-text'>报修</view>
 			<item-cell :itemdata="swapbatterydata2" type='2' :border='borders'></item-cell>
 			<view class='change-battery-button'>
-				<button class='share-button-default' @click='putstorage'>入库</button>
+				<button class='share-button-default' type='primary' @click='putstorage'>入库</button>
 			</view>
 		</view>
 	</view>

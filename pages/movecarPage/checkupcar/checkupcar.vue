@@ -9,8 +9,8 @@
 					<view class='checkup-text' v-for="(item,i) in checkupdata"><text>{{item}}</text></view>
 				</view>
 				<view class='change-battery-button'>
-					<button class='share-button-default checkup-button' @click='changbattery(0)'>车辆故障</button>
-					<button class='share-button-default checkup-button' @click='changbattery(1)'>车辆正常</button>
+					<button class='share-button-default checkup-button' type="primary" @click='changbattery(0)'>车辆故障</button>
+					<button class='share-button-default checkup-button' type='primary' @click='changbattery(1)'>车辆正常</button>
 				</view>
 			</view>
 			<view v-if="showshartmove" class='end-move-button'>
@@ -19,7 +19,7 @@
 			</view>
 
 			<view v-if="showendmove" class='end-move-button'>
-				<button class='share-button-default margin-topbtn' @click='endmovecar'>完成挪车</button>
+				<button class='share-button-default margin-topbtn' type='primary' @click='endmovecar'>完成挪车</button>
 				<!-- <button class='share-button-default margin-topbtn' @click='cantmovecar'>无法挪车</button> -->
 			</view>
 
@@ -48,11 +48,11 @@
 					},
 					{
 						name: '最近一次检查人:',
-						val: '祝盛炜'
+						val: ''
 					},
 					{
 						name: '待安全检查持续时常:',
-						val: '3天19小时19分21秒'
+						val: ''
 					}
 				],
 				checkupdata: [
@@ -71,7 +71,6 @@
 			this.swapbatterydata[2].val = 'xxx'
 		},
 		methods: {
-			...mapMutations(['setMovecarorder']),
 			gocarcenter() {
 				uni.navigateTo({
 					url: '/pages/carBigCenter/carcenter/carcenter',
@@ -93,11 +92,6 @@
 				console.log('date', this.$formatetimes())
 				this.showshartmove = false
 				this.showendmove = true
-				var temp={
-					id: this.bikeinfo.id,
-					time: this.$formatetimes()
-				}
-				this.setMovecarorder(temp)
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {

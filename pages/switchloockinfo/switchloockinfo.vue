@@ -38,6 +38,7 @@
 	import UniLoadMore from '@/components/load-more.vue'
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
+	import {mapState,mapMutations} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -60,7 +61,9 @@
 		components: {
 			UniLoadMore,itemCell,uniPopup
 		},
+		computed:mapState(['bikeinfo']),
 		methods: {
+			...mapMutations(['setSn']),
 			togglePopup(type) {
 				this.type = type
 				
@@ -90,14 +93,16 @@
 			},
 			// 开锁记录
 			openbattery(page,num) {
+				this.setSn('*')
 				var options = {
 					url: '/bike/oper_list', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
 						"type": 10,
-						"bike_id":'test0001',
+						// "bike_id":'test0001',
 						"pno": page,
+						"bike_id":this.bikeinfo.id,
 						"psize": num
 					}
 				}
