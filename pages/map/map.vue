@@ -76,7 +76,9 @@
 			baseImg,
 			uniPopup
 		},
-		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'userinfo','orderid','endmove']),
+		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'userinfo', 'orderid',
+			'endmove'
+		]),
 		data() {
 			return {
 				// endmove: false,
@@ -178,6 +180,8 @@
 			wx.setNavigationBarTitle({
 				title: e.name
 			})
+		},
+		onShow() {
 			uni.getLocation({ //获取当前的位置坐标
 				type: 'gcj02',
 				success: (res) => {
@@ -191,8 +195,6 @@
 					console.log('fail', res)
 				}
 			});
-		},
-		onShow() {
 			switch (this.type) {
 				case '0':
 					this.scanbuttonname = '扫码换电'
@@ -235,6 +237,7 @@
 						head: false,
 						bottom: true
 					}
+					this.maintainbikelist(this.longitude, this.latitude)
 					break
 				case '3.1':
 					this.movingbike()
@@ -905,6 +908,37 @@
 						this.ingtext = '挪车中的车辆' + res.list.length
 						this.inglength = res.list.length
 						this.setInginfo(res.list)
+					}
+				})
+			},
+			// 车辆保养列表
+			maintainbikelist(tempjindu,tempweidu) {
+				this.setSn('*')
+				this.setBikeid('*')
+				let options = {
+					url: '/bike/list_to_maintain_nearby',
+					method: 'POST',
+					data: {
+						"coordinate": [
+							tempjindu,
+							tempweidu
+						],
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					console.log('车辆保养列表', res)
+					if (res.status == 0) {
+						this.covers = []
+						for (let i = 0; i < res.list.length; i++) {
+							let tmpObj = {}
+							tmpObj.id = res.list[i].id
+							tmpObj.latitude = res.list[i].coordinate[1]
+							tmpObj.longitude = res.list[i].coordinate[0]
+							tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+							tmpObj.width = 39
+							tmpObj.height = 48
+							this.covers.push(tmpObj)
+						}
 					}
 				})
 			},

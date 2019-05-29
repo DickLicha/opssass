@@ -353,7 +353,7 @@
 							context: '',
 							data: {
 								"channel": "WXMP",
-								"bike_id": this.bikeid,
+								"bike_id": this.bikeinfo.id,
 								"user_coordinate": [
 									res.longitude, res.latitude
 								]

@@ -121,6 +121,11 @@
 								uni.showToast({
 									title: '保养成功'
 								});
+								setTimeout(()=>{
+									uni.navigateBack({
+										delta: 1
+									});
+								},1000)
 							}else{
 								uni.showToast({
 									title: res.message?res.message:'保养失败'
