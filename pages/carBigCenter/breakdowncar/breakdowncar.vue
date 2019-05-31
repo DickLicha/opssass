@@ -166,8 +166,14 @@
 						uni.showToast({
 							title: '报修提交成功',
 							mask: false,
+							icon:'none',
 							duration: 1500
 						});
+						setTimeout(()=>{
+						    uni.navigateBack({
+						    	delta: 1
+						    });	
+						},1500)
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '报修提交失败',

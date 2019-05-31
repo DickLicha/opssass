@@ -62,10 +62,12 @@
 			}
 			this.swapbatterydata2[1].val = desc
 			this.swapbatterydata2[2].val = this.orderinfo.creator_name
-			this.warehostlist()
+			
 		},
 		onShow() {
-			this.swapbatterydata1[0].val = this.warehoselist[this.putstorageindex].name
+			this.warehostlists()
+			console.log('this.warehoselist',this.warehoselist,this.putstorageindex)
+			
 		},
 		methods: {
 			...mapMutations(['setWarehoselist']),
@@ -78,7 +80,7 @@
 				});
 			},
 			// 仓库列表
-			warehostlist() {
+			warehostlists() {
 				var options = {
 					url: '/warehouse/list', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -98,10 +100,12 @@
 					console.log('仓库列表', res)
 					if (res.status == 0) {
 						this.setWarehoselist(res.list)
+						this.swapbatterydata1[0].val = this.warehoselist[this.putstorageindex].name
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取仓库列表失败！',
 							mask: false,
+							icon:'none',
 							duration: 2500
 						});
 					}
@@ -144,10 +148,16 @@
 									mask: false,
 									duration: 2500
 								});
+								setTimeout(()=>{
+								uni.navigateBack({
+									delta: 1
+								});	
+								},2000)
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '入库失败！',
 									mask: false,
+									icon:'none',
 									duration: 2500
 								});
 							}

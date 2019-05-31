@@ -1,34 +1,44 @@
 import store from '@/store'
 export default function(obj) {
 	// if (obj.method === 'GET') {
-	let sn,id;
+	let sn, id;
 	sn = store.state.sn || ""
-	if(obj.url=='/balert/confirm'){
+	if (obj.url == '/balert/confirm') {
 		id = obj.data.id
-	}else{
+	} else {
 		id = store.state.bikeid || ''
 	}
-	var token=store.state.userinfo.token
+	var token=''
+	try {
+		const value = uni.getStorageSync('userinfo');
+		if (value) {
+			token=value.token
+		}
+	} catch (e) {
+		// error
+	}
+	// var token = store.state.userinfo.token
+	// console.log('tocken',tocken)
 	//#ifndef H5	
 	// #endif
 	// #ifdef H5
 	// #endif
 	obj.header = obj.header || {}
-	  Object.assign(obj.data, {
-	    id: id,
-		bike_sn:sn,
+	Object.assign(obj.data, {
+		id: id,
+		bike_sn: sn,
 		// bike_id:id,	
-	    token: token,		
-		city_id: "350001",	
-	  })
+		token: token,
+		city_id: "350001",
+	})
 
 	// let baseUrl = 'http://www.fishors.com:8086'
 	let baseUrl = 'https://dd0001.izyscp.com'
-	for(const key in obj.data){
+	for (const key in obj.data) {
 		const element = obj.data[key]
-		 // 全选
+		// 全选
 		if (element === '*' || undefined === element || element === null) {
-		  delete obj.data[key]
+			delete obj.data[key]
 		}
 	}
 	let p = new Promise((resolve, reject) => {

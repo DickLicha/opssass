@@ -29,7 +29,10 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
-	import {mapState,mapMutations} from 'vuex'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		data() {
 			return {
@@ -71,6 +74,48 @@
 			this.swapbatterydata[2].val = 'xxx'
 		},
 		methods: {
+			// 车辆安全检查
+			checkbike() {
+				this.showshartmove = false
+				this.showendmove = true
+				uni.getLocation({ //获取当前的位置坐标
+					type: 'gcj02',
+					success: (res) => {
+						var options = {
+							url: '/bike/check', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"bike_id": this.bikeinfo.id,
+								"user_coordinate": [res.longitude, res.latitude],
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('安全检查', res)
+							if (res.status == 0) {
+								this.showdetil = false
+								this.showshartmove = true
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '安全检查失败',
+									mask: false,
+									icon: 'none',
+									duration: 1500
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+
+					},
+					fail: (res) => {
+						console.log('fail', res)
+					}
+				});
+			},
 			gocarcenter() {
 				uni.navigateTo({
 					url: '/pages/carBigCenter/carcenter/carcenter',
@@ -116,6 +161,7 @@
 								uni.showToast({
 									title: res.message ? res.message : '该车不可挪',
 									mask: false,
+									icon: 'none',
 									duration: 1500
 								});
 							}
@@ -131,9 +177,7 @@
 			},
 			changbattery(type) {
 				if (type == 1) {
-					this.showdetil = false
-					this.showshartmove = true
-					// this.startmovecar()
+					this.checkbike()
 				} else {
 					uni.navigateTo({
 						url: '/pages/carBigCenter/breakdowncar/breakdowncar',
@@ -142,17 +186,6 @@
 						complete: () => {}
 					});
 				}
-				// uni.showModal({
-				// 	title: '确认打开电池锁',
-				// 	content: '',
-				// showCancel: false,
-				// 	cancelText: '取消',
-				// 	confirmText: '打开',
-				// 	confirmColor: '#F6C700',
-				// 	success: res => {},
-				// 	fail: () => {},
-				// 	complete: () => {}
-				// });
 			}
 		}
 	}

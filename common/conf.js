@@ -29,6 +29,21 @@ const invstate = {
 	BIKE_INV_STATE_SCRAPED:3, //报废
 	BIKE_INV_STATE_DEPOT_REPAIRED:4 //返厂维修
 }
+// 故障状态
+// const invstate = {
+// 	BIKE_EX_OK : 0,
+//     BIKE_ALERT_LOCK_FAILED : 1, //关锁失败
+//     BIKE_ALERT_UNDER_VOLT : 2, //欠压
+//     BIKE_ALERT_OFFLINE : 4, //离线
+//     BIKE_ALERT_GPS_FAILED : 8, //定位失败
+// 	BIKE_ALERT_FAULT : 16, //故障警告
+// 	BIKE_ALERT_STOLEN : 32, //怀疑被盗
+// 	BIKE_ALERT_EX_UNLOCK : 64, //异常开锁
+// 	BIKE_ALERT_LONG_BATTERY_UNLOCKED : 128, //电池锁长时间打开
+// 	BIKE_ALERT_LONG_BATTERY_OFF : 256, //长时间电池空置
+// 	BIKE_ALERT_EX_BATTERY_OFF : 512, //电池异常空置
+// 	BIKE_ALERT_EX_LONG_UNLOCK : 1024, //超时未锁
+// }
 export {
 	eums,parkstate,invstate
 }

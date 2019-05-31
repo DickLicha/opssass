@@ -76,7 +76,7 @@
 			baseImg,
 			uniPopup
 		},
-		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'userinfo', 'orderid',
+		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'orderid',
 			'endmove'
 		]),
 		data() {
@@ -164,11 +164,20 @@
 				hidebutton: false,
 				ingtext: '挪车中车辆：1', //正在进行中订单标题
 				inglength: 0, //是否有正在进行中的订单
+				userinfo: {},
 			};
 		},
 		onLoad(e) {
 			// this.orderid = e.orderid
 			// this.endmove = e.endmove
+			try {
+				const value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.userinfo = value
+				}
+			} catch (e) {
+				// error
+			}
 			this.headviewtext = e.text
 			this.type = e.type
 			console.log('type', this.type)
@@ -470,6 +479,7 @@
 								uni.showToast({
 									title: res.message ? res.message : '挪车失败',
 									mask: false,
+									icon: 'none',
 									duration: 3000
 								});
 							}
@@ -779,16 +789,29 @@
 						// this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
-						uni.navigateTo({
-							url: this.urls,
-							success: res => {},
-							fail: () => {},
-							complete: () => {}
-						});
+						console.log('tttt',this.type)
+						if (this.type == 1.1) {
+							var datas = {
+								"is_order_finished": 0,
+								"pno": 1,
+								"psize": 100,
+								"order_state": 0,
+							}
+							this.setSn('*')
+							this.requestorder(datas)
+						}else{
+							uni.navigateTo({
+								url: this.urls,
+								success: res => {},
+								fail: () => {},
+								complete: () => {}
+							});
+						}						
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
 							mask: false,
+							icon: 'none',
 							duration: 1500
 						});
 					}
@@ -831,6 +854,7 @@
 						uni.showToast({
 							title: res.message ? res.message : '创建车站失败',
 							mask: false,
+							icon: 'none',
 							duration: 2500
 						});
 					}
@@ -860,6 +884,10 @@
 							length: res.list.length,
 							id: res.list[0].id
 						}
+					}else{
+						uni.showToast({
+							title: '查询订单失败'
+						});
 					}
 				})
 			},
@@ -912,7 +940,7 @@
 				})
 			},
 			// 车辆保养列表
-			maintainbikelist(tempjindu,tempweidu) {
+			maintainbikelist(tempjindu, tempweidu) {
 				this.setSn('*')
 				this.setBikeid('*')
 				let options = {

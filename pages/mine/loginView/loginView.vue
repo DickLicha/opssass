@@ -28,14 +28,20 @@
 		},
 		onLoad() {
 			this.getLoginData();
-			console.log('this.userinfo',this.userinfo)
-			if(this.userinfo.token){
-				uni.navigateTo({
-					url: '/pages/tabbar/index/index',
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
+			try {
+				const value = uni.getStorageSync('userinfo');
+				console.log('value',value)
+				if (value.status==0) {
+					uni.switchTab({
+						url: '/pages/tabbar/index/index',
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
+				}
+			} catch (e) {
+				// error
+				console.log('e',e)
 			}
 		},
 		computed:mapState(['userinfo']),
@@ -79,12 +85,23 @@
 					this.$httpReq(options).then((res) => {
 						if(res.status==0){
 							console.log('登录成功',res)
-							this.setUserinfo(res)
+							uni.setStorage({
+								key:'userinfo',
+								data:res,
+								success:res=>{
+									console.log('success')
+								},
+								fail:res=>{
+									
+								}
+							})
+							// this.setUserinfo(res)
 							uni.showToast({
 								title: '登录成功',
 								mask: false,
 								duration: 1500,
-								icon:"success"
+								icon:'none',
+								// icon:"success"
 							})
 							setTimeout(()=>{
 								uni.switchTab({
@@ -94,6 +111,7 @@
 						}else{
 							uni.showToast({
 								title: res.message?res.message:'登录失败',
+								icon:'none',
 								duration: 1500,
 							});
 						}					

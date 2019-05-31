@@ -28,23 +28,25 @@
 
 <script>
 	import UniLoadMore from '@/components/load-more.vue'
-	import {mapState} from 'vuex'
+	import {
+		mapState
+	} from 'vuex'
 	export default {
 		data() {
 			return {
 				switchloockdata: [],
-				pageindex:1,
-				pagenum:20,
-				allnumber:100,
-				resquestState: 0
+				pageindex: 1,
+				pagenum: 20,
+				allnumber: 100,
+				resquestState: 0,
+				userinfo: {},
 			}
 		},
-		components:{
+		components: {
 			UniLoadMore
 		},
-		computed:mapState(['userinfo']),
 		methods: {
-			gocarinfo(item){
+			gocarinfo(item) {
 				uni.navigateTo({
 					url: `/pages/movecarPage/movecarinfo/movecarinfo?date=${item.date}`,
 					success: res => {},
@@ -67,7 +69,7 @@
 				// }
 			},
 			// 挪车记录
-			openbattery(page,num) {
+			openbattery(page, num) {
 				var options = {
 					url: '/rporder/user_monthly_stat', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -80,12 +82,12 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('挪车记录', res)
-					this.allnumber=res.total
+					this.allnumber = res.total
 					if (res.status == 0) {
-						this.switchloockdata=res.info
+						this.switchloockdata = res.info
 					} else {
 						uni.showToast({
-							title: res.message?res.message:"获取挪车记录失败"
+							title: res.message ? res.message : "获取挪车记录失败"
 						});
 					}
 				}).catch((err) => {
@@ -95,7 +97,15 @@
 			},
 		},
 		onLoad() {
-			this.openbattery(this.pageindex,this.pagenum)
+			this.openbattery(this.pageindex, this.pagenum)
+			try {
+				const value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.userinfo = value
+				}
+			} catch (e) {
+				// error
+			}
 		}
 	}
 </script>
@@ -104,11 +114,13 @@
 	.listscrow {
 		height: calc(100vh - 100upx);
 	}
-	.right-view{
+
+	.right-view {
 		color: green
 	}
-	.wrong-view{
-		color:red
+
+	.wrong-view {
+		color: red
 	}
 
 	.wrap {
@@ -125,27 +137,33 @@
 				height: 90upx;
 				line-height: 90upx;
 			}
+
 			.flexd-posion {
 				background-color: rgb(225, 225, 225);
 			}
-            .bottom-state{
+
+			.bottom-state {
 				text-align: center;
 				margin-top: 10upx;
 				font-size: 30upx;
-				color: rgb(100,100,100)
+				color: rgb(100, 100, 100)
 			}
+
 			.view-border-bottom {
 				border-bottom: 1upx solid rgb(235, 235, 235);
 			}
+
 			.view-flexs {
 				display: flex;
 				width: 100%;
 				text-align: center;
 				align-items: center;
 				height: 80upx;
+
 				.view-border-letf {
 					border-left: 1upx solid rgb(235, 235, 235);
 				}
+
 				view {
 					width: 30%;
 				}

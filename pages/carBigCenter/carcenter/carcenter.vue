@@ -78,6 +78,11 @@
 				is_wheel_locked = '关'
 			}
 			this.carcenterdata2[5].val = is_wheel_locked
+			
+			// 异常状态
+			this.carcenterdata2[6].val = this.bikeinfo.alert_state_desc
+			// var ss=this.parseBitsPosition(parseInt(this.bikeinfo.alert_state))
+			// console.log(33,ss)
 		},
 		computed: mapState(['directinfo','bikeinfo']),
 		data() {
@@ -121,6 +126,10 @@
 					},
 					{
 						name: '车锁状态:',
+						val: ''
+					},
+					{
+						name: '异常状态:',
 						val: ''
 					},
 				],

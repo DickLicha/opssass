@@ -50,6 +50,11 @@
 							fail: () => {},
 							complete: () => {}
 						});
+					}else{
+						uni.showToast({
+							title: '订单不存在',
+							duration: 2000
+						});
 					}
 				})
 			},			
@@ -77,6 +82,7 @@
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
 							mask: false,
+							icon:'none',
 							duration: 1500
 						});
 					}

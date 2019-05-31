@@ -61,6 +61,10 @@
 							length: res.list.length,
 							id: res.list[0].id
 						}
+					}else{
+						uni.showToast({
+							title: '订单不存在'
+						});
 					}
 				})
 			},
@@ -97,6 +101,7 @@
 					} else {
 						uni.showToast({
 							title: res.message?res.message:'投放失败',
+							icon:'none',
 							mask: false,
 							duration: 1500
 						});

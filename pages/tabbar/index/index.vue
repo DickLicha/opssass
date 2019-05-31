@@ -1,5 +1,9 @@
 <template>
 	<view class='wrap'>
+		<view class='head-view'>
+			<image class='scan-img' @click="scaninto" src='/static/image/scan2x.png'>扫一扫</image>
+			<text class='head-view-text'>首页</text>
+		</view>
 		<view class='common-base-view'>
 			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item,i)'>
 				<!-- <view class='task-view-img'><i class="iconfont icondanche" style='font-size: 70upx;'></i></view> -->
@@ -21,78 +25,86 @@
 	export default {
 		onLoad() {
 			this.taskdata = []
-			var acl = this.userinfo.acl.children
-			var onlyid = '',
-				tempobj = {},
-				src = '',
-				name = '',
-				url = '',
-				text = ''
-			for (let i = 0; i < acl.length; i++) {
-				if (acl[i].visitable == 1) {
-					onlyid = parseInt(acl[i].uri)
-					switch (onlyid) {
-						case 0:
-							src = '../../../static/image/huan_dian.png'
-							name = '换电'
-							url = '/pages/map/map'
-							text = '全部待换电'
-							break
-						case 1:
-							name = '维修'
-							url = '/pages/repairlist/repairlist'
-							text = '全部故障车辆'
-							src = '../../../static/image/wei_xiu.png'
-							break
-						case 2:
-							name = '保养'
-							url = '/pages/map/map'
-							text = '待保养车辆'
-							src = '../../../static/image/bao_yang.png'
-							break
-						case 3:
-							name = '单个挪车'
-							url = '/pages/repairlist/repairlist'
-							text = '全部车站'
-							src = '../../../static/image/nuo_che.png'
-							break
-						case 8:
-							name = '库存管理'
-							url = '/pages/repairlist/repairlist'
-							text = ''
-							src = '../../../static/image/ku_cun.png'
-							break
-						case 9:
-							name = '车站'
-							url = '/pages/map/map'
-							text = '全部车站'
-							src = '../../../static/image/che_zhan.png'
-							break
-						case 10:
-							name = '违章'
-							url = '/pages/repairlist/repairlist'
-							text = ''
-							src = '../../../static/image/wei_zhang.png'
-							break
-						case 11:
-							name = '车辆排查'
-							url = '/pages/repairlist/repairlist'
-							text = ''
-							src = '../../../static/image/pai_cha.png'
-							break
+			// var acl = this.userinfo.acl.children
+			var acl = []
+			uni.getStorage({
+				key:'userinfo',
+				success:res=>{
+					acl=res.data.acl.children
+						var onlyid = '',
+						tempobj = {},
+						src = '',
+						name = '',
+						url = '',
+						text = ''
+					for (let i = 0; i < acl.length; i++) {
+						if (acl[i].visitable == 1) {
+							onlyid = parseInt(acl[i].uri)
+							switch (onlyid) {
+								case 0:
+									src = '../../../static/image/huan_dian.png'
+									name = '换电'
+									url = '/pages/map/map'
+									text = '全部待换电'
+									break
+								case 1:
+									name = '维修'
+									url = '/pages/repairlist/repairlist'
+									text = '全部故障车辆'
+									src = '../../../static/image/wei_xiu.png'
+									break
+								case 2:
+									name = '保养'
+									url = '/pages/map/map'
+									text = '待保养车辆'
+									src = '../../../static/image/bao_yang.png'
+									break
+								case 3:
+									name = '单个挪车'
+									url = '/pages/repairlist/repairlist'
+									text = '全部车站'
+									src = '../../../static/image/nuo_che.png'
+									break
+								case 8:
+									name = '库存管理'
+									url = '/pages/repairlist/repairlist'
+									text = ''
+									src = '../../../static/image/ku_cun.png'
+									break
+								case 9:
+									name = '车站'
+									url = '/pages/map/map'
+									text = '全部车站'
+									src = '../../../static/image/che_zhan.png'
+									break
+								case 10:
+									name = '违章'
+									url = '/pages/repairlist/repairlist'
+									text = ''
+									src = '../../../static/image/wei_zhang.png'
+									break
+								case 11:
+									name = '车辆排查'
+									url = '/pages/repairlist/repairlist'
+									text = ''
+									src = '../../../static/image/pai_cha.png'
+									break
+							}
+							tempobj = {
+								index: onlyid,
+								src: src,
+								name: name,
+								url: url,
+								text: text
+							}
+							this.taskdata.push(tempobj)
+						}
 					}
-					tempobj = {
-						index: onlyid,
-						src: src,
-						name: name,
-						url: url,
-						text: text
-					}
-					this.taskdata.push(tempobj)
+					this.getconfinfo()
+					this.getdirectinfo()
 				}
-			}
-			this.getconfinfo()
-			this.getdirectinfo()
+			})
+		
 		},
 		computed: mapState(['userinfo']),
 
@@ -102,7 +114,55 @@
 			};
 		},
 		methods: {
-			...mapMutations(['setDirectinfo']),
+			...mapMutations(['setDirectinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
+			scaninto() {
+				uni.scanCode({
+					onlyFromCamera: true, //只允许相机扫码
+					success: res => {
+						console.log('saoma', res)
+						var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+						this.setSn(bikesn)
+						this.setBikeid('*')
+						this.getcarinfo()
+					},
+					fail: res => {},
+					complete: res => {}
+				});
+			},
+			// 获取车辆信息
+			getcarinfo() {
+				var options = {
+					url: '/bike/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					if (res.status == 0) {
+						// this.setSn(this.carnum)
+						this.setBikeid(res.info.id)
+						this.setBikeinfo(res.info)
+						uni.navigateTo({
+							url: '/pages/swapbattery/swapbattery',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取车辆信息失败',
+							mask: false,
+							icon:'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			// 获取字典配置信息
 			getdirectinfo() {
 				var options = {
@@ -122,22 +182,6 @@
 					// 请求失败的回调
 					console.error(err, '捕捉')
 				})
-			},
-			// 扫码
-			scanCode() {
-				uni.scanCode({
-					onlyFromCamera: true, //只允许相机扫码
-					success: function(res) {
-						console.log('条码类型：' + res.scanType);
-						console.log('条码内容：' + res.result);
-					},
-					fail: function(res) {
-
-					},
-					complete: function(res) {
-
-					}
-				});
 			},
 			go(item, i) {
 				uni.navigateTo({
@@ -208,15 +252,36 @@
 
 <style lang="scss" scoped>
 	.wrap {
-		position: relative;
-		height: calc(200vh);
+		// position: relative;
+		height: calc(120vh);
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;
+
+		.head-view {
+			height: 140upx;
+			background-color: white;
+			position: fixed;
+			top: 0;
+			width: 100%;
+			.scan-img {
+				position: absolute;
+				top: 70upx;
+				left: 40upx;
+				height: 44upx;
+				width: 44upx;
+			}
+
+			.head-view-text {
+				position: absolute;
+				top: 70upx;
+				left: 47%;
+			}
+		}
 
 		.common-base-view {
 			display: flex;
 			justify-content: space-between;
-			padding-top: 15upx;
+			padding-top: 160upx;
 			flex-wrap: wrap;
 			margin: 0 20upx;
 			text-align: center;

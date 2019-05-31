@@ -10,21 +10,30 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
-	import {mapState,mapMutations} from 'vuex'
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	export default {
 		components: {
 			itemCell
 		},
 		onLoad() {
-			console.log(this.userinfo)
+			try {
+				const value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.userinfo = value
+				}
+			} catch (e) {
+				// error
+			}
 			// 车型
 			this.carcenterdata1[0].val = this.userinfo.userinfo.name
-			
+
 			// 库存状态
 			this.carcenterdata1[1].val = this.userinfo.userinfo.phone
-			 
+
 		},
-		computed: mapState(['userinfo']),
 		data() {
 			return {
 				carcenterdata1: [{
@@ -36,11 +45,11 @@
 						val: ''
 					}
 				],
+				userinfo:{},
 				carcenterdata2: [{
-						name: '修改登录密码',
-						val: ''
-					}
-				]
+					name: '修改登录密码',
+					val: ''
+				}]
 			}
 		},
 		methods: {
@@ -52,7 +61,7 @@
 					complete: () => {}
 				});
 			},
-			molidpwd(){
+			molidpwd() {
 				uni.navigateTo({
 					url: '/pages/mine/changepwd/changepwd',
 					success: res => {},
@@ -60,7 +69,7 @@
 					complete: () => {}
 				});
 			},
-			loginout(){
+			loginout() {
 				uni.showModal({
 					title: '退出登录',
 					content: '确认退出登录？',
@@ -68,18 +77,23 @@
 					cancelText: '取消',
 					confirmText: '退出登录',
 					success: res => {
+						try {
+							uni.removeStorageSync('userinfo');
+						} catch (e) {
+							// error
+						}
 						uni.showToast({
 							title: '退出登录成功！',
 							duration: 1500,
 						});
-						setTimeout(()=>{
+						setTimeout(() => {
 							uni.navigateTo({
 								url: '/pages/mine/loginView/loginView',
 								success: res => {},
 								fail: () => {},
 								complete: () => {}
 							});
-						},2000)
+						}, 2000)
 					},
 					fail: () => {},
 					complete: () => {}
@@ -97,8 +111,9 @@
 
 		.view-common {
 			margin: 10upx 22upx;
-			height:100vh;
-			.login-out{
+			height: 100vh;
+
+			.login-out {
 				position: fixed;
 				bottom: 20upx;
 				width: calc(100% - 44upx)

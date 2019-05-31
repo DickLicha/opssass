@@ -251,6 +251,7 @@
 											uni.showToast({
 												title: res.message ? res.message : '处理失败',
 												mask: false,
+												icon:'none',
 												duration: 3000
 											});
 										}

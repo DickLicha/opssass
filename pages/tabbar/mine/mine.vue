@@ -64,9 +64,17 @@
 			}
 		},
 		onLoad(){
-			this.swapdata[0].name=this.userinfo.userinfo.name
+			try {
+				const value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.swapdata[0].name=value.userinfo.name
+					// this.userinfo = value
+				}
+			} catch (e) {
+				// error
+			}
+			
 		},
-		computed:mapState(['userinfo']),
 		components: {
 			itemCell
 		},

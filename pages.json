@@ -9,7 +9,8 @@
 		{
 			"path": "pages/tabbar/index/index",
 			"style": {
-				"navigationBarTitleText": "共享电单车运维版"
+				"navigationBarTitleText": "共享电单车运维版",
+				"navigationStyle":"custom"
 				// 				"titleNView": false,
 				// 				"scrollIndicator": "none"
 				// 				"navigationStyle":"custom"
@@ -260,8 +261,7 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#F8F8F8",
-		"navigationStyle":"custom"
+		"backgroundColor": "#F8F8F8"		
 	},
 	"tabBar": {
 		"backgroundColor": "#FFFFFF",

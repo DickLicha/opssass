@@ -21,9 +21,9 @@
 					length: ''
 				},
 				type: '',
+				userinfo: {},
 			}
 		},
-		computed: mapState(['userinfo']),
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
 			// 投放市场
@@ -50,6 +50,7 @@
 						uni.showToast({
 							title: res.message ? res.message : '投放失败',
 							mask: false,
+							icon: 'none',
 							duration: 1500
 						});
 					}
@@ -152,13 +153,13 @@
 									if (chids[j].visitable == 1) {
 										tempobj = {}
 										switch (chids[j].uri) {
-											case '10.0':
-												tempobj = {
-													name: '违章骑行',
-													val: '',
-												}
-												templist.push(tempobj)
-												break
+											// case '10.0':
+											// 	tempobj = {
+											// 		name: '违章骑行',
+											// 		val: '',
+											// 	}
+											// 	templist.push(tempobj)
+											// 	break
 											case '10.1':
 												tempobj = {
 													name: '举报',
@@ -232,20 +233,21 @@
 						// this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
-						if(this.type=='10'){
+						if (this.type == '10') {
 							uni.navigateTo({
 								url: "/pages/violations/reportViolations/reportViolations",
 								success: res => {},
 								fail: () => {},
 								complete: () => {}
 							});
-						}else{
+						} else {
 							this.throwin(res.info.id)
-						}						
+						}
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
 							mask: false,
+							icon: 'none',
 							duration: 1500
 						});
 					}
@@ -255,7 +257,7 @@
 				})
 			},
 			go(item) {
-				console.log('type',this.type)
+				console.log('type', this.type)
 				if (this.type == '8' && item.name == '扫码输入') {
 					uni.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
@@ -269,17 +271,19 @@
 
 						}
 					})
-					}
-					else if(this.type == '10' && item.name=='举报'){
-					this.repairlist=[
-						{name: '手动输入',
-						val: '',
-						url: `/pages/manualscan/manualscan?urls=/pages/violations/reportViolations/reportViolations&&type=10`},
-						{name: '扫码输入',
-						val: '',
-						url: `/pages/manualscan/manualscan?urls=/pages/violations/reportViolations/reportViolations&&type=10`},
+				} else if (this.type == '10' && item.name == '举报') {
+					this.repairlist = [{
+							name: '手动输入',
+							val: '',
+							url: `/pages/manualscan/manualscan?urls=/pages/violations/reportViolations/reportViolations&&type=10`
+						},
+						{
+							name: '扫码输入',
+							val: '',
+							url: `/pages/manualscan/manualscan?urls=/pages/violations/reportViolations/reportViolations&&type=10`
+						},
 					]
-				}else if(this.type == '10' && item.name=='扫码输入'){
+				} else if (this.type == '10' && item.name == '扫码输入') {
 					uni.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
@@ -292,7 +296,7 @@
 						fail: res => {},
 						complete: res => {}
 					});
-					
+
 				} else {
 					uni.navigateTo({
 						url: item.url,
@@ -310,8 +314,8 @@
 					data: data
 				}
 				this.$httpReq(options).then((res) => {
-					console.log('订单列表', res)
-					if (res.status == 0 && res.list.length != 0) {
+					console.log('订单列表', res,res.list.length)
+					if (res.status == 0 && res.list.length!=0) {
 						this.setOrderfirstid(res.list[0].id)
 						this.setOrderinfo(res.list[0])
 						uni.navigateTo({
@@ -324,6 +328,10 @@
 							length: res.list.length,
 							id: res.list[0].id
 						}
+					}else{
+						uni.showToast({
+							title: '查询订单失败！'
+						});
 					}
 				})
 			},
@@ -332,6 +340,14 @@
 			wx.setNavigationBarTitle({
 				title: e.name
 			})
+			try {
+				const value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.userinfo = value
+				}
+			} catch (e) {
+				// error
+			}
 			this.type = e.type
 			switch (e.type) {
 				case '1':

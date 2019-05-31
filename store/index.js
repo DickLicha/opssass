@@ -28,7 +28,7 @@ const store = new Vuex.Store({
 		violationsInfo: {},
 		softconf: {},
 		removecaritem: {},
-		userinfo: {},
+		// userinfo: {},
 		inginfo:{},//未结束的订单
 		endmove:false,
 		orderid:'',
@@ -93,9 +93,9 @@ const store = new Vuex.Store({
 		setRemovecaritem(state, removecaritem) {
 			state.removecaritem = removecaritem
 		},
-		setUserinfo(state, userinfo) {
-			state.userinfo = userinfo
-		},
+		// setUserinfo(state, userinfo) {
+		// 	state.userinfo = userinfo
+		// },
 		setViolationsInfo(state, violationsInfo) {
 			state.violationsInfo = violationsInfo
 		},

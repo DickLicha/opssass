@@ -36,6 +36,13 @@
 				content: [{
 						// iconPath: '/static/component.png',
 						// selectedIconPath: '/static/componentHL.png',
+						text: '开锁',
+						val: '-1',
+						active: false
+					},
+					{
+						// iconPath: '/static/component.png',
+						// selectedIconPath: '/static/componentHL.png',
 						text: '关锁',
 						val: '0',
 						active: false
@@ -183,6 +190,44 @@
 		},
 		methods: {
 			...mapMutations(['setSn']),
+			openlock() {
+				uni.getLocation({
+					type: 'wgs84',
+					success: ress => {
+						var options = {
+							url: '/bike/unlock', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"bike_id": this.bikeinfo.id,
+								"user_coordinate": [
+									ress.longitude,
+									ress.latitude
+								]
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							if (res.status == 0) {
+								uni.showToast({
+									title: '开锁成功',
+									duration: 2000,
+								});
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '开锁失败',
+									icon: 'none',
+									duration: 2000,
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
 			gocarcenter() {
 				uni.navigateTo({
 					url: '/pages/carBigCenter/carcenter/carcenter',
@@ -205,6 +250,7 @@
 					console.log('寻车铃', typeof(res), res)
 					if (res.status == 0) {} else {
 						uni.showToast({
+							icon: 'none',
 							title: res.message ? res.message : '开启寻车铃失败'
 						});
 					}
@@ -239,6 +285,7 @@
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '关锁失败',
+									icon: 'none',
 									duration: 2000,
 								});
 							}
@@ -256,6 +303,9 @@
 				console.log(e)
 				this.content[e.index].active = !e.item.active
 				switch (e.item.val) {
+					case '-1':
+						this.openlock()
+						break
 					case '0':
 						this.closelock()
 						break
@@ -288,6 +338,9 @@
 							confirmColor: '#F6C700',
 							success: res => {
 								if (res.confirm) {
+									uni.showLoading({
+										title: '开锁中'
+									});
 									this.openbattery()
 								}
 							},
@@ -332,6 +385,9 @@
 						success: res => {
 							if (res.confirm) {
 								this.openbattery()
+								uni.showLoading({
+									title: '开锁中'
+								});
 							}
 						},
 						fail: () => {},
@@ -369,6 +425,7 @@
 								// 	duration: 2000
 								// })
 								this.orderid = res.info.id
+								uni.hideLoading()
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',
 									content: '电池锁更换完毕后，会自动记录本次操作',
@@ -384,6 +441,7 @@
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '开锁失败!',
+									icon: 'none',
 									duration: 2000
 								})
 							}
@@ -426,6 +484,7 @@
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '关锁失败!',
+									icon: 'none',
 									duration: 2000
 								})
 							}

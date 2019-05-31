@@ -101,6 +101,7 @@
 								this.buttonname = '更换电池'
 								uni.showToast({
 									title: '关成功!',
+									icon:'none',
 									duration: 2000
 								})
 								setTimeout(()=>{

@@ -13,7 +13,7 @@
 		components: {
 			itemCell
 		},
-		computed:mapState(['userinfo','bikeinfo']),
+		computed:mapState(['bikeinfo']),
 		data() {
 			return {
 				carcenterdata1: [{
@@ -54,6 +54,15 @@
 			},
 			// 获取配置信息
 			getconfinfo() {
+				var id=''
+				try {
+					const value = uni.getStorageSync('userinfo');
+					if (value) {
+						token=value.userinfo.userinfo.id
+					}
+				} catch (e) {
+					// error
+				}
 				var options = {
 					url: '/bcorder/list', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -63,7 +72,7 @@
 						"psize": 1,
 						"sk": "",
 						"bike_id": this.bikeinfo.id,
-						"user_id": this.userinfo.userinfo.id
+						"user_id": id
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -78,6 +87,7 @@
 						this.carcenterdata1[4].val=res.list[0].battery_level_after+'%'
 					}else{
 						uni.showToast({
+							icon:'none',
 							title: res.message?res.message:'获取换电信息失败'
 						});
 					}

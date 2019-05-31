@@ -128,6 +128,7 @@
 								},1000)
 							}else{
 								uni.showToast({
+									icon:'none',
 									title: res.message?res.message:'保养失败'
 								});
 							}

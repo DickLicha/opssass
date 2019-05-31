@@ -193,6 +193,7 @@
 									uni.showToast({
 										title: parsedata.msg?parsedata.msg:'文件上传失败',
 										mask: false,
+										icon:'none',
 										duration: 1500
 									});
 								}
@@ -226,7 +227,6 @@
 					if (res.status == 0) {
 						uni.showToast({
 							title: "提交成功",
-							icon: "none"
 						})
 					}else{
 						uni.showToast({

@@ -119,6 +119,7 @@
 									uni.showToast({
 										title: parsedata.msg?parsedata.msg:'文件上传失败',
 										mask: false,
+										icon:'none',
 										duration: 1500
 									});
 								}

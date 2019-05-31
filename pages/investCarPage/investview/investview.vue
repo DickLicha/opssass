@@ -117,6 +117,7 @@
 						this.switchloockdata=res.list
 					} else {
 						uni.showToast({
+							icon:'none',
 							title: res.message?res.message:'获取列表失败'
 						});
 					}
