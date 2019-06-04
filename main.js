@@ -42,7 +42,8 @@ Vue.prototype.$parkstate = function(type) {
 	return place_name
 }
 Vue.prototype.$resourcesurl = function() {
-	return 'http://www.fishors.com:9030'
+	// return 'http://www.fishors.com:9030'
+	return 'https://upload.dd.ildjoy.com'
 }
 Vue.prototype.$invstate = function(type) {
 	let inv_name = ''

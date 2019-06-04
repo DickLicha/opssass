@@ -5,13 +5,15 @@
         rightBottom: rightBottom,
         leftTop: leftTop,
         rightTop: rightTop
-      }" class="fab-box fab">
+      }"
+		 class="fab-box fab">
 			<view :class="{
           left: horizontal === 'left' && direction === 'horizontal',
           top: vertical === 'top' && direction === 'vertical',
           bottom: vertical === 'bottom' && direction === 'vertical',
           right: horizontal === 'right' && direction === 'horizontal'
-        }" :style="{ 'background-color': styles.buttonColor }" class="fab-circle" @click="_onClick">
+        }"
+			 :style="{ 'background-color': styles.buttonColor }" class="fab-circle" @click="_onClick">
 				<text :class="{ active: isShow }" class="uni-icon uni-icon-plusempty" />
 			</view>
 			<view :class="{
@@ -20,11 +22,13 @@
           flexDirection: direction === 'vertical',
           flexDirectionStart: flexDirectionStart,
           flexDirectionEnd: flexDirectionEnd
-        }" :style="{ width: boxWidth, height: boxHeight, background: styles.backgroundColor }" class="fab-content">
+        }"
+			 :style="{ width: boxWidth, height: boxHeight, background: styles.backgroundColor }" class="fab-content">
 				<view v-if="flexDirectionStart || horizontalLeft" class="fab-item first" />
 				<view v-for="(item, index) in content" :key="index" :class="{ active: isShow }" :style="{
             color: item.active ? styles.selectedColor : styles.color
-          }" class="fab-item" @click="_onItemClick(index, item)">
+          }"
+				 class="fab-item" @click="_onItemClick(index, item)">
 					<image :src="item.active ? item.selectedIconPath : item.iconPath" class="content-image" mode="widthFix" />
 					<text class="text">{{ item.text }}</text>
 				</view>
@@ -203,6 +207,7 @@
 		justify-content: center;
 		align-items: center;
 		z-index: 2;
+		font-size: 32upx!important;
 	}
 
 	.fab-box.top {

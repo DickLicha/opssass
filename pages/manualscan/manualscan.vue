@@ -80,6 +80,8 @@
 			},
 			// 投放市场
 			throwin(id) {
+				this.setBikeid('*')
+				this.setSn('*')
 				var options = {
 					url: '/binv/launch', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -96,14 +98,14 @@
 						uni.showToast({
 							title: '投放成功',
 							mask: false,
-							duration: 1500
+							duration: 2500
 						});
 					} else {
 						uni.showToast({
 							title: res.message?res.message:'投放失败',
 							icon:'none',
 							mask: false,
-							duration: 1500
+							duration: 2500
 						});
 					}
 				}).catch((err) => {

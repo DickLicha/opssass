@@ -47,7 +47,7 @@
 			itemCell,
 		},
 		methods: {
-			...mapMutations(['setRemovecaritem']),
+			...mapMutations(['setRemovecaritem','setSn']),
 			togglePopup(type) {
 				this.type = type
 			},
@@ -95,6 +95,7 @@
 			},
 			// 开锁记录
 			openbattery(page, num,starttime,endtime) {
+				this.setSn('*')
 				var options = {
 					url: '/rporder/list', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET

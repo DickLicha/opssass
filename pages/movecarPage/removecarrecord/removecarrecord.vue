@@ -97,7 +97,6 @@
 			},
 		},
 		onLoad() {
-			this.openbattery(this.pageindex, this.pagenum)
 			try {
 				const value = uni.getStorageSync('userinfo');
 				if (value) {
@@ -106,6 +105,7 @@
 			} catch (e) {
 				// error
 			}
+			this.openbattery(this.pageindex, this.pagenum)
 		}
 	}
 </script>

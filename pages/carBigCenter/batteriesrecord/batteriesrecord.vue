@@ -72,7 +72,7 @@
 						"psize": 1,
 						"sk": "",
 						"bike_id": this.bikeinfo.id,
-						"user_id": id
+						// "user_id": id
 					}
 				}
 				this.$httpReq(options).then((res) => {

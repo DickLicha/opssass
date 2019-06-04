@@ -72,6 +72,11 @@
 						val: '5',
 						active: false
 					},
+					{
+						text: '',
+						val: '6',
+						active: false
+					},
 				],
 				borders: true,
 				buttonname: '更换电池',

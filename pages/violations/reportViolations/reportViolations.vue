@@ -9,40 +9,23 @@
 			<!-- </view> -->
 			<view class="select-view" v-if="index == 3 || index == 4" @click="cellClick(index)">
 				<view class="cell-name" v-if="index == 3">{{item.content}}</view>
-				<ruiDataPicker
-					v-else=""
-					class="cell-name"
-					fields="minute"
-					start="2000-00-00 00:00"
-					end="2030-12-30 23:59"
-					:value="item.content"
-					@change="bindChange"
-					@cancel="bindCancel"
-				></ruiDataPicker>
+				<ruiDataPicker v-else="" class="cell-name" fields="minute" start="2000-00-00 00:00" end="2030-12-30 23:59" :value="item.content"
+				 @change="bindChange" @cancel="bindCancel"></ruiDataPicker>
 				<image class="cell-arrow" src="/static/image/right_arrow.png" mode=""></image>
 			</view>
-			<input class="input-view" type="text" v-model="item.content" disabled="" v-else=""/>
+			<input class="input-view" type="text" v-model="item.content" disabled="" v-else="" />
 		</view>
 		<view class="photo-view">
-			<view class="photo-item" v-for="(item, index) in imageArr" :key="index" >
-				<image 
-				class="image-content" 
-				:src="item" 
-				mode="scaleToFill" 
-				@click="imageClick(index,item)"
-				>
+			<view class="photo-item" v-for="(item, index) in imageArr" :key="index">
+				<image class="image-content" :src="item" mode="scaleToFill" @click="imageClick(index,item)">
 				</image>
-				<image class="delete-image-view" 
-				src="/static/image/delete_image_icon.png" 
-				mode="" 
-				v-show="item != addImagePath"
-				@click="deleteImage(index)"
-				></image>
+				<image class="delete-image-view" src="/static/image/delete_image_icon.png" mode="" v-show="item != addImagePath"
+				 @click="deleteImage(index)"></image>
 			</view>
 		</view>
 		<view class="remark-view">
 			<textarea class="area-view" value="" placeholder="备注" v-model="remark" />
-		</view>
+			</view>
 		<view class="submit-btn" @click="uploadImage()"> 提交 </view>
 	</view>
 </template>
@@ -63,12 +46,12 @@
 				headTitle: "用户还车地点吻合",
 				remark: "",
 				dataList:[
-					{"content":"车辆编码：801313560"},
-					{"content":"13655999000"},
-					{"content":"小明"},
+					{"content":"车辆编码："},
+					{"content":""},
+					{"content":""},
 					{"content":"选择违章类型"},
-					{"content":"2019-05-16 09:12"},
-					{"content":"江西省景德镇市乐平市名电路1号"},
+					{"content":""},
+					{"content":""},
 				],
 				imageArr: [
 				],
@@ -181,14 +164,17 @@
 							},
 							success: (res) => {					
 								var parsedata=JSON.parse(res.data)
-								console.log('数据类型', typeof(parsedata),parsedata);
-								console.log('数据类型1', parsedata.data);
 								if(parsedata.status==0){
 									console.log('this.directinfo',this.directinfo)
 									var imgs = this.directinfo.res_server_url+'/'+parsedata.data.oss_name
 									console.log('imgs',imgs)
 									this.postImageArr.push(imgs);
 									this.uploadImage();
+									setTimeout(()=>{
+									uni.navigateBack({
+										delta: 2
+									});	
+									},1500)
 								}else{
 									uni.showToast({
 										title: parsedata.msg?parsedata.msg:'文件上传失败',

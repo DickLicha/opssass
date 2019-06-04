@@ -197,6 +197,7 @@
 
 		.view-common {
 			margin: 10upx 22upx;
+			padding-bottom: 40upx;
 		}
 	}
 </style>

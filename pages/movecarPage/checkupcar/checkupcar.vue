@@ -15,12 +15,10 @@
 			</view>
 			<view v-if="showshartmove" class='end-move-button'>
 				<button class='share-button-default margin-topbtn' @click='startmovecar'>开始挪车</button>
-				<!-- <button class='share-button-default margin-topbtn' @click='cantmovecar'>无法挪车</button> -->
 			</view>
 
 			<view v-if="showendmove" class='end-move-button'>
 				<button class='share-button-default margin-topbtn' type='primary' @click='endmovecar'>完成挪车</button>
-				<!-- <button class='share-button-default margin-topbtn' @click='cantmovecar'>无法挪车</button> -->
 			</view>
 
 		</view>
@@ -53,10 +51,10 @@
 						name: '最近一次检查人:',
 						val: ''
 					},
-					{
-						name: '待安全检查持续时常:',
-						val: ''
-					}
+					// {
+					// 	name: '待安全检查持续时长:',
+					// 	val: ''
+					// }
 				],
 				checkupdata: [
 					'1、转把', '2、车把', '3、刹车', '4、车灯', '5、喇叭', '6、挡泥板'
@@ -68,12 +66,11 @@
 		},
 		computed: mapState(['bikeinfo']),
 		onLoad() {
+			this.checkcars()
 			this.swapdata[0].val = this.bikeinfo.id
-			this.swapbatterydata[0].val = this.bikeinfo.last_repark_order_end_time
-			this.swapbatterydata[1].val = 'xxx'
-			this.swapbatterydata[2].val = 'xxx'
 		},
 		methods: {
+			...mapMutations(['setEndmove','setOrderid']),
 			// 车辆安全检查
 			checkbike() {
 				this.showshartmove = false
@@ -125,12 +122,13 @@
 				});
 			},
 			endmovecar() {
-				uni.navigateTo({
-					url: `/pages/map/map?type=3.1&&name=挪车&&text=全部车站&&endmove=true&&orderid=${this.orderid}`,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
+				// uni.navigateTo({
+				// 	url: `/pages/map/map?type=3.1&&name=挪车&&text=全部车站&&endmove=true&&orderid=${this.orderid}`,
+				// 	success: res => {},
+				// 	fail: () => {},
+				// 	complete: () => {}
+				// });
+				this.startmovecar()			
 			},
 			// 开始挪车
 			startmovecar() {
@@ -156,7 +154,12 @@
 							// res为服务端返回数据的根对象
 							console.log('开始订单', res)
 							if (res.status == 0) {
-								this.orderid = res.info.id
+								// this.orderid = res.info.id
+								this.setEndmove(true)
+								this.setOrderid(res.info.id)
+								uni.navigateBack({
+									delta: 1
+								});
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '该车不可挪',
@@ -186,7 +189,39 @@
 						complete: () => {}
 					});
 				}
-			}
+			},
+			checkcars(){
+					var options = {
+					url: '/bike/oper_list', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						type:40,
+						pno:1,
+						psize:1,
+						bike_id: this.bikeinfo.id
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('最后一次检查信息',res)
+					if (res.status == 0) {
+						this.swapbatterydata[0].val = res.list[0].create_time
+						this.swapbatterydata[1].val = res.list[0].user_name
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取车辆信息失败',
+							mask: false,
+							icon:'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 		}
 	}
 </script>

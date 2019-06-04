@@ -13,6 +13,7 @@
 				  :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				  @regionchange="functionName" @end="functionName" @begin="functionName"> -->
 					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
+					<!-- <cover-view v-if="actives" class='movecar-view'>拖动地图选择车站</cover-view> -->
 					<cover-view v-if="showmapselect" class='map-select-view'>
 						<cover-view class='select-list'>
 							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i,item)" :class="{'borderrights':i==isActive}">{{item.name}}</cover-view>
@@ -45,7 +46,7 @@
 							<button type='primary' class='share-button-default' @click="finshCreat">提交</button>
 						</view>
 					</view>
-					<uni-popup :show="poptype ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
+					<uni-popup :show="poptype ==='middle-list'" position="bottom" mode="fixed" @hidePopup="togglePopup('')">
 						<view :scroll-y="true" class="uni-center center-box">
 							<view v-for="(item, index) in itemcells" :key="index" @click="selectLev(item)" style="width:180upx;height: 70upx;">
 								<text>{{item}}</text>
@@ -168,29 +169,6 @@
 			};
 		},
 		onLoad(e) {
-			// this.orderid = e.orderid
-			// this.endmove = e.endmove
-			try {
-				const value = uni.getStorageSync('userinfo');
-				if (value) {
-					this.userinfo = value
-				}
-			} catch (e) {
-				// error
-			}
-			this.headviewtext = e.text
-			this.type = e.type
-			console.log('type', this.type)
-			this.dowhat()
-			if (this.mapinfo == null) {
-				this.mapinfo = uni.createMapContext('firstmap')
-			}
-
-			wx.setNavigationBarTitle({
-				title: e.name
-			})
-		},
-		onShow() {
 			uni.getLocation({ //获取当前的位置坐标
 				type: 'gcj02',
 				success: (res) => {
@@ -204,6 +182,29 @@
 					console.log('fail', res)
 				}
 			});
+			// this.orderid = e.orderid
+			// this.endmove = e.endmove
+			try {
+				const value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.userinfo = value
+				}
+			} catch (e) {
+				// error
+			}
+			this.headviewtext = e.text
+			this.type = e.type
+			this.dowhat()
+			if (this.mapinfo == null) {
+				this.mapinfo = uni.createMapContext('firstmap')
+			}
+
+			wx.setNavigationBarTitle({
+				title: e.name
+			})
+		},
+		onShow() {
+			
 			switch (this.type) {
 				case '0':
 					this.scanbuttonname = '扫码换电'
@@ -409,6 +410,7 @@
 				}
 				if (this.type == '3.1') {
 					if (pointtype == 'stop') {
+						console.log('this.endmove',this.endmove)
 						if (this.endmove) {
 							uni.showModal({
 								title: '确定挪到以下车站吗？',
@@ -446,9 +448,16 @@
 			// 点击创建车站
 			creatStop() {
 				this.actives = true
+				// 点击创建车站前的地图经纬度坐标
+				this.coorDinates={
+					long:this.tempjindu,
+					lat:this.tempweidu,
+				}
+				console.log('this.coorDinates',this.coorDinates)
 			},
 			// 结束挪车
 			endmovecars(parkid) {
+				this.setSn('*')
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {
@@ -505,6 +514,7 @@
 			active(index, item) {
 				this.isActive = index
 				this.selectvals = item.val
+				this.headviewtext=item.name
 				// for (let i = 0; i < this.selectcoverdata.length; i++) {
 				// 	this.selectcoverdata[i].active = false
 				// }
@@ -518,8 +528,9 @@
 				let self = this
 				this.mapinfo.getCenterLocation({
 					success: (res) => {
-						self.tempjindu = res.longitude
-						self.tempweidu = res.latitude
+						this.tempjindu = res.longitude
+						this.tempweidu = res.latitude
+						console.log(res.longitude,res.latitude)
 						// self.nearbycarinfo(2)
 						switch (self.type) {
 							case '0':
@@ -830,8 +841,10 @@
 						"name": this.stopName,
 						"remark": this.stopDesc,
 						"coordinate": [
-							this.tempjindu,
-							this.tempweidu
+							// this.tempjindu,
+							// this.tempweidu
+							this.coorDinates.long,
+							this.coorDinates.lat
 						],
 						"radius": parseInt(this.stopRadius),
 						"capacity": 10,
@@ -1025,7 +1038,7 @@
 		.cover-imgs {
 			position: absolute;
 			left: 46%;
-			top: 38%;
+			top: 42%;
 			width: 50upx;
 			height: auto;
 		}

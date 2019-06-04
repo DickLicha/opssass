@@ -81,14 +81,14 @@
 				margin-top: 20upx;
 				.flex-item-mine {
 					display: flex;
-					height: 80upx;
+					height: 100upx;
 					margin: 0 40upx;
-					line-height: 80upx;
+					line-height: 100upx;
 					align-items: center;
 
 					.flex-item-left {
 						width: 97%;
-						font-size: 13px;
+						font-size: 15px;
 					}
 
 					.flextwo {}

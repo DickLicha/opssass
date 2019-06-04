@@ -17,6 +17,10 @@ export default function(obj) {
 	} catch (e) {
 		// error
 	}
+	// uni.showLoading({
+	// 	title: '加载中',
+	// 	mask: false
+	// });
 	// var token = store.state.userinfo.token
 	// console.log('tocken',tocken)
 	//#ifndef H5	
@@ -32,8 +36,11 @@ export default function(obj) {
 		city_id: "350001",
 	})
 
-	// let baseUrl = 'http://www.fishors.com:8086'
-	let baseUrl = 'https://dd0001.izyscp.com'
+	// let baseUrl = 'https://dd0001.izyscp.com'
+	// 线上测试版本
+	let baseUrl = 'https://api.dd-test.ildjoy.com'
+	// 线上真实环境
+	// let baseUrl = 'https://api.dd-dev.ildjoy.com'
 	for (const key in obj.data) {
 		const element = obj.data[key]
 		// 全选
@@ -56,7 +63,24 @@ export default function(obj) {
 				console.error('ajax错误：', res)
 				reject()
 			},
-			complete() {
+			complete(res) {
+				// setTimeout(()=>{
+				// 	uni.hideLoading();
+				// },300)			
+				if(res.data.status==-530){
+					uni.showToast({
+						title: 'token验证失败，请重新登录',
+						icon:'none'
+					});
+					setTimeout(()=>{
+						uni.navigateTo({
+							url: '/pages/mine/loginView/loginView',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+					},1000)
+				}
 				// isShowLoading = false
 				// store.commit("setloadingFlag", false);
 			}

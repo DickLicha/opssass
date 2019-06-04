@@ -15,42 +15,14 @@
 		data() {
 			return {
 				vioList: [
-					// {"time":"05-17 09:40", "reason":"其他"},
-					// {"time":"05-17 09:40", "reason":"其他"},
-					// {"time":"05-17 09:40", "reason":"其他"},
 				]
 			}
 		},
 		onLoad() {
-			var options = {
-				url: '/urviolation/list', //请求接口
-				method: 'POST', //请求方法全部大写，默认GET
-				context: '',
-				data: {
-					"order_state": 0,
-					"pno": 1,
-					"psize": 20
-				}
-			}
-			var _this = this;
-			this.$httpReq(options).then((res) => {
-				// 请求成功的回调
-				// res为服务端返回数据的根对象
-				console.log('数据列表：',res);
-				if (res.status == 0) {
-					this.vioList = res.list;
-					// this.vioList.con
-					console.log('success：',res.list);
-				}else{
-					uni.showToast({
-						title: res.message,
-						icon: "none"
-					})
-				}
-			}).catch((err) => {
-				// 请求失败的回调
-				console.error(err, '捕捉')
-			})
+			
+		},
+		onShow(){
+			this.getList()
 		},
 		methods: {
 			cellClick(e){
@@ -63,6 +35,38 @@
 			},
 			getNewTime(e){
 				return e.substr(5,11);
+			},
+			getList(){
+				var options = {
+					url: '/urviolation/list', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"order_state": 0,
+						"pno": 1,
+						"psize": 20
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('数据列表：',res);
+					if (res.status == 0) {
+						if(!!res.list){
+							this.vioList = res.list;
+						}else{
+							this.vioList = []
+						}
+					}else{
+						uni.showToast({
+							title: res.message,
+							icon: "none"
+						})
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			}
 		}
 	}

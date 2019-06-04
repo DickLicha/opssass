@@ -99,11 +99,11 @@
 							// method: 'POST',
 							header: {
 								'content-type': 'multipart/form-data',
-								'Content-Type': 'multipart/form-data',
+								// 'Content-Type': 'multipart/form-data',
 							},
 							name: 'uploadfile',
 							formData: {
-								'scheme': 2
+								'scheme': 1
 							},
 							success: (res) => {					
 								var parsedata=JSON.parse(res.data)

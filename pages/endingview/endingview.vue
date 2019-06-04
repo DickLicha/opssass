@@ -33,7 +33,7 @@
 			}
 			this.carcenterdata1[1].val = name
 		},
-		computed: mapState(['directinfo', 'bikeinfo','orderid']),
+		computed: mapState(['directinfo', 'bikeinfo','orderid','endmove']),
 		data() {
 			return {
 				carcenterdata1: [{
@@ -66,6 +66,7 @@
 					this.closebattery()
 				} else {
 					this.setEndmove(true)
+					console.log('33',this.endmove)
 					uni.navigateBack({
 						delta: 2
 					});

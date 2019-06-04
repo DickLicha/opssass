@@ -28,6 +28,8 @@
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
 			// 投放市场
 			throwin(id) {
+				this.setBikeid('*')
+				this.setSn('*')
 				var options = {
 					url: '/binv/launch', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -44,14 +46,14 @@
 						uni.showToast({
 							title: '投放成功',
 							mask: false,
-							duration: 1500
+							duration: 2500
 						});
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '投放失败',
 							mask: false,
 							icon: 'none',
-							duration: 1500
+							duration: 2500
 						});
 					}
 				}).catch((err) => {
@@ -138,7 +140,7 @@
 												break
 											case '8.1':
 												tempobj = {
-													name: '扫码输入',
+													name: '扫码投放',
 													val: '',
 													url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
 												}
@@ -258,7 +260,7 @@
 			},
 			go(item) {
 				console.log('type', this.type)
-				if (this.type == '8' && item.name == '扫码输入') {
+				if (this.type == '8' && item.name == '扫码投放') {
 					uni.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
@@ -388,7 +390,7 @@
 							url: `/pages/manualscan/manualscan?urls=/pages/stockPage/stockmanage/stockmanage&&type=8`,
 						},
 						{
-							name: '扫码输入',
+							name: '扫码投放',
 							val: '',
 							url: '/pages/movecarPage/removecarrecord/removecarrecord',
 						}
