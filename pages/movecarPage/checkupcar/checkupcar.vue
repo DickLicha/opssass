@@ -18,7 +18,7 @@
 			</view>
 
 			<view v-if="showendmove" class='end-move-button'>
-				<button class='share-button-default margin-topbtn' type='primary' @click='endmovecar'>完成挪车</button>
+				<button class='share-button-default margin-topbtn' type='primary' @click='endmovecar'>开始挪车</button>
 			</view>
 
 		</view>

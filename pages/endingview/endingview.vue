@@ -2,6 +2,8 @@
 	<view class='wrap'>
 		<view class='view-common'>
 			<item-cell :itemdata="carcenterdata1" :type='2' :border='true'></item-cell>
+			<map class='base-map-view' :latitude="latitude" :longitude="longitude" :markers="covers">
+			</map>
 			<button class='share-button-default end-btn' type='primary' @click="go">{{buttonname}}</button>
 		</view>
 	</view>
@@ -28,12 +30,12 @@
 				this.buttonname = '结束换电'
 				name = '换电'
 			} else {
-				this.buttonname = '完成挪车'
+				this.buttonname = '开始挪车'
 				name = '挪车'
 			}
 			this.carcenterdata1[1].val = name
 		},
-		computed: mapState(['directinfo', 'bikeinfo','orderid','endmove']),
+		computed: mapState(['directinfo', 'bikeinfo', 'orderid', 'endmove']),
 		data() {
 			return {
 				carcenterdata1: [{
@@ -48,11 +50,22 @@
 				type: '',
 				buttonname: '',
 				bikeid: '',
+				latitude: 39.909,
+				longitude: 116.39742,
+				covers: [{
+					latitude: 39.909,
+					longitude: 116.39742,
+					iconPath: '../../../static/location.png'
+				}, {
+					latitude: 39.90,
+					longitude: 116.39,
+					iconPath: '../../../static/location.png'
+				}]
 				// orderid: ''
 			}
 		},
 		methods: {
-			...mapMutations(['setSn','setOrderid','setEndmove']),
+			...mapMutations(['setSn', 'setOrderid', 'setEndmove']),
 			gocarcenter(item) {
 				uni.navigateTo({
 					url: item.url,
@@ -66,16 +79,15 @@
 					this.closebattery()
 				} else {
 					this.setEndmove(true)
-					console.log('33',this.endmove)
 					uni.navigateBack({
 						delta: 2
 					});
-                    // uni.navigateTo({
-                    // 	url: `/pages/map/map?type=3.1&&name=挪车&&text=全部车站&&endmove=true&&orderid=${this.orderid}`,
-                    // 	success: res => {},
-                    // 	fail: () => {},
-                    // 	complete: () => {}
-                    // });
+					// uni.navigateTo({
+					// 	url: `/pages/map/map?type=3.1&&name=挪车&&text=全部车站&&endmove=true&&orderid=${this.orderid}`,
+					// 	success: res => {},
+					// 	fail: () => {},
+					// 	complete: () => {}
+					// });
 				}
 			},
 			closebattery() {
@@ -102,14 +114,14 @@
 								this.buttonname = '更换电池'
 								uni.showToast({
 									title: '关成功!',
-									icon:'none',
+									icon: 'none',
 									duration: 2000
 								})
-								setTimeout(()=>{
+								setTimeout(() => {
 									uni.navigateBack({
 										delta: 2
 									});
-								},2000)
+								}, 2000)
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '关锁失败!',
@@ -139,6 +151,11 @@
 		.view-common {
 			margin: 10upx 22upx;
 			height: 100vh;
+			.base-map-view {
+				width: 100%;
+				height: 700upx;
+				margin-top: 30upx;
+			}
 		}
 
 		.end-btn {

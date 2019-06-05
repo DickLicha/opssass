@@ -1,6 +1,5 @@
 <template>
 	<view>
-		<!-- <view style='background: #09BB07;height: 50px;width:100%;'>hello</view> -->
 		<view v-if="showcorverview.head" style='height: 80upx;width:100%;background-color:rgba(100,100,100,.5);'>
 			<baseheader :title="headviewtext" @show='showMapSelect' :hasBack='true' :xialajiantou='true'></baseheader>
 		</view>
@@ -204,7 +203,7 @@
 			})
 		},
 		onShow() {
-			
+
 			switch (this.type) {
 				case '0':
 					this.scanbuttonname = '扫码换电'
@@ -250,6 +249,7 @@
 					this.maintainbikelist(this.longitude, this.latitude)
 					break
 				case '3.1':
+					this.showcorverview.head = false
 					this.movingbike()
 					this.scanbuttonname = '扫码挪车'
 					this.nearbymovecar(this.longitude, this.latitude, '*')
@@ -410,7 +410,7 @@
 				}
 				if (this.type == '3.1') {
 					if (pointtype == 'stop') {
-						console.log('this.endmove',this.endmove)
+						console.log('this.endmove', this.endmove)
 						if (this.endmove) {
 							uni.showModal({
 								title: '确定挪到以下车站吗？',
@@ -449,11 +449,11 @@
 			creatStop() {
 				this.actives = true
 				// 点击创建车站前的地图经纬度坐标
-				this.coorDinates={
-					long:this.tempjindu,
-					lat:this.tempweidu,
+				this.coorDinates = {
+					long: this.tempjindu,
+					lat: this.tempweidu,
 				}
-				console.log('this.coorDinates',this.coorDinates)
+				console.log('this.coorDinates', this.coorDinates)
 			},
 			// 结束挪车
 			endmovecars(parkid) {
@@ -514,7 +514,7 @@
 			active(index, item) {
 				this.isActive = index
 				this.selectvals = item.val
-				this.headviewtext=item.name
+				this.headviewtext = item.name
 				// for (let i = 0; i < this.selectcoverdata.length; i++) {
 				// 	this.selectcoverdata[i].active = false
 				// }
@@ -530,11 +530,11 @@
 					success: (res) => {
 						this.tempjindu = res.longitude
 						this.tempweidu = res.latitude
-						console.log(res.longitude,res.latitude)
+						console.log(res.longitude, res.latitude)
 						// self.nearbycarinfo(2)
 						switch (self.type) {
 							case '0':
-								self.nearbyshortpower(100, res.longitude, res.latitude)
+								self.nearbyshortpower(this.selectvals, res.longitude, res.latitude)
 								break
 							case '1.1':
 								self.nearbyfaultcar(res.longitude, res.latitude, 0)
@@ -800,7 +800,7 @@
 						// this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
-						console.log('tttt',this.type)
+						console.log('tttt', this.type)
 						if (this.type == 1.1) {
 							var datas = {
 								"is_order_finished": 0,
@@ -810,14 +810,14 @@
 							}
 							this.setSn('*')
 							this.requestorder(datas)
-						}else{
+						} else {
 							uni.navigateTo({
 								url: this.urls,
 								success: res => {},
 								fail: () => {},
 								complete: () => {}
 							});
-						}						
+						}
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
@@ -897,7 +897,7 @@
 							length: res.list.length,
 							id: res.list[0].id
 						}
-					}else{
+					} else {
 						uni.showToast({
 							title: '查询订单失败'
 						});
