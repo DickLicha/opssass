@@ -116,7 +116,7 @@
 		}, {
 			"path": "pages/movecarPage/checkupcar/checkupcar",
 			"style": {
-				"navigationBarTitleText": "车辆安全检查"
+				"navigationBarTitleText": "挪车"
 			}
 		}, {
 			"path": "pages/repairPage/repaircar/repaircar",

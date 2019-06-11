@@ -48,13 +48,22 @@
 		},
 		methods: {
 			go(item) {
-				console.log('item',item)
-				uni.navigateTo({
-					url: `/pages/endingview/endingview?type=${this.type}&&bikeid=${item.bike_id}&&orderid=${item.id}`,
-					success: res => {},
-					fail: () => {},
-					complete: () => {}
-				});
+				if(this.type==0){
+					uni.navigateTo({
+						url: `/pages/endingview/endingview?type=${this.type}&&bikeid=${item.bike_id}&&orderid=${item.id}`,
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
+				}else{
+					uni.navigateTo({
+						url: `/pages/movecarPage/checkupcar/checkupcar?type=99&&bikeid=${item.bike_id}&&orderid=${item.id}`,
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
+				}
+				
 			},
 		}
 	}

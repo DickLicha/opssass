@@ -60,39 +60,80 @@ Vue.prototype.$invstate = function(type) {
 	}
 	return inv_name
 }
-Vue.prototype.$faulttype = function(type) {
-	let health_state = ''
-	if (type == eums.BIKE_FAULT_HEALTH) {
-		health_state = '健康'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_KONG_ZHI_QI) {
-		health_state = '控制器故障'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_KONG_ZHI_QI_JIN_SHUI_DUAN_LU) {
-		health_state = '控制器故障, 进水短路'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_KONG_ZHI_QI_GONG_NENG) {
-		health_state = '控制器故障, 功能故障'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_DIAN_JI) {
-		health_state = '电机故障'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_DIAN_JI_XIAN_LU) {
-		health_state = '电机故障,线路故障'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_DIAN_JI_GAI_LIE) {
-		health_state = '电机故障,盖子裂了'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_DIAN_JI_GONG_NENG) {
-		health_state = '电机故障, 功能故障'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE) {
-		health_state = '刹车故障'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE_QIAN) {
-		health_state = '刹车-前刹'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE_HOU) {
-		health_state = '刹车-后刹'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE_XIAN) {
-		health_state = '刹车-刹车线'
-	} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE_DIAO_JIE) {
-		health_state = '刹车-不能调节'
-	} else {
-		health_state = '故障'
+Vue.prototype.$imagepath=function(element, type, bikenum) {
+	    var iconPath=''
+		// 车辆
+		if (type == 'car') {
+			// 失联
+			if (0 === element.is_online) {
+				iconPath='/static/mapicon/car_fault_black.png'
+			}
+			// 故障
+			if (0 === element.health_state) {
+				iconPath='/static/mapicon/fault.png'
+			}
+			// 低电
+			if (1 === element.is_lower_battery) {
+				iconPath='/static/mapicon/low_elec.png'
+			}
+			// 预警
+			if (0 !== element.alert_state) {
+				iconPath='/static/mapicon/yujing.png'
+			}
+			// 正常
+			if (0 === element.is_lower_battery && 0 === element.alert_state && 1 === element.health_state && 1 === element.is_online) {
+				iconPath='/static/mapicon/car_normal.png'
+			}
+		}
+		// 车站
+		 else if (type == 'stop') {
+			if (10 < bikenum && bikenum <= 20) {
+				iconPath = '/static/mapicon/stop_10+.png'
+			} else if (20 < bikenum && bikenum <= 30) {
+				iconPath = '/static/mapicon/stop_20+.png'
+			} else if (30 < bikenum && bikenum <= 40) {
+				iconPath = '/static/mapicon/stop_30+.png'
+			} else if (40 < bikenum) {
+				iconPath = '/static/mapicon/stop_40+.png'
+			} else {
+				iconPath = '/static/mapicon/stop_' + bikenum + '.png'
+			}
+		}
+		return iconPath
+	},
+	Vue.prototype.$faulttype = function(type) {
+		let health_state = ''
+		if (type == eums.BIKE_FAULT_HEALTH) {
+			health_state = '健康'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_KONG_ZHI_QI) {
+			health_state = '控制器故障'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_KONG_ZHI_QI_JIN_SHUI_DUAN_LU) {
+			health_state = '控制器故障, 进水短路'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_KONG_ZHI_QI_GONG_NENG) {
+			health_state = '控制器故障, 功能故障'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_DIAN_JI) {
+			health_state = '电机故障'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_DIAN_JI_XIAN_LU) {
+			health_state = '电机故障,线路故障'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_DIAN_JI_GAI_LIE) {
+			health_state = '电机故障,盖子裂了'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_DIAN_JI_GONG_NENG) {
+			health_state = '电机故障, 功能故障'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE) {
+			health_state = '刹车故障'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE_QIAN) {
+			health_state = '刹车-前刹'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE_HOU) {
+			health_state = '刹车-后刹'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE_XIAN) {
+			health_state = '刹车-刹车线'
+		} else if (type == eums.BIKE_FAULT_TYPE_X_SHA_CHE_DIAO_JIE) {
+			health_state = '刹车-不能调节'
+		} else {
+			health_state = '故障'
+		}
+		return health_state
 	}
-	return health_state
-}
 
 const app = new Vue({
 	...App

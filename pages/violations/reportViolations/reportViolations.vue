@@ -201,8 +201,9 @@
 					context: '',
 					data: {
 						"bike_id": this.bikeInfo.id,
-						"violation_type": this.violationsInfo.tapItem,
+						"violation_type": this.violationsInfo.tapItem+1,
 						"violation_remark": this.remark,
+						"violation_desc": this.dataList[3].content,
 						"imgs": this.postImageArr,
 					}
 				}
@@ -216,7 +217,7 @@
 						})
 					}else{
 						uni.showToast({
-							title: res.message,
+							title: res.message?res.message:'提交失败',
 							icon: "none"
 						})
 					}

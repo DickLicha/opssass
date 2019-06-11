@@ -78,7 +78,6 @@
 			},
 			loadMore() {
 				if (this.resquestState < 2) {
-					console.log(33,this.pageindex,parseInt(parseInt(this.allnumber)/this.pageindex)+1)
 					if(this.pageindex<parseInt(parseInt(this.allnumber)/this.pageindex)+1){
 						// this.getartlist(this.pageindex, 10, 'add')
 						this.openbattery(this.pageindex,this.pagenum)

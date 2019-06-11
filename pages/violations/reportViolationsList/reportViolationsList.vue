@@ -6,6 +6,7 @@
 				<view class="reason-view">{{item.violation_remark}}</view>
 				<image class="arrow-view" src="/static/image/right_arrow.png" mode=""></image>
 			</view>
+			<view class='no-data' v-if="shownodata"><text>暂无数据！</text></view>
 		</view>
 	</view>
 </template>
@@ -15,7 +16,8 @@
 		data() {
 			return {
 				vioList: [
-				]
+				],
+				shownodata:false,
 			}
 		},
 		onLoad() {
@@ -53,11 +55,14 @@
 					console.log('数据列表：',res);
 					if (res.status == 0) {
 						if(!!res.list){
+							this.shownodata=false
 							this.vioList = res.list;
 						}else{
+							this.shownodata=true
 							this.vioList = []
 						}
 					}else{
+						this.shownodata=true
 						uni.showToast({
 							title: res.message,
 							icon: "none"
@@ -77,6 +82,11 @@
 		width: 100%;
 		height: calc(100vh);
 		padding-top: 1upx;
+		.no-data{
+			text-align: center;
+			margin-top: 50upx;
+			color: rgb(220,220,220)
+		}
 		.msg-view{
 			width: 100%;
 			height: auto;

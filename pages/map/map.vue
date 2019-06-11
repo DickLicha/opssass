@@ -81,7 +81,6 @@
 		]),
 		data() {
 			return {
-				// endmove: false,
 				isActive: -1,
 				selectvals: 100,
 				stopName: '',
@@ -102,8 +101,8 @@
 				},
 				showmapselect: false,
 				mapinfo: null,
-				scale: '13', //缩放级别5-18
-				showLocation: false,
+				scale: '18', //缩放级别5-18
+				showLocation: true,
 				selectcoverdata: [{
 						name: '全部换电',
 						id: '0',
@@ -203,138 +202,106 @@
 			})
 		},
 		onShow() {
-
-			switch (this.type) {
-				case '0':
-					this.scanbuttonname = '扫码换电'
-					this.changeingbattery()
-					this.nearbyshortpower(100, this.longitude, this.latitude)
-					break;
-				case '0.1':
-					this.hidebutton = true
-					this.cartrack(this.bikeinfo.last_order_id)
-					// 设置corver初始状态
-					this.showcorverview = {
+			setTimeout(() => {
+				this.serverice(this.longitude, this.latitude)
+				switch (this.type) {
+					case '0':
+						this.scanbuttonname = '扫码换电'
+						this.changeingbattery()
+						this.nearbyshortpower(100, this.longitude, this.latitude)
+						break;
+					case '0.1':
+						this.hidebutton = true
+						this.cartrack(this.bikeinfo.last_order_id)
+						// 设置corver初始状态
+						this.showcorverview = {
+								head: false,
+								bottom: false
+							},
+							// 多边形						
+							this.covers = []
+						break;
+					case '1.1':
+						this.scanbuttonname = '扫码入库'
+						this.nearbyfaultcar(this.longitude, this.latitude, 0)
+						this.selectcoverdata = [{
+								name: '全部故障车辆',
+								id: '0',
+								val: '0'
+							},
+							{
+								name: '未入库故障车辆',
+								id: '1',
+								val: '0'
+							},
+							{
+								name: '已入库故障车辆',
+								id: '2',
+								val: '2'
+							},
+						]
+						break;
+					case '2':
+						this.showcorverview = {
 							head: false,
-							bottom: false
-						},
-						// 多边形						
-						this.covers = []
-					break;
-				case '1.1':
-					this.scanbuttonname = '扫码入库'
-					this.nearbyfaultcar(this.longitude, this.latitude, 0)
-					this.selectcoverdata = [{
-							name: '全部故障车辆',
-							id: '0',
-							val: '0'
-						},
-						{
-							name: '未入库故障车辆',
-							id: '1',
-							val: '0'
-						},
-						{
-							name: '已入库故障车辆',
-							id: '2',
-							val: '2'
-						},
-					]
-					break;
-				case '2':
-					this.showcorverview = {
-						head: false,
-						bottom: true
-					}
-					this.maintainbikelist(this.longitude, this.latitude)
-					break
-				case '3.1':
-					this.showcorverview.head = false
-					this.movingbike()
-					this.scanbuttonname = '扫码挪车'
-					this.nearbymovecar(this.longitude, this.latitude, '*')
-					// this.nearbycarinfo(2)
-					this.selectcoverdata = [{
-							name: '全部车站',
-							id: '0',
-						},
-						{
-							name: '供给不足车站',
-							id: '1',
-						},
-						{
-							name: '供给过量车站',
-							id: '2',
-						},
-						{
-							name: '预警车站',
-							id: '3',
-						},
-						{
-							name: '车效（中）车辆',
-							id: '4',
-						},
-						{
-							name: '车效（差）车辆',
-							id: '5',
-						},
-						{
-							name: '车效（极差）车辆',
-							id: '6',
-						},
-						{
-							name: '故障-维修入库',
-							id: '7',
-						},
-						{
-							name: '故障-未入库',
-							id: '8',
-						},
-						{
-							name: '12h+无人扫码车辆',
-							id: '9',
-						},
-						{
-							name: '24h+无人扫码车辆',
-							id: '10',
-						},
-						{
-							name: '1+不动车辆',
-							id: '11',
-						},
-						{
-							name: '2+不动车辆',
-							id: '12',
-						},
-						{
-							name: '3+不动车辆',
-							id: '13',
-						},
-						{
-							name: '7+不动车辆',
-							id: '14',
+							bottom: true
 						}
-					]
-					break;
-				case '9':
-					this.showcorverview.bottom = false
-					this.scanbuttonname = '创建车站'
-					this.nearbymovecar(this.longitude, this.latitude, '*')
-					this.selectcoverdata = [{
-							name: '全部车站',
-							id: '0',
-						},
-						{
-							name: '已开启车站',
-							id: '0',
-						},
-						{
-							name: '已关闭车站',
-							id: '0',
-						},
-					]
-					break;
-			}
+						this.maintainbikelist(this.longitude, this.latitude)
+						break
+					case '3.1':
+						// this.showcorverview.head = false
+						this.movingbike()
+						this.scanbuttonname = '扫码挪车'
+						this.nearbymovecar(this.longitude, this.latitude, '*')
+						// this.nearbycarinfo(2)
+						this.selectcoverdata = [{
+								name: '全部车站',
+								val: '0',
+							},
+							{
+								name: '1+不动车辆',
+								val: '1',
+							},
+							{
+								name: '2+不动车辆',
+								val: '2',
+							},
+							{
+								name: '3+不动车辆',
+								val: '3',
+							},
+							{
+								name: '4+不动车辆',
+								val: '4',
+							}
+						]
+						break;
+					case '9':
+						this.showcorverview.head = false
+						this.showcorverview.bottom = false
+						this.scanbuttonname = '创建车站'
+						// this.nearbymovecar(this.longitude, this.latitude, '*')
+						this.stoplist(this.longitude, this.latitude, '*')
+						this.selectcoverdata = [{
+								name: '全部车站',
+								id: '0',
+							},
+							{
+								name: '已开启车站',
+								id: '0',
+							},
+							{
+								name: '已关闭车站',
+								id: '0',
+							},
+						]
+						break;
+				}
+				this.headviewtext = this.selectcoverdata[0].name
+				this.isActive = 0
+				this.selectvals = this.selectcoverdata[0].val
+			}, 1000)
+
 		},
 		onReady() {
 
@@ -348,7 +315,6 @@
 			]),
 			getorder() {
 				var test = false
-				console.log(11, this.type, this.movecarorder)
 				if (this.type == 3.1) {
 					if (this.inglength > 0) {
 						test = true
@@ -382,11 +348,17 @@
 					case '1.1':
 						this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
 						break;
+					case '3.1':
+						if (this.selectvals == 100) {
+							this.nearbymovecar(this.longitude, this.latitude, "*")
+						} else {
+							this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals))
+						}
+						break
 				}
 
 			},
 			markclick(e) {
-				console.log('e', e)
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
@@ -410,7 +382,6 @@
 				}
 				if (this.type == '3.1') {
 					if (pointtype == 'stop') {
-						console.log('this.endmove', this.endmove)
 						if (this.endmove) {
 							uni.showModal({
 								title: '确定挪到以下车站吗？',
@@ -440,6 +411,8 @@
 						this.setBikeid(e.markerId)
 						this.getcarinfo()
 					}
+				} else if (this.type == '9') {
+					return
 				} else {
 					this.setBikeid(e.markerId)
 					this.getcarinfo()
@@ -453,7 +426,6 @@
 					long: this.tempjindu,
 					lat: this.tempweidu,
 				}
-				console.log('this.coorDinates', this.coorDinates)
 			},
 			// 结束挪车
 			endmovecars(parkid) {
@@ -505,7 +477,6 @@
 			// 提交创建车站
 			finshCreat() {
 				var level = parseInt(this.defaultLev.replace('级', ''))
-				console.log('level', level)
 				this.creatStopurl(level)
 				setTimeout(() => {
 					this.actives = false
@@ -530,7 +501,6 @@
 					success: (res) => {
 						this.tempjindu = res.longitude
 						this.tempweidu = res.latitude
-						console.log(res.longitude, res.latitude)
 						// self.nearbycarinfo(2)
 						switch (self.type) {
 							case '0':
@@ -540,10 +510,19 @@
 								self.nearbyfaultcar(res.longitude, res.latitude, 0)
 								break
 							case '3.1':
-								self.nearbymovecar(res.longitude, res.latitude, '*')
+								if (this.selectvals == 100) {
+									self.nearbymovecar(res.longitude, res.latitude, "*")
+								} else {
+									self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
+								}
 								break
 							case '9':
-								self.nearbymovecar(res.longitude, res.latitude, '*')
+								this.stoplist(res.longitude, res.latitude, '*')
+								// if (this.selectvals == 100) {
+								// 	self.nearbymovecar(res.longitude, res.latitude, "*")
+								// } else {
+								// 	self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
+								// }
 								break
 						}
 					},
@@ -584,7 +563,8 @@
 									tmpObj.longitude = res.list[i].coordinate[0]
 								}
 								tmpObj.name = res.list[i].name
-								tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+								// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+								tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
 								tmpObj.type = 'car'
 								tmpObj.width = 39
 								tmpObj.height = 48
@@ -600,7 +580,9 @@
 								tmpObjs.longitude = res.parks[j].coordinate[0]
 							}
 							tmpObjs.name = res.parks[j].name
-							tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
+							// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
+							var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
+							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
 							tmpObjs.type = 'stop'
 							tmpObjs.bickcount = res.parks[j].bike_count
 							tmpObjs.allkcount = res.parks[j].capacity
@@ -615,7 +597,107 @@
 							// this.covers.push(tmpObjs)
 						}
 						this.covers = temparr
-						console.log('this.covers', this.covers)
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 附近的车站
+			stoplist(longitude, latitude, reparklev) {
+				this.setSn('*')
+				this.setBikeid('*')
+				var options = {
+					url: '/city/city_object_nearby', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"coordinate": [
+							longitude,
+							latitude
+						],
+						"flag": 2
+						// "is_under_volt": 1
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('车站列表', res)
+					if (res.status == 0) {
+						this.covers = []
+						var temparr = []
+						for (let j = 0; j < res.parks.length; j++) {
+							let tmpObjs = {}
+							tmpObjs.id = res.parks[j].id
+							if (!!res.parks[j].coordinate) {
+								tmpObjs.latitude = res.parks[j].coordinate[1]
+								tmpObjs.longitude = res.parks[j].coordinate[0]
+							}
+							tmpObjs.name = res.parks[j].name
+							// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
+							var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
+							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
+							tmpObjs.type = 'stop'
+							tmpObjs.bickcount = res.parks[j].bike_count
+							tmpObjs.allkcount = res.parks[j].capacity
+							tmpObjs.radius = res.parks[j].radius
+							tmpObjs.remark = res.parks[j].remark
+							tmpObjs.grade = res.parks[j].grade
+							// tmpObjs.allkcount = res.parks[j].capacity
+							tmpObjs.width = 39
+							tmpObjs.height = 48
+							tmpObjs.parkid = res.parks[j].id
+							temparr.push(tmpObjs)
+							// this.covers.push(tmpObjs)
+						}
+						this.covers = temparr
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 服务区
+			serverice(longitude, latitude) {
+				this.setSn('*')
+				this.setBikeid('*')
+				var options = {
+					url: '/city/city_object_nearby', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"coordinate": [
+							longitude,
+							latitude
+						],
+						"flag": 1
+						// "is_under_volt": 1
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('服务区', res)
+					if (res.status == 0) {
+						this.polyline = []						
+						for (let i = 0; i < res.svcas.length; i++) {
+							let temobj = {}
+							var temparr = []
+							for (let j = 0; j < res.svcas[i].coordinates.length; j++) {
+								var jwd = {
+									longitude: res.svcas[i].coordinates[j][0],
+									latitude: res.svcas[i].coordinates[j][1]
+								}
+								temparr.push(jwd)
+							}
+							temobj.points = temparr
+							temobj.color = "#0000AA", //线的颜色
+							temobj.width = 3, //线的宽度
+							// dottedLine: true, //是否虚线
+							temobj.arrowLine = true, //带箭头的线 开发者工具暂不支持该属性
+							this.polyline.push(temobj)
+						}
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -648,7 +730,8 @@
 							tmpObj.id = res.list[i].id
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
-							tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+							// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
 							tmpObj.width = 39
 							tmpObj.height = 48
 							this.covers.push(tmpObj)
@@ -675,6 +758,25 @@
 					console.log('车辆轨迹', res)
 					if (res.status == 0) {
 						var temparr = []
+						this.covers = []
+						let temarr = []
+						let tempobj0 = {},
+							tempobj1 = {}
+						tempobj0.id = 0
+						tempobj0.longitude = res.info.track[0][0]
+						tempobj0.latitude = res.info.track[0][1]
+						tempobj0.iconPath = '/static/mapicon/start.png'
+						tempobj0.width = 39
+						tempobj0.height = 48
+						tempobj1.id = 1
+						tempobj1.longitude = res.info.track[res.info.track.length - 1][0]
+						tempobj1.latitude = res.info.track[res.info.track.length - 1][1]
+						tempobj1.iconPath = '/static/mapicon/end.png'
+						tempobj1.width = 39
+						tempobj1.height = 48
+						temarr.push(tempobj0)
+						temarr.push(tempobj1)
+						this.covers = temarr
 						for (let i = 0; i < res.info.track.length; i++) {
 							var jwd = {
 								longitude: res.info.track[i][0],
@@ -683,7 +785,10 @@
 							temparr.push(jwd)
 						}
 						this.polyline[0].points = temparr
-						console.log('this.polyline', this.polyline)
+						this.polyline[0].color = "#0000AA"//线的颜色
+						this.polyline[0].width = 5//线的宽度
+						// dottedLine: true, //是否虚线
+						this.polyline[0].arrowLine = true
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -701,7 +806,7 @@
 							longitude,
 							latitude
 						],
-						"inv_state": type
+						"inv_state": parseInt(type)
 						// "is_under_volt": 1
 					}
 				}
@@ -725,6 +830,7 @@
 					console.error(err, '捕捉')
 				})
 			},
+			// 图标类函数
 			scanCode(type) {
 				if (type == 1) {
 					uni.scanCode({
@@ -800,7 +906,6 @@
 						// this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
-						console.log('tttt', this.type)
 						if (this.type == 1.1) {
 							var datas = {
 								"is_order_finished": 0,
@@ -1063,6 +1168,7 @@
 
 			// justify-content: center;
 			.scan-button {
+				
 				background-color: #F6C700;
 				border-radius: 20upx;
 				width: 50%;

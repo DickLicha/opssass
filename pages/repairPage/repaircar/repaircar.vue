@@ -196,7 +196,6 @@
 			},
 			changbattery(type) {
 				// fault_type=0代表误报
-				console.log(55, this.faultinfo)
 				uni.showModal({
 					title: '确认操作',
 					content: '提交信息',

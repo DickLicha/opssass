@@ -2,8 +2,8 @@
 	<view class='wrap'>
 		<view class='view-common'>
 			<item-cell :itemdata="carcenterdata1" :type='2' :border='true'></item-cell>
-			<map class='base-map-view' :latitude="latitude" :longitude="longitude" :markers="covers">
-			</map>
+			<!-- <map class='base-map-view' :latitude="latitude" :longitude="longitude" :markers="covers">
+			</map> -->
 			<button class='share-button-default end-btn' type='primary' @click="go">{{buttonname}}</button>
 		</view>
 	</view>
@@ -50,17 +50,17 @@
 				type: '',
 				buttonname: '',
 				bikeid: '',
-				latitude: 39.909,
-				longitude: 116.39742,
-				covers: [{
-					latitude: 39.909,
-					longitude: 116.39742,
-					iconPath: '../../../static/location.png'
-				}, {
-					latitude: 39.90,
-					longitude: 116.39,
-					iconPath: '../../../static/location.png'
-				}]
+				// latitude: 39.909,
+				// longitude: 116.39742,
+				// covers: [{
+				// 	latitude: 39.909,
+				// 	longitude: 116.39742,
+				// 	iconPath: '../../../static/location.png'
+				// }, {
+				// 	latitude: 39.90,
+				// 	longitude: 116.39,
+				// 	iconPath: '../../../static/location.png'
+				// }]
 				// orderid: ''
 			}
 		},
@@ -78,7 +78,7 @@
 				if (this.type == 0) {
 					this.closebattery()
 				} else {
-					this.setEndmove(true)
+					// this.setEndmove(true)
 					uni.navigateBack({
 						delta: 2
 					});

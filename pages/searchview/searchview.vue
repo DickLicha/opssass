@@ -53,12 +53,21 @@
               });
 			},
 			gomapview(item){
-				var placels=item.location.split(',')
-				this.setLongitude(placels[0])
-				this.setLatitude(placels[1])
-				uni.navigateBack({
-					delta: 1
-				});
+				try{
+					var placels=item.location.split(',')
+					this.setLongitude(placels[0])
+					this.setLatitude(placels[1])
+					uni.navigateBack({
+						delta: 1
+					});
+				}catch(e){
+					//TODO handle the exception
+					uni.showToast({
+						title: '该地点经纬度异常',
+						icon:'none'
+					});
+				}
+				
 			},
 			getplace(){
 				this.amapPlugin.getInputtips({
@@ -96,6 +105,7 @@
 					margin: 20upx 50upx;
 					height: 120upx;
 					display: flex;
+					background-color: #F6C700;
 
 					.history-font {
 						margin-left: 12upx;
@@ -139,6 +149,8 @@
 					.search-input {
 						height: 60upx;
 						margin-left: 6upx;
+						/* background-color: #F6C700; */
+						width: 100%
 					}
 				}
 

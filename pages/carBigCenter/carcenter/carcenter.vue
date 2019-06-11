@@ -81,8 +81,6 @@
 			
 			// 异常状态
 			this.carcenterdata2[6].val = this.bikeinfo.alert_state_desc
-			// var ss=this.parseBitsPosition(parseInt(this.bikeinfo.alert_state))
-			// console.log(33,ss)
 		},
 		computed: mapState(['directinfo','bikeinfo']),
 		data() {

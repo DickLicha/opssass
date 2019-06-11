@@ -100,8 +100,8 @@
 							this.taskdata.push(tempobj)
 						}
 					}
-					this.getconfinfo()
-					this.getdirectinfo()
+					// this.getconfinfo()
+					// this.getdirectinfo()
 				}
 			})
 		

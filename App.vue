@@ -11,7 +11,6 @@
 			if (wx.canIUse('getUpdateManager')) {
 				const updateManager = wx.getUpdateManager()
 				updateManager.onCheckForUpdate(function(res) {
-					console.log('onCheckForUpdate====', res)
 					// 请求完新版本信息的回调
 					if (res.hasUpdate) {
 						console.log('res.hasUpdate====')

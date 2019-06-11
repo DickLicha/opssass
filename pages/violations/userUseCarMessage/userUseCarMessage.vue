@@ -6,7 +6,7 @@
 			</view>
 		</view>
 		<view class="tip-view">{{distantStr}}</view>
-		<map class="map-view" id="userMap" :latitude="26.3" :longitude="119.7"></map>
+		<map class="map-view" id="userMap" :latitude="latitude" :longitude="longitude" :markers="covers"></map>
 	</view>
 </template>
 
@@ -24,6 +24,9 @@
 				markers: [
 					
 				],
+				latitude:'26.3',
+				longitude:'119.7',
+				covers:[],
 			}
 		},
 		onLoad(e) {
@@ -36,18 +39,28 @@
 					"order_id": e.order_id,
 				}
 			}
-			var _this = this;
+			// var _this = this;
 			this.$httpReq(options).then((res) => {
 				// 请求成功的回调
 				// res为服务端返回数据的根对象
 				console.log('数据列表：',res);
 				if (res.status == 0) {
-					_this.msgList.push("姓名：" + res.info.user_name);
-					_this.msgList[0] = "姓名：" + res.info.user_name;
-					_this.msgList[1] = "手机号码：" + res.info.user_phone;
-					_this.msgList[2] = "开始时间：" + res.info.start_time;
-					_this.msgList[3] = "结束时间：" + res.info.end_time;
-					console.log(_this.msgList);
+					this.covers=[]
+					let tmpObj = {}
+					this.msgList.push("姓名：" + res.info.user_name);
+					this.msgList[0] = "姓名：" + res.info.user_name;
+					this.msgList[1] = "手机号码：" + res.info.user_phone;
+					this.msgList[2] = "开始时间：" + res.info.start_time;
+					this.msgList[3] = "结束时间：" + res.info.end_time;
+					this.longitude=res.info.end_coordinate[0]
+					this.latitude=res.info.end_coordinate[1]					
+					tmpObj.longitude = res.info.end_coordinate[0]
+					tmpObj.latitude = res.info.end_coordinate[1]
+					tmpObj.width = 39
+					tmpObj.height = 48
+					tmpObj.iconPath = '../../../static/mapicon/car_normal.png'
+					tmpObj.id = 10000
+					this.covers.push(tmpObj)
 				}else{
 					uni.showToast({
 						title: res.message,

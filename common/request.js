@@ -1,7 +1,7 @@
 import store from '@/store'
 export default function(obj) {
 	// if (obj.method === 'GET') {
-	let sn, id;
+	let sn, id,cityid;
 	sn = store.state.sn || ""
 	if (obj.url == '/balert/confirm') {
 		id = obj.data.id
@@ -13,6 +13,7 @@ export default function(obj) {
 		const value = uni.getStorageSync('userinfo');
 		if (value) {
 			token=value.token
+			cityid=value.userinfo.city_id
 		}
 	} catch (e) {
 		// error
@@ -22,7 +23,6 @@ export default function(obj) {
 	// 	mask: false
 	// });
 	// var token = store.state.userinfo.token
-	// console.log('tocken',tocken)
 	//#ifndef H5	
 	// #endif
 	// #ifdef H5
@@ -33,7 +33,7 @@ export default function(obj) {
 		bike_sn: sn,
 		// bike_id:id,	
 		token: token,
-		city_id: "350001",
+		city_id: cityid,
 	})
 
 	// let baseUrl = 'https://dd0001.izyscp.com'

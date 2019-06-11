@@ -2,7 +2,7 @@
 	<view class='wrap'>
 		<view class='view-common'>
 			<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell>
-			<view v-if="showdetil">
+			<view v-show="showdetil">
 				<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
 				<view class='check-bottom-view'>
 					<view class='checkup-text'><text>安全检查项目:</text></view>
@@ -13,11 +13,19 @@
 					<button class='share-button-default checkup-button' type='primary' @click='changbattery(1)'>车辆正常</button>
 				</view>
 			</view>
-			<view v-if="showshartmove" class='end-move-button'>
-				<button class='share-button-default margin-topbtn' @click='startmovecar'>开始挪车</button>
+
+
+			<view v-show=''>
+				<map class='base-map-view' :show-location='true' v-show='showmap' @markertap='markclick' :scale="scale" :latitude="latitude" :longitude="longitude"
+				 :markers="covers">
+				</map>
 			</view>
 
-			<view v-if="showendmove" class='end-move-button'>
+			<!-- <view v-show="showshartmove" class='end-move-button'>
+				<button class='share-button-default margin-topbtn' @click='startmovecar'>开始挪车</button>
+			</view> -->
+
+			<view v-show="showendmove" class='end-move-button'>
 				<button class='share-button-default margin-topbtn' type='primary' @click='endmovecar'>开始挪车</button>
 			</view>
 
@@ -34,6 +42,14 @@
 	export default {
 		data() {
 			return {
+				latitude: 39.909,
+				timmer: null,
+				longitude: 116.39742,
+				scale: 13,
+				covers: [],
+				showmap: false,
+				type: 0,
+				bikeid: '',
 				showshartmove: false,
 				showendmove: false,
 				showdetil: true,
@@ -58,19 +74,139 @@
 				],
 				checkupdata: [
 					'1、转把', '2、车把', '3、刹车', '4、车灯', '5、喇叭', '6、挡泥板'
-				]
+				],
+				ids: '',
 			}
 		},
 		components: {
 			itemCell
 		},
 		computed: mapState(['bikeinfo']),
-		onLoad() {
+		onLoad(e) {
+			if (e.type == 99) {
+				this.showdetil = false
+				this.showmap = true
+				// this.showendmove = true
+				this.bikeid = e.bikeid
+				this.ids = e.orderid
+				this.getmovingbike()
+				if (this.timmer == null) {
+					this.timmer = setInterval(() => {
+						this.getmovingbike()
+					}, 3000)
+				}
+			} else {
+				this.bikeid = this.bikeinfo.id				
+			}
+			uni.getLocation({
+				type: 'gcj02',
+				success: res => {
+					this.longitude = res.longitude
+					this.latitude = res.latitude
+				},
+				fail: () => {},
+				complete: () => {}
+			});
 			this.checkcars()
-			this.swapdata[0].val = this.bikeinfo.id
+			this.swapdata[0].val = this.bikeid
+		},
+		onUnload() {
+			clearInterval(this.timmer)
+			this.timmer = null
 		},
 		methods: {
-			...mapMutations(['setEndmove','setOrderid']),
+			...mapMutations(['setEndmove', 'setOrderid', 'setSn']),
+			markclick(e) {
+				console.log('e', e)
+				var pointtype = '',
+					bickcount = '',
+					allkcount = '',
+					pointname = '',
+					parkid = ""
+
+				for (let k = 0; k < this.covers.length; k++) {
+					if (this.covers[k].id == e.markerId) {
+						pointtype = this.covers[k].type
+						pointname = this.covers[k].name
+						if (pointtype == 'stop') {
+							bickcount = this.covers[k].bickcount
+							allkcount = this.covers[k].allkcount
+							parkid = this.covers[k].parkid
+							// this.setMapcovers(this.covers[k])
+						}
+						break
+					}
+				}
+				if (pointtype == 'stop') {
+					uni.showModal({
+						title: '确定挪到以下车站吗？',
+						content: pointname,
+						showCancel: true,
+						cancelText: '取消',
+						confirmText: '确定',
+						success: res => {
+							if (res.confirm) {
+								this.endmovecars(parkid)
+							} else if (res.cancel) {
+								console.log('用户点击取消');
+							}
+						},
+						fail: () => {},
+						complete: () => {}
+					});
+				}
+			},
+			// 结束挪车
+			endmovecars(parkid) {
+				this.setSn('*')
+				uni.getLocation({ //获取当前的位置坐标
+					type: 'gcj02',
+					success: (res) => {
+						var options = {
+							url: '/rporder/finish', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"order_id": this.ids,
+								"park_id": parkid,
+								"user_coordinate": [
+									res.longitude, res.latitude
+								]
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('挪车', res)
+							if (res.status == 0) {
+								uni.showToast({
+									title: '挪车成功',
+									mask: false,
+									duration: 3000
+								});
+								setTimeout(() => {
+									uni.navigateBack({
+										delta: 2
+									});
+								}, 2000)
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '挪车失败',
+									mask: false,
+									icon: 'none',
+									duration: 3000
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: (res) => {
+
+					},
+				})
+			},
 			// 车辆安全检查
 			checkbike() {
 				this.showshartmove = false
@@ -83,7 +219,7 @@
 							method: 'POST', //请求方法全部大写，默认GET
 							context: '',
 							data: {
-								"bike_id": this.bikeinfo.id,
+								"bike_id": this.bikeid,
 								"user_coordinate": [res.longitude, res.latitude],
 							}
 						}
@@ -121,20 +257,15 @@
 					complete: () => {}
 				});
 			},
+			// 开始挪车生成订单
 			endmovecar() {
-				// uni.navigateTo({
-				// 	url: `/pages/map/map?type=3.1&&name=挪车&&text=全部车站&&endmove=true&&orderid=${this.orderid}`,
-				// 	success: res => {},
-				// 	fail: () => {},
-				// 	complete: () => {}
-				// });
-				this.startmovecar()			
+				this.startmovecar()
 			},
 			// 开始挪车
 			startmovecar() {
-				console.log('date', this.$formatetimes())
 				this.showshartmove = false
-				this.showendmove = true
+				this.showendmove = false
+				// this.showendmove = true
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {
@@ -144,7 +275,7 @@
 							method: 'POST', //请求方法全部大写，默认GET
 							context: '',
 							data: {
-								"bike_id": this.bikeinfo.id,
+								"bike_id": this.bikeid,
 								"user_coordinate": [res.longitude, res.latitude],
 								"channel": "xxx"
 							}
@@ -155,11 +286,21 @@
 							console.log('开始订单', res)
 							if (res.status == 0) {
 								// this.orderid = res.info.id
-								this.setEndmove(true)
+								// this.setEndmove(true)
+								this.ids=res.info.id
 								this.setOrderid(res.info.id)
-								uni.navigateBack({
-									delta: 1
-								});
+								this.showmap = true
+
+								this.getmovingbike()
+								if (this.timmer == null) {
+									this.timmer = setInterval(() => {
+										this.getmovingbike()
+									}, 3000)
+								}
+
+								// uni.navigateBack({
+								// 	delta: 1
+								// });
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '该车不可挪',
@@ -190,22 +331,22 @@
 					});
 				}
 			},
-			checkcars(){
-					var options = {
+			checkcars() {
+				var options = {
 					url: '/bike/oper_list', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						type:40,
-						pno:1,
-						psize:1,
-						bike_id: this.bikeinfo.id
+						type: 40,
+						pno: 1,
+						psize: 1,
+						bike_id: this.bikeid
 					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('最后一次检查信息',res)
+					console.log('最后一次检查信息', res)
 					if (res.status == 0) {
 						this.swapbatterydata[0].val = res.list[0].create_time
 						this.swapbatterydata[1].val = res.list[0].user_name
@@ -213,7 +354,7 @@
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
 							mask: false,
-							icon:'none',
+							icon: 'none',
 							duration: 1500
 						});
 					}
@@ -222,6 +363,67 @@
 					console.error(err, '捕捉')
 				})
 			},
+			getmovingbike() {
+				var options = {
+					url: '/bike/coord_and_park_nearby', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						bike_id: this.bikeid
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('正在挪车辆信息', res)
+					if (res.status == 0) {
+						this.covers = []
+						var temparr = []
+						let tmpObj = {}
+						tmpObj.latitude = res.coordinate[1]
+						tmpObj.longitude = res.coordinate[0]
+						tmpObj.iconPath = '../../../static/mapicon/car_normal.png'
+						tmpObj.type = 'car'
+						tmpObj.width = 39
+						tmpObj.height = 48
+						temparr.push(tmpObj)
+						for (let j = 0; j < res.parks.length; j++) {
+							let tmpObjs = {}
+							tmpObjs.id = res.parks[j].id
+							if (!!res.parks[j].coordinate) {
+								tmpObjs.latitude = res.parks[j].coordinate[1]
+								tmpObjs.longitude = res.parks[j].coordinate[0]
+							}
+							tmpObjs.name = res.parks[j].name
+							var bikenum=parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
+							tmpObjs.iconPath =this.$imagepath(res.parks[j],'stop',bikenum)				
+							tmpObjs.type = 'stop'
+							tmpObjs.bickcount = res.parks[j].bike_count
+							tmpObjs.allkcount = res.parks[j].capacity
+							tmpObjs.radius = res.parks[j].radius
+							tmpObjs.remark = res.parks[j].remark
+							tmpObjs.grade = res.parks[j].grade
+							// tmpObjs.allkcount = res.parks[j].capacity
+							tmpObjs.width = 39
+							tmpObjs.height = 48
+							tmpObjs.parkid = res.parks[j].id
+							temparr.push(tmpObjs)
+							// this.covers.push(tmpObjs)
+						}
+						this.covers = temparr
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取车辆信息失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			}
 		}
 	}
 </script>
@@ -245,6 +447,12 @@
 			margin: 10upx 22upx;
 			height: 98vh;
 			position: relative;
+
+			.base-map-view {
+				width: 100%;
+				height: calc(100vh - 140upx);
+				margin-top: 30upx;
+			}
 
 			.change-battery-button {
 				position: fixed;
