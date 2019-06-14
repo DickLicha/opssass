@@ -45,7 +45,7 @@
 				latitude: 39.909,
 				timmer: null,
 				longitude: 116.39742,
-				scale: 13,
+				scale: 18,
 				covers: [],
 				showmap: false,
 				type: 0,

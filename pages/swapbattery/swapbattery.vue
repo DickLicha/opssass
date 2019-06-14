@@ -47,20 +47,19 @@
 					selectedColor: '#007AFF',
 					buttonColor: '#007AFF'
 				},
-				content: [{
-						// iconPath: '/static/component.png',
-						// selectedIconPath: '/static/componentHL.png',
-						text: '开锁',
-						val: '-1',
-						active: false
-					},
-					{
-						// iconPath: '/static/component.png',
-						// selectedIconPath: '/static/componentHL.png',
-						text: '关锁',
-						val: '0',
-						active: false
-					},
+				content: [
+					// {
+					// 	// iconPath: '/static/component.png',
+					// 	// selectedIconPath: '/static/componentHL.png',
+					// 	text: '开锁',
+					// 	val: '-1',
+					// 	active: false
+					// },
+					// {
+					// 	text: '关锁',
+					// 	val: '0',
+					// 	active: false
+					// },
 					{
 						text: '寻车铃',
 						val: '1',
@@ -81,11 +80,11 @@
 						val: '4',
 						active: false
 					},
-					{
-						text: '开电池锁',
-						val: '5',
-						active: false
-					},
+					// {
+					// 	text: '开电池锁',
+					// 	val: '5',
+					// 	active: false
+					// },
 					{
 						text: '',
 						val: '6',

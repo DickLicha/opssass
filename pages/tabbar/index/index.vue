@@ -116,7 +116,7 @@
 		methods: {
 			...mapMutations(['setDirectinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
 			scaninto() {
-				uni.scanCode({
+				wx.scanCode({
 					onlyFromCamera: true, //只允许相机扫码
 					success: res => {
 						console.log('saoma', res)

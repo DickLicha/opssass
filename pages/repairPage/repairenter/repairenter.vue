@@ -100,7 +100,7 @@
 						complete: () => {}
 					});
 				} else {
-					uni.scanCode({
+					wx.scanCode({
 						onlyFromCamera: true,
 						success: (res) => {
 							var bikesn=res.result.match(/\?bikesn=(.*)/)[1]

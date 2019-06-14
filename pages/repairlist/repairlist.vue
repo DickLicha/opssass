@@ -126,21 +126,44 @@
 								}
 								break
 							case '8':
+								// for (let j = 0; j < chids.length; j++) {
+								// 	if (chids[j].visitable == 1) {
+								// 		tempobj = {}
+								// 		switch (chids[j].uri) {
+								// 			case '8.0':
+								// 				tempobj = {
+								// 					name: '手动输入',
+								// 					val: '',
+								// 					url: `/pages/manualscan/manualscan?urls=/pages/stockPage/stockmanage/stockmanage&&type=8`,
+								// 				}
+								// 				templist.push(tempobj)
+								// 				break
+								// 			case '8.1':
+								// 				tempobj = {
+								// 					name: '扫码投放',
+								// 					val: '',
+								// 					url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
+								// 				}
+								// 				templist.push(tempobj)
+								// 				break
+								// 		}
+								// 	}
+								// }
 								for (let j = 0; j < chids.length; j++) {
 									if (chids[j].visitable == 1) {
 										tempobj = {}
 										switch (chids[j].uri) {
 											case '8.0':
 												tempobj = {
-													name: '手动输入',
+													name: '入库',
 													val: '',
-													url: `/pages/manualscan/manualscan?urls=/pages/stockPage/stockmanage/stockmanage&&type=8`,
+													url: `/pages/stockPage/putstorage/putstorage`,
 												}
 												templist.push(tempobj)
 												break
 											case '8.1':
 												tempobj = {
-													name: '扫码投放',
+													name: '投放',
 													val: '',
 													url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
 												}
@@ -260,8 +283,8 @@
 			},
 			go(item) {
 				console.log('type', this.type)
-				if (this.type == '8' && item.name == '扫码投放') {
-					uni.scanCode({
+				if (this.type == '8' && item.name == '投放') {
+					wx.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
 							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
@@ -286,7 +309,7 @@
 						},
 					]
 				} else if (this.type == '10' && item.name == '扫码输入') {
-					uni.scanCode({
+					wx.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
 							console.log('saoma', res)

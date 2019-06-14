@@ -34,20 +34,20 @@
 			
 			// 位置
 			this.carcenterdata1[3].val = this.$parkstate(this.bikeinfo.park_state)
-			console.log('this.directinfo.bike_bus_state_enum',this.directinfo,this.bikeinfo.bus_state)
 			// 车辆业务状态
-			if(this.bikeinfo.bus_state){
-				this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[this.bikeinfo.bus_state]
-			}
+			this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[this.bikeinfo.bus_state]
+			// if(this.bikeinfo.bus_state){
+			// 	this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[0]
+			// }
 													 
 			// 车辆运行状态
 			let is_battery_locked = ''
-			if (this.bikeinfo.is_on_battery == 0) {
-				is_battery_locked = '开'
-			} else if (this.bikeinfo.is_on_battery == 1) {
-				is_battery_locked = '关'
+			if (this.bikeinfo.is_in_motion == 0) {
+				is_battery_locked = '静止'
+			} else if (this.bikeinfo.is_in_motion == 1) {
+				is_battery_locked = '运动'
 			}
-			this.carcenterdata2[1].val = '未接'
+			this.carcenterdata2[1].val = is_battery_locked
 			
 			// 网络状态
 			let is_online=''

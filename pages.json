@@ -256,6 +256,12 @@
 				"navigationBarTitleText": "结束订单"
 			}
         }
+        ,{
+            "path" : "pages/stockPage/putstorage/putstorage",
+            "style" : {
+				"navigationBarTitleText": "入库"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

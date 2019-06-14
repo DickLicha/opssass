@@ -412,7 +412,23 @@
 						this.getcarinfo()
 					}
 				} else if (this.type == '9') {
-					return
+					uni.showModal({
+						title: '删除车站',
+						content: pointname,
+						showCancel: true,
+						cancelText: '取消',
+						confirmText: '删除',
+						success: res => {
+							if (res.confirm) {
+								console.log('parkid',parkid)
+								this.deletestop(parkid)
+							} else if (res.cancel) {
+								console.log('用户点击取消');
+							}
+						},
+						fail: () => {},
+						complete: () => {}
+					});
 				} else {
 					this.setBikeid(e.markerId)
 					this.getcarinfo()
@@ -426,6 +442,42 @@
 					long: this.tempjindu,
 					lat: this.tempweidu,
 				}
+			},
+			// 删除车站
+			deletestop(ids){
+				console.log('ids',ids)
+				var options = {
+					url: '/park/del', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"id":ids
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('删除车站', res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: '删除车站成功',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+						this.stoplist(this.longitude, this.latitude, '*')
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '删除车站失败',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 			// 结束挪车
 			endmovecars(parkid) {
@@ -680,7 +732,7 @@
 					// res为服务端返回数据的根对象
 					console.log('服务区', res)
 					if (res.status == 0) {
-						this.polyline = []						
+						this.polyline = []
 						for (let i = 0; i < res.svcas.length; i++) {
 							let temobj = {}
 							var temparr = []
@@ -693,10 +745,10 @@
 							}
 							temobj.points = temparr
 							temobj.color = "#0000AA", //线的颜色
-							temobj.width = 3, //线的宽度
-							// dottedLine: true, //是否虚线
-							temobj.arrowLine = true, //带箭头的线 开发者工具暂不支持该属性
-							this.polyline.push(temobj)
+								temobj.width = 3, //线的宽度
+								// dottedLine: true, //是否虚线
+								temobj.arrowLine = true, //带箭头的线 开发者工具暂不支持该属性
+								this.polyline.push(temobj)
 						}
 					}
 				}).catch((err) => {
@@ -785,8 +837,8 @@
 							temparr.push(jwd)
 						}
 						this.polyline[0].points = temparr
-						this.polyline[0].color = "#0000AA"//线的颜色
-						this.polyline[0].width = 5//线的宽度
+						this.polyline[0].color = "#0000AA" //线的颜色
+						this.polyline[0].width = 5 //线的宽度
 						// dottedLine: true, //是否虚线
 						this.polyline[0].arrowLine = true
 					}
@@ -833,7 +885,7 @@
 			// 图标类函数
 			scanCode(type) {
 				if (type == 1) {
-					uni.scanCode({
+					wx.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
 							console.log('saoma', res)
@@ -1168,7 +1220,7 @@
 
 			// justify-content: center;
 			.scan-button {
-				
+
 				background-color: #F6C700;
 				border-radius: 20upx;
 				width: 50%;

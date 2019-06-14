@@ -3,7 +3,8 @@ export default function(obj) {
 	// if (obj.method === 'GET') {
 	let sn, id,cityid;
 	sn = store.state.sn || ""
-	if (obj.url == '/balert/confirm') {
+	// 字段冲突过滤
+	if (obj.url == '/balert/confirm' || obj.url == '/park/del') {
 		id = obj.data.id
 	} else {
 		id = store.state.bikeid || ''
@@ -39,6 +40,7 @@ export default function(obj) {
 	// let baseUrl = 'https://dd0001.izyscp.com'
 	// 线上测试版本
 	let baseUrl = 'https://api.dd-test.ildjoy.com'
+	// let baseUrl = 'https://api.dd.ildjoy.com'
 	// 线上真实环境
 	// let baseUrl = 'https://api.dd-dev.ildjoy.com'
 	for (const key in obj.data) {
@@ -72,6 +74,11 @@ export default function(obj) {
 						title: 'token验证失败，请重新登录',
 						icon:'none'
 					});
+					try {
+						uni.removeStorageSync('userinfo');
+					} catch (e) {
+						// error
+					}
 					setTimeout(()=>{
 						uni.navigateTo({
 							url: '/pages/mine/loginView/loginView',
