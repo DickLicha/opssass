@@ -129,11 +129,14 @@
 			// 车辆异常确认
 			balertconfirm(id) {
 				var options = {
-					url: '/balert/confirm', //请求接口
+					// url: '/balert/confirm', //请求接口
+					url: '/balert/handle', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"id":id
+						"id":id,
+						"handle_note":'',
+						"result":0
 					}
 				}
 				this.$httpReq(options).then((res) => {

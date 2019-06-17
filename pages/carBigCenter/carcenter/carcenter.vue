@@ -51,9 +51,9 @@
 			
 			// 网络状态
 			let is_online=''
-			if(this.bikeinfo.is_on_battery==0){
+			if(this.bikeinfo.is_online==1){
 				is_online='在线'
-			}else if(this.bikeinfo.is_on_battery==1){
+			}else if(this.bikeinfo.is_online==0){
 				is_online='离线'
 			}
 			this.carcenterdata2[2].val = is_online
@@ -62,13 +62,13 @@
 			this.carcenterdata2[3].val = this.bikeinfo.gps_update_time
 			
 			// SIM卡状态
-			let sim_state=''
-			if(this.bikeinfo.is_on_battery==0){
-				sim_state='在线'
-			}else if(this.bikeinfo.is_on_battery==1){
-				sim_state='离线'
-			}
-			this.carcenterdata2[4].val = sim_state
+			// let sim_state=''
+			// if(this.bikeinfo.is_on_battery==0){
+			// 	sim_state='在线'
+			// }else if(this.bikeinfo.is_on_battery==1){
+			// 	sim_state='离线'
+			// }
+			// this.carcenterdata2[4].val = sim_state
 			
 			// 车锁状态
 			let is_wheel_locked = ''
@@ -77,10 +77,10 @@
 			} else if (this.bikeinfo.is_wheel_locked == 1) {
 				is_wheel_locked = '关'
 			}
-			this.carcenterdata2[5].val = is_wheel_locked
+			this.carcenterdata2[4].val = is_wheel_locked
 			
 			// 异常状态
-			this.carcenterdata2[6].val = this.bikeinfo.alert_state_desc
+			this.carcenterdata2[5].val = this.bikeinfo.alert_state_desc
 		},
 		computed: mapState(['directinfo','bikeinfo']),
 		data() {
@@ -118,10 +118,10 @@
 						name: 'GPS状态:',
 						val: ''
 					},
-					{
-						name: 'SIM卡状态:',
-						val: ''
-					},
+					// {
+					// 	name: 'SIM卡状态:',
+					// 	val: ''
+					// },
 					{
 						name: '车锁状态:',
 						val: ''

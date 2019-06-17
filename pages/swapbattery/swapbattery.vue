@@ -6,7 +6,7 @@
 			<view class='change-battery-button'>
 				<button type='primary' class='share-button-default' @click='changbattery(buttonname)'>{{buttonname}}</button>
 			</view>
-			
+
 			<uni-popup :show="poptype ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
 				<view :scroll-y="true" class="uni-center center-box">
 					<view><text>换电前电量：</text><text>{{beforeelec}}</text></view>
@@ -14,7 +14,7 @@
 					<view><text>电量增长：</text><text>{{addelect}}</text></view>
 				</view>
 			</uni-popup>
-			
+
 			<uni-fab ref="fab" :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction"
 			 @trigger="trigger" />
 		</view>
@@ -32,9 +32,9 @@
 	export default {
 		data() {
 			return {
-				beforeelec:0,
-				afterelect:0,
-				addelect:0,
+				beforeelec: 0,
+				afterelect: 0,
+				addelect: 0,
 				title: 'uni-fab',
 				directionStr: '垂直',
 				horizontal: 'right',
@@ -47,19 +47,18 @@
 					selectedColor: '#007AFF',
 					buttonColor: '#007AFF'
 				},
-				content: [
-					// {
-					// 	// iconPath: '/static/component.png',
-					// 	// selectedIconPath: '/static/componentHL.png',
-					// 	text: '开锁',
-					// 	val: '-1',
-					// 	active: false
-					// },
-					// {
-					// 	text: '关锁',
-					// 	val: '0',
-					// 	active: false
-					// },
+				content: [{
+						// iconPath: '/static/component.png',
+						// selectedIconPath: '/static/componentHL.png',
+						text: '开锁',
+						val: '-1',
+						active: false
+					},
+					{
+						text: '关锁',
+						val: '0',
+						active: false
+					},
 					{
 						text: '寻车铃',
 						val: '1',
@@ -80,14 +79,19 @@
 						val: '4',
 						active: false
 					},
-					// {
-					// 	text: '开电池锁',
-					// 	val: '5',
-					// 	active: false
-					// },
+					{
+						text: '开电池锁',
+						val: '5',
+						active: false
+					},
+					{
+						text: '测试',
+						val: '6',
+						active: false
+					},
 					{
 						text: '',
-						val: '6',
+						val: '7',
 						active: false
 					},
 				],
@@ -131,7 +135,7 @@
 						val: ''
 					},
 					{
-						name: 'SIM卡状态:',
+						name: '是否设防:',
 						val: ''
 					},
 					// {
@@ -155,7 +159,7 @@
 		},
 		computed: mapState(['bikeinfo', 'bikeid']),
 		onLoad() {
-			this.beforeelec=this.bikeinfo.battery_level+'%'
+			this.beforeelec = this.bikeinfo.battery_level + '%'
 			// this.getcarinfo()
 			// 车辆编码
 			this.swapdata[0].val = this.bikeinfo.id
@@ -194,9 +198,9 @@
 			// 网络状态
 			let is_online = ''
 			if (this.bikeinfo.is_on_battery == 0) {
-				is_online = '离线'
+				is_online = '是'
 			} else if (this.bikeinfo.is_on_battery == 1) {
-				is_online = '在线'
+				is_online = '否'
 			}
 			this.swapbatterydata[6].val = is_online
 
@@ -205,13 +209,13 @@
 
 			// sim卡状态
 			let sim_state = ''
-			if (this.bikeinfo.is_on_battery == 0) {
-				sim_state = '在线'
-			} else if (this.bikeinfo.is_on_battery == 1) {
-				sim_state = '离线'
+			if (this.bikeinfo.is_defend_on == 1) {
+				sim_state = '是'
+			} else if (this.bikeinfo.is_defend_on == 0) {
+				sim_state = '否'
 			}
 			this.swapbatterydata[8].val = sim_state
-			
+
 			// 异常状态
 			// this.swapbatterydata[9].val = this.bikeinfo.alert_state_desc
 		},
@@ -286,8 +290,8 @@
 					console.error(err, '捕捉')
 				})
 			},
-			togglePopup(){
-				this.poptype=''
+			togglePopup() {
+				this.poptype = ''
 			},
 			// 关锁
 			closelock() {
@@ -378,6 +382,9 @@
 							fail: () => {},
 							complete: () => {}
 						});
+						break
+					case '6':
+						this.biketest()
 						break
 				}
 
@@ -488,6 +495,44 @@
 					complete: () => {}
 				});
 			},
+			// test
+			biketest() {
+				this.setSn('*')
+				var options = {
+					url: '/bike/test', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('test', res)
+					if (res.status == 0) {
+						// uni.showToast({
+						// 	title: '开锁成功!',
+						// 	duration: 2000
+						// })
+						this.orderid = res.info.id
+						// uni.hideLoading()
+						uni.showToast({
+							title: 'success'
+						});
+
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '失败!',
+							icon: 'none',
+							duration: 2000
+						})
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			// 打开电池锁
 			openbattery() {
 				uni.getLocation({
@@ -571,7 +616,7 @@
 							// res为服务端返回数据的根对象
 							console.log('关锁完成订单电池锁', res)
 							if (res.status == 0) {
-								this.poptype='middle-list'
+								this.poptype = 'middle-list'
 								this.buttonname = '更换电池'
 								this.getcarinfo()
 								// uni.showToast({
@@ -608,8 +653,8 @@
 					// res为服务端返回数据的根对象
 					console.log('车辆信息', typeof(res), res)
 					if (res.status == 0) {
-						this.afterelect=res.info.battery_level+'%'
-						this.addelect=res.info.battery_level-this.bikeinfo.battery_level+'%'
+						this.afterelect = res.info.battery_level + '%'
+						this.addelect = res.info.battery_level - this.bikeinfo.battery_level + '%'
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -627,7 +672,8 @@
 		padding-bottom: 1upx;
 		/* height: 100vh; */
 		overflow: hidden;
-			.center-box {
+
+		.center-box {
 			font-size: 34upx;
 			height: 140upx;
 			width: 240upx;

@@ -141,7 +141,7 @@
 		}, {
 			"path": "pages/manualscan/manualscan",
 			"style": {
-				"navigationBarTitleText": "输入编号扫码入库"
+				"navigationBarTitleText": "输入编号"
 			}
 		}, {
 			"path": "pages/repairPage/warehoselist/warehoselist",

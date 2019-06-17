@@ -4,7 +4,7 @@ export default function(obj) {
 	let sn, id,cityid;
 	sn = store.state.sn || ""
 	// 字段冲突过滤
-	if (obj.url == '/balert/confirm' || obj.url == '/park/del') {
+	if (obj.url == '/balert/confirm' || obj.url == '/park/del' || obj.url=='/balert/handle') {
 		id = obj.data.id
 	} else {
 		id = store.state.bikeid || ''
@@ -39,8 +39,8 @@ export default function(obj) {
 
 	// let baseUrl = 'https://dd0001.izyscp.com'
 	// 线上测试版本
-	let baseUrl = 'https://api.dd-test.ildjoy.com'
-	// let baseUrl = 'https://api.dd.ildjoy.com'
+	// let baseUrl = 'https://api.dd-test.ildjoy.com'
+	let baseUrl = 'https://api.dd.ildjoy.com'
 	// 线上真实环境
 	// let baseUrl = 'https://api.dd-dev.ildjoy.com'
 	for (const key in obj.data) {
