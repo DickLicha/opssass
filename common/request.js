@@ -3,15 +3,9 @@ export default function(obj) {
 	// if (obj.method === 'GET') {
 	let sn, id,cityid;
 	sn = store.state.sn || ""
-	// 字段冲突过滤
-	if (obj.url == '/balert/confirm' || obj.url == '/park/del' || obj.url=='/balert/handle') {
-		id = obj.data.id
-	} else {
-		id = store.state.bikeid || ''
-	}
-	var token=''
+		var token='',value={}
 	try {
-		const value = uni.getStorageSync('userinfo');
+		value = uni.getStorageSync('userinfo');
 		if (value) {
 			token=value.token
 			cityid=value.userinfo.city_id
@@ -19,6 +13,21 @@ export default function(obj) {
 	} catch (e) {
 		// error
 	}
+	// 字段冲突过滤
+	if (obj.url == '/balert/confirm' || obj.url == '/park/del' || obj.url=='/balert/handle' || obj.url=='/bike/unlock_battery') {
+		id = obj.data.id
+	} else {
+		id = store.state.bikeid || ''
+	}
+	if(obj.url=='/staff/switch_city'){
+		cityid=obj.data.city_id
+	}
+	// else{
+	// 	if(value){
+	// 		cityid=value.userinfo.city_id
+	// 	}
+	// 	
+	// }
 	// uni.showLoading({
 	// 	title: '加载中',
 	// 	mask: false

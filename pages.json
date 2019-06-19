@@ -35,7 +35,7 @@
 		}, {
 			"path": "pages/mine/mineye/mineye",
 			"style": {
-				"navigationBarTitleText": "余额"
+				"navigationBarTitleText": "切换城市"
 			}
 		}, {
 			"path": "pages/mine/mineyhq/mineyhq",

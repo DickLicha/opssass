@@ -20,11 +20,11 @@
 					url:'/pages/mine/minecard/minecard'
 				}],
 				swapbatterydata: [
-					// {
-					// 	name: '预警',
-					// 	val: '',
-					// 	url:'/pages/mine/mineye/mineye',
-					// },
+					{
+						name: '切换城市',
+						val: '',
+						url:'/pages/mine/mineye/mineye',
+					},
 					// {
 					// 	name: '通知',
 					// 	val: '',

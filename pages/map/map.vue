@@ -84,8 +84,8 @@
 				isActive: -1,
 				selectvals: 100,
 				stopName: '',
-				defaultLev: '选择等级',
-				stopRadius: '',
+				defaultLev: '1级',
+				stopRadius: 15,
 				stopDesc: '',
 				poptype: '',
 				itemcells: ['1级', '2级', '3级'],
@@ -196,10 +196,11 @@
 			if (this.mapinfo == null) {
 				this.mapinfo = uni.createMapContext('firstmap')
 			}
-
-			wx.setNavigationBarTitle({
-				title: e.name
-			})
+            if(!!e.name){
+				wx.setNavigationBarTitle({
+					title: e.name
+				})
+			}		
 		},
 		onShow() {
 			setTimeout(() => {
@@ -208,7 +209,7 @@
 					case '0':
 						this.scanbuttonname = '扫码换电'
 						this.changeingbattery()
-						this.nearbyshortpower(100, this.longitude, this.latitude)
+						this.nearbyshortpower(100, this.longitude, this.latitude,'*')
 						break;
 					case '0.1':
 						this.hidebutton = true
@@ -343,7 +344,11 @@
 				this.showmapselect = false
 				switch (this.type) {
 					case '0':
-						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude)
+					    var undervolt='*'
+					    if(this.selectvals==0){
+					    	undervolt=1
+					    }
+						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude,undervolt)
 						break;
 					case '1.1':
 						this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
@@ -430,8 +435,10 @@
 						complete: () => {}
 					});
 				} else {
-					this.setBikeid(e.markerId)
-					this.getcarinfo()
+					if(this.type!='0.1'){
+						this.setBikeid(e.markerId)
+						this.getcarinfo()
+					}				
 				}
 			},
 			// 点击创建车站
@@ -528,11 +535,16 @@
 			},
 			// 提交创建车站
 			finshCreat() {
+				if(this.stopName==''){
+					uni.showToast({
+						title: '车站名称不能为空',
+						icon:'none',
+						duration:2000,
+					});
+					return
+				}
 				var level = parseInt(this.defaultLev.replace('级', ''))
 				this.creatStopurl(level)
-				setTimeout(() => {
-					this.actives = false
-				}, 2000)
 			},
 			active(index, item) {
 				this.isActive = index
@@ -556,7 +568,11 @@
 						// self.nearbycarinfo(2)
 						switch (self.type) {
 							case '0':
-								self.nearbyshortpower(this.selectvals, res.longitude, res.latitude)
+							    var undervolt='*'
+							    if(this.selectvals==0){
+									undervolt=1
+								}
+								self.nearbyshortpower(this.selectvals, res.longitude, res.latitude,undervolt)
 								break
 							case '1.1':
 								self.nearbyfaultcar(res.longitude, res.latitude, 0)
@@ -757,7 +773,7 @@
 				})
 			},
 			// 附近需要换电的车辆
-			nearbyshortpower(max, longitude, latitude) {
+			nearbyshortpower(max, longitude, latitude,undervolt) {
 				var options = {
 					url: '/bike/list_to_change_battery_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -768,7 +784,7 @@
 							latitude
 						],
 						"battery_level_max": max,
-						// "is_under_volt": 1
+						"is_under_volt": undervolt
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -841,6 +857,38 @@
 						this.polyline[0].width = 5 //线的宽度
 						// dottedLine: true, //是否虚线
 						this.polyline[0].arrowLine = true
+						
+						
+						var tempcoor=this.bikeinfo.coordinate
+						this.covers = []
+			            let tmpObj = {}
+						tmpObj.id = 999999
+						tmpObj.latitude = tempcoor[1]
+						tmpObj.longitude = tempcoor[0]
+						tmpObj.name=this.bikeinfo.id
+						tmpObj.iconPath='/static/mapicon/car_normal.png'
+						tmpObj.type='car'
+						tmpObj.width=39
+						tmpObj.height=48
+						this.covers.push(tmpObj)
+						console.log(555,this.covers)
+							// for (let i = 0; i < res.list.length; i++) {
+							// 	let tmpObj = {}
+							// 	tmpObj.id = res.list[i].id
+							// 	if (!!res.list[i].coordinate) {
+							// 		tmpObj.latitude = res.list[i].coordinate[1]
+							// 		tmpObj.longitude = res.list[i].coordinate[0]
+							// 	}
+							// 	tmpObj.name = res.list[i].name
+							// 	// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+							// 	tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
+							// 	tmpObj.type = 'car'
+							// 	tmpObj.width = 39
+							// 	tmpObj.height = 48
+							// 	temparr.push(tmpObj)
+							// 	// this.covers.push(tmpObj)
+							// }
+							// this.covers=temparr
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -873,7 +921,10 @@
 							tmpObj.id = res.list[i].id
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
-							tmpObj.iconPath = '../../static/image/0-small.png'
+							tmpObj.width = 39
+							tmpObj.height = 48
+							// tmpObj.iconPath = '../../static/image/0-small.png'
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)							
 							this.covers.push(tmpObj)
 						}
 					}
@@ -1020,6 +1071,9 @@
 							mask: false,
 							duration: 2500
 						});
+						setTimeout(() => {
+							this.actives = false
+						}, 2000)
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '创建车站失败',

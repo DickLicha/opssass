@@ -6,7 +6,7 @@
 				<view class='view-flexs switch-head'>
 					<view>时间</view>
 					<view class='view-border-letf'>动作</view>
-					<view class='view-border-letf'>渠道</view>
+					<view class='view-border-letf'>操作</view>
 					<view class='view-border-letf'>结果</view>
 				</view>
 			</view>
@@ -15,7 +15,7 @@
 				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key=i @click="detilpop(item,i,'middle-list')">
 					<view>{{item.time}}</view>
 					<view class='view-border-letf'>{{item.action}}</view>
-					<view class='view-border-letf'>{{item.qudao}}</view>
+					<view class='view-border-letf'>{{item.op}}</view>
 					<view class='view-border-letf' :class="{'right-view':item.status=='正常','wrong-view':item.status=='异常'}">{{item.status}}</view>
 				</view>
 				<uni-load-more :loadingType="resquestState"></uni-load-more>
@@ -110,13 +110,13 @@
 					// res为服务端返回数据的根对象
 					console.log('开锁记录', res)
 					this.allnumber=res.total
-					if (res.status == 0) {
-						let datainfo = {}
+					if (res.status == 0) {						
 						// this.switchloockdatathis.switchloockdata.concat(res.list)
 						for (let i = 0; i < res.list.length; i++) {
+							let datainfo = {}
 							datainfo.time = res.list[i].create_time
 							datainfo.action = (res.list[i].type==10)?'开锁':'关锁'
-							datainfo.qudao = res.list[i].channel?res.list[i].channel:'无'
+							datainfo.op = res.list[i].bound_order_op
 							datainfo.status = (res.list[i].success==0)?'成功':'失败'
 							datainfo.netstatus = (res.list[i].is_online==0)?'在线':'离线'
 							datainfo.username = res.list[i].user_name
@@ -124,8 +124,11 @@
 							datainfo.errormsg = res.list[i].error_msg
 							this.switchloockdata.push(datainfo)
 						}
+						// console.log('this.switchloockdata',this.switchloockdata)
 					} else {
-						
+						uni.showToast({
+							title: '无记录'
+						});
 					}
 				}).catch((err) => {
 					// 请求失败的回调

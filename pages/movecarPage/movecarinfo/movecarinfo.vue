@@ -40,6 +40,7 @@
 				allnumber: 100,
 				type: '',
 				list: [1, 2, 3, 4],
+				userid:'',
 			}
 		},
 		components: {
@@ -92,7 +93,7 @@
 
 				}
 			},
-			// 开锁记录
+			// 挪车记录
 			openbattery(page, num,starttime,endtime) {
 				this.setSn('*')
 				var options = {
@@ -105,6 +106,7 @@
 						"is_start_from_park": 0,
 						"sk": "",
 						"start_time": starttime,
+						'user_id':this.userid,
 						"end_time": endtime
 					}
 				}
@@ -125,10 +127,18 @@
 			},
 		},
 		onLoad(e) {
-			console.log('e.date',e.date)
-			var starttime=e.date+' 00:00:00'
-			var endtime=e.date+' 23:59:59'
-			this.openbattery(this.pageindex, this.pagenum,starttime,endtime)
+			try {
+				var value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.userid=value.userinfo.id
+					var starttime=e.date+' 00:00:00'
+					var endtime=e.date+' 23:59:59'
+					this.openbattery(this.pageindex, this.pagenum,starttime,endtime)
+				}
+			} catch (e) {
+				// error
+			}
+			
 		}
 	}
 </script>

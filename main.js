@@ -60,33 +60,64 @@ Vue.prototype.$invstate = function(type) {
 	}
 	return inv_name
 }
-Vue.prototype.$imagepath=function(element, type, bikenum) {
-	    var iconPath=''
+
+// 车辆图标状态
+// bikeHealthType: function(element) {
+// 		// 失联
+// 		if (0 === element.is_online) {
+// 			return 'unconnect'
+// 		}
+// 		// 故障
+// 		if (1 === element.health_state) {
+// 			return 'broken'
+// 		}
+// 		// 低电
+// 		if (1 === element.is_lower_battery) {
+// 			return 'lowpower'
+// 		}
+// 		// 预警
+// 		if (0 !== element.alert_state) {
+// 			return 'warning'
+// 		}
+// 		// 占用中
+// 		if (0 !== element.bus_state) {
+// 			return 'used'
+// 		}
+// 		return 'icon'
+// 	},
+
+
+	Vue.prototype.$imagepath = function(element, type, bikenum) {
+		var iconPath = '/static/mapicon/car_normal.png'
 		// 车辆
 		if (type == 'car') {
 			// 失联
 			if (0 === element.is_online) {
-				iconPath='/static/mapicon/car_fault_black.png'
+				iconPath = '/static/mapicon/car_fault_black.png'
 			}
 			// 故障
-			if (0 === element.health_state) {
-				iconPath='/static/mapicon/fault.png'
+			else if (1 === element.health_state) {
+				iconPath = '/static/mapicon/fault.png'
 			}
 			// 低电
-			if (1 === element.is_lower_battery) {
-				iconPath='/static/mapicon/low_elec.png'
+			else if (1 === element.is_lower_battery) {
+				iconPath = '/static/mapicon/low_elec.png'
 			}
 			// 预警
-			if (0 !== element.alert_state) {
-				iconPath='/static/mapicon/yujing.png'
+			else if (0 !== element.alert_state) {
+				iconPath = '/static/mapicon/yujing.png'
 			}
-			// 正常
-			if (0 === element.is_lower_battery && 0 === element.alert_state && 1 === element.health_state && 1 === element.is_online) {
-				iconPath='/static/mapicon/car_normal.png'
+			// 占用中
+			else if (0 !== element.bus_state) {
+				iconPath='/static/mapicon/bikeing.png'
 			}
+			// // 正常
+			// else if (0 === element.is_lower_battery && 0 === element.alert_state && 1 === element.health_state && 1 === element.is_online) {
+			// 	iconPath = '/static/mapicon/car_normal.png'
+			// }
 		}
 		// 车站
-		 else if (type == 'stop') {
+		else if (type == 'stop') {
 			if (10 < bikenum && bikenum <= 20) {
 				iconPath = '/static/mapicon/stop_10+.png'
 			} else if (20 < bikenum && bikenum <= 30) {

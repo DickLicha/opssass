@@ -47,18 +47,19 @@
 					selectedColor: '#007AFF',
 					buttonColor: '#007AFF'
 				},
-				content: [{
-						// iconPath: '/static/component.png',
-						// selectedIconPath: '/static/componentHL.png',
-						text: '开锁',
-						val: '-1',
-						active: false
-					},
-					{
-						text: '关锁',
-						val: '0',
-						active: false
-					},
+				content: [
+					// {
+					// 	// iconPath: '/static/component.png',
+					// 	// selectedIconPath: '/static/componentHL.png',
+					// 	text: '开锁',
+					// 	val: '-1',
+					// 	active: false
+					// },
+					// {
+					// 	text: '关锁',
+					// 	val: '0',
+					// 	active: false
+					// },
 					{
 						text: '寻车铃',
 						val: '1',
@@ -197,10 +198,10 @@
 
 			// 网络状态
 			let is_online = ''
-			if (this.bikeinfo.is_on_battery == 0) {
-				is_online = '是'
-			} else if (this.bikeinfo.is_on_battery == 1) {
-				is_online = '否'
+			if (this.bikeinfo.is_online == 0) {
+				is_online = '离线'
+			} else if (this.bikeinfo.is_online == 1) {
+				is_online = '在线'
 			}
 			this.swapbatterydata[6].val = is_online
 
@@ -423,9 +424,9 @@
 						success: res => {
 							if (res.confirm) {
 								this.openbattery()
-								uni.showLoading({
-									title: '开锁中'
-								});
+								// uni.showLoading({
+								// 	title: '开锁中'
+								// });
 							}
 						},
 						fail: () => {},
@@ -448,7 +449,8 @@
 							data: {
 								"user_coordinate": [
 									res.longitude, res.latitude
-								]
+								],
+								id: this.bikeinfo.id
 							}
 						}
 						this.$httpReq(options).then((res) => {
@@ -460,8 +462,7 @@
 								// 	title: '开锁成功!',
 								// 	duration: 2000
 								// })
-								this.orderid = res.info.id
-								uni.hideLoading()
+								// this.orderid = res.info.id								
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',
 									content: '电池锁更换完毕后，会自动记录本次操作',
@@ -492,7 +493,9 @@
 						})
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
 			// test
@@ -515,7 +518,7 @@
 						// 	title: '开锁成功!',
 						// 	duration: 2000
 						// })
-						this.orderid = res.info.id
+						// this.orderid = res.info.id
 						// uni.hideLoading()
 						uni.showToast({
 							title: 'success'
@@ -535,6 +538,9 @@
 			},
 			// 打开电池锁
 			openbattery() {
+				uni.showLoading({
+					title: '开锁中'
+				});
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
@@ -559,8 +565,7 @@
 								// 	title: '开锁成功!',
 								// 	duration: 2000
 								// })
-								this.orderid = res.info.id
-								uni.hideLoading()
+								this.orderid = res.info.id								
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',
 									content: '电池锁更换完毕后，会自动记录本次操作',
@@ -591,11 +596,16 @@
 						})
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
 			// 关闭电池锁完成订单
 			closebattery() {
+				uni.showLoading({
+					title: '开锁中'
+				});
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
@@ -618,7 +628,9 @@
 							if (res.status == 0) {
 								this.poptype = 'middle-list'
 								this.buttonname = '更换电池'
-								this.getcarinfo()
+								this.afterelect = res.info.battery_level_after + '%'
+								this.addelect = res.info.battery_level_after - this.bikeinfo.battery_level + '%'
+								// this.getcarinfo()
 								// uni.showToast({
 								// 	title: '关成功!',
 								// 	duration: 2000
@@ -635,8 +647,11 @@
 							console.error(err, '捕捉')
 						})
 					},
-					fail: () => {},
-					complete: () => {}
+					fail: () => {						
+					},
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 
 			},

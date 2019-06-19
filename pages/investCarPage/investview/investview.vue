@@ -102,7 +102,8 @@
 					data: {
 						"type": type,//1048576车辆失联、16车辆故障、32车辆疑似被盗
 						"pno": 1,
-						"psize": 100
+						"psize": 100,
+						"is_solved":0
 					}
 				}
 				this.$httpReq(options).then((res) => {
