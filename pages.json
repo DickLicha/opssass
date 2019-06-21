@@ -262,6 +262,12 @@
 				"navigationBarTitleText": "入库"
 			}
         }
+        ,{
+            "path" : "pages/ecutest/ecutest",
+            "style" : {
+				"navigationBarTitleText": "ecu测试"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

@@ -32,7 +32,7 @@
 				desc='过量'
 			}
 			this.carcenterdata2[0].val = desc
-			this.carcenterdata2[1].val = e.bickcount+'辆'
+			// this.carcenterdata2[1].val = e.bickcount+'辆'
 			this.requestbikelist(e.id)
 		},
 		computed: mapState(['directinfo','bikeinfo']),
@@ -88,6 +88,7 @@
 					console.log('车站内车辆', res)
 					if(res.status==0){
 						this.carlist=res.list
+						this.carcenterdata2[1].val = res.total+'辆'
 					}
 				})
 			},

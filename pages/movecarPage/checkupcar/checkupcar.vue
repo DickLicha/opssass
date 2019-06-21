@@ -17,7 +17,7 @@
 
 			<view v-show=''>
 				<map class='base-map-view' :show-location='true' v-show='showmap' @markertap='markclick' :scale="scale" :latitude="latitude" :longitude="longitude"
-				 :markers="covers">
+				 :markers="covers" :circles="circles">
 				</map>
 			</view>
 
@@ -43,6 +43,7 @@
 		data() {
 			return {
 				latitude: 39.909,
+				circles:[],
 				timmer: null,
 				longitude: 116.39742,
 				scale: 18,
@@ -379,6 +380,7 @@
 					if (res.status == 0) {
 						this.covers = []
 						var temparr = []
+						var circles=[]
 						let tmpObj = {}
 						tmpObj.latitude = res.coordinate[1]
 						tmpObj.longitude = res.coordinate[0]
@@ -389,10 +391,17 @@
 						temparr.push(tmpObj)
 						for (let j = 0; j < res.parks.length; j++) {
 							let tmpObjs = {}
+							let circlesObj = {}
 							tmpObjs.id = res.parks[j].id
 							if (!!res.parks[j].coordinate) {
 								tmpObjs.latitude = res.parks[j].coordinate[1]
 								tmpObjs.longitude = res.parks[j].coordinate[0]
+								circlesObj.latitude = res.parks[j].coordinate[1]
+								circlesObj.longitude = res.parks[j].coordinate[0]
+								circlesObj.radius = res.parks[j].radius
+								circlesObj.fillColor = "#FF9F0040"
+								circlesObj.color = "#FF9F0040"
+								circlesObj.strokeWidth = 2
 							}
 							tmpObjs.name = res.parks[j].name
 							var bikenum=parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
@@ -408,9 +417,11 @@
 							tmpObjs.height = 48
 							tmpObjs.parkid = res.parks[j].id
 							temparr.push(tmpObjs)
+							circles.push(circlesObj)
 							// this.covers.push(tmpObjs)
 						}
 						this.covers = temparr
+						this.circles = circles
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',

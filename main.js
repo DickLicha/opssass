@@ -61,31 +61,6 @@ Vue.prototype.$invstate = function(type) {
 	return inv_name
 }
 
-// 车辆图标状态
-// bikeHealthType: function(element) {
-// 		// 失联
-// 		if (0 === element.is_online) {
-// 			return 'unconnect'
-// 		}
-// 		// 故障
-// 		if (1 === element.health_state) {
-// 			return 'broken'
-// 		}
-// 		// 低电
-// 		if (1 === element.is_lower_battery) {
-// 			return 'lowpower'
-// 		}
-// 		// 预警
-// 		if (0 !== element.alert_state) {
-// 			return 'warning'
-// 		}
-// 		// 占用中
-// 		if (0 !== element.bus_state) {
-// 			return 'used'
-// 		}
-// 		return 'icon'
-// 	},
-
 
 	Vue.prototype.$imagepath = function(element, type, bikenum) {
 		var iconPath = '/static/mapicon/car_normal.png'
@@ -108,8 +83,11 @@ Vue.prototype.$invstate = function(type) {
 				iconPath = '/static/mapicon/yujing.png'
 			}
 			// 占用中
-			else if (0 !== element.bus_state) {
-				iconPath='/static/mapicon/bikeing.png'
+			// else if (0 !== element.bus_state) {
+			// 	iconPath='/static/mapicon/bikeing.png'
+			// }
+			else if(element.health_state==0 && element.repark_index!=0){
+				iconPath = '/static/mapicon/car_bad+.png'
 			}
 			// // 正常
 			// else if (0 === element.is_lower_battery && 0 === element.alert_state && 1 === element.health_state && 1 === element.is_online) {
@@ -126,7 +104,10 @@ Vue.prototype.$invstate = function(type) {
 				iconPath = '/static/mapicon/stop_30+.png'
 			} else if (40 < bikenum) {
 				iconPath = '/static/mapicon/stop_40+.png'
-			} else {
+			} else if(bikenum<0){
+				iconPath = '/static/mapicon/stop_0.png'
+			}
+			else {
 				iconPath = '/static/mapicon/stop_' + bikenum + '.png'
 			}
 		}

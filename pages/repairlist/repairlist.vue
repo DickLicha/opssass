@@ -126,29 +126,6 @@
 								}
 								break
 							case '8':
-								// for (let j = 0; j < chids.length; j++) {
-								// 	if (chids[j].visitable == 1) {
-								// 		tempobj = {}
-								// 		switch (chids[j].uri) {
-								// 			case '8.0':
-								// 				tempobj = {
-								// 					name: '手动输入',
-								// 					val: '',
-								// 					url: `/pages/manualscan/manualscan?urls=/pages/stockPage/stockmanage/stockmanage&&type=8`,
-								// 				}
-								// 				templist.push(tempobj)
-								// 				break
-								// 			case '8.1':
-								// 				tempobj = {
-								// 					name: '扫码投放',
-								// 					val: '',
-								// 					url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
-								// 				}
-								// 				templist.push(tempobj)
-								// 				break
-								// 		}
-								// 	}
-								// }
 								for (let j = 0; j < chids.length; j++) {
 									if (chids[j].visitable == 1) {
 										tempobj = {}
@@ -238,6 +215,15 @@
 									}
 								}
 								break
+							case '12':								
+								templist = [							
+									{
+										name: '扫码输入',
+										val: '',
+										url: '',
+									}
+								]
+								break
 						}
 					}
 				}
@@ -322,7 +308,27 @@
 						complete: res => {}
 					});
 
-				} else {
+				}
+				else if(this.type=='12'){
+					wx.scanCode({
+						onlyFromCamera: true, //只允许相机扫码
+						success: res => {
+							console.log(res,'res')
+							var result=res.result.split(' ')
+							console.log(result,'result')
+							var imei=result[0].split(':')[1]
+							uni.navigateTo({
+								url: `/pages/ecutest/ecutest?imei=${imei}`,
+								success: res => {},
+								fail: () => {},
+								complete: () => {}
+							});
+						},
+						fail: res => {},
+						complete: res => {}
+					});
+				}
+				 else {
 					uni.navigateTo({
 						url: item.url,
 						success: res => {},
@@ -339,8 +345,8 @@
 					data: data
 				}
 				this.$httpReq(options).then((res) => {
-					console.log('订单列表', res,res.list.length)
-					if (res.status == 0 && res.list.length!=0) {
+					console.log('订单列表', res, res.list.length)
+					if (res.status == 0 && res.list.length != 0) {
 						this.setOrderfirstid(res.list[0].id)
 						this.setOrderinfo(res.list[0])
 						uni.navigateTo({
@@ -353,7 +359,7 @@
 							length: res.list.length,
 							id: res.list[0].id
 						}
-					}else{
+					} else {
 						uni.showToast({
 							title: '查询订单失败！'
 						});

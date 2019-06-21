@@ -6,8 +6,8 @@
 		<view class="page-body">
 			<view class="page-section page-section-gap">
 				<map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
-				 :longitude="longitude" :markers="covers" :show-location='showLocation' :polyline="polyline" @markertap='markclick'
-				 @regionchange="functionName" @end="functionName">
+				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
+				 @markertap='markclick' @regionchange="functionName" @end="functionName">
 					<!-- <map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
 				  :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				  @regionchange="functionName" @end="functionName" @begin="functionName"> -->
@@ -196,11 +196,11 @@
 			if (this.mapinfo == null) {
 				this.mapinfo = uni.createMapContext('firstmap')
 			}
-            if(!!e.name){
+			if (!!e.name) {
 				wx.setNavigationBarTitle({
 					title: e.name
 				})
-			}		
+			}
 		},
 		onShow() {
 			setTimeout(() => {
@@ -209,7 +209,7 @@
 					case '0':
 						this.scanbuttonname = '扫码换电'
 						this.changeingbattery()
-						this.nearbyshortpower(100, this.longitude, this.latitude,'*')
+						this.nearbyshortpower(100, this.longitude, this.latitude, '*')
 						break;
 					case '0.1':
 						this.hidebutton = true
@@ -253,7 +253,7 @@
 						// this.showcorverview.head = false
 						this.movingbike()
 						this.scanbuttonname = '扫码挪车'
-						this.nearbymovecar(this.longitude, this.latitude, '*')
+						this.nearbymovecar(this.longitude, this.latitude, '*','*')
 						// this.nearbycarinfo(2)
 						this.selectcoverdata = [{
 								name: '全部车站',
@@ -274,7 +274,11 @@
 							{
 								name: '4+不动车辆',
 								val: '4',
-							}
+							},
+							{
+								name: '服务区外车辆',
+								val: '21',
+							},
 						]
 						break;
 					case '9':
@@ -344,26 +348,31 @@
 				this.showmapselect = false
 				switch (this.type) {
 					case '0':
-					    var undervolt='*'
-					    if(this.selectvals==0){
-					    	undervolt=1
-					    }
-						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude,undervolt)
+						var undervolt = '*'
+						if (this.selectvals == 0) {
+							undervolt = 1
+						}
+						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude, undervolt)
 						break;
 					case '1.1':
 						this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
 						break;
 					case '3.1':
 						if (this.selectvals == 100) {
-							this.nearbymovecar(this.longitude, this.latitude, "*")
+							this.nearbymovecar(this.longitude, this.latitude, "*",'*')
 						} else {
-							this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals))
+							if(this.selectvals==21){
+								this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
+							}else{
+								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals),'*')
+							}							
 						}
 						break
 				}
 
 			},
 			markclick(e) {
+				console.log(3333, e)
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
@@ -425,7 +434,7 @@
 						confirmText: '删除',
 						success: res => {
 							if (res.confirm) {
-								console.log('parkid',parkid)
+								console.log('parkid', parkid)
 								this.deletestop(parkid)
 							} else if (res.cancel) {
 								console.log('用户点击取消');
@@ -435,10 +444,10 @@
 						complete: () => {}
 					});
 				} else {
-					if(this.type!='0.1'){
+					if (this.type != '0.1') {
 						this.setBikeid(e.markerId)
 						this.getcarinfo()
-					}				
+					}
 				}
 			},
 			// 点击创建车站
@@ -451,14 +460,14 @@
 				}
 			},
 			// 删除车站
-			deletestop(ids){
-				console.log('ids',ids)
+			deletestop(ids) {
+				console.log('ids', ids)
 				var options = {
 					url: '/park/del', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"id":ids
+						"id": ids
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -535,11 +544,11 @@
 			},
 			// 提交创建车站
 			finshCreat() {
-				if(this.stopName==''){
+				if (this.stopName == '') {
 					uni.showToast({
 						title: '车站名称不能为空',
-						icon:'none',
-						duration:2000,
+						icon: 'none',
+						duration: 2000,
 					});
 					return
 				}
@@ -568,11 +577,11 @@
 						// self.nearbycarinfo(2)
 						switch (self.type) {
 							case '0':
-							    var undervolt='*'
-							    if(this.selectvals==0){
-									undervolt=1
+								var undervolt = '*'
+								if (this.selectvals == 0) {
+									undervolt = 1
 								}
-								self.nearbyshortpower(this.selectvals, res.longitude, res.latitude,undervolt)
+								self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt)
 								break
 							case '1.1':
 								self.nearbyfaultcar(res.longitude, res.latitude, 0)
@@ -581,7 +590,12 @@
 								if (this.selectvals == 100) {
 									self.nearbymovecar(res.longitude, res.latitude, "*")
 								} else {
-									self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
+									if(this.selectvals==21){
+										this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
+									}else{
+										this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals),'*')
+									}
+									// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
 								}
 								break
 							case '9':
@@ -600,7 +614,7 @@
 				})
 			},
 			// 附近需要挪的车
-			nearbymovecar(longitude, latitude, reparklev) {
+			nearbymovecar(longitude, latitude, reparklev,parkstate) {
 				var options = {
 					url: '/bike/list_to_repark_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -611,6 +625,7 @@
 							latitude
 						],
 						"repark_index": reparklev,
+						"park_state":parkstate,
 						"flag": 1
 						// "is_under_volt": 1
 					}
@@ -622,6 +637,7 @@
 					if (res.status == 0) {
 						this.covers = []
 						var temparr = []
+						var circles = []
 						if (this.type != '9') {
 							for (let i = 0; i < res.list.length; i++) {
 								let tmpObj = {}
@@ -640,31 +656,48 @@
 								// this.covers.push(tmpObj)
 							}
 						}
-						for (let j = 0; j < res.parks.length; j++) {
-							let tmpObjs = {}
-							tmpObjs.id = res.parks[j].id
-							if (!!res.parks[j].coordinate) {
-								tmpObjs.latitude = res.parks[j].coordinate[1]
-								tmpObjs.longitude = res.parks[j].coordinate[0]
+						// circles: [{ //在地图上显示圆
+						// 		latitude: 26.0627,
+						// 		longitude: 119.31414,
+						// 		fillColor: "#FFC41F", //填充颜色
+						// 		color: "#12A1DD", //描边的颜色
+						// 		radius: 200, //半径
+						// 		strokeWidth: 2 //描边的宽度
+						// 	}],
+							for (let j = 0; j < res.parks.length; j++) {
+								let tmpObjs = {}
+								let circlesObj = {}
+								tmpObjs.id = res.parks[j].id
+								if (!!res.parks[j].coordinate) {
+									tmpObjs.latitude = res.parks[j].coordinate[1]
+									tmpObjs.longitude = res.parks[j].coordinate[0]
+									circlesObj.latitude = res.parks[j].coordinate[1]
+									circlesObj.longitude = res.parks[j].coordinate[0]
+									circlesObj.radius = res.parks[j].radius
+									circlesObj.fillColor = "#FF9F0040"
+									circlesObj.color = "#FF9F0040"
+									circlesObj.strokeWidth = 2
+								}
+								tmpObjs.name = res.parks[j].name
+								// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
+								var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
+								tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
+								tmpObjs.type = 'stop'
+								tmpObjs.bickcount = res.parks[j].bike_count
+								tmpObjs.allkcount = res.parks[j].capacity
+								tmpObjs.radius = res.parks[j].radius
+								tmpObjs.remark = res.parks[j].remark
+								tmpObjs.grade = res.parks[j].grade
+								// tmpObjs.allkcount = res.parks[j].capacity
+								tmpObjs.width = 39
+								tmpObjs.height = 48
+								tmpObjs.parkid = res.parks[j].id
+								temparr.push(tmpObjs)
+								circles.push(circlesObj)
+								// this.covers.push(tmpObjs)
 							}
-							tmpObjs.name = res.parks[j].name
-							// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
-							var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
-							tmpObjs.type = 'stop'
-							tmpObjs.bickcount = res.parks[j].bike_count
-							tmpObjs.allkcount = res.parks[j].capacity
-							tmpObjs.radius = res.parks[j].radius
-							tmpObjs.remark = res.parks[j].remark
-							tmpObjs.grade = res.parks[j].grade
-							// tmpObjs.allkcount = res.parks[j].capacity
-							tmpObjs.width = 39
-							tmpObjs.height = 48
-							tmpObjs.parkid = res.parks[j].id
-							temparr.push(tmpObjs)
-							// this.covers.push(tmpObjs)
-						}
 						this.covers = temparr
+						this.circles=circles
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -695,12 +728,20 @@
 					if (res.status == 0) {
 						this.covers = []
 						var temparr = []
+						var circles=[]
 						for (let j = 0; j < res.parks.length; j++) {
 							let tmpObjs = {}
+							let circlesObj = {}
 							tmpObjs.id = res.parks[j].id
 							if (!!res.parks[j].coordinate) {
 								tmpObjs.latitude = res.parks[j].coordinate[1]
 								tmpObjs.longitude = res.parks[j].coordinate[0]
+								circlesObj.latitude = res.parks[j].coordinate[1]
+								circlesObj.longitude = res.parks[j].coordinate[0]
+								circlesObj.radius = res.parks[j].radius
+								circlesObj.fillColor = "#FF9F0040"
+								circlesObj.color = "#FF9F0040"
+								circlesObj.strokeWidth = 2
 							}
 							tmpObjs.name = res.parks[j].name
 							// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
@@ -717,9 +758,11 @@
 							tmpObjs.height = 48
 							tmpObjs.parkid = res.parks[j].id
 							temparr.push(tmpObjs)
+							circles.push(circlesObj)
 							// this.covers.push(tmpObjs)
 						}
 						this.covers = temparr
+						this.circles = circles
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -773,7 +816,7 @@
 				})
 			},
 			// 附近需要换电的车辆
-			nearbyshortpower(max, longitude, latitude,undervolt) {
+			nearbyshortpower(max, longitude, latitude, undervolt) {
 				var options = {
 					url: '/bike/list_to_change_battery_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -857,38 +900,38 @@
 						this.polyline[0].width = 5 //线的宽度
 						// dottedLine: true, //是否虚线
 						this.polyline[0].arrowLine = true
-						
-						
-						var tempcoor=this.bikeinfo.coordinate
+
+
+						var tempcoor = this.bikeinfo.coordinate
 						this.covers = []
-			            let tmpObj = {}
+						let tmpObj = {}
 						tmpObj.id = 999999
 						tmpObj.latitude = tempcoor[1]
 						tmpObj.longitude = tempcoor[0]
-						tmpObj.name=this.bikeinfo.id
-						tmpObj.iconPath='/static/mapicon/car_normal.png'
-						tmpObj.type='car'
-						tmpObj.width=39
-						tmpObj.height=48
+						tmpObj.name = this.bikeinfo.id
+						tmpObj.iconPath = '/static/mapicon/car_normal.png'
+						tmpObj.type = 'car'
+						tmpObj.width = 39
+						tmpObj.height = 48
 						this.covers.push(tmpObj)
-						console.log(555,this.covers)
-							// for (let i = 0; i < res.list.length; i++) {
-							// 	let tmpObj = {}
-							// 	tmpObj.id = res.list[i].id
-							// 	if (!!res.list[i].coordinate) {
-							// 		tmpObj.latitude = res.list[i].coordinate[1]
-							// 		tmpObj.longitude = res.list[i].coordinate[0]
-							// 	}
-							// 	tmpObj.name = res.list[i].name
-							// 	// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
-							// 	tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
-							// 	tmpObj.type = 'car'
-							// 	tmpObj.width = 39
-							// 	tmpObj.height = 48
-							// 	temparr.push(tmpObj)
-							// 	// this.covers.push(tmpObj)
-							// }
-							// this.covers=temparr
+						console.log(555, this.covers)
+						// for (let i = 0; i < res.list.length; i++) {
+						// 	let tmpObj = {}
+						// 	tmpObj.id = res.list[i].id
+						// 	if (!!res.list[i].coordinate) {
+						// 		tmpObj.latitude = res.list[i].coordinate[1]
+						// 		tmpObj.longitude = res.list[i].coordinate[0]
+						// 	}
+						// 	tmpObj.name = res.list[i].name
+						// 	// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+						// 	tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
+						// 	tmpObj.type = 'car'
+						// 	tmpObj.width = 39
+						// 	tmpObj.height = 48
+						// 	temparr.push(tmpObj)
+						// 	// this.covers.push(tmpObj)
+						// }
+						// this.covers=temparr
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -924,7 +967,7 @@
 							tmpObj.width = 39
 							tmpObj.height = 48
 							// tmpObj.iconPath = '../../static/image/0-small.png'
-							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)							
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
 							this.covers.push(tmpObj)
 						}
 					}

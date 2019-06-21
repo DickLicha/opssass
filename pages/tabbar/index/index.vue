@@ -24,14 +24,32 @@
 	} from 'vuex'
 	export default {
 		onLoad() {
+			// 蓝牙模块
+			// uni.openBluetoothAdapter({
+			// 	success(res) {
+			// 		console.log(333, res)
+			// 		uni.startBluetoothDevicesDiscovery({
+			// 			// services: ['FEE7'],
+			// 			success(res) {
+			// 				console.log(22,res)
+			// 			}
+			// 		})
+			// 	},
+			// 	complete(res) {
+			// 		console.log('end', res)
+			// 	}
+			// })
+		},
+		computed: mapState(['userinfo']),
+		onShow() {
 			this.taskdata = []
 			// var acl = this.userinfo.acl.children
 			var acl = []
 			uni.getStorage({
-				key:'userinfo',
-				success:res=>{
-					acl=res.data.acl.children
-						var onlyid = '',
+				key: 'userinfo',
+				success: res => {
+					acl = res.data.acl.children
+					var onlyid = '',
 						tempobj = {},
 						src = '',
 						name = '',
@@ -89,6 +107,12 @@
 									text = ''
 									src = '../../../static/image/pai_cha.png'
 									break
+								case 12:
+									name = 'ecu检测'
+									url = '/pages/repairlist/repairlist'
+									text = ''
+									src = '../../../static/image/pai_cha.png'
+									break
 							}
 							tempobj = {
 								index: onlyid,
@@ -104,10 +128,7 @@
 					// this.getdirectinfo()
 				}
 			})
-		
 		},
-		computed: mapState(['userinfo']),
-
 		data() {
 			return {
 				taskdata: []
@@ -154,7 +175,7 @@
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
 							mask: false,
-							icon:'none',
+							icon: 'none',
 							duration: 1500
 						});
 					}
@@ -253,16 +274,17 @@
 <style lang="scss" scoped>
 	.wrap {
 		// position: relative;
-		height: calc(120vh);
+		height: calc(135vh);
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;
-
+        overflow-y: hidden;
 		.head-view {
 			height: 140upx;
 			background-color: white;
 			position: fixed;
 			top: 0;
 			width: 100%;
+
 			.scan-img {
 				position: absolute;
 				top: 70upx;
