@@ -5,7 +5,7 @@
 		<button class="login-view" type="primary" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信用户快速登录</button>
 		<view class="bottom-view">
 			<view class="bottom-text">登录即代表同意</view>
-			<view class="click-text">《点点出行用户协议》</view>
+			<view class="click-text">《点点电单车用户协议》</view>
 		</view>
 	</view>
 </template>

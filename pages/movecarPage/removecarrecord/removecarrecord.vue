@@ -27,7 +27,7 @@
 </template>
 
 <script>
-	import UniLoadMore from '@/components/load-more.vue'
+	// import UniLoadMore from '@/components/load-more.vue'
 	import {
 		mapState
 	} from 'vuex'
@@ -43,7 +43,7 @@
 			}
 		},
 		components: {
-			UniLoadMore
+			// UniLoadMore
 		},
 		methods: {
 			gocarinfo(item) {

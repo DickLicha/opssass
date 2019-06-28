@@ -5,7 +5,7 @@ export default function(obj) {
 	sn = store.state.sn || ""
 		var token='',value={}
 	try {
-		value = uni.getStorageSync('userinfo');
+		var value = uni.getStorageSync('userinfo');
 		if (value) {
 			token=value.token
 			cityid=value.userinfo.city_id
@@ -61,7 +61,8 @@ export default function(obj) {
 	}
 	let p = new Promise((resolve, reject) => {
 		uni.request({
-			url: baseUrl + obj.url,
+			// url: baseUrl + obj.url,
+			url: store.state.baseurl + obj.url,
 			method: obj.method || 'GET',
 			data: obj.data || {},
 			header: obj.header || {},

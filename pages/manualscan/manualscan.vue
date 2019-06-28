@@ -30,7 +30,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(['setBikeid', 'setSn', 'setBikeinfo','setOrderfirstid','setOrderinfo']),
+			...mapMutations(['setBikeid', 'setSn', 'setBikeinfo','setOrderfirstid','setOrderinfo','setBaseurl']),
 			onKeyInput() {
 				this.inputValue = event.target.value
 			},
@@ -183,8 +183,52 @@
 					console.error(err, '捕捉')
 				})
 			},
-			hideKeyboard(event) {
+			hideKeyboard(event) {			
 				if (this.carnum.length === 8) {
+					if(this.carnum=='08091011'){
+						try {
+							uni.removeStorageSync('userinfo');
+						} catch (e) {
+							// error
+						}
+						this.setBaseurl('https://api.dd-test.ildjoy.com')
+						uni.showToast({
+							title: '已切换到测试环境',
+							icon:'none',
+						    duration:2000,
+						});
+						setTimeout(()=>{
+							uni.navigateTo({
+								url: '/pages/mine/loginView/loginView',
+								success: res => {},
+								fail: () => {},
+								complete: () => {}
+							});
+						},2000)
+						return
+					}
+					if(this.carnum=='08091012'){
+						this.setBaseurl('https://api.dd.ildjoy.com')
+						try {
+							uni.removeStorageSync('userinfo');
+						} catch (e) {
+							// error
+						}
+						uni.showToast({
+							title: '已切换到线上环境',
+							icon:'none',
+							duration:2000,
+						});
+						setTimeout(()=>{
+							uni.navigateTo({
+								url: '/pages/mine/loginView/loginView',
+								success: res => {},
+								fail: () => {},
+								complete: () => {}
+							});
+						},2000)
+						return
+					}
 					this.setBikeid('*')
 					this.setSn(this.carnum)
 					uni.hideKeyboard();

@@ -113,6 +113,12 @@
 									text = ''
 									src = '../../../static/image/pai_cha.png'
 									break
+								case 13:
+									name = 'ecu换绑'
+									url = '/pages/repairlist/repairlist'
+									text = ''
+									src = '../../../static/image/ecu_huanban.png'
+									break	
 							}
 							tempobj = {
 								index: onlyid,

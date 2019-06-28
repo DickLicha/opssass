@@ -32,6 +32,7 @@ const store = new Vuex.Store({
 		inginfo:{},//未结束的订单
 		endmove:false,
 		orderid:'',
+		baseurl:'https://api.dd.ildjoy.com',
 	},
 	mutations: {
 		login(state, provider) {
@@ -107,6 +108,9 @@ const store = new Vuex.Store({
 		},
 		setOrderid(state, orderid) {
 			state.orderid = orderid
+		},
+		setBaseurl(state, baseurl) {
+			state.baseurl = baseurl
 		},
 	},
 	actions: {

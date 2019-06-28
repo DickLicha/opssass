@@ -7,7 +7,7 @@
 			<view class="page-section page-section-gap">
 				<map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
 				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
-				 @markertap='markclick' @regionchange="functionName" @end="functionName">
+				 @markertap='markclick' @regionchange="functionNames" @end="functionName">
 					<!-- <map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
 				  :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				  @regionchange="functionName" @end="functionName" @begin="functionName"> -->
@@ -209,7 +209,7 @@
 					case '0':
 						this.scanbuttonname = '扫码换电'
 						this.changeingbattery()
-						this.nearbyshortpower(100, this.longitude, this.latitude, '*')
+						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude, '*')
 						break;
 					case '0.1':
 						this.hidebutton = true
@@ -253,7 +253,17 @@
 						// this.showcorverview.head = false
 						this.movingbike()
 						this.scanbuttonname = '扫码挪车'
-						this.nearbymovecar(this.longitude, this.latitude, '*','*')
+						if (this.selectvals == 100) {
+							this.nearbymovecar(this.longitude, this.latitude, "*",'*')
+						} else {
+							// 服务区外车辆
+							if(this.selectvals==21){
+								this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
+							}else{
+								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals),'*')
+							}							
+						}
+						// this.nearbymovecar(this.longitude, this.latitude, '*','*')
 						// this.nearbycarinfo(2)
 						this.selectcoverdata = [{
 								name: '全部车站',
@@ -302,9 +312,9 @@
 						]
 						break;
 				}
-				this.headviewtext = this.selectcoverdata[0].name
-				this.isActive = 0
-				this.selectvals = this.selectcoverdata[0].val
+				// this.headviewtext = this.selectcoverdata[0].name
+				// this.isActive = 0
+				// this.selectvals = this.selectcoverdata[0].val
 			}, 1000)
 
 		},
@@ -361,6 +371,7 @@
 						if (this.selectvals == 100) {
 							this.nearbymovecar(this.longitude, this.latitude, "*",'*')
 						} else {
+							// 服务区外车辆
 							if(this.selectvals==21){
 								this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
 							}else{
@@ -565,7 +576,7 @@
 				// this.selectcoverdata[index].active = true
 			},
 			functionNames() {
-
+               
 			},
 			// 移动地图获取中心点坐标
 			functionName() {
@@ -588,23 +599,18 @@
 								break
 							case '3.1':
 								if (this.selectvals == 100) {
-									self.nearbymovecar(res.longitude, res.latitude, "*")
+									self.nearbymovecar(res.longitude, res.latitude, "*",'*')
 								} else {
 									if(this.selectvals==21){
-										this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
+										this.nearbymovecar(res.longitude, res.latitude,'*',parseInt(this.selectvals))
 									}else{
-										this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals),'*')
+										this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals),'*')
 									}
 									// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
 								}
 								break
 							case '9':
 								this.stoplist(res.longitude, res.latitude, '*')
-								// if (this.selectvals == 100) {
-								// 	self.nearbymovecar(res.longitude, res.latitude, "*")
-								// } else {
-								// 	self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
-								// }
 								break
 						}
 					},
@@ -903,7 +909,7 @@
 
 
 						var tempcoor = this.bikeinfo.coordinate
-						this.covers = []
+						// this.covers = []
 						let tmpObj = {}
 						tmpObj.id = 999999
 						tmpObj.latitude = tempcoor[1]
@@ -914,7 +920,6 @@
 						tmpObj.width = 39
 						tmpObj.height = 48
 						this.covers.push(tmpObj)
-						console.log(555, this.covers)
 						// for (let i = 0; i < res.list.length; i++) {
 						// 	let tmpObj = {}
 						// 	tmpObj.id = res.list[i].id
@@ -976,7 +981,6 @@
 					console.error(err, '捕捉')
 				})
 			},
-			// 图标类函数
 			scanCode(type) {
 				if (type == 1) {
 					wx.scanCode({

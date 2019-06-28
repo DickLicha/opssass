@@ -64,6 +64,7 @@ Vue.prototype.$invstate = function(type) {
 
 	Vue.prototype.$imagepath = function(element, type, bikenum) {
 		var iconPath = '/static/mapicon/car_normal.png'
+		console.log(element,'element')
 		// 车辆
 		if (type == 'car') {
 			// 失联
@@ -79,14 +80,15 @@ Vue.prototype.$invstate = function(type) {
 				iconPath = '/static/mapicon/low_elec.png'
 			}
 			// 预警
-			else if (0 !== element.alert_state) {
-				iconPath = '/static/mapicon/yujing.png'
-			}
+			// else if (0 !== element.alert_state) {
+			// 	iconPath = '/static/mapicon/yujing.png'
+			// }
 			// 占用中
 			// else if (0 !== element.bus_state) {
 			// 	iconPath='/static/mapicon/bikeing.png'
 			// }
-			else if(element.health_state==0 && element.repark_index!=0){
+			else if(element.health_state==0 && element.repark_index!='0'){
+				console.log('repark_index',element.repark_index)
 				iconPath = '/static/mapicon/car_bad+.png'
 			}
 			// // 正常

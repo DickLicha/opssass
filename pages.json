@@ -48,9 +48,9 @@
 				"navigationBarTitleText": "我的卡"
 			}
 		}, {
-			"path": "pages/mine/mineyj/mineyj",
+			"path": "pages/mine/minehdrecord/minehdrecord",
 			"style": {
-				"navigationBarTitleText": "押金"
+				"navigationBarTitleText": "换电记录"
 			}
 		}, {
 			"path": "pages/mine/minezhmx/minezhmx",
@@ -266,6 +266,12 @@
             "path" : "pages/ecutest/ecutest",
             "style" : {
 				"navigationBarTitleText": "ecu测试"
+			}
+        }
+        ,{
+            "path" : "pages/stockPage/bikelist/bikelist",
+            "style" : {
+				"navigationBarTitleText": "车辆列表"
 			}
         }
     ],

@@ -43,7 +43,7 @@
 		data() {
 			return {
 				bikeInfo: {},
-				headTitle: "用户还车地点吻合",
+				headTitle: "用户还车地点",
 				remark: "",
 				dataList:[
 					{"content":"车辆编码："},
@@ -149,7 +149,7 @@
 				// console.log(e);
 				uni.showLoading({
 					title: "正在上传图片..."
-				})
+				}) 
 				if (this.postImageArr.length < this.imageArr.length) {
 					if (this.imageArr[this.postImageArr.length] != this.addImagePath){
 						uni.uploadFile({
@@ -165,9 +165,7 @@
 							success: (res) => {					
 								var parsedata=JSON.parse(res.data)
 								if(parsedata.status==0){
-									console.log('this.directinfo',this.directinfo)
 									var imgs = this.directinfo.res_server_url+'/'+parsedata.data.oss_name
-									console.log('imgs',imgs)
 									this.postImageArr.push(imgs);
 									this.uploadImage();
 									setTimeout(()=>{
@@ -176,13 +174,27 @@
 									});	
 									},1500)
 								}else{
+									
 									uni.showToast({
 										title: parsedata.msg?parsedata.msg:'文件上传失败',
 										mask: false,
 										icon:'none',
 										duration: 1500
 									});
+									
 								}
+							},
+							
+							fail:(res)=>{
+								uni.hideLoading();
+								 var parsedata=JSON.parse(res)
+								 console.log('res,',parsedata)	
+								
+		
+							},
+							complete: (res) => {
+								
+								
 							}
 						});
 					}else{

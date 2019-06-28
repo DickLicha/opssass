@@ -25,11 +25,11 @@
 						val: '',
 						url:'/pages/mine/mineye/mineye',
 					},
-					// {
-					// 	name: '通知',
-					// 	val: '',
-					// 	url:'/pages/mine/mineyhq/mineyhq'
-					// },
+					{
+						name: '换电记录',
+						val: '',
+						url:'/pages/mine/minehdrecord/minehdrecord'
+					},
 					// {
 					// 	name: '未关电机锁车辆记录',
 					// 	val: '',

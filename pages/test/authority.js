@@ -62,7 +62,7 @@
 		url: '/pages/map/map?onlyid=4',
 		text: '',
 		src: '../../../static/image/ecu_huanban.png',
-		children:[]
+		children:[] 
 	},
 	{
 		name: 'ECU绑定',

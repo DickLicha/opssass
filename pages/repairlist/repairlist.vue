@@ -149,6 +149,12 @@
 										}
 									}
 								}
+								tempobj = {
+									name: '车辆列表',
+									val: '',
+									url: '/pages/stockPage/bikelist/bikelist',
+								}
+								templist.push(tempobj)
 								break
 							case '10':
 								for (let j = 0; j < chids.length; j++) {
@@ -215,13 +221,24 @@
 									}
 								}
 								break
-							case '12':								
-								templist = [							
-									{
-										name: '扫码输入',
+							case '12':
+								templist = [{
+									name: '扫码输入',
+									val: '',
+									url: '',
+								}]
+								break
+							case '13':
+								templist = [{
+										name: 'ecu解绑',
 										val: '',
 										url: '',
-									}
+									},
+									{
+										name: 'ecu换绑',
+										val: '',
+										url: '',
+									},
 								]
 								break
 						}
@@ -308,15 +325,14 @@
 						complete: res => {}
 					});
 
-				}
-				else if(this.type=='12'){
+				} else if (this.type == '12') {
 					wx.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
-							console.log(res,'res')
-							var result=res.result.split(' ')
-							console.log(result,'result')
-							var imei=result[0].split(':')[1]
+							console.log(res, 'res')
+							var result = res.result.split(' ')
+							console.log(result, 'result')
+							var imei = result[0].split(':')[1]
 							uni.navigateTo({
 								url: `/pages/ecutest/ecutest?imei=${imei}`,
 								success: res => {},
@@ -327,8 +343,13 @@
 						fail: res => {},
 						complete: res => {}
 					});
-				}
-				 else {
+				} else if (this.type == '13') {
+					if (item.name == 'ecu解绑') {
+                           this.ecuunbind()
+					} else {
+                           this.ecubind() 
+					}
+				} else {
 					uni.navigateTo({
 						url: item.url,
 						success: res => {},
@@ -337,6 +358,78 @@
 					});
 				}
 
+			},
+			// ecu解绑
+			ecuunbind() {
+				var options = {
+					url: '/bike/unbind_ecu', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"bike_id": '',
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('ecu解绑', res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: '删除车站成功',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+						this.stoplist(this.longitude, this.latitude, '*')
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '删除车站失败',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// ecu绑定
+			ecubind() {
+				var options = {
+					url: '/bike/unbind_ecu', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"bike_id": '',
+						"imei":'' ,
+						"ecu_sn":'' 
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('ecu綁定', res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: 'ecu绑定成功',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+						this.stoplist(this.longitude, this.latitude, '*')
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : 'ecu绑定失败',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 			requestorder(data, item) {
 				let options = {

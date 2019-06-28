@@ -5,18 +5,18 @@
 			<view class='flexd-posion'>
 				<view class='view-flexs switch-head'>
 					<view>时间</view>
-					<view class='view-border-letf'>动作</view>
-					<view class='view-border-letf'>操作</view>
-					<view class='view-border-letf'>结果</view>
+					<view class='view-border-letf'>车辆id</view>
+					<view class='view-border-letf'>换前</view>
+					<view class='view-border-letf'>换后</view>
 				</view>
 			</view>
 
 			<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
-				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key=i @click="detilpop(item,i,'middle-list')">
-					<view>{{item.time}}</view>
-					<view class='view-border-letf'>{{item.action}}</view>
-					<view class='view-border-letf'>{{item.op}}</view>
-					<view class='view-border-letf' :class="{'right-view':item.status=='正常','wrong-view':item.status=='异常'}">{{item.status}}</view>
+				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key='i'>
+					<view>{{item.create_time}}</view>
+					<view class='view-border-letf'>{{item.bike_id}}</view>
+					<view class='view-border-letf'>{{item.battery_level_before}}%</view>
+					<view class='view-border-letf'>{{item.battery_level_after}}%</view>
 				</view>
 				<uni-load-more :loadingType="resquestState"></uni-load-more>
 			</scroll-view>
@@ -48,6 +48,7 @@
 				pagenum:20,
 				allnumber:100,
 				type:'',
+				userid:'',
 				list:[1,2,3,4],
 				itemcells:[
 					{name:'时间:',val:''},
@@ -90,40 +91,42 @@
 					
 				}
 			},
-			// 开锁记录
+			// 换电记录
 			openbattery(page,num) {
 				this.setSn('*')
 				var options = {
-					url: '/bike/oper_list', //请求接口
+					url: '/bcorder/list', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"type": 10,
+						// "type": 10,
 						// "bike_id":'test0001',
 						"pno": page,
-						"bike_id":this.bikeinfo.id,
+						"user_id":this.userid,
+						// "bike_id":this.bikeinfo.id,
 						"psize": num
 					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('开锁记录', res)
+					console.log('换电记录', res)
 					this.allnumber=res.total
-					if (res.status == 0) {						
+					if (res.status == 0) {
+						this.switchloockdata=this.switchloockdata.concat(res.list)
 						// this.switchloockdatathis.switchloockdata.concat(res.list)
-						for (let i = 0; i < res.list.length; i++) {
-							let datainfo = {}
-							datainfo.time = res.list[i].create_time
-							datainfo.action = (res.list[i].type==10)?'开锁':'关锁'
-							datainfo.op = res.list[i].bound_order_op
-							datainfo.status = (res.list[i].success==0)?'成功':'失败'
-							datainfo.netstatus = (res.list[i].is_online==1)?'在线':'离线'
-							datainfo.username = res.list[i].user_name
-							datainfo.phone = res.list[i].user_phone
-							datainfo.errormsg = res.list[i].error_msg
-							this.switchloockdata.push(datainfo)
-						}
+						// for (let i = 0; i < res.list.length; i++) {
+						// 	let datainfo = {}
+						// 	datainfo.time = res.list[i].create_time
+						// 	datainfo.action = res.list[i].bike_id
+						// 	datainfo.op = res.list[i].battery_level_before
+						// 	datainfo.status = res.list[i].battery_level_after
+						// 	datainfo.netstatus = (res.list[i].is_online==1)?'在线':'离线'
+						// 	datainfo.username = res.list[i].user_name
+						// 	datainfo.phone = res.list[i].user_phone
+						// 	datainfo.errormsg = res.list[i].error_msg
+						// 	this.switchloockdata.push(datainfo)
+						// }
 						// console.log('this.switchloockdata',this.switchloockdata)
 					} else {
 						uni.showToast({
@@ -137,7 +140,16 @@
 			},
 		},
 		onLoad() {
-			this.openbattery(this.pageindex,this.pagenum)
+			try {
+				var value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.userid=value.userinfo.id
+					this.openbattery(this.pageindex,this.pagenum)
+				}
+			} catch (e) {
+				// error
+			}
+			
 		}
 	}
 </script>
