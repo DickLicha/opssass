@@ -33,7 +33,7 @@
 		},
 		computed: mapState(['userinfo']),
 		methods: {
-			...mapMutations(['setUserinfo', 'setDirectinfo']),
+			...mapMutations(['setUserinfo', 'setDirectinfo','setGobelrelogin']),
 			// 获取字典配置信息
 			getdirectinfo() {
 				var options = {
@@ -161,6 +161,7 @@
 					}
 					this.$httpReq(options).then((res) => {
 						if (res.status == 0) {
+							this.setGobelrelogin(false);
 							console.log('登录成功', res)
 							uni.setStorage({
 								key: 'userinfo',

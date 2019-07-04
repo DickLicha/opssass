@@ -335,7 +335,6 @@
 
 			},
 			trigger(e) {
-				console.log(e)
 				this.content[e.index].active = !e.item.active
 				switch (e.item.val) {
 					case '-1':
@@ -388,18 +387,6 @@
 						this.biketest()
 						break
 				}
-
-				// uni.showModal({
-				// 	title: '提示',
-				// 	content: `您${this.content[e.index].active ? '选中了' : '取消了'}${e.item.text}`,
-				// 	success: function(res) {
-				// 		if (res.confirm) {
-				// 			console.log('用户点击确定')
-				// 		} else if (res.cancel) {
-				// 			console.log('用户点击取消')
-				// 		}
-				// 	}
-				// })
 			},
 			switchBtn(hor, ver) {
 				if (hor === 0) {
@@ -573,7 +560,7 @@
 									cancelText: '',
 									confirmText: '我知道了',
 									success: res => {
-										this.buttonname = '关闭电池锁'
+										this.buttonname = '结束换电'
 									},
 									fail: () => {},
 									complete: () => {}

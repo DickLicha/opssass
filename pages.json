@@ -3,7 +3,9 @@
 		{
 			"path": "pages/mine/loginView/loginView",
 			"style": {
-				"navigationBarTitleText": "登录"
+				"navigationBarTitleText": "登录",
+				"navigationStyle":"custom",
+				"titleNView": false
 			}
 		},
 		{

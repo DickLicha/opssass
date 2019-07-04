@@ -109,7 +109,7 @@
 									break
 								case 12:
 									name = 'ecu检测'
-									url = '/pages/repairlist/repairlist'
+									url = '/pages/ecutest/ecutest'
 									text = ''
 									src = '../../../static/image/pai_cha.png'
 									break

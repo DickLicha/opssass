@@ -1,9 +1,14 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
+			<view>
+				<text>当前车辆imei：</text>
+				<text>{{imei}}</text>
+			</view>
 			<view class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
 				<text>{{item.name}}</text>
 			</view>
+			<button type='primary' class='share-button-default' @click="scancode">扫码</button>
 		</view>
 	</view>
 </template>
@@ -67,16 +72,16 @@
 				uni.showLoading({
 					title: `${item.name}中`
 				});
-				var index='*'
-				if(item.val=='5'){
-					index=1
+				var index = '*'
+				if (item.val == '5') {
+					index = 1
 				}
 				let options = {
 					url: item.url,
 					method: 'POST',
 					data: {
 						imei: this.imei,
-						index:index,
+						index: index,
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -85,22 +90,35 @@
 					if (res.status == 0) {
 						uni.showToast({
 							title: `成功`,
-							icon: none,
+							icon: 'none',
 							duration: 3000
 						});
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '失败',
-							icon: none,
+							icon: 'none',
 							duration: 3000
 						});
+					}
+				})
+			},
+			scancode() {
+				wx.scanCode({
+					onlyFromCamera: true,
+					success: res => {
+						var result = res.result.split(' ')
+						console.log(result, 'result')
+						var imei = result[0].split(':')[1]
+						this.imei = imei
+					},
+					fail: res => {
+
 					}
 				})
 			}
 		},
 		onLoad(e) {
 			console.log('eeee', e)
-			this.imei = e.imei
 		}
 	}
 </script>
@@ -125,6 +143,7 @@
 				line-height: 80upx;
 				text-align: center;
 				margin-bottom: 20upx;
+				margin-top: 30upx;
 			}
 		}
 	}

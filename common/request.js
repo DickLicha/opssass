@@ -79,24 +79,31 @@ export default function(obj) {
 				// setTimeout(()=>{
 				// 	uni.hideLoading();
 				// },300)			
-				if(res.data.status==-530){
+				if(res.data.status==-530){					
 					uni.showToast({
 						title: 'token验证失败，请重新登录',
-						icon:'none'
+						icon:'none',
+						duration:1000
 					});
 					try {
 						uni.removeStorageSync('userinfo');
 					} catch (e) {
 						// error
 					}
-					setTimeout(()=>{
-						uni.navigateTo({
-							url: '/pages/mine/loginView/loginView',
-							success: res => {},
-							fail: () => {},
-							complete: () => {}
-						});
-					},1000)
+					var loginstate=store.state.gobelrelogin
+					if(loginstate===false){
+						store.commit("setGobelrelogin", true);
+						setTimeout(()=>{							
+							uni.navigateTo({
+								url: '/pages/mine/loginView/loginView',
+								success: res => {
+									// store.mutations.setGobelrelogin(true)									
+								},
+								fail: () => {},
+								complete: () => {}
+							});
+						},1000)
+					}					
 				}
 				// isShowLoading = false
 				// store.commit("setloadingFlag", false);

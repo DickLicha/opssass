@@ -5,7 +5,7 @@
 			<view class='flexd-posion'>
 				<view class='view-flexs switch-head'>
 					<view>名称</view>
-					<view class='view-border-letf'>电量</view>
+					<view class='view-border-letf'>时间</view>
 					<view class='view-border-letf'>位置</view>
 					<view class='view-border-letf'>排查内容</view>
 				</view>
@@ -13,8 +13,8 @@
 
 			<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
 				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key=i @click="detilpop(item)" :class="[item.order_state == '1'? 'wrong-view' : 'right-view']">
-					<view>{{item.bike_id}}</view>
-					<view class='view-border-letf'>{{item.battery_level}}</view>
+					<view>{{item.bike_id.substr(6,8)}}</view>
+					<view class='view-border-letf'>{{item.create_time}}</view>
 					<view class='view-border-letf'>{{item.address}}</view>
 					<view class='view-border-letf'>{{item.alert_content}}</view>
 				</view>
@@ -160,14 +160,21 @@
 		},
 		onLoad(e) {
 			this.types=e.type
+			var title=''
 			if(this.types==0){
 				this.faulttype=32
+				title='车辆疑似被盗'
 			}else if(this.types==1){
 				this.faulttype=16
+				title='车辆疑似报修'
 			}else{
 				this.faulttype=1048576
+				title='车辆疑似失联'
 			}
 			this.openbattery(this.faulttype)
+			wx.setNavigationBarTitle({
+				title:title
+			})
 		}
 	}
 </script>

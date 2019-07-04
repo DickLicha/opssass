@@ -134,7 +134,7 @@
 												tempobj = {
 													name: '入库',
 													val: '',
-													url: `/pages/stockPage/putstorage/putstorage`,
+													url: `/pages/stockPage/putstorage/putstorage?type=0`,
 												}
 												templist.push(tempobj)
 												break
@@ -345,9 +345,27 @@
 					});
 				} else if (this.type == '13') {
 					if (item.name == 'ecu解绑') {
-                           this.ecuunbind()
+						   wx.scanCode({
+						   	onlyFromCamera:true,
+							success:res=>{
+								console.log('saoma', res)
+								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+								this.setSn(bikesn)
+								this.setBikeid('*')
+								this.ecuunbind(bikesn)
+							},
+							fail:res=>{
+								
+							}
+						   })                         
 					} else {
-                           this.ecubind() 
+						uni.navigateTo({
+							url: '/pages/stockPage/putstorage/putstorage?type=1',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+                           // this.ecubind() 
 					}
 				} else {
 					uni.navigateTo({
@@ -360,13 +378,13 @@
 
 			},
 			// ecu解绑
-			ecuunbind() {
+			ecuunbind(id) {
 				var options = {
 					url: '/bike/unbind_ecu', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"bike_id": '',
+						// "bike_id": id,
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -375,7 +393,7 @@
 					console.log('ecu解绑', res)
 					if (res.status == 0) {
 						uni.showToast({
-							title: '删除车站成功',
+							title: '解绑成功',
 							mask: false,
 							icon: 'none',
 							duration: 3000
@@ -383,44 +401,7 @@
 						this.stoplist(this.longitude, this.latitude, '*')
 					} else {
 						uni.showToast({
-							title: res.message ? res.message : '删除车站失败',
-							mask: false,
-							icon: 'none',
-							duration: 3000
-						});
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
-			},
-			// ecu绑定
-			ecubind() {
-				var options = {
-					url: '/bike/unbind_ecu', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						"bike_id": '',
-						"imei":'' ,
-						"ecu_sn":'' 
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('ecu綁定', res)
-					if (res.status == 0) {
-						uni.showToast({
-							title: 'ecu绑定成功',
-							mask: false,
-							icon: 'none',
-							duration: 3000
-						});
-						this.stoplist(this.longitude, this.latitude, '*')
-					} else {
-						uni.showToast({
-							title: res.message ? res.message : 'ecu绑定失败',
+							title: res.message ? res.message : '解绑失败',
 							mask: false,
 							icon: 'none',
 							duration: 3000

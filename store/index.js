@@ -33,6 +33,8 @@ const store = new Vuex.Store({
 		endmove:false,
 		orderid:'',
 		baseurl:'https://api.dd.ildjoy.com',
+		// baseurl:'https://api.dd-test.ildjoy.com',	
+		gobelrelogin:false,
 	},
 	mutations: {
 		login(state, provider) {
@@ -111,6 +113,9 @@ const store = new Vuex.Store({
 		},
 		setBaseurl(state, baseurl) {
 			state.baseurl = baseurl
+		},
+		setGobelrelogin(state, gobelrelogin) {
+			state.gobelrelogin = gobelrelogin
 		},
 	},
 	actions: {

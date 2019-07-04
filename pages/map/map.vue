@@ -140,14 +140,7 @@
 					},
 				],
 				covers: [],
-				circles: [{ //在地图上显示圆
-					latitude: 26.0627,
-					longitude: 119.31414,
-					fillColor: "#FFC41F", //填充颜色
-					color: "#12A1DD", //描边的颜色
-					radius: 200, //半径
-					strokeWidth: 2 //描边的宽度
-				}],
+				circles: [],
 				polyline: [{ //指定一系列坐标点，从数组第一项连线至最后一项
 					points: [
 
@@ -861,6 +854,19 @@
 			},
 			// 车辆轨迹
 			cartrack(orderid) {
+				var tempcoor = this.bikeinfo.coordinate
+				let temarr = []
+				this.covers = []
+				let tmpObj = {}
+				tmpObj.id = 999999
+				tmpObj.latitude = tempcoor[1]
+				tmpObj.longitude = tempcoor[0]
+				tmpObj.name = this.bikeinfo.id
+				tmpObj.iconPath = '/static/mapicon/car_normal.png'
+				tmpObj.type = 'car'
+				tmpObj.width = 39
+				tmpObj.height = 48
+				temarr.push(tmpObj)
 				var options = {
 					url: '/urorder/info', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -875,8 +881,7 @@
 					console.log('车辆轨迹', res)
 					if (res.status == 0) {
 						var temparr = []
-						this.covers = []
-						let temarr = []
+						// this.covers = []					
 						let tempobj0 = {},
 							tempobj1 = {}
 						tempobj0.id = 0
@@ -893,7 +898,7 @@
 						tempobj1.height = 48
 						temarr.push(tempobj0)
 						temarr.push(tempobj1)
-						this.covers = temarr
+						this.covers=temarr
 						for (let i = 0; i < res.info.track.length; i++) {
 							var jwd = {
 								longitude: res.info.track[i][0],
@@ -906,37 +911,13 @@
 						this.polyline[0].width = 5 //线的宽度
 						// dottedLine: true, //是否虚线
 						this.polyline[0].arrowLine = true
-
-
-						var tempcoor = this.bikeinfo.coordinate
-						// this.covers = []
-						let tmpObj = {}
-						tmpObj.id = 999999
-						tmpObj.latitude = tempcoor[1]
-						tmpObj.longitude = tempcoor[0]
-						tmpObj.name = this.bikeinfo.id
-						tmpObj.iconPath = '/static/mapicon/car_normal.png'
-						tmpObj.type = 'car'
-						tmpObj.width = 39
-						tmpObj.height = 48
-						this.covers.push(tmpObj)
-						// for (let i = 0; i < res.list.length; i++) {
-						// 	let tmpObj = {}
-						// 	tmpObj.id = res.list[i].id
-						// 	if (!!res.list[i].coordinate) {
-						// 		tmpObj.latitude = res.list[i].coordinate[1]
-						// 		tmpObj.longitude = res.list[i].coordinate[0]
-						// 	}
-						// 	tmpObj.name = res.list[i].name
-						// 	// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
-						// 	tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
-						// 	tmpObj.type = 'car'
-						// 	tmpObj.width = 39
-						// 	tmpObj.height = 48
-						// 	temparr.push(tmpObj)
-						// 	// this.covers.push(tmpObj)
-						// }
-						// this.covers=temparr
+						console.log('this.covers',this.covers);
+					}
+					else{
+						uni.showToast({
+							title: res.message?res.message:'获取轨迹失败',
+							icon:'none'
+						});
 					}
 				}).catch((err) => {
 					// 请求失败的回调
