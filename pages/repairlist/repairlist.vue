@@ -241,6 +241,19 @@
 									},
 								]
 								break
+							case '14':
+								templist = [{
+										name: '手动输入',
+										val: '',
+										url: '/pages/manualscan/manualscan?urls=/pages/endOrder/endorder/endorder&type=14',
+									},
+									{
+										name: '扫码输入',
+										val: '',
+										url: '',
+									},
+								]
+								break
 						}
 					}
 				}
@@ -268,7 +281,15 @@
 								fail: () => {},
 								complete: () => {}
 							});
-						} else {
+						}else if(this.type=='14'){
+							uni.navigateTo({
+								url: "/pages/endOrder/endorder/endorder",
+								success: res => {},
+								fail: () => {},
+								complete: () => {}
+							});
+						}
+						 else {
 							this.throwin(res.info.id)
 						}
 					} else {
@@ -345,29 +366,45 @@
 					});
 				} else if (this.type == '13') {
 					if (item.name == 'ecu解绑') {
-						   wx.scanCode({
-						   	onlyFromCamera:true,
-							success:res=>{
+						wx.scanCode({
+							onlyFromCamera: true,
+							success: res => {
 								console.log('saoma', res)
 								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 								this.setSn(bikesn)
 								this.setBikeid('*')
 								this.ecuunbind(bikesn)
 							},
-							fail:res=>{
-								
+							fail: res => {
+
 							}
-						   })                         
-					} else {
+						})
+					} 					
+					else {
 						uni.navigateTo({
 							url: '/pages/stockPage/putstorage/putstorage?type=1',
 							success: res => {},
 							fail: () => {},
 							complete: () => {}
 						});
-                           // this.ecubind() 
+						// this.ecubind() 
 					}
-				} else {
+				}
+				 else if (this.type == '14' && item.name == '扫码输入') {
+				 	wx.scanCode({
+				 		onlyFromCamera: true,
+				 		success: res => {
+				 			console.log('saoma', res)
+				 			var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+				 			this.setSn(bikesn)
+				 			this.getcarinfo()
+				 		},
+				 		fail: res => {
+				 
+				 		}
+				 	})
+				 } 
+				 else {
 					uni.navigateTo({
 						url: item.url,
 						success: res => {},

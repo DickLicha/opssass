@@ -118,7 +118,13 @@
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = '../../../static/image/ecu_huanban.png'
-									break	
+									break
+								case 14:
+									name = '结束订单'
+									url = '/pages/repairlist/repairlist'
+									text = ''
+									src = '../../../static/image/che_zhan.png'
+									break
 							}
 							tempobj = {
 								index: onlyid,
@@ -127,7 +133,7 @@
 								url: url,
 								text: text
 							}
-							this.taskdata.push(tempobj)
+							this.taskdata.push(tempobj)							
 						}
 					}
 					// this.getconfinfo()

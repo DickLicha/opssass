@@ -276,6 +276,12 @@
 				"navigationBarTitleText": "车辆列表"
 			}
         }
+        ,{
+            "path" : "pages/endOrder/endorder/endorder",
+            "style" : {
+				"navigationBarTitleText": "结束订单"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

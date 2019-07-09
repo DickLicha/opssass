@@ -27,11 +27,12 @@ const BIKE_OPER_TYPE_MAINTAIN = 30;
 
 //车辆业务状态 bus_state
 const BIKE_BUS_STAT_IDLE = 0; //空闲
-const BIKE_BUS_STAT_RESERVED = 10; //用户订单-预约
-const BIKE_BUS_STAT_RIDING = 11; //用户订单-骑行
-const BIKE_BUS_STAT_TEMP_PARK = 12; //用户订单-临时停车
+const BIKE_BUS_STAT_RESERVED = 10; //用户订单-预约         订单id   last_order_id
+const BIKE_BUS_STAT_RIDING = 11; //用户订单-骑行           订单id  last_order_id
+const BIKE_BUS_STAT_TEMP_PARK = 12; //用户订单-临时停车    订单id  last_order_id
 
-const BIKE_BUS_STAT_OPER_MOVING = 20; //挪车
+const BIKE_BUS_STAT_OPER_MOVING = 20; //挪车    订单id last_repark_order_id
+const BIKE_BUS_STAT_OPER_MOVING = 30; //换电    订单id last_battery_change_order_id
 
 //订单类型
 const ORDER_TYPE_USR_RIDING = 'USR_RIDING'; //用户骑行订单

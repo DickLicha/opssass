@@ -250,7 +250,7 @@
 							this.nearbymovecar(this.longitude, this.latitude, "*",'*')
 						} else {
 							// 服务区外车辆
-							if(this.selectvals==21){
+							if(this.selectvals==21 || this.selectvals==11){
 								this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
 							}else{
 								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals),'*')
@@ -277,6 +277,10 @@
 							{
 								name: '4+不动车辆',
 								val: '4',
+							},
+							{
+								name: '禁停区内车辆',
+								val: '11',
 							},
 							{
 								name: '服务区外车辆',
@@ -365,7 +369,7 @@
 							this.nearbymovecar(this.longitude, this.latitude, "*",'*')
 						} else {
 							// 服务区外车辆
-							if(this.selectvals==21){
+							if(this.selectvals==21 || this.selectvals==11){
 								this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
 							}else{
 								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals),'*')
@@ -594,7 +598,7 @@
 								if (this.selectvals == 100) {
 									self.nearbymovecar(res.longitude, res.latitude, "*",'*')
 								} else {
-									if(this.selectvals==21){
+									if(this.selectvals==21 || this.selectvals==11){
 										this.nearbymovecar(res.longitude, res.latitude,'*',parseInt(this.selectvals))
 									}else{
 										this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals),'*')

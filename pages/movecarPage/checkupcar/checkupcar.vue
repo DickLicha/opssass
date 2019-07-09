@@ -16,8 +16,8 @@
 
 
 			<view v-show=''>
-				<map class='base-map-view' :show-location='true' v-show='showmap' @markertap='markclick' :scale="scale" :latitude="latitude" :longitude="longitude"
-				 :markers="covers" :circles="circles">
+				<map class='base-map-view' :show-location='true' v-show='showmap' @markertap='markclick' :scale="scale" :latitude="latitude"
+				 :longitude="longitude" :markers="covers" :circles="circles">
 				</map>
 			</view>
 
@@ -43,7 +43,7 @@
 		data() {
 			return {
 				latitude: 39.909,
-				circles:[],
+				circles: [],
 				timmer: null,
 				longitude: 116.39742,
 				scale: 18,
@@ -84,12 +84,15 @@
 		},
 		computed: mapState(['bikeinfo']),
 		onLoad(e) {
+			console.log('type',e.type)
 			if (e.type == 99) {
 				this.showdetil = false
 				this.showmap = true
 				// this.showendmove = true
 				this.bikeid = e.bikeid
 				this.ids = e.orderid
+				this.setSn(e.bikeid)
+				this.getcarinfo()
 				this.getmovingbike()
 				if (this.timmer == null) {
 					this.timmer = setInterval(() => {
@@ -97,8 +100,12 @@
 					}, 3000)
 				}
 			} else {
-				this.bikeid = this.bikeinfo.id				
+				this.bikeid = this.bikeinfo.id
+				this.checkcars()
 			}
+			
+			
+			
 			uni.getLocation({
 				type: 'gcj02',
 				success: res => {
@@ -108,7 +115,7 @@
 				fail: () => {},
 				complete: () => {}
 			});
-			this.checkcars()
+
 			this.swapdata[0].val = this.bikeid
 		},
 		onUnload() {
@@ -117,6 +124,33 @@
 		},
 		methods: {
 			...mapMutations(['setEndmove', 'setOrderid', 'setSn']),
+			// 获取车辆信息
+			getcarinfo() {
+				var options = {
+					url: '/bike/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					if (res.status == 0) {
+						this.setBikeinfo(res.info)
+
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取车辆信息失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			markclick(e) {
 				console.log('e', e)
 				var pointtype = '',
@@ -288,7 +322,7 @@
 							if (res.status == 0) {
 								// this.orderid = res.info.id
 								// this.setEndmove(true)
-								this.ids=res.info.id
+								this.ids = res.info.id
 								this.setOrderid(res.info.id)
 								this.showmap = true
 
@@ -380,7 +414,7 @@
 					if (res.status == 0) {
 						this.covers = []
 						var temparr = []
-						var circles=[]
+						var circles = []
 						let tmpObj = {}
 						tmpObj.latitude = res.coordinate[1]
 						tmpObj.longitude = res.coordinate[0]
@@ -404,8 +438,8 @@
 								circlesObj.strokeWidth = 2
 							}
 							tmpObjs.name = res.parks[j].name
-							var bikenum=parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-							tmpObjs.iconPath =this.$imagepath(res.parks[j],'stop',bikenum)				
+							var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
+							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
 							tmpObjs.type = 'stop'
 							tmpObjs.bickcount = res.parks[j].bike_count
 							tmpObjs.allkcount = res.parks[j].capacity

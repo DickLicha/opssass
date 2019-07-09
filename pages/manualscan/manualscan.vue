@@ -127,7 +127,7 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('bikeinfo', res)
-					if (res.status == 0) {						
+					if (res.status == 0) {	
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						// 入库和维修要先请求订单信息
@@ -163,6 +163,13 @@
 								}
 								
 							}else{
+								if(this.type=='14' && res.info.bus_state==0){
+									uni.showToast({
+										title: '无正在进行中订单',
+										icon:'none'
+									});
+									return
+								}
 								uni.navigateTo({
 									url: this.urls,
 									success: res => {},

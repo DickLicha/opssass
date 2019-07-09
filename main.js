@@ -148,6 +148,26 @@ Vue.prototype.$invstate = function(type) {
 		}
 		return health_state
 	}
+	
+	Vue.prototype.$bus_state = function(type) {
+		let health_state = ''
+		if (type == 0) {
+			health_state = '空闲'
+		} else if (type == 10) {
+			health_state = '车辆预约'
+		} else if (type == 11) {
+			health_state = '用户骑行'
+		} else if (type == 12) {
+			health_state = '临时停车'
+		} else if (type == 20) {
+			health_state = '挪车'
+		} else if (type == 30) {
+			health_state = '换电'
+		} else{
+			health_state = '异常'
+		}
+		return health_state
+	}
 
 const app = new Vue({
 	...App

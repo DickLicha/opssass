@@ -373,7 +373,9 @@
 					url: '/bike/ring', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
-					data: {}
+					data: {
+						id:this.bikeinfo.id
+					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
