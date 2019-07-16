@@ -15,7 +15,7 @@
 		data() {
 			return {
 				carcenterdata1:[
-					{name:'SIM卡号码:',val:'1440323872857'},
+					{name:'IMEI:',val:''},
 					{name:'ECUsn产品码:',val:'777039046'},
 				]		
 			}
@@ -47,8 +47,7 @@
 					console.log('车辆信息',res)
 					if (res.status == 0) {
 						// SIM卡号码
-						this.carcenterdata1[0].val = '未接'
-			
+						this.carcenterdata1[0].val = res.info.imei			
 						// ECUsn
 						this.carcenterdata1[1].val = res.info.ecu_sn						             
 					}

@@ -29,12 +29,14 @@
 				"navigationBarTitleText": "地图",
 				"scrollIndicator": "none"
 			}
-		}, {
-			"path": "pages/test/test",
-			"style": {
-				"navigationBarTitleText": "测试"
-			}
-		}, {
+		}, 
+		// {
+		// 	"path": "pages/test/test",
+		// 	"style": {
+		// 		"navigationBarTitleText": "测试"
+		// 	}
+		// },
+		{
 			"path": "pages/mine/mineye/mineye",
 			"style": {
 				"navigationBarTitleText": "切换城市"

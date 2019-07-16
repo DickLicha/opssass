@@ -40,7 +40,9 @@
 					url: '/config/direct', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
-					data: ''
+					data: {
+						version:'1.0.67',
+					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
@@ -80,7 +82,7 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						phone: "15980198199",
+						phone: "15515318202",
 						passwd: "e10adc3949ba59abbe56e057f20f883e"
 					}
 				}

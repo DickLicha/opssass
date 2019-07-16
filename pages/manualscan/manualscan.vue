@@ -192,7 +192,7 @@
 			},
 			hideKeyboard(event) {			
 				if (this.carnum.length === 8) {
-					if(this.carnum=='08091011'){
+					if(this.carnum=='86350001'){
 						try {
 							uni.removeStorageSync('userinfo');
 						} catch (e) {
@@ -214,7 +214,7 @@
 						},2000)
 						return
 					}
-					if(this.carnum=='08091012'){
+					if(this.carnum=='86350000'){
 						this.setBaseurl('https://api.dd.ildjoy.com')
 						try {
 							uni.removeStorageSync('userinfo');
