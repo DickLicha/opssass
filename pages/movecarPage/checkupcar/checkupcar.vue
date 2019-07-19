@@ -91,7 +91,7 @@
 				// this.showendmove = true
 				this.bikeid = e.bikeid
 				this.ids = e.orderid
-				this.setSn(e.bikeid)
+				this.setSn(e.bikeid.slice(6,14))
 				this.getcarinfo()
 				this.getmovingbike()
 				if (this.timmer == null) {

@@ -12,7 +12,7 @@
 			</view>
 
 			<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
-				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key='i'>
+				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key='i' @click="delbike(item.id)">
 					<view>{{item.sn}}</view>
 					<view class='view-border-letf'>{{item.battery_level}}%</view>
 					<view class='view-border-letf'>{{item.is_defend_on==0?'撤防':'设防'}}</view>
@@ -64,9 +64,50 @@
 		},
 		computed:mapState(['bikeinfo']),
 		methods: {
-			...mapMutations(['setSn']),
+			...mapMutations(['setSn','setBikeid']),
 			togglePopup(type) {
 				this.type = type
+				
+			},
+			delbike(item){
+				uni.showModal({
+					title: '删除车辆',
+					content: '确认删除车辆',
+					// showCancel: false,
+					cancelText: '取消',
+					confirmText: '确认',
+					success: res => {
+						if(res.confirm){
+							this.setBikeid(item)
+							var options = {
+								url: '/binv/del', //请求接口
+								method: 'POST', //请求方法全部大写，默认GET
+								context: '',
+								data: {
+								}
+							}
+							this.$httpReq(options).then((res) => {
+								// 请求成功的回调
+								// res为服务端返回数据的根对象
+								console.log('车辆列表', res)
+								this.allnumber=res.total
+								if (res.status == 0) {
+									this.switchloockdata=[]
+									this.openbattery(0,20)
+								} else {
+									uni.showToast({
+										title: '删除失败'
+									});
+								}
+							}).catch((err) => {
+								// 请求失败的回调
+								console.error(err, '捕捉')
+							})
+						}
+					},
+					fail: () => {},
+					complete: () => {}
+				});
 				
 			},
 			detilpop(item,i,type){
@@ -110,19 +151,6 @@
 					this.allnumber=res.total
 					if (res.status == 0) {
 						this.switchloockdata=this.switchloockdata.concat(res.list)
-						// for (let i = 0; i < res.list.length; i++) {
-						// 	let datainfo = {}
-						// 	datainfo.time = res.list[i].create_time
-						// 	datainfo.action = res.list[i].bike_id
-						// 	datainfo.op = res.list[i].battery_level_before
-						// 	datainfo.status = res.list[i].battery_level_after
-						// 	datainfo.netstatus = (res.list[i].is_online==1)?'在线':'离线'
-						// 	datainfo.username = res.list[i].user_name
-						// 	datainfo.phone = res.list[i].user_phone
-						// 	datainfo.errormsg = res.list[i].error_msg
-						// 	this.switchloockdata.push(datainfo)
-						// }
-						// console.log('this.switchloockdata',this.switchloockdata)
 					} else {
 						uni.showToast({
 							title: '无记录'

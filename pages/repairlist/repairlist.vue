@@ -150,6 +150,12 @@
 									}
 								}
 								tempobj = {
+									name: '车辆运输',
+									val: '',
+									url: '',
+								}
+								templist.push(tempobj)
+								tempobj = {
 									name: '车辆列表',
 									val: '',
 									url: '/pages/stockPage/bikelist/bikelist',
@@ -260,7 +266,7 @@
 				this.repairlist = templist
 			},
 			// 获取车辆信息
-			getcarinfo() {
+			getcarinfo(id,name) {
 				var options = {
 					url: '/bike/info', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -288,6 +294,10 @@
 								fail: () => {},
 								complete: () => {}
 							});
+						}else if(this.type=='8' && name=='车辆运输'){
+							this.setSn('*')
+							this.setBikeid('*')
+							this.deliver(res.info.id)
 						}
 						 else {
 							this.throwin(res.info.id)
@@ -305,21 +315,77 @@
 					console.error(err, '捕捉')
 				})
 			},
+			// 发货
+			deliver(id) {
+				var options = {
+					url: '/binv/deliver', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						bike_id:id
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					if (res.status == 0) {
+						uni.showToast({
+							title: '车辆运输中',
+							duration:1500
+						});
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			go(item) {
 				console.log('type', this.type)
-				if (this.type == '8' && item.name == '投放') {
-					wx.scanCode({
-						onlyFromCamera: true, //只允许相机扫码
-						success: res => {
-							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
-							// this.throwin(bikesn)
-							this.setSn(bikesn)
-							this.getcarinfo()
-						},
-						fail: res => {
-
-						}
-					})
+				if (this.type == '8') {
+					if(item.name=='车辆运输'){
+						wx.scanCode({
+							onlyFromCamera: true, //只允许相机扫码
+							success: res => {
+								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+								this.setSn(bikesn)
+								this.setBikeid('*')
+								this.getcarinfo(bikesn,item.name)								
+							},
+							fail: res => {
+						
+							}
+						})
+					}
+					else if(item.name=='投放'){
+						wx.scanCode({
+							onlyFromCamera: true, //只允许相机扫码
+							success: res => {
+								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+								// this.throwin(bikesn)
+								this.setSn(bikesn)
+								this.getcarinfo()
+							},
+							fail: res => {
+						
+							}
+						})
+					}
+					else{
+						uni.navigateTo({
+							url: item.url,
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+					}					
+					
 				} else if (this.type == '10' && item.name == '举报') {
 					this.repairlist = [{
 							name: '手动输入',
