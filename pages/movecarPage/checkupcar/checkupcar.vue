@@ -102,10 +102,7 @@
 			} else {
 				this.bikeid = this.bikeinfo.id
 				this.checkcars()
-			}
-			
-			
-			
+			}			
 			uni.getLocation({
 				type: 'gcj02',
 				success: res => {

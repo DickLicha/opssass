@@ -3,7 +3,7 @@
 		<view class='view-common'>
 			<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell>
 			<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
-			<view class='change-battery-button'>
+			<view class='change-battery-button' v-if='showBatteryBtn==true'>
 				<button type='primary' class='share-button-default' @click='changbattery(buttonname)'>{{buttonname}}</button>
 			</view>
 
@@ -32,6 +32,7 @@
 	export default {
 		data() {
 			return {
+				showBatteryBtn:true,
 				beforeelec: 0,
 				afterelect: 0,
 				addelect: 0,
@@ -159,7 +160,13 @@
 			return false
 		},
 		computed: mapState(['bikeinfo', 'bikeid']),
-		onLoad() {
+		onLoad(e) {
+			if(e){
+				this.showBatteryBtn=e.showBtn
+				wx.setNavigationBarTitle({
+					title:'车辆信息'
+				})
+			}		
 			this.beforeelec = this.bikeinfo.battery_level + '%'
 			// this.getcarinfo()
 			// 车辆编码

@@ -7,16 +7,17 @@
 					<view>sn</view>
 					<view class='view-border-letf'>电量</view>
 					<view class='view-border-letf'>设防</view>
-					<view class='view-border-letf'>是否在线</view>
+					<view class='view-border-letf'>删除</view>
 				</view>
 			</view>
 
 			<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
-				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key='i' @click="delbike(item.id)">
-					<view>{{item.sn}}</view>
+				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key='i' >
+					<view @click="gobikecenter(item.id)" style='color:green'>{{item.sn}}</view>
 					<view class='view-border-letf'>{{item.battery_level}}%</view>
 					<view class='view-border-letf'>{{item.is_defend_on==0?'撤防':'设防'}}</view>
-					<view class='view-border-letf'>{{item.is_online==0?'离线':'在线'}}</view>
+					<!-- <view class='view-border-letf'>{{item.is_online==0?'离线':'在线'}}</view> -->
+					<view class='view-border-letf' style='color:red' @click="delbike(item.id)">删除</view>
 				</view>
 				<uni-load-more :loadingType="resquestState"></uni-load-more>
 			</scroll-view>
@@ -64,15 +65,54 @@
 		},
 		computed:mapState(['bikeinfo']),
 		methods: {
-			...mapMutations(['setSn','setBikeid']),
+			...mapMutations(['setSn','setBikeid','setBikeinfo']),
 			togglePopup(type) {
 				this.type = type
 				
 			},
+					// 获取车辆信息
+			getcarinfo() {
+				var options = {
+					url: '/bike/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					if (res.status == 0) {
+						// this.setSn(this.carnum)
+						this.setBikeid(res.info.id)
+						this.setBikeinfo(res.info)
+						uni.navigateTo({
+							url: '/pages/swapbattery/swapbattery?showBtn=false',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取车辆信息失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			gobikecenter(id){
+				this.setSn(id.slice(6,14))
+				this.setBikeid('*')
+				this.getcarinfo()
+			},
 			delbike(item){
 				uni.showModal({
 					title: '删除车辆',
-					content: '确认删除车辆',
+					content: `确认删除车${item.slice(6,14)}`,
 					// showCancel: false,
 					cancelText: '取消',
 					confirmText: '确认',
@@ -232,6 +272,7 @@
 				width: 100%;
 				text-align: center;
 				align-items: center;
+				height: 44px;
 
 				// justify-content: center;
 				.view-border-letf {

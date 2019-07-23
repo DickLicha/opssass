@@ -150,7 +150,7 @@
 									}
 								}
 								tempobj = {
-									name: '车辆运输',
+									name: '发货',
 									val: '',
 									url: '',
 								}
@@ -294,7 +294,7 @@
 								fail: () => {},
 								complete: () => {}
 							});
-						}else if(this.type=='8' && name=='车辆运输'){
+						}else if(this.type=='8' && name=='发货'){
 							this.setSn('*')
 							this.setBikeid('*')
 							this.deliver(res.info.id)
@@ -349,7 +349,7 @@
 			go(item) {
 				console.log('type', this.type)
 				if (this.type == '8') {
-					if(item.name=='车辆运输'){
+					if(item.name=='发货'){
 						wx.scanCode({
 							onlyFromCamera: true, //只允许相机扫码
 							success: res => {
