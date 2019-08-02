@@ -120,6 +120,9 @@
 			},
 			// 入库
 			rukustate() {
+				uni.showLoading({
+					title: '入库中'
+				});
 				var options = {
 					url: '/binv/import', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -129,11 +132,14 @@
 						"ecu_sn": this.swapdata[1].val
 					}
 				}
-				this.$httpReq(options).then((res) => {
-					console.log(111, res)
+				this.$httpReq(options).then((res) => {                    
+					setTimeout(function() {
+						uni.hideLoading();
+					}, 2000);
 					if (res.status == 0) {
 						uni.showToast({
 							title: '入库成功',
+							icon: 'none',
 							duration: 2000,
 						});
 						this.swapdata[0].val = ''

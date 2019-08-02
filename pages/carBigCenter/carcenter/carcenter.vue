@@ -14,12 +14,25 @@
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import uniFab from '@/components/uni-fab/uni-fab.vue'
 	import {mapState,mapMutations} from 'vuex'
+	import ble from '../../../common/xa-bluetooth.js'
+	import {doCmd} from '../../../common/strdel.js'
 	export default {
 		components: {
 			itemCell,
 			uniFab
 		},
+			onUnload() {
+			// uni.closeBluetoothAdapter({
+			// 	success(res) {
+			// 		console.log(res)
+			// 	}
+			// })
+		},
 		onLoad() {
+			// var name = this.bikeinfo.bluetooth_name
+			// ble.initBluetooth(name, (res) => {
+			// 	this.setBlueres(res)
+			// })
 			// this.getcarinfo()
 			// 车型
 			this.carcenterdata1[0].val = this.bikeinfo.model
@@ -86,7 +99,7 @@
 			// 异常状态
 			this.carcenterdata2[5].val = this.bikeinfo.alert_state_desc
 		},
-		computed: mapState(['directinfo','bikeinfo']),
+		computed: mapState(['directinfo','bikeinfo','blueres']),
 		data() {
 			return {
 				carcenterdata1: [{
@@ -369,6 +382,10 @@
 			},
 			// 寻车铃
 			openring() {
+				// var str1 = doCmd('28', '09', this.bikeinfo.bluetooth_name)
+				// ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+				// 	console.log('蓝牙操作', res)
+				// })	
 				var options = {
 					url: '/bike/ring', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -394,6 +411,10 @@
 			},
 			// 单独开锁不产生绩效
 			unlockbattery() {
+				// var str1 = doCmd('34', '01', this.bikeinfo.bluetooth_name)
+				// ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+				// 	console.log('蓝牙操作', res)
+				// })	
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {

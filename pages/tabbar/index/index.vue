@@ -22,25 +22,32 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+	import ble from '../../../common/xa-bluetooth.js'
+	import {
+		doCmd
+	} from '../../../common/strdel.js'
 	export default {
 		onLoad() {
-			// 蓝牙模块
-			// uni.openBluetoothAdapter({
-			// 	success(res) {
-			// 		console.log(333, res)
-			// 		uni.startBluetoothDevicesDiscovery({
-			// 			// services: ['FEE7'],
-			// 			success(res) {
-			// 				console.log(22,res)
-			// 			}
-			// 		})
-			// 	},
-			// 	complete(res) {
-			// 		console.log('end', res)
-			// 	}
-			// })
+// 			var str1 = doCmd('34', '01', '0A0A0505')
+// 			ble.connectBluetooth(this, (res) => {
+// 				this.setBlueres(res)
+// 				// ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(res) {
+// 				// 	console.log('开锁', res)
+// 				// })				
+// 			})
+// 
+// 			ble.onBluetoothAdapterStateChange(function(res) {
+// 				console.log('回调', res)
+// 
+// 			})
+// 			ble.onBLEConnectionStateChange(function(res) {
+// 
+// 			})
+// 			ble.onBLECharacteristicValueChange(function(res) {
+// 
+// 			})
 		},
-		computed: mapState(['userinfo']),
+		computed: mapState(['userinfo', 'blueres']),
 		onShow() {
 			this.taskdata = []
 			// var acl = this.userinfo.acl.children
@@ -133,7 +140,7 @@
 								url: url,
 								text: text
 							}
-							this.taskdata.push(tempobj)							
+							this.taskdata.push(tempobj)
 						}
 					}
 					// this.getconfinfo()
@@ -147,7 +154,7 @@
 			};
 		},
 		methods: {
-			...mapMutations(['setDirectinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
+			...mapMutations(['setDirectinfo', 'setSn', 'setBikeid', 'setBikeinfo', 'setBlueres']),
 			scaninto() {
 				wx.scanCode({
 					onlyFromCamera: true, //只允许相机扫码
@@ -286,10 +293,11 @@
 <style lang="scss" scoped>
 	.wrap {
 		// position: relative;
-		height: calc(135vh);
+		height: calc(155vh);
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;
-        overflow-y: hidden;
+		overflow-y: hidden;
+
 		.head-view {
 			height: 140upx;
 			background-color: white;

@@ -8,9 +8,6 @@
 				<map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
 				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				 @markertap='markclick' @regionchange="functionNames" @end="functionName">
-					<!-- <map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
-				  :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
-				  @regionchange="functionName" @end="functionName" @begin="functionName"> -->
 					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
 					<!-- <cover-view v-if="actives" class='movecar-view'>拖动地图选择车站</cover-view> -->
 					<cover-view v-if="showmapselect" class='map-select-view'>
@@ -67,6 +64,8 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+	import ble from '../../common/xa-bluetooth.js'
+	import {doCmd} from '../../common/strdel.js'
 
 
 	export default {
@@ -77,7 +76,7 @@
 			uniPopup
 		},
 		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'orderid',
-			'endmove'
+			'endmove','blueres'
 		]),
 		data() {
 			return {
@@ -160,6 +159,7 @@
 			};
 		},
 		onLoad(e) {
+		
 			uni.getLocation({ //获取当前的位置坐标
 				type: 'gcj02',
 				success: (res) => {
@@ -320,6 +320,11 @@
 		},
 		onUnload() {
 			this.mapinfo = null
+			uni.closeBluetoothAdapter({
+				success(res) {
+					console.log(res)
+				}
+			})
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
@@ -505,7 +510,15 @@
 			},
 			// 结束挪车
 			endmovecars(parkid) {
+				var name = this.bikeinfo.bluetooth_name
+				ble.initBluetooth(this,name, (res) => {
+					this.setBlueres(res)
+				})
 				this.setSn('*')
+				var str1 = doCmd('20', '01', this.bikeinfo.bluetooth_token)
+				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+					console.log('蓝牙操作', res)
+				})
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {

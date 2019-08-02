@@ -67,7 +67,6 @@
 		},
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
-			// 投放市场
 			go(item) {
 				uni.showLoading({
 					title: `${item.name}中`

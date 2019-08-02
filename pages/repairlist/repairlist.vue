@@ -161,6 +161,12 @@
 									url: '/pages/stockPage/bikelist/bikelist',
 								}
 								templist.push(tempobj)
+								tempobj = {
+									name: '删除',
+									val: '',
+									url: '/pages/stockPage/bikelist/bikelist',
+								}
+								templist.push(tempobj)
 								break
 							case '10':
 								for (let j = 0; j < chids.length; j++) {
@@ -294,14 +300,21 @@
 								fail: () => {},
 								complete: () => {}
 							});
-						}else if(this.type=='8' && name=='发货'){
-							this.setSn('*')
-							this.setBikeid('*')
-							this.deliver(res.info.id)
+						}else if(this.type=='8'){
+							if(name=='发货'){
+								this.setSn('*')
+								this.setBikeid('*')
+								this.deliver(res.info.id)
+							}else if(name=='删除'){
+								this.setSn('*')
+								this.delbike(res.info.id)
+							}
+							else {
+								this.throwin(res.info.id)
+							}
+							
 						}
-						 else {
-							this.throwin(res.info.id)
-						}
+						 
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
@@ -377,6 +390,21 @@
 							}
 						})
 					}
+					else if (item.name=='删除'){
+						wx.scanCode({
+							onlyFromCamera: true, //只允许相机扫码
+							success: res => {
+								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+								// this.throwin(bikesn)
+								this.setSn(bikesn)
+								this.getcarinfo(bikesn,item.name)
+								// this.delbike(bikesn)
+							},
+							fail: res => {
+						
+							}
+						})
+					}
 					else{
 						uni.navigateTo({
 							url: item.url,
@@ -432,14 +460,22 @@
 					});
 				} else if (this.type == '13') {
 					if (item.name == 'ecu解绑') {
+						// uni.navigateTo({
+						// 	url: '/pages/stockPage/ecutodulist/ecutodulist',
+						// 	success: res => {},
+						// 	fail: () => {},
+						// 	complete: () => {}
+						// });
 						wx.scanCode({
 							onlyFromCamera: true,
 							success: res => {
 								console.log('saoma', res)
-								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
-								this.setSn(bikesn)
+								var result = res.result.split(' ')
+								// this.swapdata[0].val = result[0].split(':')[1]
+								// var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+								this.setSn('*')
 								this.setBikeid('*')
-								this.ecuunbind(bikesn)
+								this.ecuunbind(result[0].split(':')[1])
 							},
 							fail: res => {
 
@@ -480,6 +516,48 @@
 				}
 
 			},
+			delbike(item){
+				uni.showModal({
+					title: '删除车辆',
+					content: `确认删除车${item}`,
+					// showCancel: false,
+					cancelText: '取消',
+					confirmText: '确认',
+					success: res => {
+						if(res.confirm){
+							this.setBikeid(item)
+							var options = {
+								url: '/binv/del', //请求接口
+								method: 'POST', //请求方法全部大写，默认GET
+								context: '',
+								data: {
+								}
+							}
+							this.$httpReq(options).then((res) => {
+								// 请求成功的回调
+								// res为服务端返回数据的根对象
+								console.log('车辆列表', res)
+								this.allnumber=res.total
+								if (res.status == 0) {
+									uni.showToast({
+										title: '删除成功'
+									});
+								} else {
+									uni.showToast({
+										title: '删除失败'
+									});
+								}
+							}).catch((err) => {
+								// 请求失败的回调
+								console.error(err, '捕捉')
+							})
+						}
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+				
+			},
 			// ecu解绑
 			ecuunbind(id) {
 				var options = {
@@ -487,6 +565,7 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
+						sk:id,
 						// "bike_id": id,
 					}
 				}

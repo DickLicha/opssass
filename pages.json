@@ -284,6 +284,12 @@
 				"navigationBarTitleText": "结束订单"
 			}
         }
+        ,{
+            "path" : "pages/stockPage/ecutodulist/ecutodulist",
+            "style" : {
+				"navigationBarTitleText": "ecu解绑"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

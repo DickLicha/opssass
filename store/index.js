@@ -32,9 +32,10 @@ const store = new Vuex.Store({
 		inginfo:{},//未结束的订单
 		endmove:false,
 		orderid:'',
-		baseurl:'https://api.dd.ildjoy.com',
-		// baseurl:'https://api.dd-test.ildjoy.com',	
+		// baseurl:'https://api.dd.ildjoy.com',
+		baseurl:'https://api.dd-test.ildjoy.com',	
 		gobelrelogin:false,
+		blueres:{}
 	},
 	mutations: {
 		login(state, provider) {
@@ -117,6 +118,9 @@ const store = new Vuex.Store({
 		setGobelrelogin(state, gobelrelogin) {
 			state.gobelrelogin = gobelrelogin
 		},
+		setBlueres(state, blueres) {
+			state.blueres = blueres
+		}
 	},
 	actions: {
 		// lazy loading openid

@@ -97,14 +97,14 @@
 					if (res.status == 0) {
 						uni.showToast({
 							title: '投放成功',
-							mask: false,
+							// mask: false,
 							duration: 2500
 						});
 					} else {
 						uni.showToast({
 							title: res.message?res.message:'投放失败',
 							icon:'none',
-							mask: false,
+							// mask: false,
 							duration: 2500
 						});
 					}

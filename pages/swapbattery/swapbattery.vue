@@ -29,10 +29,14 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+	import ble from '../../common/xa-bluetooth.js'
+	import {
+		doCmd
+	} from '../../common/strdel.js'
 	export default {
 		data() {
 			return {
-				showBatteryBtn:true,
+				showBatteryBtn: true,
 				beforeelec: 0,
 				afterelect: 0,
 				addelect: 0,
@@ -144,7 +148,7 @@
 					// 	name:'异常状态',
 					// 	val:''
 					// }
-				]
+				],
 			}
 		},
 		components: {
@@ -159,14 +163,36 @@
 			}
 			return false
 		},
-		computed: mapState(['bikeinfo', 'bikeid']),
+		onUnload() {
+			// var deviceId = this.blueres.deviceId
+			// uni.closeBLEConnection({
+			// 	deviceId,
+			// 	success(res) {
+			// 		console.log('关闭蓝牙成功', res)
+			// 	}
+			// })
+			uni.closeBluetoothAdapter({
+				success(res) {
+					console.log(res)
+				}
+			})
+		},
+		computed: mapState(['bikeinfo', 'bikeid', 'blueres']),
 		onLoad(e) {
-			if(e){
-				this.showBatteryBtn=e.showBtn
+			var name = this.bikeinfo.bluetooth_name
+			ble.initBluetooth(this,name, (res) => {
+				console.log(5555, res)
+				this.setBlueres(res)
+			})
+			ble.onBLECharacteristicValueChange(function(res) {
+                console.log('初始化监听',res)
+			})
+			if (e) {
+				this.showBatteryBtn = e.showBtn
 				wx.setNavigationBarTitle({
-					title:'车辆信息'
+					title: '车辆信息'
 				})
-			}		
+			}
 			this.beforeelec = this.bikeinfo.battery_level + '%'
 			// this.getcarinfo()
 			// 车辆编码
@@ -228,7 +254,7 @@
 			// this.swapbatterydata[9].val = this.bikeinfo.alert_state_desc
 		},
 		methods: {
-			...mapMutations(['setSn']),
+			...mapMutations(['setSn', 'setBlueres']),
 			openlock() {
 				uni.getLocation({
 					type: 'wgs84',
@@ -277,12 +303,16 @@
 			},
 			// 寻车铃
 			openring() {
+				var str1 = doCmd('28', '09', this.bikeinfo.bluetooth_token)		
+				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+					console.log('蓝牙操作', res)
+				})
 				var options = {
 					url: '/bike/ring', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						id:this.bikeinfo.id
+						id: this.bikeinfo.id
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -453,6 +483,10 @@
 							// 请求成功的回调
 							// res为服务端返回数据的根对象
 							console.log('打开电池锁', res)
+							var str1 = doCmd('34', '01', this.bikeinfo.bluetooth_token)
+							ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+								console.log('蓝牙操作', res)
+							})
 							if (res.status == 0) {
 								// uni.showToast({
 								// 	title: '开锁成功!',
@@ -537,6 +571,7 @@
 				uni.showLoading({
 					title: '开锁中'
 				});
+
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
@@ -549,19 +584,24 @@
 								"bike_id": this.bikeinfo.id,
 								"user_coordinate": [
 									res.longitude, res.latitude
-								]
+								],
+								"bluetooth": 1
 							}
 						}
 						this.$httpReq(options).then((res) => {
 							// 请求成功的回调
 							// res为服务端返回数据的根对象
+							var str1 = doCmd('34', '01', this.bikeinfo.bluetooth_token)
+							ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+								console.log('蓝牙操作', res)
+							})
 							console.log('打开电池锁', res)
 							if (res.status == 0) {
 								// uni.showToast({
 								// 	title: '开锁成功!',
 								// 	duration: 2000
 								// })
-								this.orderid = res.info.id								
+								this.orderid = res.info.id
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',
 									content: '电池锁更换完毕后，会自动记录本次操作',
@@ -643,8 +683,7 @@
 							console.error(err, '捕捉')
 						})
 					},
-					fail: () => {						
-					},
+					fail: () => {},
 					complete: () => {
 						uni.hideLoading()
 					}

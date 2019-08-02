@@ -39,6 +39,8 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+	import ble from '../../../common/xa-bluetooth.js'
+	import {doCmd} from '../../../common/strdel.js'
 	export default {
 		data() {
 			return {
@@ -82,8 +84,13 @@
 		components: {
 			itemCell
 		},
-		computed: mapState(['bikeinfo']),
+		computed: mapState(['bikeinfo','blueres']),
 		onLoad(e) {
+			var name = this.bikeinfo.bluetooth_name
+			console.log('name---->',name)
+			ble.initBluetooth(this,name, (res) => {
+				this.setBlueres(res)
+			})
 			console.log('type',e.type)
 			if (e.type == 99) {
 				this.showdetil = false
@@ -118,9 +125,14 @@
 		onUnload() {
 			clearInterval(this.timmer)
 			this.timmer = null
+			uni.closeBluetoothAdapter({
+				success(res) {
+					console.log('关闭蓝牙',res)
+				}
+			})
 		},
 		methods: {
-			...mapMutations(['setEndmove', 'setOrderid', 'setSn']),
+			...mapMutations(['setEndmove', 'setOrderid', 'setSn','setBlueres']),
 			// 获取车辆信息
 			getcarinfo() {
 				var options = {
@@ -190,6 +202,11 @@
 			},
 			// 结束挪车
 			endmovecars(parkid) {
+				console.log('this.blueres',this.blueres)
+				var str1 = doCmd('20', '01', this.bikeinfo.bluetooth_token)
+				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+					console.log('蓝牙操作', res)
+				})
 				this.setSn('*')
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
@@ -297,6 +314,11 @@
 			startmovecar() {
 				this.showshartmove = false
 				this.showendmove = false
+				var str1 = doCmd('20', '00', this.bikeinfo.bluetooth_token)
+				console.log('开始挪车=-----》',this.blueres)
+				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+					console.log('蓝牙操作', res)
+				})
 				// this.showendmove = true
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',

@@ -9,131 +9,169 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
-	import {mapState} from 'vuex'
+	import {
+		mapState
+	} from 'vuex'
+	import ble from '../../../common/xa-bluetooth.js'
+	import {
+		doCmd
+	} from '../../../common/strdel.js'
 	export default {
-		components:{
+		components: {
 			itemCell
 		},
-		computed: mapState(['bikeinfo']),
+		computed: mapState(['bikeinfo', 'blueres']),
 		data() {
 			return {
-				carcenterdata1:[
-					{name:'订单编号:',val:''},
-					{name:'用户姓名:',val:''},
-					{name:'手机号码:',val:'',click:true},
-					{name:'订单开始:',val:''},
-					{name:'订单状态:',val:''},
+				carcenterdata1: [{
+						name: '订单编号:',
+						val: ''
+					},
+					{
+						name: '用户姓名:',
+						val: ''
+					},
+					{
+						name: '手机号码:',
+						val: '',
+						click: true
+					},
+					{
+						name: '订单开始:',
+						val: ''
+					},
+					{
+						name: '订单状态:',
+						val: ''
+					},
 					// {name:'订单状态:',val:'已结束'},
 					// {name:'订单轨迹:',val:'查看',click:true},
-				]		
+				]
 			}
 		},
-		onLoad(){
+		onUnload() {
+			uni.closeBluetoothAdapter({
+				success(res) {
+					console.log(res)
+				}
+			})
+		},
+		onLoad() {
+			var name = this.bikeinfo.bluetooth_name
+			ble.initBluetooth(this,name, (res) => {
+				this.setBlueres(res)
+			})
 			// 订单编号
 			this.carcenterdata1[0].val = this.bikeinfo.last_order_id
-						
+
 			// 用户姓名
 			this.carcenterdata1[1].val = this.bikeinfo.last_order_oper_name
-			 
+
 			// 手机号码
 			this.carcenterdata1[2].val = this.bikeinfo.last_order_oper_phone
-			
+
 			// 订单开始时间
 			this.carcenterdata1[3].val = this.bikeinfo.last_order_start_time
-			
+
 			// 订单状态
 			this.carcenterdata1[4].val = this.$bus_state(this.bikeinfo.bus_state)
 			// 骑行中的订单
-			if(this.bikeinfo.bus_state==10 || this.bikeinfo.bus_state==11 || this.bikeinfo.bus_state==12){
+			if (this.bikeinfo.bus_state == 10 || this.bikeinfo.bus_state == 11 || this.bikeinfo.bus_state == 12) {
 				// 订单编号
 				this.carcenterdata1[0].val = this.bikeinfo.last_order_id
-							
+
 				// 用户姓名
 				this.carcenterdata1[1].val = this.bikeinfo.last_order_oper_name
-				 
+
 				// 手机号码
 				this.carcenterdata1[2].val = this.bikeinfo.last_order_oper_phone
-				
+
 				// 订单开始时间
 				this.carcenterdata1[3].val = this.bikeinfo.last_order_start_time
-				
+
 				// 订单状态
 				this.carcenterdata1[4].val = this.$bus_state(this.bikeinfo.bus_state)
 			}
 			// 挪车中的订单
-			else if(this.bikeinfo.bus_state==20){
-				
+			else if (this.bikeinfo.bus_state == 20) {
+
 			}
 			// 换点中的订单
-			else if(this.bikeinfo.bus_state==30){
-				
-			}else{
+			else if (this.bikeinfo.bus_state == 30) {
+
+			} else {
 				uni.showToast({
 					title: '订单状态异常',
-					icon:'none'
+					icon: 'none'
 				});
 			}
 		},
 		methods: {
-			gocarcenter(e){
-// 				uni.navigateTo({
-// 					url: '/pages/map/map',
-// 					success: res => {},
-// 					fail: () => {},
-// 					complete: () => {}
-// 				});
+			gocarcenter(e) {
+				// 				uni.navigateTo({
+				// 					url: '/pages/map/map',
+				// 					success: res => {},
+				// 					fail: () => {},
+				// 					complete: () => {}
+				// 				});
 			},
-			endorder(){
-				var url='',order_id='',user_coordinate=[]
+			endorder() {
+				var url = '',
+					order_id = '',
+					user_coordinate = []
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
-						console.log(res,'res')
-						user_coordinate=[res.longitude,res.latitude]
+						console.log(res, 'res')
+						user_coordinate = [res.longitude, res.latitude]
 					},
 					fail: () => {},
 					complete: () => {}
 				});
-				if(this.bikeinfo.bus_state==10 || this.bikeinfo.bus_state==11 || this.bikeinfo.bus_state==12){
-					url='/urorder/force_finish'
-					order_id='*'
-					user_coordinate='*'
+				if (this.bikeinfo.bus_state == 10 || this.bikeinfo.bus_state == 11 || this.bikeinfo.bus_state == 12) {
+					url = '/urorder/force_finish'
+					order_id = '*'
+					user_coordinate = '*'
 				}
 				// 换电
-				else if(this.bikeinfo.bus_state==30){
-					url='/bcorder/finish'
-					order_id=this.bikeinfo.last_battery_change_order_id
+				else if (this.bikeinfo.bus_state == 30) {
+					url = '/bcorder/finish'
+					order_id = this.bikeinfo.last_battery_change_order_id
 				}
 				// 挪车
-				else if(this.bikeinfo.bus_state==20){
-					url='/rporder/finish'
-					order_id=this.bikeinfo.last_repark_order_id
+				else if (this.bikeinfo.bus_state == 20) {
+					url = '/rporder/finish'
+					order_id = this.bikeinfo.last_repark_order_id
+					var str1 = doCmd('20', '01', this.bikeinfo.bluetooth_token)
+					ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+						console.log('蓝牙操作', res)
+					})
 				}
-					var options = {
+				var options = {
 					url: url, //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						bike_id:this.bikeinfo.id,
-						order_id:order_id,
-						user_coordinate :[]
+						bike_id: this.bikeinfo.id,
+						order_id: order_id,
+						user_coordinate: []
 					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('结束订单',res)
+					console.log('结束订单', res)
 					if (res.status == 0) {
 						uni.showToast({
 							title: '结束订单成功',
-							icon:'none',
-							duration:2000,
+							icon: 'none',
+							duration: 2000,
 						});
-						setTimeout(()=>{
+						setTimeout(() => {
 							uni.navigateBack({
 								delta: 1,
 							});
-						},1500)
+						}, 1500)
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '结束订单失败',
@@ -147,9 +185,9 @@
 					console.error(err, '捕捉')
 				})
 			},
-			go(item){
-				if(item.click){
-					if(item.name=='手机号码:'){
+			go(item) {
+				if (item.click) {
+					if (item.name == '手机号码:') {
 						uni.showModal({
 							title: '',
 							content: item.val,
@@ -157,41 +195,41 @@
 							cancelText: '取消',
 							confirmText: '拨打',
 							success: res => {
-								if(res.confirm){
+								if (res.confirm) {
 									uni.makePhoneCall({
-										phoneNumber:item.val
+										phoneNumber: item.val
 									})
-								}							
+								}
 							},
 							fail: () => {},
 							complete: () => {}
 						});
-					}else if(item.name=='订单轨迹:'){
+					} else if (item.name == '订单轨迹:') {
 						uni.navigateTo({
 							// url: '/pages/map/map?name=' + name
 							url: `/pages/map/map?name=订单轨迹&type=0.1&text=33`
 						});
 					}
-				}				
+				}
 			},
 		}
 	}
 </script>
 
 <style lang='scss' scoped>
-	.wrap{
-		background-color: rgb(245,245,245);	
-	    height: calc(100vh - 11upx);
+	.wrap {
+		background-color: rgb(245, 245, 245);
+		height: calc(100vh - 11upx);
 		padding-top: 1upx;
 		overflow: hidden;
+
 		/* padding-bottom: 1upx; */
-		.view-common{
-		  margin:10upx 22upx 0 22upx;
-		  .endorder-btn{
-			  margin-top: 120upx;
-		  }
+		.view-common {
+			margin: 10upx 22upx 0 22upx;
+
+			.endorder-btn {
+				margin-top: 120upx;
+			}
 		}
 	}
-	
-  
 </style>

@@ -1,4 +1,4 @@
-<script>
+<script>	
 	export default {
 		data() {
 			return {
@@ -7,7 +7,7 @@
 		},
 		onLaunch: function() {
 			console.log('App Launch');
-
+		
 			if (wx.canIUse('getUpdateManager')) {
 				const updateManager = wx.getUpdateManager()
 				updateManager.onCheckForUpdate(function(res) {
