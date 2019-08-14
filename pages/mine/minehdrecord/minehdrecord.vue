@@ -114,20 +114,6 @@
 					this.allnumber=res.total
 					if (res.status == 0) {
 						this.switchloockdata=this.switchloockdata.concat(res.list)
-						// this.switchloockdatathis.switchloockdata.concat(res.list)
-						// for (let i = 0; i < res.list.length; i++) {
-						// 	let datainfo = {}
-						// 	datainfo.time = res.list[i].create_time
-						// 	datainfo.action = res.list[i].bike_id
-						// 	datainfo.op = res.list[i].battery_level_before
-						// 	datainfo.status = res.list[i].battery_level_after
-						// 	datainfo.netstatus = (res.list[i].is_online==1)?'在线':'离线'
-						// 	datainfo.username = res.list[i].user_name
-						// 	datainfo.phone = res.list[i].user_phone
-						// 	datainfo.errormsg = res.list[i].error_msg
-						// 	this.switchloockdata.push(datainfo)
-						// }
-						// console.log('this.switchloockdata',this.switchloockdata)
 					} else {
 						uni.showToast({
 							title: '无记录'

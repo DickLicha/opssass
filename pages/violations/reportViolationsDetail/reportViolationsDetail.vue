@@ -86,7 +86,7 @@
 				fine: 0,
 				fineSelect: 20,
 				fineArr: [
-					"5",
+					"10",
 				],
 			}
 		},

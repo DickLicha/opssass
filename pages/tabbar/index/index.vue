@@ -22,10 +22,7 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
-	import ble from '../../../common/xa-bluetooth.js'
-	import {
-		doCmd
-	} from '../../../common/strdel.js'
+	// import ble from '../../../common/xa-bluetooth.js'
 	export default {
 		onLoad() {
 // 			var str1 = doCmd('34', '01', '0A0A0505')
@@ -67,7 +64,7 @@
 							onlyid = parseInt(acl[i].uri)
 							switch (onlyid) {
 								case 0:
-									src = '../../../static/image/huan_dian.png'
+									src = require('../../../static/image/huan_dian.png')
 									name = '换电'
 									url = '/pages/map/map'
 									text = '全部待换电'
@@ -76,62 +73,68 @@
 									name = '维修'
 									url = '/pages/repairlist/repairlist'
 									text = '全部故障车辆'
-									src = '../../../static/image/wei_xiu.png'
+									src = require('../../../static/image/wei_xiu.png')
 									break
 								case 2:
 									name = '保养'
 									url = '/pages/map/map'
 									text = '待保养车辆'
-									src = '../../../static/image/bao_yang.png'
+									src = require('../../../static/image/bao_yang.png')
 									break
 								case 3:
 									name = '单个挪车'
 									url = '/pages/repairlist/repairlist'
 									text = '全部车站'
-									src = '../../../static/image/nuo_che.png'
+									src = require('../../../static/image/nuo_che.png')
 									break
 								case 8:
 									name = '库存管理'
 									url = '/pages/repairlist/repairlist'
 									text = ''
-									src = '../../../static/image/ku_cun.png'
+									src = require('../../../static/image/ku_cun.png')
 									break
 								case 9:
 									name = '车站'
 									url = '/pages/map/map'
 									text = '全部车站'
-									src = '../../../static/image/che_zhan.png'
+									src = require('../../../static/image/che_zhan.png')
 									break
 								case 10:
 									name = '违章'
 									url = '/pages/repairlist/repairlist'
 									text = ''
-									src = '../../../static/image/wei_zhang.png'
+									src = require('../../../static/image/wei_zhang.png')
 									break
 								case 11:
 									name = '车辆排查'
 									url = '/pages/repairlist/repairlist'
 									text = ''
-									src = '../../../static/image/pai_cha.png'
+									src = require('../../../static/image/pai_cha.png')
 									break
 								case 12:
 									name = 'ecu检测'
 									url = '/pages/ecutest/ecutest'
 									text = ''
-									src = '../../../static/image/pai_cha.png'
+									src = require('../../../static/image/pai_cha.png')
 									break
 								case 13:
 									name = 'ecu换绑'
 									url = '/pages/repairlist/repairlist'
 									text = ''
-									src = '../../../static/image/ecu_huanban.png'
+									src = require('../../../static/image/ecu_huanban.png')
 									break
 								case 14:
 									name = '结束订单'
 									url = '/pages/repairlist/repairlist'
 									text = ''
-									src = '../../../static/image/che_zhan.png'
+									src = require('../../../static/image/che_zhan.png')
 									break
+								case 15:
+									name = '仪表盘'
+									url = '/pages/echartPage/echartpage/echartpage'
+									text = ''
+									src = require('../../../static/image/che_zhan.png')
+									break	
 							}
 							tempobj = {
 								index: onlyid,
@@ -143,8 +146,13 @@
 							this.taskdata.push(tempobj)
 						}
 					}
-					// this.getconfinfo()
-					// this.getdirectinfo()
+					// var testobj={
+					// 	name : '仪表盘',
+					// 	url : '/pages/echartPage/echartpage/echartpage',
+					// 	text : '',
+					// 	src : require('../../../static/image/che_zhan.png'),
+					// }
+					// this.taskdata.push(testobj)
 				}
 			})
 		},
@@ -185,7 +193,7 @@
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						uni.navigateTo({
-							url: '/pages/swapbattery/swapbattery',
+							url: '/pages/swapbattery/swapbattery?type=0',
 							success: res => {},
 							fail: () => {},
 							complete: () => {}
@@ -293,7 +301,7 @@
 <style lang="scss" scoped>
 	.wrap {
 		// position: relative;
-		height: calc(155vh);
+		height: calc(160vh);
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;
 		overflow-y: hidden;

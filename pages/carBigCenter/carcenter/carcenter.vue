@@ -15,7 +15,7 @@
 	import uniFab from '@/components/uni-fab/uni-fab.vue'
 	import {mapState,mapMutations} from 'vuex'
 	import ble from '../../../common/xa-bluetooth.js'
-	import {doCmd} from '../../../common/strdel.js'
+	// import {doCmd} from '../../../common/strdel.js'
 	export default {
 		components: {
 			itemCell,

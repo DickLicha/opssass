@@ -242,13 +242,13 @@
 								break
 							case '13':
 								templist = [{
-										name: 'ecu解绑',
-										val: '',
+										name: '换二维码',
+										val: '1',
 										url: '',
 									},
 									{
-										name: 'ecu换绑',
-										val: '',
+										name: '换ecu',
+										val: '2',
 										url: '',
 									},
 								]
@@ -459,38 +459,44 @@
 						complete: res => {}
 					});
 				} else if (this.type == '13') {
-					if (item.name == 'ecu解绑') {
-						// uni.navigateTo({
-						// 	url: '/pages/stockPage/ecutodulist/ecutodulist',
-						// 	success: res => {},
-						// 	fail: () => {},
-						// 	complete: () => {}
-						// });
-						wx.scanCode({
-							onlyFromCamera: true,
-							success: res => {
-								console.log('saoma', res)
-								var result = res.result.split(' ')
-								// this.swapdata[0].val = result[0].split(':')[1]
-								// var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
-								this.setSn('*')
-								this.setBikeid('*')
-								this.ecuunbind(result[0].split(':')[1])
-							},
-							fail: res => {
-
-							}
-						})
-					} 					
-					else {
-						uni.navigateTo({
-							url: '/pages/stockPage/putstorage/putstorage?type=1',
-							success: res => {},
-							fail: () => {},
-							complete: () => {}
-						});
-						// this.ecubind() 
-					}
+					
+					// if(item.val==1){
+					// 	
+					// }else(item.val==2){
+					// 	
+					// }
+					uni.navigateTo({
+						url: `/pages/stockPage/putstorage/putstorage?type=${item.val}`,
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
+					
+// 					if (item.name == 'ecu解绑') {
+// 						wx.scanCode({
+// 							onlyFromCamera: true,
+// 							success: res => {
+// 								console.log('saoma', res)
+// 								var result = res.result.split(' ')
+// 								// this.swapdata[0].val = result[0].split(':')[1]
+// 								// var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+// 								this.setSn('*')
+// 								this.setBikeid('*')
+// 								this.ecuunbind(result[0].split(':')[1])
+// 							},
+// 							fail: res => {
+// 
+// 							}
+// 						})
+// 					} 					
+// 					else {
+// 						uni.navigateTo({
+// 							url: '/pages/stockPage/putstorage/putstorage?type=1',
+// 							success: res => {},
+// 							fail: () => {},
+// 							complete: () => {}
+// 						});
+// 					}
 				}
 				 else if (this.type == '14' && item.name == '扫码输入') {
 				 	wx.scanCode({

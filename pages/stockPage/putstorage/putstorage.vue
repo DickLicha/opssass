@@ -3,11 +3,11 @@
 		<view class='view-common'>
 			<item-cell :itemdata="swapdata" type='2' :border='borders' @itemclick='gocarcenter'></item-cell>
 			<view class='change-battery-button'>
-				<button type='primary' class='share-button-default' @click='scan(0)'>扫码获取</button>
+				<button type='primary' class='share-button-default' @click='scan(0)'>{{btn1}}</button>
 			</view>
 			<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
 			<view class='change-battery-button'>
-				<button type='primary' class='share-button-default' @click='scan(1)'>扫码获取</button>
+				<button type='primary' class='share-button-default' @click='scan(1)'>{{btn2}}</button>
 			</view>
 			<view class='change-battery-bottom'>
 				<button type='primary' class='share-button-default' @click='intostorage'>{{btnname}}</button>
@@ -29,19 +29,21 @@
 				poptype: '',
 				borders: true,
 				buttonname: '更换电池',
+				btn1:'',
+				btn2:'',
 				swapdata: [{
-						name: 'IMEI:',
+						name: 'ECU-IMEI:',
 						val: '',
 					},
 					{
-						name: 'SN:',
+						name: 'ECU-SN:',
 						val: '',
 					},
 				],
 				orderid: '',
 				type: '',
 				swapbatterydata: [{
-					name: 'BIKE-SN:',
+					name: '二维码:',
 					val: ''
 				}],
 				btnname: '',
@@ -53,14 +55,103 @@
 		computed: mapState(['bikeinfo', 'bikeid']),
 		onLoad(e) {
 			this.type = e.type
+			var title=''
 			if (this.type == 0) {
 				this.btnname = '入库'
-			} else {
-				this.btnname = 'ecu绑定'
+				title='入库'
+				this.btn1="扫ecu码"
+				this.btn2='扫二维码'
+			} else if(this.type==1) {
+				this.btnname = '换二维码'
+				title='换二维码'
+				this.btn1="扫ecu码"
+				this.btn2='扫新的二维码'
 			}
+			else if(this.type==2){
+				this.btnname = '换ecu'
+				title='换ecu'
+				this.btn1="扫新的ecu码"
+				this.btn2='扫二维码'
+			}
+			wx.setNavigationBarTitle({
+				title:title
+			})
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
+			// 换二维码
+			changesn(){
+				var options = {
+					url: '/bike/change_sn', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						// "bike_id": '',
+						"sk": this.swapdata[0].val,
+						"new_sn": this.swapbatterydata[0].val
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('换二维码', res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: '换二维码成功',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+						// this.stoplist(this.longitude, this.latitude, '*')
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '换二维码失败',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 换ecu
+			changeecu(){
+				var options = {
+					url: '/bike/change_ecu', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						// "bike_id": '',
+						"new_imei": this.swapdata[0].val,
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('换ecu', res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: '换ecu成功',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+						// this.stoplist(this.longitude, this.latitude, '*')
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '换ecu失败',
+							mask: false,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			// ecu绑定
 			ecubind() {
 				var options = {
@@ -169,8 +260,10 @@
 				}
 				if (this.type == 0) {
 					this.rukustate()
-				} else {
-					this.ecubind()
+				} else if(this.type==1) {
+					this.changesn()
+				}else if(this.type==2){
+					this.changeecu()
 				}
 			},
 		}

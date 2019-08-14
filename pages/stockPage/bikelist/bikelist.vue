@@ -86,7 +86,7 @@
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						uni.navigateTo({
-							url: '/pages/swapbattery/swapbattery?showBtn=false',
+							url: '/pages/swapbattery/swapbattery?showBtn=false&type=99',
 							success: res => {},
 							fail: () => {},
 							complete: () => {}

@@ -29,8 +29,11 @@
 						<view class='border-view'>
 							<input class='normal-input' v-model="stopName" type="text" placeholder="车站名称">
 						</view>
-						<view class='border-view'>
+						<!-- <view class='border-view'>
 							<view class='normal-input' @click="choseStopLev('middle-list')">{{defaultLev}}</view>
+						</view> -->
+						<view class='border-view'>
+							<input class='normal-input' v-model="stopVolume" type="text" placeholder="车站容量">
 						</view>
 						<view class='border-view'>
 							<input class='normal-input' v-model="stopRadius" type="text" placeholder="半径">
@@ -65,7 +68,6 @@
 		mapMutations
 	} from 'vuex'
 	import ble from '../../common/xa-bluetooth.js'
-	import {doCmd} from '../../common/strdel.js'
 
 
 	export default {
@@ -76,7 +78,7 @@
 			uniPopup
 		},
 		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'orderid',
-			'endmove','blueres'
+			'endmove','blueres','bluestate'
 		]),
 		data() {
 			return {
@@ -84,7 +86,8 @@
 				selectvals: 100,
 				stopName: '',
 				defaultLev: '1级',
-				stopRadius: 15,
+				stopRadius: "",
+				stopVolume:'',
 				stopDesc: '',
 				poptype: '',
 				itemcells: ['1级', '2级', '3级'],
@@ -511,11 +514,25 @@
 			// 结束挪车
 			endmovecars(parkid) {
 				var name = this.bikeinfo.bluetooth_name
-				ble.initBluetooth(this,name, (res) => {
-					this.setBlueres(res)
+				var _self = this
+				var name = _self.bikeinfo.bluetooth_name
+				ble.initBluetooth(name, (res) => {
+					_self.setBlueres(res)
+				})
+				ble.onBLECharacteristicValueChange(function(res) {
+					console.log('初始化监听', res)
+				})
+				ble.onBluetoothAdapterStateChange(function(res) {
+					console.log('回调', res)
+					if (res.available == true && res.discovering == false && _self.bluestate == false) {
+						console.log(66666)
+						ble.initBluetooth(name, (res) => {
+							_self.setBlueres(res)
+						})
+					}
 				})
 				this.setSn('*')
-				var str1 = doCmd('20', '01', this.bikeinfo.bluetooth_token)
+				var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
 				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
 					console.log('蓝牙操作', res)
 				})
@@ -568,6 +585,22 @@
 				if (this.stopName == '') {
 					uni.showToast({
 						title: '车站名称不能为空',
+						icon: 'none',
+						duration: 2000,
+					});
+					return
+				}
+				if (this.stopVolume == '') {
+					uni.showToast({
+						title: '车站容量不能为空',
+						icon: 'none',
+						duration: 2000,
+					});
+					return
+				}
+				if (this.stopRadius == '') {
+					uni.showToast({
+						title: '车站半径不能为空',
 						icon: 'none',
 						duration: 2000,
 					});
@@ -1023,7 +1056,7 @@
 			dowhat() {
 				switch (this.type) {
 					case '0':
-						this.urls = '/pages/swapbattery/swapbattery'
+						this.urls = '/pages/swapbattery/swapbattery?type=0'
 						break;
 					case '1.3':
 						this.urls = '/pages/repairPage/repaircar/repaircar'
@@ -1100,10 +1133,11 @@
 							this.coorDinates.lat
 						],
 						"radius": parseInt(this.stopRadius),
-						"capacity": 10,
+						"capacity": parseInt(this.stopVolume),
 						"state": 0,
 						"type": "SCHOOL",
-						"grade": level,
+						// "grade": level,
+						"grade": 1,
 						"imgs": this.imgarr
 					}
 				}

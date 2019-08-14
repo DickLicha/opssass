@@ -22,6 +22,11 @@ export default function(obj) {
 	if(obj.url=='/staff/switch_city'){
 		cityid=obj.data.city_id
 	}
+	if(obj.url=='/bike/report_bike_gps'){
+		cityid="*"
+		id="*"
+		sn="*"
+	}
 	// else{
 	// 	if(value){
 	// 		cityid=value.userinfo.city_id

@@ -40,7 +40,7 @@
 		mapMutations
 	} from 'vuex'
 	import ble from '../../../common/xa-bluetooth.js'
-	import {doCmd} from '../../../common/strdel.js'
+	// import {doCmd} from '../../../common/strdel.js'
 	export default {
 		data() {
 			return {
@@ -84,13 +84,64 @@
 		components: {
 			itemCell
 		},
-		computed: mapState(['bikeinfo','blueres']),
+		computed: mapState(['bikeinfo','blueres','bluestate','baseurl']),
 		onLoad(e) {
-			var name = this.bikeinfo.bluetooth_name
-			console.log('name---->',name)
-			ble.initBluetooth(this,name, (res) => {
-				this.setBlueres(res)
-			})
+			if(e.type!=100){
+				var _self = this
+				var name = _self.bikeinfo.bluetooth_name
+				ble.onBLECharacteristicValueChange(function(res) {
+					console.log('特征值返回', res)
+					var gps=res.slice(0,2)
+					console.log(gps,'gps')
+					if(gps==32){
+						gpsSb=res
+						var str1 = ble.doCmd('21', '', _self.bikeinfo.bluetooth_token)
+						ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
+							console.log('蓝牙操作', res)													
+						})
+					}
+					if(gps==21){
+						stateSb=res
+						var options = {
+							url: '/bike/report_bike_gps', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								bike_id: _self.bikeinfo.id,
+								stat: stateSb,
+								gps: gpsSb
+							}
+						}
+						_self.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('上报', res)
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					}
+					
+				})			
+				ble.initBluetooth(name, (res) => {
+					_self.setBlueres(res)
+						var str1 = ble.doCmd('32', '', _self.bikeinfo.bluetooth_token)
+						ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
+							console.log('蓝牙操作', res)
+							
+						})			
+				})
+				ble.onBluetoothAdapterStateChange(function(res) {
+					console.log('回调', res)
+					if (res.available == true && res.discovering == false && _self.bluestate == false) {
+						console.log(66666)
+						ble.initBluetooth(name, (res) => {
+							_self.setBlueres(res)
+						})
+					}
+				})
+			}
+			
 			console.log('type',e.type)
 			if (e.type == 99) {
 				this.showdetil = false
@@ -203,7 +254,7 @@
 			// 结束挪车
 			endmovecars(parkid) {
 				console.log('this.blueres',this.blueres)
-				var str1 = doCmd('20', '01', this.bikeinfo.bluetooth_token)
+				var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
 				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
 					console.log('蓝牙操作', res)
 				})
@@ -314,7 +365,7 @@
 			startmovecar() {
 				this.showshartmove = false
 				this.showendmove = false
-				var str1 = doCmd('20', '00', this.bikeinfo.bluetooth_token)
+				var str1 = ble.doCmd('20', '00', this.bikeinfo.bluetooth_token)
 				console.log('开始挪车=-----》',this.blueres)
 				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
 					console.log('蓝牙操作', res)

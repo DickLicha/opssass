@@ -4,7 +4,7 @@
 			"path": "pages/mine/loginView/loginView",
 			"style": {
 				"navigationBarTitleText": "登录",
-				"navigationStyle":"custom",
+				"navigationStyle": "custom",
 				"titleNView": false
 			}
 		},
@@ -12,7 +12,7 @@
 			"path": "pages/tabbar/index/index",
 			"style": {
 				"navigationBarTitleText": "共享电单车运维版",
-				"navigationStyle":"custom"
+				"navigationStyle": "custom"
 				// 				"titleNView": false,
 				// 				"scrollIndicator": "none"
 				// 				"navigationStyle":"custom"
@@ -29,7 +29,7 @@
 				"navigationBarTitleText": "地图",
 				"scrollIndicator": "none"
 			}
-		}, 
+		},
 		// {
 		// 	"path": "pages/test/test",
 		// 	"style": {
@@ -49,7 +49,7 @@
 		}, {
 			"path": "pages/mine/minecard/minecard",
 			"style": {
-				"navigationBarTitleText": "我的卡"
+				"navigationBarTitleText": "我的"
 			}
 		}, {
 			"path": "pages/mine/minehdrecord/minehdrecord",
@@ -241,61 +241,78 @@
 			"style": {
 				"navigationBarTitleText": "违章举报详情"
 			}
-		}
-	    ,{
-            "path" : "pages/mine/chosecity/chosecity",
-            "style" : {
+		}, {
+			"path": "pages/mine/chosecity/chosecity",
+			"style": {
 				"navigationBarTitleText": "选择城市"
 			}
-        }
-        ,{
-            "path" : "pages/ingview/ingview",
-            "style" : {
+		}, {
+			"path": "pages/ingview/ingview",
+			"style": {
 				"navigationBarTitleText": "挪车"
 			}
-        }
-        ,{
-            "path" : "pages/endingview/endingview",
-            "style" : {
+		}, {
+			"path": "pages/endingview/endingview",
+			"style": {
 				"navigationBarTitleText": "结束订单"
 			}
-        }
-        ,{
-            "path" : "pages/stockPage/putstorage/putstorage",
-            "style" : {
+		}, {
+			"path": "pages/stockPage/putstorage/putstorage",
+			"style": {
 				"navigationBarTitleText": "入库"
 			}
-        }
-        ,{
-            "path" : "pages/ecutest/ecutest",
-            "style" : {
+		}, {
+			"path": "pages/ecutest/ecutest",
+			"style": {
 				"navigationBarTitleText": "ecu测试"
 			}
-        }
-        ,{
-            "path" : "pages/stockPage/bikelist/bikelist",
-            "style" : {
+		}, {
+			"path": "pages/stockPage/bikelist/bikelist",
+			"style": {
 				"navigationBarTitleText": "车辆列表"
 			}
-        }
-        ,{
-            "path" : "pages/endOrder/endorder/endorder",
-            "style" : {
+		}, {
+			"path": "pages/endOrder/endorder/endorder",
+			"style": {
 				"navigationBarTitleText": "结束订单"
 			}
-        }
-        ,{
-            "path" : "pages/stockPage/ecutodulist/ecutodulist",
-            "style" : {
+		}, {
+			"path": "pages/stockPage/ecutodulist/ecutodulist",
+			"style": {
 				"navigationBarTitleText": "ecu解绑"
 			}
-        }
-    ],
+		},
+		{
+			"path": "pages/echartPage/echartpage/echartpage",
+			"style": {
+				"navigationBarTitleText": "仪表盘"
+			}
+		}
+	],
+ //   "subPackages":
+	// [ 
+	// {
+ //        "root": "pagesB",
+ //        "pages": [
+	// 	{
+	// 		"path": "echartPage/echartpage/echartpage",
+	// 		"style": {
+	// 			"navigationBarTitleText": "仪表盘"
+	// 		}
+	// 	}
+	// 	]
+ //    }],
+	// "preloadRule": {
+	// 	"pagesB/echartPage/echartpage/echartpage": {
+	// 		"network": "all",
+	// 		"packages": ["__APP__"]
+	// 	}
+	// },
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#F8F8F8"		
+		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
 		"backgroundColor": "#FFFFFF",

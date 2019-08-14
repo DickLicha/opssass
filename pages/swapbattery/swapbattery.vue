@@ -30,9 +30,11 @@
 		mapMutations
 	} from 'vuex'
 	import ble from '../../common/xa-bluetooth.js'
-	import {
-		doCmd
-	} from '../../common/strdel.js'
+	var gpsSb = '',
+		stateSb = ''
+	// import {
+	// 	doCmd
+	// } from '../../common/strdel.js'
 	export default {
 		data() {
 			return {
@@ -164,29 +166,70 @@
 			return false
 		},
 		onUnload() {
-			// var deviceId = this.blueres.deviceId
-			// uni.closeBLEConnection({
-			// 	deviceId,
-			// 	success(res) {
-			// 		console.log('关闭蓝牙成功', res)
-			// 	}
-			// })
 			uni.closeBluetoothAdapter({
 				success(res) {
 					console.log(res)
 				}
 			})
 		},
-		computed: mapState(['bikeinfo', 'bikeid', 'blueres']),
+		computed: mapState(['bikeinfo', 'bikeid', 'blueres', 'bluestate', 'baseurl']),
 		onLoad(e) {
-			var name = this.bikeinfo.bluetooth_name
-			ble.initBluetooth(this,name, (res) => {
-				console.log(5555, res)
-				this.setBlueres(res)
-			})
-			ble.onBLECharacteristicValueChange(function(res) {
-                console.log('初始化监听',res)
-			})
+			if (e.type != 99) {
+				var _self = this
+				var name = _self.bikeinfo.bluetooth_name
+				// console.log('name',name)
+				ble.onBLECharacteristicValueChange(function(res) {
+					console.log('特征值返回', res)
+					var gps = res.slice(0, 2)
+					console.log(gps, 'gps')
+					if (gps == 32) {
+						gpsSb = res
+						var str1 = ble.doCmd('21', '', _self.bikeinfo.bluetooth_token)
+						ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
+							console.log('蓝牙操作', res)
+						})
+					}
+					if (gps == 21) {
+						stateSb = res						
+						var options = {
+							url: '/bike/report_bike_gps', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								bike_id: _self.bikeinfo.id,
+								stat: stateSb,
+								gps: gpsSb
+							}
+						}
+						_self.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('上报', res)
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					}
+
+				})
+				ble.initBluetooth(name, (res) => {
+					_self.setBlueres(res)
+					var str1 = ble.doCmd('32', '', _self.bikeinfo.bluetooth_token)
+					setTimeout(()=>{ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(ress) {
+						console.log('蓝牙操作', ress)
+					})}, 3000);				
+				})
+				ble.onBluetoothAdapterStateChange(function(res) {
+					console.log('回调', res)
+					if (res.available == true && res.discovering == false && _self.bluestate == false) {
+						console.log(66666)
+						ble.initBluetooth(name, (res) => {
+							_self.setBlueres(res)
+						})
+					}
+				})
+			}
+
 			if (e) {
 				this.showBatteryBtn = e.showBtn
 				wx.setNavigationBarTitle({
@@ -303,7 +346,8 @@
 			},
 			// 寻车铃
 			openring() {
-				var str1 = doCmd('28', '09', this.bikeinfo.bluetooth_token)		
+				var str1 = ble.doCmd('28', '09', this.bikeinfo.bluetooth_token)
+				// console.log('this.bikeinfo.bluetooth_token',this.bikeinfo.bluetooth_token)
 				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
 					console.log('蓝牙操作', res)
 				})
@@ -387,7 +431,7 @@
 						break
 					case '3':
 						uni.navigateTo({
-							url: '/pages/movecarPage/checkupcar/checkupcar',
+							url: `/pages/movecarPage/checkupcar/checkupcar?type=100`,
 							success: res => {},
 							fail: () => {},
 							complete: () => {}
@@ -483,16 +527,11 @@
 							// 请求成功的回调
 							// res为服务端返回数据的根对象
 							console.log('打开电池锁', res)
-							var str1 = doCmd('34', '01', this.bikeinfo.bluetooth_token)
-							ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-								console.log('蓝牙操作', res)
-							})
 							if (res.status == 0) {
-								// uni.showToast({
-								// 	title: '开锁成功!',
-								// 	duration: 2000
-								// })
-								// this.orderid = res.info.id								
+								var str1 = ble.doCmd('34', '01', this.bikeinfo.bluetooth_token)
+								ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+									console.log('蓝牙操作', res)
+								})
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',
 									content: '电池锁更换完毕后，会自动记录本次操作',
@@ -575,6 +614,10 @@
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
+						var bluetooth = 0
+						if (this.bluestate == true) {
+							bluetooth = 1
+						}
 						var options = {
 							url: '/bcorder/submit', //请求接口
 							method: 'POST', //请求方法全部大写，默认GET
@@ -585,18 +628,18 @@
 								"user_coordinate": [
 									res.longitude, res.latitude
 								],
-								"bluetooth": 1
+								"bluetooth": bluetooth
 							}
 						}
 						this.$httpReq(options).then((res) => {
 							// 请求成功的回调
 							// res为服务端返回数据的根对象
-							var str1 = doCmd('34', '01', this.bikeinfo.bluetooth_token)
-							ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-								console.log('蓝牙操作', res)
-							})
 							console.log('打开电池锁', res)
 							if (res.status == 0) {
+								var str1 = ble.doCmd('34', '01', this.bikeinfo.bluetooth_token)
+								ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+									console.log('蓝牙操作', res)
+								})
 								// uni.showToast({
 								// 	title: '开锁成功!',
 								// 	duration: 2000

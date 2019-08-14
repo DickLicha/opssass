@@ -4,6 +4,8 @@ import './static/iconfont/iconfont.css';
 import store from './store'
 import request from './common/request.js'
 import './common/gobel.css';
+// import ECharts from './sdk/echarts/ECharts.vue'
+// import './sdk/echarts/line.js'
 import {
 	eums,
 	parkstate,
@@ -11,6 +13,7 @@ import {
 } from './common/conf.js'
 // import './static/iconfont'
 Vue.config.productionTip = false
+// Vue.component('chart', ECharts)
 
 App.mpType = 'app'
 
