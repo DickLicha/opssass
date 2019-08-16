@@ -34,6 +34,7 @@
 </template>
 
 <script>
+	var blueWriteState = 0,loadtime=1000
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import {
 		mapState,
@@ -79,77 +80,99 @@
 					'1、转把', '2、车把', '3、刹车', '4、车灯', '5、喇叭', '6、挡泥板'
 				],
 				ids: '',
+				openOrClose: 10,
 			}
 		},
 		components: {
 			itemCell
 		},
-		computed: mapState(['bikeinfo','blueres','bluestate','baseurl']),
+		computed: mapState(['bikeinfo', 'blueres', 'bluestate', 'blueconectstate']),
 		onLoad(e) {
-			if(e.type!=100){
+			if (e.type != 100) {
 				var _self = this
 				var name = _self.bikeinfo.bluetooth_name
-				ble.onBLECharacteristicValueChange(function(res) {
-					console.log('特征值返回', res)
-					var gps=res.slice(0,2)
-					console.log(gps,'gps')
-					if(gps==32){
-						gpsSb=res
-						var str1 = ble.doCmd('21', '', _self.bikeinfo.bluetooth_token)
-						ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
-							console.log('蓝牙操作', res)													
-						})
-					}
-					if(gps==21){
-						stateSb=res
-						var options = {
-							url: '/bike/report_bike_gps', //请求接口
-							method: 'POST', //请求方法全部大写，默认GET
-							context: '',
-							data: {
-								bike_id: _self.bikeinfo.id,
-								stat: stateSb,
-								gps: gpsSb
+				var gpsSb = '',
+					stateSb = ''
+				
+				if (!!name && !!_self.bikeinfo.bluetooth_token) {
+					ble.onBLECharacteristicValueChange(function(res) {
+						console.log('特征值返回', res)
+						var gps = res.slice(0, 2)
+						console.log(gps, 'gps')
+						if (gps == 20) {
+							console.log('res.slice(-3, -2)',res.slice(-3, -2))
+							if (res.slice(-3, -2) == 0) {
+								blueWriteState = 1
+								_self.reportblue(_self.openOrClose, 0,loadtime)
 							}
 						}
-						_self.$httpReq(options).then((res) => {
-							// 请求成功的回调
-							// res为服务端返回数据的根对象
-							console.log('上报', res)
-						}).catch((err) => {
-							// 请求失败的回调
-							console.error(err, '捕捉')
-						})
-					}
+						if (gps == 32) {
+							gpsSb = res
+							if (!!_self.bikeinfo.bluetooth_token) {
+								var str1 = ble.doCmd('21', '', _self.bikeinfo.bluetooth_token)
+								ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
+									console.log('蓝牙操作', res)
+								})
+							}
+						}
+						if (gps == 21) {
+							stateSb = res
+							var options = {
+								url: '/bike/report_bike_gps', //请求接口
+								method: 'POST', //请求方法全部大写，默认GET
+								context: '',
+								data: {
+									bike_id: _self.bikeinfo.id,
+									stat: stateSb,
+									gps: gpsSb
+								}
+							}
+							_self.$httpReq(options).then((res) => {
+								// 请求成功的回调
+								// res为服务端返回数据的根对象
+								console.log('上报', res)
+							}).catch((err) => {
+								// 请求失败的回调
+								console.error(err, '捕捉')
+							})
+						}
 					
-				})			
-				ble.initBluetooth(name, (res) => {
-					_self.setBlueres(res)
-						var str1 = ble.doCmd('32', '', _self.bikeinfo.bluetooth_token)
-						ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
-							console.log('蓝牙操作', res)
-							
-						})			
-				})
-				ble.onBluetoothAdapterStateChange(function(res) {
-					console.log('回调', res)
-					if (res.available == true && res.discovering == false && _self.bluestate == false) {
-						console.log(66666)
-						ble.initBluetooth(name, (res) => {
-							_self.setBlueres(res)
-						})
-					}
-				})
+					})
+					ble.initBluetooth(name, (res) => {
+						_self.setBlueres(res)
+						if (!!_self.bikeinfo.bluetooth_token) {
+							var str1 = ble.doCmd('32', '', _self.bikeinfo.bluetooth_token)
+							setTimeout(() => {
+								ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(ress) {
+									console.log('蓝牙操作', ress)
+								})
+							}, 3000);
+						}
+					})
+					ble.onBluetoothAdapterStateChange(function(res) {
+						console.log('回调', res)
+						if (res.available == true && res.discovering == false && _self.bluestate == false) {
+							console.log(66666)
+							ble.initBluetooth(name, (res) => {
+								_self.setBlueres(res)
+							})
+						}
+					})
+				} else {
+					console.log('++++蓝牙不可用++++')
+				}
+				
+				
 			}
-			
-			console.log('type',e.type)
+
+			console.log('type', e.type)
 			if (e.type == 99) {
 				this.showdetil = false
 				this.showmap = true
 				// this.showendmove = true
 				this.bikeid = e.bikeid
 				this.ids = e.orderid
-				this.setSn(e.bikeid.slice(6,14))
+				this.setSn(e.bikeid.slice(6, 14))
 				this.getcarinfo()
 				this.getmovingbike()
 				if (this.timmer == null) {
@@ -160,7 +183,7 @@
 			} else {
 				this.bikeid = this.bikeinfo.id
 				this.checkcars()
-			}			
+			}
 			uni.getLocation({
 				type: 'gcj02',
 				success: res => {
@@ -178,12 +201,12 @@
 			this.timmer = null
 			uni.closeBluetoothAdapter({
 				success(res) {
-					console.log('关闭蓝牙',res)
+					console.log('关闭蓝牙', res)
 				}
 			})
 		},
 		methods: {
-			...mapMutations(['setEndmove', 'setOrderid', 'setSn','setBlueres']),
+			...mapMutations(['setEndmove', 'setOrderid', 'setSn', 'setBlueres']),
 			// 获取车辆信息
 			getcarinfo() {
 				var options = {
@@ -253,12 +276,8 @@
 			},
 			// 结束挪车
 			endmovecars(parkid) {
-				console.log('this.blueres',this.blueres)
-				var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
-				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-					console.log('蓝牙操作', res)
-				})
 				this.setSn('*')
+				this.openOrClose = 11
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {
@@ -269,6 +288,7 @@
 							data: {
 								"order_id": this.ids,
 								"park_id": parkid,
+								"bluetooth": this.blueconectstate,
 								"user_coordinate": [
 									res.longitude, res.latitude
 								]
@@ -279,6 +299,20 @@
 							// res为服务端返回数据的根对象
 							console.log('挪车', res)
 							if (res.status == 0) {
+								if (!!this.bikeinfo.bluetooth_token) {
+									var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
+									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+										console.log('蓝牙操作', res)
+										loadtime=res.loadtime
+									})
+								}
+								blueWriteState = 0								
+									setTimeout(() => {
+										if (blueWriteState == 0) {
+										console.log('蓝牙写入失败', blueWriteState)
+										this.reportblue(this.openOrClose, 1,loadtime)
+										}
+									}, 5000)								
 								uni.showToast({
 									title: '挪车成功',
 									mask: false,
@@ -288,7 +322,7 @@
 									uni.navigateBack({
 										delta: 2
 									});
-								}, 2000)
+								}, 2500)
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '挪车失败',
@@ -361,15 +395,58 @@
 			endmovecar() {
 				this.startmovecar()
 			},
+			//上报蓝牙操作
+			reportblue(type, state,loadtime) {
+				uni.getLocation({
+					type: 'wgs84',
+					success: res => {
+						var opername = ''
+						if (type == 10) {
+							opername = '挪车开锁'
+						}
+						if (type == 11) {
+							opername = '挪车关锁'
+						}
+						var options = {
+							url: '/bike/report_bluetooth_oper', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								// "token": "xxx",
+								"bike_id": this.bikeinfo.id,
+								"bound_order_type": "BIKE_REPARK", //绑定订单类型， USER_RIDE =用户骑行订单，BIKE_REPARK=挪车订单，BIKE_BATTERY_RECHANGE=换电订单，
+								"bound_order_id": this.ids,
+								"bound_order_op": opername, //骑行开锁，骑行关锁，挪车开锁，挪车关锁，换电开锁 。。。,
+								"type": type, //10=开锁，11=关锁，21=开电池锁,
+								"result": { //操作结果
+									"success": state, //0=成功， 其他值失败
+									"cost": loadtime, //耗时 1000毫秒
+									"error_msg": "" //错误信息
+								},
+								"user_coordinate": [res.longitude, res.latitude]
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('上报接口', res)
+							if (res.status == 0) {}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
+				});
+			},
 			// 开始挪车
 			startmovecar() {
 				this.showshartmove = false
 				this.showendmove = false
-				var str1 = ble.doCmd('20', '00', this.bikeinfo.bluetooth_token)
-				console.log('开始挪车=-----》',this.blueres)
-				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-					console.log('蓝牙操作', res)
-				})
+				this.openOrClose = 10
 				// this.showendmove = true
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
@@ -382,7 +459,8 @@
 							data: {
 								"bike_id": this.bikeid,
 								"user_coordinate": [res.longitude, res.latitude],
-								"channel": "xxx"
+								"channel": "xxx",
+								"bluetooth": this.blueconectstate,
 							}
 						}
 						this.$httpReq(options).then((res) => {
@@ -392,6 +470,20 @@
 							if (res.status == 0) {
 								// this.orderid = res.info.id
 								// this.setEndmove(true)
+								if (!!this.bikeinfo.bluetooth_token) {
+									var str1 = ble.doCmd('20', '00', this.bikeinfo.bluetooth_token)
+									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+										console.log('蓝牙操作', res)
+									})
+								}
+								blueWriteState = 0
+								setTimeout(() => {
+									if (blueWriteState == 0) {
+										console.log('blueWriteState2', blueWriteState)
+										this.reportblue(this.openOrClose, 1,loadtime)
+									}
+								}, 5000)
+
 								this.ids = res.info.id
 								this.setOrderid(res.info.id)
 								this.showmap = true
@@ -411,7 +503,7 @@
 									title: res.message ? res.message : '该车不可挪',
 									mask: false,
 									icon: 'none',
-									duration: 1500
+									duration: 2500
 								});
 							}
 						}).catch((err) => {

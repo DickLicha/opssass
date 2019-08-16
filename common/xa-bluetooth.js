@@ -1,7 +1,9 @@
 import store from '@/store'
 var systemtype = '',
 	name = '',
-	code = ''
+	code = '',
+	starttime='',
+	endtime=''
 
 function ab2hex(buffer) {
 	const hexArr = Array.prototype.map.call(
@@ -16,7 +18,7 @@ function ab2hex(buffer) {
 var onBluetoothDeviceFound = new Promise((resolve, reject) => {
 	// 搜索到设备回调 
 	uni.onBluetoothDeviceFound(function(res) {
-		// console.log("成功1:", res.devices[0]);
+		console.log("成功1:", res.devices[0]);
 		if (res.devices[0].localName == name) {
 			// uni.hideLoading()
 			console.log("成功:", res);
@@ -28,6 +30,7 @@ var onBluetoothDeviceFound = new Promise((resolve, reject) => {
 				deviceId: res.devices[0].deviceId,
 				success: (res) => {
 					console.log("连接设备成功", res);
+					store.commit('setBlueconectstate',1)
 					uni.showToast({
 						title: '连接蓝牙成功',
 						duration: 3000,
@@ -74,16 +77,16 @@ var onBluetoothDeviceFound = new Promise((resolve, reject) => {
 										},
 										fail: (res) => {
 											console.log("特征值变化监听启动失败：", res);
+											reject({
+												fail: 'fali'
+											})
 										}
 									})
 									resolve({
 										deviceId: deviceId,
 										serviceId: serviceId,
 										characterId: characterId,
-									})
-									reject({
-										fail: 'fali'
-									})
+									})								
 								}
 							})
 						}
@@ -136,6 +139,7 @@ const onBLECharacteristicValueChange = (callback) => {
 //  写入数据
 //  开锁相关操作
 const openLock = (tocken, deviceId, serviceId, characteristicId, success) => {
+	starttime=Date.now()
 	uni.writeBLECharacteristicValue({
 		deviceId: deviceId,
 		serviceId: serviceId,
@@ -143,6 +147,10 @@ const openLock = (tocken, deviceId, serviceId, characteristicId, success) => {
 		value: tocken,
 		success: (res) => {
 			console.log('writeBLECharacteristicValue success', res)
+			endtime=Date.now()
+			var loadtime=endtime-starttime
+			// console.log('loadtime',loadtime)
+			res.loadtime=loadtime
 			success(res);
 		},
 		fail: (res) => {

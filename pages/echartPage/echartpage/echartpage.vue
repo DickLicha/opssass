@@ -35,49 +35,7 @@
 	export default {
 		data() {
 			return {
-				orderlist: [{
-						time: '08-01',
-						num: 300,
-						money: 3000,
-						bikeper: '45%'
-					},
-					{
-						time: '08-02',
-						num: 300,
-						money: 3000,
-						bikeper: '45%'
-					},
-					{
-						time: '08-03',
-						num: 300,
-						money: 3000,
-						bikeper: '45%'
-					},
-					{
-						time: '08-04',
-						num: 300,
-						money: 3000,
-						bikeper: '45%'
-					},
-					{
-						time: '08-05',
-						num: 300,
-						money: 3000,
-						bikeper: '45%'
-					},
-					{
-						time: '08-06',
-						num: 300,
-						money: 3000,
-						bikeper: '45%'
-					},
-					{
-						time: '08-07',
-						num: 300,
-						money: 3000,
-						bikeper: '45%'
-					},
-				],
+				orderlist: [],
 				cWidth: '',
 				cHeight: '',
 				pixelRatio: 1,
@@ -212,10 +170,13 @@
 					series: chartData.series,
 					animation: true,
 					xAxis: {
-						type: 'grid',
+						type: 'calibration',
 						gridColor: '#CCCCCC',
 						gridType: 'dash',
-						dashLength: 8
+						dashLength: 8,
+						labelCount:4,
+						// rotateLabel:true
+						// fontSize:8
 					},
 					yAxis: {
 						gridType: 'dash',
@@ -225,7 +186,8 @@
 						// min: 10,\\\
 						// max: 180,
 						format: (val) => {
-							return val.toFixed(0) + '元'
+							// return val.toFixed(0) + '元'
+							return val.toFixed(0)
 						}
 					},
 					width: _self.cWidth * _self.pixelRatio,

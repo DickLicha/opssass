@@ -37,6 +37,7 @@ const store = new Vuex.Store({
 		gobelrelogin:false,
 		blueres:{},
 		bluestate:false,
+		blueconectstate:0,
 	},
 	mutations: {
 		login(state, provider) {
@@ -124,10 +125,10 @@ const store = new Vuex.Store({
 		},
 		setBluestate(state, bluestate) {
 			state.bluestate = bluestate
+		},
+		setBlueconectstate(state,blueconectstate){
+			state.blueconectstate=blueconectstate
 		}
-		// setBlueconectstate(state,blueconectstate){
-		// 	state.blueconectstate=blueconectstate
-		// }
 		
 	},
 	actions: {

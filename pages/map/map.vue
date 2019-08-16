@@ -59,6 +59,7 @@
 </template>
 
 <script>
+	var blueWriteState = 0,loadtime=1000
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
 	import baseImg from '@/components/image/image.vue'
@@ -78,7 +79,7 @@
 			uniPopup
 		},
 		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'orderid',
-			'endmove','blueres','bluestate'
+			'endmove', 'blueres', 'bluestate', 'blueconectstate'
 		]),
 		data() {
 			return {
@@ -87,7 +88,7 @@
 				stopName: '',
 				defaultLev: '1级',
 				stopRadius: "",
-				stopVolume:'',
+				stopVolume: '',
 				stopDesc: '',
 				poptype: '',
 				itemcells: ['1级', '2级', '3级'],
@@ -162,7 +163,7 @@
 			};
 		},
 		onLoad(e) {
-		
+
 			uni.getLocation({ //获取当前的位置坐标
 				type: 'gcj02',
 				success: (res) => {
@@ -250,14 +251,14 @@
 						this.movingbike()
 						this.scanbuttonname = '扫码挪车'
 						if (this.selectvals == 100) {
-							this.nearbymovecar(this.longitude, this.latitude, "*",'*')
+							this.nearbymovecar(this.longitude, this.latitude, "*", '*')
 						} else {
 							// 服务区外车辆
-							if(this.selectvals==21 || this.selectvals==11){
-								this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
-							}else{
-								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals),'*')
-							}							
+							if (this.selectvals == 21 || this.selectvals == 11) {
+								this.nearbymovecar(this.longitude, this.latitude, '*', parseInt(this.selectvals))
+							} else {
+								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals), '*')
+							}
 						}
 						// this.nearbymovecar(this.longitude, this.latitude, '*','*')
 						// this.nearbycarinfo(2)
@@ -374,14 +375,14 @@
 						break;
 					case '3.1':
 						if (this.selectvals == 100) {
-							this.nearbymovecar(this.longitude, this.latitude, "*",'*')
+							this.nearbymovecar(this.longitude, this.latitude, "*", '*')
 						} else {
 							// 服务区外车辆
-							if(this.selectvals==21 || this.selectvals==11){
-								this.nearbymovecar(this.longitude, this.latitude,'*',parseInt(this.selectvals))
-							}else{
-								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals),'*')
-							}							
+							if (this.selectvals == 21 || this.selectvals == 11) {
+								this.nearbymovecar(this.longitude, this.latitude, '*', parseInt(this.selectvals))
+							} else {
+								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals), '*')
+							}
 						}
 						break
 				}
@@ -511,31 +512,85 @@
 					console.error(err, '捕捉')
 				})
 			},
+			//上报蓝牙操作
+			reportblue(type, state,loadtime) {
+				uni.getLocation({
+					type: 'wgs84',
+					success: res => {
+						var opername = ''
+						if (type == 10) {
+							opername = '挪车开锁'
+						}
+						if (type == 11) {
+							opername = '挪车关锁'
+						}
+						var options = {
+							url: '/bike/report_bluetooth_oper', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								// "token": "xxx",
+								"bike_id": this.bikeinfo.id,
+								"bound_order_type": "BIKE_REPARK", //绑定订单类型， USER_RIDE =用户骑行订单，BIKE_REPARK=挪车订单，BIKE_BATTERY_RECHANGE=换电订单，
+								"bound_order_id": this.orderid,
+								"bound_order_op": opername, //骑行开锁，骑行关锁，挪车开锁，挪车关锁，换电开锁 。。。,
+								"type": type, //10=开锁，11=关锁，21=开电池锁,
+								"result": { //操作结果
+									"success": state, //0=成功， 其他值失败
+									"cost": loadtime, //耗时 1000毫秒
+									"error_msg": "" //错误信息
+								},
+								"user_coordinate": [res.longitude, res.latitude]
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('上报接口', res)
+							if (res.status == 0) {}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
+				});
+			},
 			// 结束挪车
 			endmovecars(parkid) {
 				var name = this.bikeinfo.bluetooth_name
 				var _self = this
-				var name = _self.bikeinfo.bluetooth_name
-				ble.initBluetooth(name, (res) => {
-					_self.setBlueres(res)
-				})
-				ble.onBLECharacteristicValueChange(function(res) {
-					console.log('初始化监听', res)
-				})
-				ble.onBluetoothAdapterStateChange(function(res) {
-					console.log('回调', res)
-					if (res.available == true && res.discovering == false && _self.bluestate == false) {
-						console.log(66666)
-						ble.initBluetooth(name, (res) => {
-							_self.setBlueres(res)
-						})
-					}
-				})
+				if (!!name && !!_self.bikeinfo.bluetooth_token) {
+					ble.initBluetooth(name, (res) => {
+						_self.setBlueres(res)
+					})
+					ble.onBLECharacteristicValueChange(function(res) {
+						console.log('初始化监听', res)
+						var gps = res.slice(0, 2)
+						if (gps == 20) {
+							if (res.slice(-3, -2) == 0) {
+								this.reportblue(11, 0,loadtime)
+								blueWriteState = 1
+							}
+						}
+					})
+					ble.onBluetoothAdapterStateChange(function(res) {
+						console.log('回调', res)
+						if (res.available == true && res.discovering == false && _self.bluestate == false) {
+							console.log(66666)
+							ble.initBluetooth(name, (res) => {
+								_self.setBlueres(res)
+							})
+						}
+					})
+				} else {
+					console.log('++++蓝牙不可用++++')
+				}				
+				
 				this.setSn('*')
-				var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
-				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-					console.log('蓝牙操作', res)
-				})
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {
@@ -546,6 +601,7 @@
 							data: {
 								"order_id": this.orderid,
 								"park_id": parkid,
+								"bluetooth": this.blueconectstate,
 								"user_coordinate": [
 									res.longitude, res.latitude
 								]
@@ -556,6 +612,19 @@
 							// res为服务端返回数据的根对象
 							console.log('挪车', res)
 							if (res.status == 0) {
+								if (!!this.bikeinfo.bluetooth_token) {
+									var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
+									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+										console.log('蓝牙操作', res)
+										loadtime=res.loadtime
+									})
+								}
+								blueWriteState = 0
+								setTimeout(() => {
+									if (blueWriteState == 0) {
+										this.reportblue(11, 1,loadtime)
+									}
+								}, 5000)
 								this.movingbike()
 								uni.showToast({
 									title: '挪车成功',
@@ -619,7 +688,7 @@
 				// this.selectcoverdata[index].active = true
 			},
 			functionNames() {
-               
+
 			},
 			// 移动地图获取中心点坐标
 			functionName() {
@@ -642,12 +711,12 @@
 								break
 							case '3.1':
 								if (this.selectvals == 100) {
-									self.nearbymovecar(res.longitude, res.latitude, "*",'*')
+									self.nearbymovecar(res.longitude, res.latitude, "*", '*')
 								} else {
-									if(this.selectvals==21 || this.selectvals==11){
-										this.nearbymovecar(res.longitude, res.latitude,'*',parseInt(this.selectvals))
-									}else{
-										this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals),'*')
+									if (this.selectvals == 21 || this.selectvals == 11) {
+										this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals))
+									} else {
+										this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals), '*')
 									}
 									// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
 								}
@@ -663,7 +732,7 @@
 				})
 			},
 			// 附近需要挪的车
-			nearbymovecar(longitude, latitude, reparklev,parkstate) {
+			nearbymovecar(longitude, latitude, reparklev, parkstate) {
 				var options = {
 					url: '/bike/list_to_repark_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -674,7 +743,7 @@
 							latitude
 						],
 						"repark_index": reparklev,
-						"park_state":parkstate,
+						"park_state": parkstate,
 						"flag": 1
 						// "is_under_volt": 1
 					}
@@ -713,40 +782,40 @@
 						// 		radius: 200, //半径
 						// 		strokeWidth: 2 //描边的宽度
 						// 	}],
-							for (let j = 0; j < res.parks.length; j++) {
-								let tmpObjs = {}
-								let circlesObj = {}
-								tmpObjs.id = res.parks[j].id
-								if (!!res.parks[j].coordinate) {
-									tmpObjs.latitude = res.parks[j].coordinate[1]
-									tmpObjs.longitude = res.parks[j].coordinate[0]
-									circlesObj.latitude = res.parks[j].coordinate[1]
-									circlesObj.longitude = res.parks[j].coordinate[0]
-									circlesObj.radius = res.parks[j].radius
-									circlesObj.fillColor = "#FF9F0040"
-									circlesObj.color = "#FF9F0040"
-									circlesObj.strokeWidth = 2
-								}
-								tmpObjs.name = res.parks[j].name
-								// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
-								var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-								tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
-								tmpObjs.type = 'stop'
-								tmpObjs.bickcount = res.parks[j].bike_count
-								tmpObjs.allkcount = res.parks[j].capacity
-								tmpObjs.radius = res.parks[j].radius
-								tmpObjs.remark = res.parks[j].remark
-								tmpObjs.grade = res.parks[j].grade
-								// tmpObjs.allkcount = res.parks[j].capacity
-								tmpObjs.width = 39
-								tmpObjs.height = 48
-								tmpObjs.parkid = res.parks[j].id
-								temparr.push(tmpObjs)
-								circles.push(circlesObj)
-								// this.covers.push(tmpObjs)
+						for (let j = 0; j < res.parks.length; j++) {
+							let tmpObjs = {}
+							let circlesObj = {}
+							tmpObjs.id = res.parks[j].id
+							if (!!res.parks[j].coordinate) {
+								tmpObjs.latitude = res.parks[j].coordinate[1]
+								tmpObjs.longitude = res.parks[j].coordinate[0]
+								circlesObj.latitude = res.parks[j].coordinate[1]
+								circlesObj.longitude = res.parks[j].coordinate[0]
+								circlesObj.radius = res.parks[j].radius
+								circlesObj.fillColor = "#FF9F0040"
+								circlesObj.color = "#FF9F0040"
+								circlesObj.strokeWidth = 2
 							}
+							tmpObjs.name = res.parks[j].name
+							// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
+							var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
+							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
+							tmpObjs.type = 'stop'
+							tmpObjs.bickcount = res.parks[j].bike_count
+							tmpObjs.allkcount = res.parks[j].capacity
+							tmpObjs.radius = res.parks[j].radius
+							tmpObjs.remark = res.parks[j].remark
+							tmpObjs.grade = res.parks[j].grade
+							// tmpObjs.allkcount = res.parks[j].capacity
+							tmpObjs.width = 39
+							tmpObjs.height = 48
+							tmpObjs.parkid = res.parks[j].id
+							temparr.push(tmpObjs)
+							circles.push(circlesObj)
+							// this.covers.push(tmpObjs)
+						}
 						this.covers = temparr
-						this.circles=circles
+						this.circles = circles
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -777,7 +846,7 @@
 					if (res.status == 0) {
 						this.covers = []
 						var temparr = []
-						var circles=[]
+						var circles = []
 						for (let j = 0; j < res.parks.length; j++) {
 							let tmpObjs = {}
 							let circlesObj = {}
@@ -948,7 +1017,7 @@
 						tempobj1.height = 48
 						temarr.push(tempobj0)
 						temarr.push(tempobj1)
-						this.covers=temarr
+						this.covers = temarr
 						for (let i = 0; i < res.info.track.length; i++) {
 							var jwd = {
 								longitude: res.info.track[i][0],
@@ -961,12 +1030,11 @@
 						this.polyline[0].width = 5 //线的宽度
 						// dottedLine: true, //是否虚线
 						this.polyline[0].arrowLine = true
-						console.log('this.covers',this.covers);
-					}
-					else{
+						console.log('this.covers', this.covers);
+					} else {
 						uni.showToast({
-							title: res.message?res.message:'获取轨迹失败',
-							icon:'none'
+							title: res.message ? res.message : '获取轨迹失败',
+							icon: 'none'
 						});
 					}
 				}).catch((err) => {
