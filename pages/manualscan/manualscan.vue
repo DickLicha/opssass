@@ -26,11 +26,11 @@
 				changeValue: '',
 				carnum: '',
 				urls: '',
-				type:'',
+				type: '',
 			}
 		},
 		methods: {
-			...mapMutations(['setBikeid', 'setSn', 'setBikeinfo','setOrderfirstid','setOrderinfo','setBaseurl']),
+			...mapMutations(['setBikeid', 'setSn', 'setBikeinfo', 'setOrderfirstid', 'setOrderinfo', 'setBaseurl']),
 			onKeyInput() {
 				this.inputValue = event.target.value
 			},
@@ -61,7 +61,7 @@
 							length: res.list.length,
 							id: res.list[0].id
 						}
-					}else{
+					} else {
 						uni.showToast({
 							title: '订单不存在'
 						});
@@ -87,13 +87,13 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"bike_id":id,
+						"bike_id": id,
 					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('投放信息',res)
+					console.log('投放信息', res)
 					if (res.status == 0) {
 						uni.showToast({
 							title: '投放成功',
@@ -102,8 +102,8 @@
 						});
 					} else {
 						uni.showToast({
-							title: res.message?res.message:'投放失败',
-							icon:'none',
+							title: res.message ? res.message : '投放失败',
+							icon: 'none',
 							// mask: false,
 							duration: 2500
 						});
@@ -127,46 +127,48 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('bikeinfo', res)
-					if (res.status == 0) {	
-						this.setBikeid(res.info.id)
+					if (res.status == 0) {
+						this.setBikeid("*")
+						this.setSn("*")
+						// this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						// 入库和维修要先请求订单信息
-						if(this.type=='1.1'||this.type=='1.3'){
-							var datas={}
-							if(this.type=='1.1'){
+						if (this.type == '1.1' || this.type == '1.3') {
+							var datas = {}
+							if (this.type == '1.1') {
 								datas = {
-									"is_order_finished": 0,//车子处于报修状态包括入库和未入库
+									"is_order_finished": 0, //车子处于报修状态包括入库和未入库
 									"pno": 1,
 									"psize": 100,
-									"order_state": 0,//刚报修未入库，没有这个值表示已入库
+									"bike_id": res.info.id,
+									"order_state": 0, //刚报修未入库，没有这个值表示已入库
 								}
-							}else{							
-									datas = {
-										"is_order_finished": 0,
-										"pno": 1,
-										"psize": 100,
-										
-									}													
-							}							
+							} else {
+								datas = {
+									"is_order_finished": 0,
+									"pno": 1,
+									"psize": 100,
+									"bike_id": res.info.id,
+								}
+							}
 							this.requestorder(datas)
-						}
-						else{
+						} else {
 							// 投放市场
-							if(this.type=='8'){
+							if (this.type == '8') {
 								// 判断车辆是否已经投放市场
-								if(res.info.inv_state==99){
+								if (res.info.inv_state == 99) {
 									this.throwin(res.info.id)
-								}else{
+								} else {
 									uni.showToast({
 										title: '该车已经投放市场'
 									});
 								}
-								
-							}else{
-								if(this.type=='14' && res.info.bus_state==0){
+
+							} else {
+								if (this.type == '14' && res.info.bus_state == 0) {
 									uni.showToast({
 										title: '无正在进行中订单',
-										icon:'none'
+										icon: 'none'
 									});
 									return
 								}
@@ -176,7 +178,7 @@
 									fail: () => {},
 									complete: () => {}
 								});
-							}							
+							}
 						}
 					} else {
 						uni.showToast({
@@ -190,9 +192,9 @@
 					console.error(err, '捕捉')
 				})
 			},
-			hideKeyboard(event) {			
+			hideKeyboard(event) {
 				if (this.carnum.length === 8) {
-					if(this.carnum=='86350001'){
+					if (this.carnum == '86350001') {
 						try {
 							uni.removeStorageSync('userinfo');
 						} catch (e) {
@@ -201,20 +203,20 @@
 						this.setBaseurl('https://api.dd-test.ildjoy.com')
 						uni.showToast({
 							title: '已切换到测试环境',
-							icon:'none',
-						    duration:2000,
+							icon: 'none',
+							duration: 2000,
 						});
-						setTimeout(()=>{
+						setTimeout(() => {
 							uni.navigateTo({
 								url: '/pages/mine/loginView/loginView',
 								success: res => {},
 								fail: () => {},
 								complete: () => {}
 							});
-						},2000)
+						}, 2000)
 						return
 					}
-					if(this.carnum=='86350000'){
+					if (this.carnum == '86350000') {
 						this.setBaseurl('https://api.dd.ildjoy.com')
 						try {
 							uni.removeStorageSync('userinfo');
@@ -223,17 +225,17 @@
 						}
 						uni.showToast({
 							title: '已切换到线上环境',
-							icon:'none',
-							duration:2000,
+							icon: 'none',
+							duration: 2000,
 						});
-						setTimeout(()=>{
+						setTimeout(() => {
 							uni.navigateTo({
 								url: '/pages/mine/loginView/loginView',
 								success: res => {},
 								fail: () => {},
 								complete: () => {}
 							});
-						},2000)
+						}, 2000)
 						return
 					}
 					this.setBikeid('*')
@@ -246,7 +248,7 @@
 		onLoad(e) {
 			console.log('e', e)
 			this.urls = e.urls
-			this.type=e.type
+			this.type = e.type
 		}
 	}
 </script>
@@ -268,10 +270,11 @@
 			.letter-spacings {
 				/* letter-spacing:40upx; */
 			}
-			.sure-btn{
+
+			.sure-btn {
 				position: fixed;
 				bottom: 20upx;
-				width:calc(100% - 44upx);
+				width: calc(100% - 44upx);
 			}
 
 			.input-place {

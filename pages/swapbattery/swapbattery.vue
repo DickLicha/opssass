@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import itemCell from '@/components/item-cell/item-cell.vue'
+	import itemCell from '@/components/item-cell/item-cell.vue'	
 	import uniFab from '@/components/uni-fab/uni-fab.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import {
@@ -35,9 +35,6 @@
 		openOrCloseLock = 0,
 		blueWriteState = 0,
 		loadtime = 1000
-	// import {
-	// 	doCmd
-	// } from '../../common/strdel.js'
 	export default {
 		data() {
 			return {
@@ -175,20 +172,17 @@
 				}
 			})
 		},
-		computed: mapState(['bikeinfo', 'bikeid', 'blueres', 'bluestate', 'blueconectstate']),
+		computed: mapState(['bikeinfo', 'bikeid', 'blueres', 'bluestate', 'blueconectstate','blueconectstate']),
 		onLoad(e) {
 			if (e.type != 99) {
 				var _self = this
 				var name = _self.bikeinfo.bluetooth_name
-				console.log('name', name, _self.bikeinfo.bluetooth_toke)
 				if (!!name && !!_self.bikeinfo.bluetooth_token) {
-					ble.onBLECharacteristicValueChange(function(res) {
+					ble.onBLECharacteristicValueChange((res)=> {
 						console.log('特征值返回', res)
 						var gps = res.slice(0, 2)
-						console.log(gps, 'gps')
 						// 开电池锁
 						if (gps == 34) {
-							console.log(333, res.slice(-3, -2))
 							if (res.slice(-3, -2) == 0) {
 								blueWriteState = 1
 								_self.reportblue(0, loadtime)
@@ -235,7 +229,7 @@
 								ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(ress) {
 									console.log('蓝牙操作', ress)
 								})
-							}, 3000);
+							}, 0);
 						}
 					})
 					ble.onBluetoothAdapterStateChange(function(res) {
@@ -368,11 +362,13 @@
 			},
 			// 寻车铃
 			openring() {
-				var str1 = ble.doCmd('28', '09', this.bikeinfo.bluetooth_token)
-				// console.log('this.bikeinfo.bluetooth_token',this.bikeinfo.bluetooth_token)
-				ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-					console.log('蓝牙操作', res)
-				})
+				if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
+					var str1 = ble.doCmd('28', '09', this.bikeinfo.bluetooth_token)
+					// console.log('this.bikeinfo.bluetooth_token',this.bikeinfo.bluetooth_token)
+					ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+						console.log('蓝牙操作', res)
+					})
+				}							
 				var options = {
 					url: '/bike/ring', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -550,10 +546,12 @@
 							// res为服务端返回数据的根对象
 							console.log('打开电池锁', res)
 							if (res.status == 0) {
-								var str1 = ble.doCmd('34', '01', this.bikeinfo.bluetooth_token)
-								ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-									console.log('蓝牙操作', res)
-								})
+								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
+									var str1 = ble.doCmd('34', '01', this.bikeinfo.bluetooth_token)
+									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+										console.log('蓝牙操作', res)
+									})
+								}																
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',
 									content: '电池锁更换完毕后，会自动记录本次操作',
@@ -642,7 +640,7 @@
 								"bound_order_type": "BIKE_BATTERY_RECHANGE", //绑定订单类型， USER_RIDE =用户骑行订单，BIKE_REPARK=挪车订单，BIKE_BATTERY_RECHANGE=换电订单，
 								"bound_order_id": this.orderid,
 								"bound_order_op": "换电开锁", //骑行开锁，骑行关锁，挪车开锁，挪车关锁，换电开锁 。。。,
-								"type": 21, //10=开锁，11=关锁，21=开电池锁,
+								"type": 21, //10=关锁，11=开锁，21=开电池锁,
 								"result": { //操作结果
 									"success": state, //0=成功， 其他值失败
 									"cost": loadtime, //耗时 1000毫秒
@@ -694,17 +692,22 @@
 							// res为服务端返回数据的根对象
 							console.log('打开电池锁', res)
 							if (res.status == 0) {
-								var str1 = ble.doCmd('34', '01', this.bikeinfo.bluetooth_token)
-								ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-									console.log('蓝牙操作', res)
-									loadtime = res.loadtime
-								})
-								blueWriteState = 0
-								setTimeout(() => {
-									if (blueWriteState = 0) {
-										this.reportblue(1, loadtime)
-									}
-								}, 5000)
+								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
+									var str1 = ble.doCmd('34', '01', this.bikeinfo.bluetooth_token)
+									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+										console.log('蓝牙操作', res)
+										loadtime = res.loadtime
+									})
+									blueWriteState = 0
+									setTimeout(() => {
+										if (blueWriteState = 0) {
+											this.reportblue(1, loadtime)
+										}
+									}, 5000)
+								}else{
+									this.reportblue(1, loadtime)
+								}
+												
 								this.orderid = res.info.id
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',

@@ -67,7 +67,6 @@ Vue.prototype.$invstate = function(type) {
 
 	Vue.prototype.$imagepath = function(element, type, bikenum) {
 		var iconPath = '/static/mapicon/car_normal.png'
-		console.log(element,'element')
 		// 车辆
 		if (type == 'car') {
 			// 失联
@@ -91,7 +90,6 @@ Vue.prototype.$invstate = function(type) {
 			// 	iconPath='/static/mapicon/bikeing.png'
 			// }
 			else if(element.health_state==0 && element.repark_index!='0'){
-				console.log('repark_index',element.repark_index)
 				iconPath = '/static/mapicon/car_bad+.png'
 			}
 			// // 正常

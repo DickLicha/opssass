@@ -69,11 +69,12 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-						// this.setSn(this.carnum)
-						this.setBikeid(res.info.id)
+						this.setSn("*")
+						this.setBikeid("*")
 						this.setBikeinfo(res.info)
 						var datas = {
 							"is_order_finished": 0,
+							"bike_id":res.info.id,
 							"pno": 1,
 							"psize": 100,
 						}

@@ -17,7 +17,7 @@
 		components: {
 			itemCell
 		},
-		computed: mapState(['bikeinfo', 'blueres', 'bluestate', 'baseurl']),
+		computed: mapState(['bikeinfo', 'blueres', 'bluestate', 'baseurl','blueconectstate']),
 		data() {
 			return {
 				carcenterdata1: [{
@@ -60,7 +60,6 @@
 				ble.onBLECharacteristicValueChange(function(res) {
 					console.log('特征值返回', res)
 					var gps = res.slice(0, 2)
-					console.log(gps, 'gps')
 					if (gps == 32) {
 						gpsSb = res
 						var str1 = ble.doCmd('21', '', _self.bikeinfo.bluetooth_token)
@@ -98,7 +97,7 @@
 						ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
 							console.log('蓝牙操作', res)
 						})
-					}, 3000);
+					}, 0);
 				})
 				ble.onBluetoothAdapterStateChange(function(res) {
 					console.log('回调', res)
@@ -194,10 +193,12 @@
 				else if (this.bikeinfo.bus_state == 20) {
 					url = '/rporder/finish'
 					order_id = this.bikeinfo.last_repark_order_id
-					var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
-					ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-						console.log('蓝牙操作', res)
-					})
+					if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
+						var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
+						ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+							console.log('蓝牙操作', res)
+						})
+					}										
 				}
 				var options = {
 					url: url, //请求接口

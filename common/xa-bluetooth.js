@@ -14,122 +14,145 @@ function ab2hex(buffer) {
 	)
 	return hexArr.join('')
 }
-
-var onBluetoothDeviceFound = new Promise((resolve, reject) => {
-	// 搜索到设备回调 
-	uni.onBluetoothDeviceFound(function(res) {
-		console.log("成功1:", res.devices[0]);
-		if (res.devices[0].localName == name) {
-			// uni.hideLoading()
-			console.log("成功:", res);
-			var deviceId = "";
-			var serviceId = "";
-			deviceId = res.devices[0].deviceId;
-			//  连接指定设备
-			uni.createBLEConnection({
-				deviceId: res.devices[0].deviceId,
-				success: (res) => {
-					console.log("连接设备成功", res);
-					store.commit('setBlueconectstate',1)
-					uni.showToast({
-						title: '连接蓝牙成功',
-						duration: 3000,
-					});
-					//  获取蓝牙设备所有服务 ，获取设备服务 uuid
-					uni.getBLEDeviceServices({
-						deviceId: deviceId,
+function onBluetoothDeviceFound(){
+	return new Promise((resolve, reject)=>{
+		wx.onBluetoothDeviceFound((res)=> {
+			try{
+				// store.commit('setBlueconectstate',2)
+				// console.log("成功1:", res.devices[0]);
+				if (res.devices[0].localName == name) {
+					// uni.hideLoading()
+					// console.log("成功:", res);
+					var deviceId = "";
+					var serviceId = "";
+					deviceId = res.devices[0].deviceId;
+					//  连接指定设备
+					wx.createBLEConnection({
+						deviceId: res.devices[0].deviceId,
 						success: (res) => {
-							// console.log("蓝牙设备服务",res);
-							if(systemtype=='android'){
-								serviceId = res.services[0].uuid;
-							}else{
-								serviceId = res.services[res.services.length-1].uuid;
-							}
-							// 获取蓝牙设备某个服务中所有特征值
-							uni.getBLEDeviceCharacteristics({
+							console.log("连接设备成功", res);
+							store.commit('setBlueconectstate',1)
+							uni.showToast({
+								title: '连接蓝牙成功',
+								duration: 3000,
+							});
+							//  获取蓝牙设备所有服务 ，获取设备服务 uuid
+							wx.getBLEDeviceServices({
 								deviceId: deviceId,
-								serviceId: serviceId,
 								success: (res) => {
-									// console.log("蓝牙设备所有特征值",res);
-									var charaArr = res.characteristics;
-									var notifyId = "";
-									var characterId = "";
-									for (var i = 0; i < charaArr.length; i++) {
-										if (charaArr[i].properties.notify && false === charaArr[i].properties.read && false === charaArr[
-												i].properties.write) {
-											// _this.notyCharacteristicId = charaArr[i].uuid;
-											notifyId = charaArr[i].uuid;
-										}
-										if (false === charaArr[i].properties.notify && false === charaArr[i].properties.read && charaArr[
-												i].properties.write) {
-											// _this.characteristicId = charaArr[i].uuid;
-											characterId = charaArr[i].uuid;
-										}
+									// console.log("蓝牙设备服务",res);
+									if(systemtype=='android'){
+										serviceId = res.services[0].uuid;
+									}else{
+										serviceId = res.services[res.services.length-1].uuid;
 									}
-									uni.notifyBLECharacteristicValueChange({
+									// 获取蓝牙设备某个服务中所有特征值
+									wx.getBLEDeviceCharacteristics({									
 										deviceId: deviceId,
 										serviceId: serviceId,
-										characteristicId: notifyId,
-										state: true,
 										success: (res) => {
-											console.log("特征值变化监听启动成功：", res);
-											// _this.writeDataToBluetooth();
+											console.log("蓝牙设备所有特征值",res);
+											var charaArr = res.characteristics;
+											var notifyId = "";
+											var characterId = "";
+											for (var i = 0; i < charaArr.length; i++) {
+												if (charaArr[i].properties.notify && false === charaArr[i].properties.read && false === charaArr[
+														i].properties.write) {
+													// _this.notyCharacteristicId = charaArr[i].uuid;
+													notifyId = charaArr[i].uuid;
+												}
+												if (false === charaArr[i].properties.notify && false === charaArr[i].properties.read && charaArr[
+														i].properties.write) {
+													// _this.characteristicId = charaArr[i].uuid;
+													characterId = charaArr[i].uuid;
+												}
+											}
+											wx.notifyBLECharacteristicValueChange({
+												deviceId: deviceId,
+												serviceId: serviceId,
+												characteristicId: notifyId,
+												state: true,
+												success: (res) => {
+													console.log("特征值变化监听启动成功：", res);
+													// _this.writeDataToBluetooth();
+													resolve({
+														deviceId: deviceId,
+														serviceId: serviceId,
+														characterId: characterId,
+													})
+												},
+												fail: (res) => {
+													console.log("特征值变化监听启动失败：", res);
+													reject({
+														fail: '特征值变化监听启动失败'+res
+													})
+												}
+											})
+																			
 										},
-										fail: (res) => {
-											console.log("特征值变化监听启动失败：", res);
+										fail:(res)=>{
 											reject({
-												fail: 'fali'
+												fail: '获取蓝牙特征值失败'+res
 											})
 										}
 									})
-									resolve({
-										deviceId: deviceId,
-										serviceId: serviceId,
-										characterId: characterId,
-									})								
+								},
+								fail:(res)=>{
+									reject({
+										fail: '获取蓝牙所有服务失败'+res
+									})
 								}
 							})
+							//  关闭蓝牙搜索
+							wx.stopBluetoothDevicesDiscovery({
+								success: (res) => {
+									console.log("关闭成功");
+								}
+							})
+						},
+						fail: (res) => {
+							console.log("连接设备失败", res);
+							reject({
+								fail: '连接设备失败'+res
+							})
+							uni.showToast({
+								title: '连接蓝牙失败',
+								duration: 3000,
+							});
 						}
 					})
-					//  关闭蓝牙搜索
-					uni.stopBluetoothDevicesDiscovery({
-						success: (res) => {
-							console.log("关闭成功");
-						}
-					})
-				},
-				fail: (res) => {
-					console.log("连接设备失败", res);
-					uni.showToast({
-						title: '连接蓝牙失败',
-						duration: 3000,
-					});
 				}
-			})
-		}
+			}catch(e){
+				//TODO handle the exception
+				reject({
+					fail: '异常失败'+res
+				})
+			}
+			
+		})
 	})
-})
+}
 
 
 /*** 监听蓝牙变化 ***/
 
 //  监听蓝牙是否打开，以及是否在搜索附近设备
 const onBluetoothAdapterStateChange = (callback) => {
-	uni.onBluetoothAdapterStateChange(function(res) {
+	wx.onBluetoothAdapterStateChange(function(res) {
 		// console.log('adapterState changed, now is', res)
 		callback(res);
 	})
 }
 //  手机与蓝牙连接状态变化监听
 const onBLEConnectionStateChange = (callback) => {
-	uni.onBLEConnectionStateChange(function(res) {
+	wx.onBLEConnectionStateChange(function(res) {
 		// console.log('onBLEConnectionStateChange：', JSON.stringify(res));
 		callback(res);
 	})
 }
 //  特征值发生变化
 const onBLECharacteristicValueChange = (callback) => {
-	uni.onBLECharacteristicValueChange(function(res) {
+	wx.onBLECharacteristicValueChange(function(res) {
 		// console.log(`characteristic ${res.characteristicId} has changed, now is ${res.value}`)
 		console.log("特征值变化事件", ab2hex(res.value));
 
@@ -140,7 +163,7 @@ const onBLECharacteristicValueChange = (callback) => {
 //  开锁相关操作
 const openLock = (tocken, deviceId, serviceId, characteristicId, success) => {
 	starttime=Date.now()
-	uni.writeBLECharacteristicValue({
+	wx.writeBLECharacteristicValue({
 		deviceId: deviceId,
 		serviceId: serviceId,
 		characteristicId: characteristicId,
@@ -155,7 +178,7 @@ const openLock = (tocken, deviceId, serviceId, characteristicId, success) => {
 		},
 		fail: (res) => {
 			console.log('writeBLECharacteristicValue fail', res)
-			uni.writeBLECharacteristicValue({
+			wx.writeBLECharacteristicValue({
 				deviceId: deviceId,
 				serviceId: serviceId,
 				characteristicId: characteristicId,
@@ -166,6 +189,19 @@ const openLock = (tocken, deviceId, serviceId, characteristicId, success) => {
 				},
 				fail: (res) => {
 					console.log('writeBLECharacteristicValue fail', res)
+					wx.writeBLECharacteristicValue({
+						deviceId: deviceId,
+						serviceId: serviceId,
+						characteristicId: characteristicId, 
+						value: tocken,
+						success: (res) => {
+							console.log('writeBLECharacteristicValue success', res)
+							success(res);
+						},
+						fail: (res) => {
+							console.log('writeBLECharacteristicValue fail', res)
+						},
+					})
 				},
 			})
 		},
@@ -173,7 +209,7 @@ const openLock = (tocken, deviceId, serviceId, characteristicId, success) => {
 }
 //  停止搜索周边蓝牙设备
 function stopSearchBluetooth() {
-	uni.stopBluetoothDevicesDiscovery({
+	wx.stopBluetoothDevicesDiscovery({
 		success: (res) => {
 			console.log("停止成功");
 		}
@@ -185,55 +221,68 @@ var startBluetoothDevicesDiscovery = new Promise((resolve, reject) => {
 })
 
 ///  初始化蓝牙 
-const initBluetooth = (names, isok, error) => {
+const initBluetooth = (names, isok) => {
 	// uni.showLoading({
 	// 	title: '连接蓝牙中',
 	// 	mask: false
 	// });
-	store.commit("setBluestate", false);
-	uni.getSystemInfo({
-		success: function(res) {
-			systemtype = res.platform
-			name = names;
-			// var _this=e
-			uni.openBluetoothAdapter({
-				success: (res) => {
-					console.log(" ======== 初始化蓝牙 (成功) =======", res);
-					store.commit("setBluestate", true);
-					//  开始搜索设备
-					uni.startBluetoothDevicesDiscovery({
+	store.commit('setBlueconectstate',0)
+	wx.closeBluetoothAdapter({
+		success(res) {
+			console.log('关闭蓝牙成功',res)
+			store.commit("setBluestate", false);
+			uni.getSystemInfo({
+				success: function(res) {
+					systemtype = res.platform
+					name = names;
+					// var _this=e
+					wx.openBluetoothAdapter({
 						success: (res) => {
-							console.log("搜索到的设备", res);
-							// return onBluetoothDeviceFound;
-							onBluetoothDeviceFound.then((val) => {
-								console.log("返回结果", val);
-								isok(val)
+							console.log(" ======== 初始化蓝牙 (成功) =======", res);
+							store.commit("setBluestate", true);
+							//  开始搜索设备
+							wx.startBluetoothDevicesDiscovery({
+								success: (res) => {
+									console.log(" 开始搜索设备", res);
+									// return onBluetoothDeviceFound;
+									// console.log('onBluetoothDeviceFound',onBluetoothDeviceFound())
+									onBluetoothDeviceFound().then((val) => {
+										console.log("查询返回结果", val);
+										isok(val)
+									}).catch((val)=>{
+										console.log('蓝牙reject',val)
+									})
+								},
+								fail: (res) => {
+									console.log("搜索设备失败", res);
+									// uni.hideLoading()
+									uni.showToast({
+										title: '搜索蓝牙失败',
+										icon: 'none',
+										duration: 3000
+									});
+								}
 							})
+							// return startBluetoothDevicesDiscovery;
 						},
 						fail: (res) => {
-							console.log("搜索设备失败", res);
 							// uni.hideLoading()
+							console.log(" ======== 初始化蓝牙（失败） =======", res);
 							uni.showToast({
-								title: '搜索蓝牙失败',
+								title: '初始化蓝牙失败请手动打开蓝牙',
 								icon: 'none',
 								duration: 3000
 							});
 						}
 					})
-					return startBluetoothDevicesDiscovery;
 				},
-				fail: (res) => {
-					// uni.hideLoading()
-					console.log(" ======== 初始化蓝牙（失败） =======", res);
-					uni.showToast({
-						title: '初始化蓝牙失败请手动打开蓝牙',
-						icon: 'none',
-						duration: 3000
-					});
-				}
 			})
 		},
+		fail:(res)=>{
+			console.log('关闭蓝牙失败',res)
+		}
 	})
+	
 
 }
 // 计算长度

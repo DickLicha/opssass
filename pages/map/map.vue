@@ -79,7 +79,7 @@
 			uniPopup
 		},
 		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'orderid',
-			'endmove', 'blueres', 'bluestate', 'blueconectstate'
+			'endmove', 'blueres', 'bluestate', 'blueconectstate','blueconectstate'
 		]),
 		data() {
 			return {
@@ -519,10 +519,10 @@
 					success: res => {
 						var opername = ''
 						if (type == 10) {
-							opername = '挪车开锁'
+							opername = '挪车关锁'
 						}
 						if (type == 11) {
-							opername = '挪车关锁'
+							opername = '挪车开锁'
 						}
 						var options = {
 							url: '/bike/report_bluetooth_oper', //请求接口
@@ -534,7 +534,7 @@
 								"bound_order_type": "BIKE_REPARK", //绑定订单类型， USER_RIDE =用户骑行订单，BIKE_REPARK=挪车订单，BIKE_BATTERY_RECHANGE=换电订单，
 								"bound_order_id": this.orderid,
 								"bound_order_op": opername, //骑行开锁，骑行关锁，挪车开锁，挪车关锁，换电开锁 。。。,
-								"type": type, //10=开锁，11=关锁，21=开电池锁,
+								"type": type, //10=关锁，11=开锁，21=开电池锁,
 								"result": { //操作结果
 									"success": state, //0=成功， 其他值失败
 									"cost": loadtime, //耗时 1000毫秒
@@ -572,7 +572,7 @@
 						var gps = res.slice(0, 2)
 						if (gps == 20) {
 							if (res.slice(-3, -2) == 0) {
-								this.reportblue(11, 0,loadtime)
+								this.reportblue(10, 0,loadtime)
 								blueWriteState = 1
 							}
 						}
@@ -612,19 +612,21 @@
 							// res为服务端返回数据的根对象
 							console.log('挪车', res)
 							if (res.status == 0) {
-								if (!!this.bikeinfo.bluetooth_token) {
+								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
 									var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
 									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
 										console.log('蓝牙操作', res)
 										loadtime=res.loadtime
 									})
-								}
-								blueWriteState = 0
-								setTimeout(() => {
-									if (blueWriteState == 0) {
-										this.reportblue(11, 1,loadtime)
-									}
-								}, 5000)
+									blueWriteState = 0
+									setTimeout(() => {
+										if (blueWriteState == 0) {
+											this.reportblue(10, 1,loadtime)
+										}
+									}, 5000)
+								}else{
+									this.reportblue(10, 1,loadtime)
+								}								
 								this.movingbike()
 								uni.showToast({
 									title: '挪车成功',
