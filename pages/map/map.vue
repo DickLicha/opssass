@@ -5,7 +5,7 @@
 		</view>
 		<view class="page-body">
 			<view class="page-section page-section-gap">
-				<map class='map-base-view' :class="{'activemap':actives}" :scale="scale" id='firstmap' :latitude="latitude"
+				<map class='map-base-view' :class="{'activemap':actives}" :style="{height:(!showcorverview.bottom&&!actives&&!hidebutton?'100vh':'83vh')}" :scale="scale" id='firstmap' :latitude="latitude"
 				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				 @markertap='markclick' @regionchange="functionNames" @end="functionName">
 					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
@@ -18,8 +18,8 @@
 					</cover-view>
 					<cover-view v-if="getorder()" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
 					<cover-view class='map-cover-view'>
-						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
-						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view>
+						<!-- <cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
+						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view> -->
 						<cover-view v-if="!showcorverview.bottom&&!actives&&!hidebutton" class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
 					</cover-view>
 				</map>
@@ -53,15 +53,21 @@
 						</view>
 					</uni-popup>
 				</view>
+				<view v-if="showcorverview.bottom" style='margin-top: 10upx;'>
+					<base-input @scanCode='scanCode(1)' @goPage='goNewPage' :title='inputval' @hidekeygo='manualsgo'></base-input>
+				</view>
+
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	var blueWriteState = 0,loadtime=1000
+	var blueWriteState = 0,
+		loadtime = 1000
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
+	import baseInput from '@/components/baseinput/baseinput.vue'
 	import baseImg from '@/components/image/image.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import {
@@ -76,13 +82,15 @@
 			scanbutton,
 			baseheader,
 			baseImg,
-			uniPopup
+			uniPopup,
+			baseInput
 		},
 		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'orderid',
-			'endmove', 'blueres', 'bluestate', 'blueconectstate','blueconectstate'
+			'endmove', 'blueres', 'bluestate', 'blueconectstate', 'blueconectstate'
 		]),
 		data() {
 			return {
+				inputval: '',
 				isActive: -1,
 				selectvals: 100,
 				stopName: '',
@@ -163,7 +171,6 @@
 			};
 		},
 		onLoad(e) {
-
 			uni.getLocation({ //获取当前的位置坐标
 				type: 'gcj02',
 				success: (res) => {
@@ -319,9 +326,6 @@
 			}, 1000)
 
 		},
-		onReady() {
-
-		},
 		onUnload() {
 			this.mapinfo = null
 			uni.closeBluetoothAdapter({
@@ -334,6 +338,13 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
+			manualsgo() {
+				this.getcarinfo()
+			},
+			goNewPage(item) {
+				this.setSn(item)
+				this.getcarinfo()
+			},
 			getorder() {
 				var test = false
 				if (this.type == 3.1) {
@@ -513,7 +524,7 @@
 				})
 			},
 			//上报蓝牙操作
-			reportblue(type, state,loadtime) {
+			reportblue(type, state, loadtime) {
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
@@ -572,7 +583,7 @@
 						var gps = res.slice(0, 2)
 						if (gps == 20) {
 							if (res.slice(-3, -2) == 0) {
-								this.reportblue(10, 0,loadtime)
+								this.reportblue(10, 0, loadtime)
 								blueWriteState = 1
 							}
 						}
@@ -588,8 +599,8 @@
 					})
 				} else {
 					console.log('++++蓝牙不可用++++')
-				}				
-				
+				}
+
 				this.setSn('*')
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
@@ -612,21 +623,19 @@
 							// res为服务端返回数据的根对象
 							console.log('挪车', res)
 							if (res.status == 0) {
-								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
+								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
 									var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
 									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
 										console.log('蓝牙操作', res)
-										loadtime=res.loadtime
+										loadtime = res.loadtime
 									})
 									blueWriteState = 0
 									setTimeout(() => {
 										if (blueWriteState == 0) {
-											this.reportblue(10, 1,loadtime)
+											this.reportblue(10, 1, loadtime)
 										}
 									}, 5000)
-								}else{
-									this.reportblue(10, 1,loadtime)
-								}								
+								}
 								this.movingbike()
 								uni.showToast({
 									title: '挪车成功',
@@ -1089,29 +1098,13 @@
 						success: res => {
 							console.log('saoma', res)
 							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+							this.inputval = bikesn
 							this.setSn(bikesn)
 							this.setBikeid('*')
 							this.getcarinfo()
-							// 入库和维修要先请求订单信息
-							// if (this.type == '1.1' || this.type == '1.3') {
-							// 	var datas = {}
-							// 	if (this.type == '1.1') {
-							// 		datas = {
-							// 			"is_order_finished": 0,
-							// 			"pno": 1,
-							// 			"psize": 100,
-							// 			"order_state": 0,
-							// 		}
-							// 	} else {
-							// 		datas = {
-							// 			"is_order_finished": 0,
-							// 			"pno": 1,
-							// 			"psize": 100,
-							// 		}
-							// 	}
-							// 	this.requestorder(datas)
-							// } else {
-							// }
+							// setTimeout(() => {
+							// 	this.getcarinfo()
+							// }, 1500)
 						},
 						fail: res => {},
 						complete: res => {}
@@ -1356,6 +1349,10 @@
 </script>
 
 <style lang="scss" scoped>
+	.page-body {
+		background-color: rgb(245, 245, 245);
+	}
+
 	.activemap {
 		height: 35vh !important;
 	}
@@ -1389,10 +1386,10 @@
 			}
 		}
 	}
-
+ 
 	.map-base-view {
 		// height: calc(100vh - 80upx);
-		height: calc(100vh);
+		height: calc(90vh - 88upx);
 		width: 100%;
 
 		.cover-imgs {
@@ -1481,5 +1478,8 @@
 				}
 			}
 		}
+	}
+	.maxheigh{
+		height: 100vh;
 	}
 </style>

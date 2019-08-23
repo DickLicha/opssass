@@ -288,7 +288,11 @@
 				"navigationBarTitleText": "仪表盘"
 			}
 		}
-	],
+	    ,{
+            "path" : "components/baseinput/baseinput",
+            "style" : {}
+        }
+    ],
  //   "subPackages":
 	// [ 
 	// {

@@ -25,8 +25,11 @@
 				<button class='share-button-default margin-topbtn' @click='startmovecar'>开始挪车</button>
 			</view> -->
 
-			<view v-show="showendmove" class='end-move-button'>
-				<button class='share-button-default margin-topbtn' type='primary' @click='endmovecar'>开始挪车</button>
+			<view v-show="showendmove" class='end-move-button1'>
+				<button class='share-button-default margin-topbtn' type='primary' @click='startmovecar(1)'>单个挪车</button>
+			</view>
+			<view v-show="showendmove" class='end-move-button2'>
+				<button class='share-button-default margin-topbtn' type='primary' @click='startmovecar(0)'>批量挪车</button>
 			</view>
 
 		</view>
@@ -320,8 +323,6 @@
 											this.reportblue(this.openOrClose, 1, loadtime)
 										}
 									}, 5000)
-								} else{
-									this.reportblue(this.openOrClose, 1, loadtime)
 								}
 								uni.showToast({
 									title: '挪车成功',
@@ -401,10 +402,6 @@
 					complete: () => {}
 				});
 			},
-			// 开始挪车生成订单
-			endmovecar() {
-				this.startmovecar()
-			},
 			//上报蓝牙操作
 			reportblue(type, state, loadtime) {
 				uni.getLocation({
@@ -453,7 +450,7 @@
 				});
 			},
 			// 开始挪车
-			startmovecar() {
+			startmovecar(type) {
 				this.showshartmove = false
 				this.showendmove = false
 				this.openOrClose = 11
@@ -471,6 +468,7 @@
 								"user_coordinate": [res.longitude, res.latitude],
 								"channel": "xxx",
 								"bluetooth": this.blueconectstate,
+								'unlock':type,
 							}
 						}
 						this.$httpReq(options).then((res) => {
@@ -492,8 +490,6 @@
 											this.reportblue(this.openOrClose, 1, loadtime)
 										}
 									}, 5000)
-								}else{
-									this.reportblue(this.openOrClose, 1, loadtime)
 								}							
 								this.ids = res.info.id
 								this.setOrderid(res.info.id)
@@ -654,7 +650,12 @@
 		/* height: 100vh; */
 		overflow: hidden;
 
-		.end-move-button {
+		.end-move-button1 {
+			position: absolute;
+			width: 100%;
+			bottom: 150upx;
+		}
+		.end-move-button2 {
 			position: absolute;
 			width: 100%;
 			bottom: 40upx;

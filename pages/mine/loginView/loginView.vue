@@ -41,7 +41,7 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						version:'1.0.69',
+						version:'1.0.71',
 					}
 				}
 				this.$httpReq(options).then((res) => {

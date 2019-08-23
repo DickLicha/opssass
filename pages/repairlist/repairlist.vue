@@ -1,8 +1,12 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<view class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
+			<view v-if="type!=14&&type!=99" class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
 				<text>{{item.name}}</text>
+			</view>
+			
+			<view v-if="type==14 ||type==99" style='margin-top: 10upx;'>
+				<base-input @scanCode='scanCodes()' @goPage='goNewPage' :title='inputval' @hidekeygo='manualsgo'></base-input>
 			</view>
 		</view>
 	</view>
@@ -13,9 +17,11 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+	import baseInput from '@/components/baseinput/baseinput.vue'
 	export default {
 		data() {
 			return {
+				inputval:"",
 				repairlist: [],
 				order: {
 					length: ''
@@ -24,8 +30,18 @@
 				userinfo: {},
 			}
 		},
+		components:{
+			baseInput
+		},
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
+			goNewPage(item){
+				this.setSn(item)
+				this.getcarinfo()
+			},
+			manualsgo() {
+				this.getcarinfo()
+			},
 			// 投放市场
 			throwin(id) {
 				this.setBikeid('*')
@@ -59,6 +75,24 @@
 				}).catch((err) => {
 					// 请求失败的回调
 					console.error(err, '捕捉')
+				})
+			},
+			scanCodes(){
+				wx.scanCode({
+					onlyFromCamera: true,
+					success: res => {
+						console.log('saoma', res)
+						var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+						this.setSn(bikesn)
+						this.inputval=bikesn
+						setTimeout(()=>{
+							this.getcarinfo()
+						},1500)
+					
+					},
+					fail: res => {
+								 
+					}
 				})
 			},
 			// 获取二级菜单权限
@@ -286,7 +320,7 @@
 						// this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
-						if (this.type == '10') {
+						if (this.type == '99') {
 							uni.navigateTo({
 								url: "/pages/violations/reportViolations/reportViolations",
 								success: res => {},
@@ -415,17 +449,18 @@
 					}					
 					
 				} else if (this.type == '10' && item.name == '举报') {
-					this.repairlist = [{
-							name: '手动输入',
-							val: '',
-							url: `/pages/manualscan/manualscan?urls=/pages/violations/reportViolations/reportViolations&&type=10`
-						},
-						{
-							name: '扫码输入',
-							val: '',
-							url: `/pages/manualscan/manualscan?urls=/pages/violations/reportViolations/reportViolations&&type=10`
-						},
-					]
+					this.type=99
+					// this.repairlist = [{
+					// 		name: '手动输入',
+					// 		val: '',
+					// 		url: `/pages/manualscan/manualscan?urls=/pages/violations/reportViolations/reportViolations&&type=10`
+					// 	},
+					// 	{
+					// 		name: '扫码输入',
+					// 		val: '',
+					// 		url: `/pages/manualscan/manualscan?urls=/pages/violations/reportViolations/reportViolations&&type=10`
+					// 	},
+					// ]
 				} else if (this.type == '10' && item.name == '扫码输入') {
 					wx.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
@@ -459,46 +494,13 @@
 						complete: res => {}
 					});
 				} else if (this.type == '13') {
-					
-					// if(item.val==1){
-					// 	
-					// }else(item.val==2){
-					// 	
-					// }
 					uni.navigateTo({
 						url: `/pages/stockPage/putstorage/putstorage?type=${item.val}`,
 						success: res => {},
 						fail: () => {},
 						complete: () => {}
 					});
-					
-// 					if (item.name == 'ecu解绑') {
-// 						wx.scanCode({
-// 							onlyFromCamera: true,
-// 							success: res => {
-// 								console.log('saoma', res)
-// 								var result = res.result.split(' ')
-// 								// this.swapdata[0].val = result[0].split(':')[1]
-// 								// var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
-// 								this.setSn('*')
-// 								this.setBikeid('*')
-// 								this.ecuunbind(result[0].split(':')[1])
-// 							},
-// 							fail: res => {
-// 
-// 							}
-// 						})
-// 					} 					
-// 					else {
-// 						uni.navigateTo({
-// 							url: '/pages/stockPage/putstorage/putstorage?type=1',
-// 							success: res => {},
-// 							fail: () => {},
-// 							complete: () => {}
-// 						});
-// 					}
-				}
-				 else if (this.type == '14' && item.name == '扫码输入') {
+				}else if (this.type == '14' && item.name == '扫码输入') {
 				 	wx.scanCode({
 				 		onlyFromCamera: true,
 				 		success: res => {
@@ -649,10 +651,6 @@
 							val: '',
 							url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
 						},
-						// {
-						// 	name: '报修',
-						// 	url: '/pages/carBigCenter/breakdowncar/breakdowncar',
-						// },
 						{
 							name: '修车',
 							val: '',

@@ -1,8 +1,11 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<view class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
+			<!-- <view class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
 				<text>{{item.name}}</text>
+			</view> -->
+			<view style='margin-top: 10upx;'>
+				<base-input @scanCode='go(1)' @goPage='goNewPage' :title='inputval' @hidekeygo='manualsgo'></base-input>
 			</view>
 		</view>
 	</view>
@@ -12,10 +15,15 @@
 	import {
 		mapMutations
 	} from 'vuex'
+	import baseInput from '@/components/baseinput/baseinput.vue'
 	export default {
+		components: {
+			baseInput
+		},
 		data() {
 			return {
 				repairlist: [{
+						inputval: "",
 						name: '手动输入',
 						val: '0',
 						url: '/pages/manualscan/manualscan?type=1.3&&urls=/pages/repairPage/repaircar/repaircar'
@@ -32,7 +40,14 @@
 			}
 		},
 		methods: {
-			...mapMutations(['setSn', 'setOrderfirstid', 'setOrderinfo','setBikeid','setBikeinfo']),
+			...mapMutations(['setSn', 'setOrderfirstid', 'setOrderinfo', 'setBikeid', 'setBikeinfo']),
+			goNewPage(item) {
+				this.setSn(item)
+				this.getcarinfo()
+			},
+			manualsgo() {
+				this.getcarinfo()
+			},
 			requestorder(data) {
 				let options = {
 					url: '/brorder/list',
@@ -50,14 +65,14 @@
 							fail: () => {},
 							complete: () => {}
 						});
-					}else{
+					} else {
 						uni.showToast({
 							title: '订单不存在',
 							duration: 2000
 						});
 					}
 				})
-			},			
+			},
 			getcarinfo() {
 				var options = {
 					url: '/bike/info', //请求接口
@@ -74,7 +89,7 @@
 						this.setBikeinfo(res.info)
 						var datas = {
 							"is_order_finished": 0,
-							"bike_id":res.info.id,
+							"bike_id": res.info.id,
 							"pno": 1,
 							"psize": 100,
 						}
@@ -83,7 +98,7 @@
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
 							mask: false,
-							icon:'none',
+							icon: 'none',
 							duration: 1500
 						});
 					}
@@ -104,9 +119,10 @@
 					wx.scanCode({
 						onlyFromCamera: true,
 						success: (res) => {
-							var bikesn=res.result.match(/\?bikesn=(.*)/)[1]
+							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 							this.setSn(bikesn)
 							// this.setSn(res.result)
+							this.inputval = bikesn
 							this.getcarinfo()
 						},
 						fail: (res) => {

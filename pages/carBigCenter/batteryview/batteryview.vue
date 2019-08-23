@@ -23,6 +23,7 @@
 					// {name:'型号编码:',val:''},
 					{name:'电池状态:',val:''},
 					{name:'电池锁状态:',val:''},
+					{name:'电池型号:',val:''},
 				]		
 			}
 		},
@@ -57,6 +58,7 @@
 				is_battery_locked='关'
 			}
 			this.carcenterdata1[4].val = is_battery_locked	
+			this.carcenterdata1[5].val = this.bikeinfo.battery_model
 		},
 		methods: {
 			gocarcenter(e){

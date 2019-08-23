@@ -12,6 +12,15 @@
 			<view class='change-battery-bottom'>
 				<button type='primary' class='share-button-default' @click='intostorage'>{{btnname}}</button>
 			</view>
+
+			<view v-if="type==0">
+				<text>车辆型号</text>
+				<view class='result-fault'>
+					<view class='result-fault-view' v-for="(item,i) in faultdata" :key="i" @click='chosefault(item,i)' :class="{'borderrights':isActive==i}">
+						<text>{{item.name}}</text>
+					</view>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -25,12 +34,25 @@
 	export default {
 		data() {
 			return {
+				faultdata: [{
+						name: 'Q5',
+						val: 1,
+						select: true
+					},
+					{
+						name: 'Q1',
+						val: 1,
+						select: false
+					},
+				],
+				models: 'Q5',
+				isActive: 0,
 				title: 'uni-fab',
 				poptype: '',
 				borders: true,
 				buttonname: '更换电池',
-				btn1:'',
-				btn2:'',
+				btn1: '',
+				btn2: '',
 				swapdata: [{
 						name: 'ECU-IMEI:',
 						val: '',
@@ -55,32 +77,36 @@
 		computed: mapState(['bikeinfo', 'bikeid']),
 		onLoad(e) {
 			this.type = e.type
-			var title=''
+			var title = ''
 			if (this.type == 0) {
 				this.btnname = '入库'
-				title='入库'
-				this.btn1="扫ecu码"
-				this.btn2='扫二维码'
-			} else if(this.type==1) {
+				title = '入库'
+				this.btn1 = "扫ecu码"
+				this.btn2 = '扫二维码'
+			} else if (this.type == 1) {
 				this.btnname = '换二维码'
-				title='换二维码'
-				this.btn1="扫ecu码"
-				this.btn2='扫新的二维码'
-			}
-			else if(this.type==2){
+				title = '换二维码'
+				this.btn1 = "扫ecu码"
+				this.btn2 = '扫新的二维码'
+			} else if (this.type == 2) {
 				this.btnname = '换ecu'
-				title='换ecu'
-				this.btn1="扫新的ecu码"
-				this.btn2='扫二维码'
+				title = '换ecu'
+				this.btn1 = "扫新的ecu码"
+				this.btn2 = '扫二维码'
 			}
 			wx.setNavigationBarTitle({
-				title:title
+				title: title
 			})
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
+			chosefault(item,i) {
+				this.models = item.name
+				this.isActive=i
+				console.log('models', this.models)
+			},
 			// 换二维码
-			changesn(){
+			changesn() {
 				var options = {
 					url: '/bike/change_sn', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -117,7 +143,7 @@
 				})
 			},
 			// 换ecu
-			changeecu(){
+			changeecu() {
 				var options = {
 					url: '/bike/change_ecu', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -210,7 +236,7 @@
 				});
 			},
 			// 入库
-			rukustate() {
+			rukustate(models) {
 				uni.showLoading({
 					title: '入库中'
 				});
@@ -220,10 +246,11 @@
 					context: '',
 					data: {
 						"imei": this.swapdata[0].val,
-						"ecu_sn": this.swapdata[1].val
+						"ecu_sn": this.swapdata[1].val,
+						"model": models
 					}
 				}
-				this.$httpReq(options).then((res) => {                    
+				this.$httpReq(options).then((res) => {
 					setTimeout(function() {
 						uni.hideLoading();
 					}, 2000);
@@ -259,10 +286,10 @@
 					return
 				}
 				if (this.type == 0) {
-					this.rukustate()
-				} else if(this.type==1) {
+					this.rukustate(this.models)
+				} else if (this.type == 1) {
 					this.changesn()
-				}else if(this.type==2){
+				} else if (this.type == 2) {
 					this.changeecu()
 				}
 			},
@@ -282,6 +309,27 @@
 			font-size: 34upx;
 			height: 140upx;
 			width: 240upx;
+		}
+
+		.borderrights {
+			color: #F6C700;
+			border: 1upx solid #F6C700;
+		}
+
+		.result-fault {
+			margin-top: 20upx;
+			display: flex;
+			flex-wrap: wrap;
+
+			.result-fault-view {
+				width: 40%;
+				margin-left: 40upx;
+				text-align: center;
+				margin-top: 20upx;
+				background-color: white;
+				height: 80upx;
+				line-height: 80upx;
+			}
 		}
 
 		/* margin-bottom: 20upx; */

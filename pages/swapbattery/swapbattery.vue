@@ -704,10 +704,7 @@
 											this.reportblue(1, loadtime)
 										}
 									}, 5000)
-								}else{
-									this.reportblue(1, loadtime)
-								}
-												
+								}												
 								this.orderid = res.info.id
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',
