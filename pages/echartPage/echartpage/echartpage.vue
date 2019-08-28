@@ -121,15 +121,17 @@
 							orderobj.bikeper=bikepers
 							this.orderlist.push(orderobj)
 						}
-						orderNum.data = user_order_growth
-						orderMoney.data = user_order_amount_growth
-						bikeeffic.data=bike_count_daily
+						// 倒序
+						this.orderlist.reverse()
+						orderNum.data = user_order_growth.reverse()
+						orderMoney.data = user_order_amount_growth.reverse()
+						bikeeffic.data=bike_count_daily.reverse()
 						let LineA = {
 							categories: [],
 							series: []
 						};
 						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
-						LineA.categories = datatimes;
+						LineA.categories = datatimes.reverse();
 						LineA.series.push(orderNum)
 						LineA.series.push(orderMoney)
 						LineA.series.push(bikeeffic)

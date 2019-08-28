@@ -63,7 +63,9 @@
 				]
 			}
 		},
-		onLoad(){
+		onLoad(){			
+		},
+		onShow(){
 			try {
 				const value = uni.getStorageSync('userinfo');
 				if (value) {
@@ -73,7 +75,6 @@
 			} catch (e) {
 				// error
 			}
-			
 		},
 		components: {
 			itemCell

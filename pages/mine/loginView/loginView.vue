@@ -27,9 +27,10 @@
 				phoneNumber: "",
 			}
 		},
-		onLoad() {
+		onLoad() {			
 			this.getLoginData();
 			this.getdirectinfo()
+			this.getsysversion()
 		},
 		computed: mapState(['userinfo']),
 		methods: {
@@ -50,9 +51,49 @@
 					console.log('字典信息', res)
 					if (res.status == 0) {
 						this.setDirectinfo(res.direct)
-						if (res.direct.version == "VERSION_FOR_AUDIT") {
+						// if (res.direct.version == "VERSION_FOR_AUDIT") {
+						// 	this.loginbyphone()
+						// } 
+						// else {
+							// try {
+							// 	const value = uni.getStorageSync('userinfo');
+							// 	console.log('value', value)
+							// 	if (value.status == 0) {
+							// 		uni.switchTab({
+							// 			url: '/pages/tabbar/index/index',
+							// 			success: res => {},
+							// 			fail: () => {},
+							// 			complete: () => {}
+							// 		});
+							// 	}
+							// } catch (e) {
+							// 	// error
+							// 	console.log('e', e)
+							// }
+						// }
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 获取体验版还是正式版
+			getsysversion() {
+				var options = {
+					url: '/config/wxmpenv', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {						
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('获取系统版本（体验/正式）', res)
+					if(res.status==0){
+						if(res.env=='exp'){
 							this.loginbyphone()
-						} else {
+						}else{							
 							try {
 								const value = uni.getStorageSync('userinfo');
 								console.log('value', value)

@@ -181,11 +181,30 @@
 					ble.onBLECharacteristicValueChange((res)=> {
 						console.log('特征值返回', res)
 						var gps = res.slice(0, 2)
+						var blestate=res.slice(-3, -2)
 						// 开电池锁
 						if (gps == 34) {
-							if (res.slice(-3, -2) == 0) {
+							if (blestate == 0) {
 								blueWriteState = 1
-								_self.reportblue(0, loadtime)
+								_self.reportblue(0, loadtime,'')
+							}else{
+								var bleerrstate=''
+								if(blestate==1){
+									bleerrstate='token校验失败'
+								}else if(blestate==2){
+									bleerrstate='请求内容错误'
+								}else if(blestate==3){
+									bleerrstate='请求命令错误'
+								}else if(blestate==4){
+									bleerrstate='操作失败'
+								}else if(blestate==5){
+									bleerrstate='命令不支持'
+								}else if(blestate==6){
+									bleerrstate='车辆正在骑行中'
+								}else{
+									bleerrstate='未知失败'
+								}
+								_self.reportblue(1, loadtime,bleerrstate)
 							}
 						}
 						// 获取gps数据
@@ -626,7 +645,7 @@
 				})
 			},
 			//上报蓝牙操作
-			reportblue(state, loadtime) {
+			reportblue(state, loadtime,errname) {
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
@@ -644,7 +663,7 @@
 								"result": { //操作结果
 									"success": state, //0=成功， 其他值失败
 									"cost": loadtime, //耗时 1000毫秒
-									"error_msg": "" //错误信息
+									"error_msg": errname //错误信息
 								},
 								"user_coordinate": [res.longitude, res.latitude]
 							}
@@ -701,7 +720,7 @@
 									blueWriteState = 0
 									setTimeout(() => {
 										if (blueWriteState = 0) {
-											this.reportblue(1, loadtime)
+											this.reportblue(1, loadtime,'无特征值返回')
 										}
 									}, 5000)
 								}												

@@ -7,7 +7,7 @@
 			<view class="page-section page-section-gap">
 				<map class='map-base-view' :class="{'activemap':actives}" :style="{height:(!showcorverview.bottom&&!actives&&!hidebutton?'100vh':'83vh')}" :scale="scale" id='firstmap' :latitude="latitude"
 				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
-				 @markertap='markclick' @regionchange="functionNames" @end="functionName">
+				 @markertap='markclick' @controltap='mapcentionloc' @regionchange="functionNames" @end="functionName" :controls='maploc'>
 					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
 					<!-- <cover-view v-if="actives" class='movecar-view'>拖动地图选择车站</cover-view> -->
 					<cover-view v-if="showmapselect" class='map-select-view'>
@@ -90,6 +90,12 @@
 		]),
 		data() {
 			return {
+				maploc:[{
+					id:88,
+					position:{left:10,top:30,width:50,height:50},
+					iconPath:'../../static/image/location.png',
+					clickable:true,
+				}],
 				inputval: '',
 				isActive: -1,
 				selectvals: 100,
@@ -344,7 +350,7 @@
 			goNewPage(item) {
 				this.setSn(item)
 				this.getcarinfo()
-			},
+			},			
 			getorder() {
 				var test = false
 				if (this.type == 3.1) {
@@ -478,6 +484,9 @@
 					}
 				}
 			},
+			mapcentionloc(){
+				this.mapinfo.moveToLocation()
+			},
 			// 点击创建车站
 			creatStop() {
 				this.actives = true
@@ -524,7 +533,7 @@
 				})
 			},
 			//上报蓝牙操作
-			reportblue(type, state, loadtime) {
+			reportblue(type, state, loadtime,errname) {
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
@@ -549,7 +558,7 @@
 								"result": { //操作结果
 									"success": state, //0=成功， 其他值失败
 									"cost": loadtime, //耗时 1000毫秒
-									"error_msg": "" //错误信息
+									"error_msg": errname //错误信息
 								},
 								"user_coordinate": [res.longitude, res.latitude]
 							}
@@ -581,10 +590,29 @@
 					ble.onBLECharacteristicValueChange(function(res) {
 						console.log('初始化监听', res)
 						var gps = res.slice(0, 2)
+						var blestate=res.slice(-3, -2)
 						if (gps == 20) {
-							if (res.slice(-3, -2) == 0) {
-								this.reportblue(10, 0, loadtime)
+							if (blestate == 0) {
+								this.reportblue(10, 0, loadtime,'')
 								blueWriteState = 1
+							}else{
+								var bleerrstate=''
+								if(blestate==1){
+									bleerrstate='token校验失败'
+								}else if(blestate==2){
+									bleerrstate='请求内容错误'
+								}else if(blestate==3){
+									bleerrstate='请求命令错误'
+								}else if(blestate==4){
+									bleerrstate='操作失败'
+								}else if(blestate==5){
+									bleerrstate='命令不支持'
+								}else if(blestate==6){
+									bleerrstate='车辆正在骑行中'
+								}else{
+									bleerrstate='未知失败'
+								}
+								this.reportblue(10, 1, loadtime,bleerrstate)
 							}
 						}
 					})
@@ -632,7 +660,7 @@
 									blueWriteState = 0
 									setTimeout(() => {
 										if (blueWriteState == 0) {
-											this.reportblue(10, 1, loadtime)
+											this.reportblue(10, 1, loadtime,'无特征值返回')
 										}
 									}, 5000)
 								}
@@ -1397,6 +1425,13 @@
 			left: 46%;
 			top: 42%;
 			width: 50upx;
+			height: auto;
+		}
+		.location-imgs {
+			position: absolute;
+			right: 40upx;
+			bottom: 100upx;
+			width: 100upx;
 			height: auto;
 		}
 
