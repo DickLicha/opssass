@@ -69,8 +69,12 @@ Vue.prototype.$invstate = function(type) {
 		var iconPath = '/static/mapicon/car_normal.png'
 		// 车辆
 		if (type == 'car') {
+			// 差+车
+			if(element.health_state==0 && element.repark_index!='0'){
+				iconPath = '/static/mapicon/car_bad+.png'
+			}
 			// 失联
-			if (0 === element.is_online) {
+			else if (0 === element.is_online) {
 				iconPath = '/static/mapicon/car_fault_black.png'
 			}
 			// 故障
@@ -88,10 +92,7 @@ Vue.prototype.$invstate = function(type) {
 			// 占用中
 			// else if (0 !== element.bus_state) {
 			// 	iconPath='/static/mapicon/bikeing.png'
-			// }
-			else if(element.health_state==0 && element.repark_index!='0'){
-				iconPath = '/static/mapicon/car_bad+.png'
-			}
+			// }			
 			// // 正常
 			// else if (0 === element.is_lower_battery && 0 === element.alert_state && 1 === element.health_state && 1 === element.is_online) {
 			// 	iconPath = '/static/mapicon/car_normal.png'

@@ -92,7 +92,7 @@
 			return {
 				maploc:[{
 					id:88,
-					position:{left:10,top:30,width:50,height:50},
+					position:{left:10,top:50,width:50,height:50},
 					iconPath:'../../static/image/location.png',
 					clickable:true,
 				}],

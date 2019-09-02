@@ -144,7 +144,8 @@
 								data: {
 									bike_id: _self.bikeinfo.id,
 									stat: stateSb,
-									gps: gpsSb
+									gps: gpsSb,
+									tm:new Date().getTime()
 								}
 							}
 							_self.$httpReq(options).then((res) => {

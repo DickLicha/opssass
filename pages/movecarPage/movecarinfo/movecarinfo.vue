@@ -13,7 +13,7 @@
 
 			<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
 				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key=i @click="detilpop(item,i,'middle-list')">
-					<view>{{item.bike_id}}</view>
+					<view>{{item.bike_sn}}</view>
 					<view class='view-border-letf'>{{getgrade(item.grade)}}</view>
 					<view class='view-border-letf'>{{remark(item.grade_info)}}</view>
 					<!-- <view class='view-border-letf' :class="{'right-view':item.status=='正常','wrong-view':item.status=='异常'}">{{item.status}}</view> -->
