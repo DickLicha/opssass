@@ -26,7 +26,7 @@
 		<view class="remark-view">
 			<textarea class="area-view" value="" placeholder="备注" v-model="remark" />
 			</view>
-		<view class="submit-btn" @click="uploadImage()"> 提交 </view>
+		<view class="submit-btn" :class="{'unsubmit':bubmitstate}" @click="uploadImage()"> 提交 </view>
 	</view>
 </template>
 
@@ -42,6 +42,7 @@
 		},
 		data() {
 			return {
+				bubmitstate:false,
 				bikeInfo: {},
 				headTitle: "用户还车地点",
 				remark: "",
@@ -52,6 +53,7 @@
 					{"content":"选择违章类型"},
 					{"content":""},
 					{"content":""},
+					{"content":"举报状态：未举报"},
 				],
 				imageArr: [
 				],
@@ -115,7 +117,35 @@
 						_this.dataList[1].content = "电话号码：" + res.info.last_order_oper_phone;
 						_this.dataList[2].content = "用户：" + res.info.last_order_oper_name;
 						_this.dataList[5].content = res.info.address;
-						
+						this.geturorder(res.info.last_order_id)
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 用户订单信息
+			geturorder(id) {
+				var options = {
+					url: '/urorder/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						order_id:id
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('用户订单信息',res)
+					if (res.status == 0) {
+						// 订单被举报过
+						if(!!res.info.is_violational){
+							this.bubmitstate=true
+							this.dataList[6].content=`举报状态：已举报，罚款${res.info.violation_fine/100}元`
+						}else{
+							this.bubmitstate=false
+						}
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -137,6 +167,14 @@
 				}
 			},
 			uploadImage(){
+				if(this.bubmitstate){
+					uni.showToast({
+						title: '该订单已举报',
+						icon:'none',
+						duration:2000,
+					});
+					return
+				}
 				if (this.violationsInfo.itemContent == null || this.violationsInfo.itemContent == "") {
 					// console.log("选择违章类型")
 					// this.dataList[3].content = "选择违章类型";
@@ -227,6 +265,9 @@
 						uni.showToast({
 							title: "提交成功",
 						})
+						uni.navigateBack({
+							delta: 1
+						});
 					}else{
 						uni.showToast({
 							title: res.message?res.message:'提交失败',
@@ -383,16 +424,16 @@
 		position: relative;
 		display: flex;
 		align-items: flex-start;
-		margin-top: 30upx;
+		margin-top: 14upx;
 		height: auto;
 		width: 100%;
 		// background-color: antiquewhite;
 		.photo-item{
 			position: relative;
 			.image-content{
-				margin-top: 20upx;
-				width: 140upx;
-				height: 140upx;
+				margin-top: 8upx;
+				width: 80upx;
+				height: 80upx;
 				margin-left: 30upx;
 				// background-color: blanchedalmond;
 			}
@@ -409,27 +450,31 @@
 		}
 	}
 	.remark-view{
-		margin-top: 20upx;
+		margin-top: 12upx;
 		margin-left: 20upx;
 		margin-right: 20upx;
-		height: 200upx;
+		height: 120upx;
 		border: 2upx solid gold;
 		.area-view{
-			margin-top: 20upx;
+			margin-top: 12upx;
 			margin-left: 20upx;
 			// margin-right: 20upx;
 			width: calc(100% - 40upx);
-			height: 160upx;
+			height: 120upx;
 			// background-color: red;
 		}
 	}
 	.submit-btn{
-		margin: 40upx 20upx 40upx 20upx;
+		margin: 14upx 20upx 40upx 20upx;
 		height: 88upx;
 		border-radius: 6upx;
 		background-color: gold;
 		text-align: center;
 		line-height: 88upx;
 		font-size: 36upx;
+	}
+	.unsubmit{
+		background-color: rgb(210,210,210)!important;
+		color: rgb(50,50,50);
 	}
 </style>

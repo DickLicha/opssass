@@ -18,21 +18,21 @@
 				vioList: [
 				],
 				shownodata:false,
+				type:0,
 			}
 		},
-		onLoad() {
-			
+		onLoad(e) {
+			console.log('ee',e)
+			this.type=e.type
 		},
 		onShow(){
 			this.getList()
 		},
 		methods: {
 			cellClick(e){
-				console.log("???");
 				var d = this.vioList[e];
-				console.log("begin push:", d , JSON.stringify(d));
 				uni.navigateTo({
-					url: "../reportViolationsDetail/reportViolationsDetail?data=" + JSON.stringify(d)
+					url: `../reportViolationsDetail/reportViolationsDetail?data=${JSON.stringify(d)}&type=${this.type}`
 				})
 			},
 			getNewTime(e){
@@ -44,7 +44,7 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"order_state": 0,
+						"order_state": parseInt(this.type),
 						"pno": 1,
 						"psize": 20
 					}

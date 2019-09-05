@@ -78,6 +78,7 @@
 				})
 			},
 			scanCodes(){
+				console.log('type',this.type)
 				wx.scanCode({
 					onlyFromCamera: true,
 					success: res => {
@@ -85,9 +86,20 @@
 						var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 						this.setSn(bikesn)
 						this.inputval=bikesn
+						if(this.type==99){
+							if (this.type == '99') {
+								uni.navigateTo({
+									url: "/pages/violations/reportViolations/reportViolations",
+									success: res => {},
+									fail: () => {},
+									complete: () => {}
+								});
+								return
+							}
+						}
 						setTimeout(()=>{
 							this.getcarinfo()
-						},1500)
+						},500)
 					
 					},
 					fail: res => {
@@ -207,13 +219,6 @@
 									if (chids[j].visitable == 1) {
 										tempobj = {}
 										switch (chids[j].uri) {
-											// case '10.0':
-											// 	tempobj = {
-											// 		name: '违章骑行',
-											// 		val: '',
-											// 	}
-											// 	templist.push(tempobj)
-											// 	break
 											case '10.1':
 												tempobj = {
 													name: '举报',
@@ -226,13 +231,27 @@
 												tempobj = {
 													name: '处理',
 													val: '',
-													url: '/pages/violations/reportViolationsList/reportViolationsList',
+													url: '/pages/violations/reportViolationsList/reportViolationsList?type=0',
 												}
 												templist.push(tempobj)
 												break
+											case '10.3':
+												tempobj = {
+													name: '违章审核',
+													val: '',
+													url: '/pages/violations/reportViolationsList/reportViolationsList?type=10',
+												}
+												templist.push(tempobj)
+												break	
 										}
 									}
 								}
+								// tempobj = {
+								// 	name: '违章审核',
+								// 	val: '',
+								// 	url: '/pages/violations/reportViolationsList/reportViolationsList?type=10',
+								// }
+								// templist.push(tempobj)
 								break
 							case '11':
 								for (let j = 0; j < chids.length; j++) {
@@ -327,7 +346,8 @@
 								fail: () => {},
 								complete: () => {}
 							});
-						}else if(this.type=='14'){
+						}
+						else if(this.type=='14'){
 							uni.navigateTo({
 								url: "/pages/endOrder/endorder/endorder",
 								success: res => {},

@@ -786,11 +786,6 @@
 								this.buttonname = '更换电池'
 								this.afterelect = res.info.battery_level_after + '%'
 								this.addelect = res.info.battery_level_after - this.bikeinfo.battery_level + '%'
-								// this.getcarinfo()
-								// uni.showToast({
-								// 	title: '关成功!',
-								// 	duration: 2000
-								// })
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '关锁失败!',

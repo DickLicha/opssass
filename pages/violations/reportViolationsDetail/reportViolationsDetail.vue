@@ -11,6 +11,10 @@
 				<view class="user-msg-item">{{item}}</view>
 				<image class="arrow" src="/static/image/right_arrow.png" mode="" v-show="index == 0"></image>
 			</view>
+			<view v-if="ordertype==10" class="user-msg-view" v-for="(item, index) in laheList" :key="index">
+				<view class="user-msg-item">{{item}}</view>
+				<image class="arrow" src="/static/image/right_arrow.png" mode="" v-show="index == 0"></image>
+			</view>
 			<view class="line-view"></view>
 			<image class="image-view" :src="item" v-for="(item, index) in imgArr" :key="index" mode="" @click="imageClick(index)"></image>
 			<view class="violations-view" v-for="(item, index) in findList" :key="index">{{item}}</view>
@@ -52,6 +56,8 @@
 		},
 		data() {
 			return {
+				lahestate:false,
+				faqianstate:false,
 				headTitle : "用户还车位子吻合",
 				violationsList: [
 					"违章时间：2019-05-17 09:11:23",
@@ -62,6 +68,8 @@
 					"用户姓名：王建立",
 					"用户手机号码：13900008888",
 					"车辆编号：801313560"
+				],
+				laheList: [
 				],
 				imgArr: [
 					
@@ -88,11 +96,17 @@
 				fineArr: [
 					"10",
 				],
+				ordertype:0,
+				faqianjine:0,
+				laheitime:0
 			}
 		},
 		onLoad(e) {
-			console.log( "detail：", JSON.parse(e.data));
+			console.log( "detail：", e);
 			var data = JSON.parse(e.data)
+			console.log('black',data.blacklisted)
+			this.laheList[0]='拉黑时间:'+data.blacklisted/3600/24+'天'
+			this.ordertype=e.type
 			this.orderData = data;
 			
 			this.violationsList[0] = "违章时间：" + data.create_time;
@@ -107,9 +121,39 @@
 			this.findList[0] = "发现时间：" + data.create_time;
 			this.findList[1] = "发现地点：" + data.address;
 			
-			console.log(this.blacklistedArr);
+			this.geturorder(data.bound_order_id)
 		},
 		methods: {
+			// 用户订单信息
+			geturorder(id) {
+				var options = {
+					url: '/urorder/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						order_id:id
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('用户订单信息',res)
+					if (res.status == 0) {
+						// 订单被举报过										
+						if(!!res.info.violation_blacklisted){
+							this.lahestate=true
+							this.laheitime=res.violation_blacklisted
+						}
+						if(!!res.info.violation_fine){
+							this.faqianstate=true
+							this.faqianjine=res.info.violation_fine
+						}
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			headClick(){
 				console.log("this.orderData.bound_order_id: ", this.orderData.bound_order_id);
 				uni.navigateTo({
@@ -117,20 +161,34 @@
 				})
 			},
 			publish(){
+				// 不拉黑
+				if(this.ordertype==10){
+					this.agreelahe(0)
+					return
+				}
+				var agreestate=1
 				if (this.blacklistedSelect != 20) {
 					this.blacklisted = this.blacklistedArr[this.blacklistedSelect] * 24 * 3600;
+					if(this.blacklisted!=0){
+						agreestate=10
+					}
 				}
 				if (this.fineSelect != 20) {
 					this.fine = this.fineArr[this.fineSelect] * 100;
 				}
+				this.dealorder(agreestate,this.fine,this.blacklisted)			
+			},
+			// 处理举报信息
+			dealorder(agreestate,fine,blacklisted){
 				var options = {
 					url: '/urviolation/punish', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
 						"order_id": this.orderData.id,
-						"fine": this.fine,
-						"blacklisted": this.blacklisted
+						"fine": fine,
+						"blacklisted": blacklisted,
+						"agree":agreestate
 					}
 				}
 				var _this = this;
@@ -138,6 +196,41 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('数据列表：',res);
+					if (res.status == 0) {
+						uni.showToast({
+							title: "处理成功",
+							icon: "success",
+							duration:2000, 
+						})
+						uni.navigateBack({
+							
+						});
+					}else{
+						uni.showToast({
+							title: res.message,
+							icon: "none"
+						})
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 同意拉黑
+			agreelahe(state){
+				var options = {
+					url: '/urviolation/audit', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"order_id": this.orderData.id,
+						"agreed":state
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('拉黑：',res);
 					if (res.status == 0) {
 						uni.showToast({
 							title: "处理成功",
@@ -167,10 +260,23 @@
 				})
 			},
 			togglePopup(e){
+				if(this.ordertype==10){
+					// this.dealorder(1,this.faqianjine,this.laheitime)
+					this.agreelahe(1)
+					return
+				}
 				this.type = e;
 			},
 			blackBtnClick(e){
 				console.log(e);
+				if(this.lahestate){
+					uni.showToast({
+						title: '该订单已拉黑！',
+						icon:'none',
+						duration:2000
+					});
+					return
+				}
 				if (this.blacklistedSelect == e) {
 					this.blacklistedSelect = 20;
 				}else{
@@ -179,6 +285,14 @@
 			},
 			fBtnClick(e){
 				console.log(e);
+				if(this.faqianstate){
+					uni.showToast({
+						title: '该订单已罚钱！',
+						icon:'none',
+						duration:2000
+					});
+					return
+				}
 				if (this.fineSelect == e) {
 					this.fineSelect = 20;
 				}else{

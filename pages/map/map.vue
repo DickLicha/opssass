@@ -5,7 +5,7 @@
 		</view>
 		<view class="page-body">
 			<view class="page-section page-section-gap">
-				<map class='map-base-view' :class="{'activemap':actives}" :style="{height:(!showcorverview.bottom&&!actives&&!hidebutton?'100vh':'83vh')}" :scale="scale" id='firstmap' :latitude="latitude"
+				<map class='map-base-view' :class="{'activemap':actives}" :style="{height:(!showcorverview.bottom&&!actives&&!hidebutton||type==0.1?'100vh':'83vh')}" :scale="scale" id='firstmap' :latitude="latitude"
 				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				 @markertap='markclick' @controltap='mapcentionloc' @regionchange="functionNames" @end="functionName" :controls='maploc'>
 					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>

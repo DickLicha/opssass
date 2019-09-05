@@ -146,13 +146,6 @@
 							this.taskdata.push(tempobj)
 						}
 					}
-					// var testobj={
-					// 	name : '仪表盘',
-					// 	url : '/pages/echartPage/echartpage/echartpage',
-					// 	text : '',
-					// 	src : require('../../../static/image/che_zhan.png'),
-					// }
-					// this.taskdata.push(testobj)
 				}
 			})
 		},
