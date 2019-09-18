@@ -1,7 +1,7 @@
 import store from '@/store'
 export default function(obj) {
 	// if (obj.method === 'GET') {
-	let sn, id,cityid;
+	let sn, id,cityid,baseurl;
 	sn = store.state.sn || ""
 		var token='',value={}
 	try {
@@ -10,6 +10,11 @@ export default function(obj) {
 			token=value.token
 			cityid=value.userinfo.city_id
 		}
+	} catch (e) {
+		// error
+	}
+	try {
+		baseurl = uni.getStorageSync('baseurl');
 	} catch (e) {
 		// error
 	}
@@ -50,13 +55,6 @@ export default function(obj) {
 		token: token,
 		city_id: cityid,
 	})
-
-	// let baseUrl = 'https://dd0001.izyscp.com'
-	// 线上测试版本
-	// let baseUrl = 'https://api.dd-test.ildjoy.com'
-	let baseUrl = 'https://api.dd.ildjoy.com'
-	// 线上真实环境
-	// let baseUrl = 'https://api.dd-dev.ildjoy.com'
 	for (const key in obj.data) {
 		const element = obj.data[key]
 		// 全选
@@ -66,8 +64,8 @@ export default function(obj) {
 	}
 	let p = new Promise((resolve, reject) => {
 		uni.request({
-			// url: baseUrl + obj.url,
-			url: store.state.baseurl + obj.url,
+			url: baseurl + obj.url,
+			// url: store.state.baseurl + obj.url,
 			method: obj.method || 'GET',
 			data: obj.data || {},
 			header: obj.header || {},

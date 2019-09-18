@@ -122,7 +122,7 @@
 							this.orderlist.push(orderobj)
 						}
 						// 倒序
-						this.orderlist.reverse()
+						// this.orderlist.reverse()
 						orderNum.data = user_order_growth.reverse()
 						orderMoney.data = user_order_amount_growth.reverse()
 						bikeeffic.data=bike_count_daily.reverse()

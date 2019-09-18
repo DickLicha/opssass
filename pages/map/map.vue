@@ -1,11 +1,11 @@
 <template>
 	<view>
-		<view v-if="showcorverview.head" style='height: 80upx;width:100%;background-color:rgba(100,100,100,.5);'>
+		<view v-if="showcorverview.head" style='height: 6vh;width:100%;background-color:rgba(100,100,100,.5);'>
 			<baseheader :title="headviewtext" @show='showMapSelect' :hasBack='true' :xialajiantou='true'></baseheader>
 		</view>
 		<view class="page-body">
 			<view class="page-section page-section-gap">
-				<map class='map-base-view' :class="{'activemap':actives}" :style="{height:(!showcorverview.bottom&&!actives&&!hidebutton||type==0.1?'100vh':'83vh')}" :scale="scale" id='firstmap' :latitude="latitude"
+				<map class='map-base-view' :class="{'activemap':actives}" :style="{height:(!showcorverview.bottom&&!actives&&!hidebutton||type==0.1?'100vh':'84vh')}" :scale="scale" id='firstmap' :latitude="latitude"
 				 :longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles' :polyline="polyline"
 				 @markertap='markclick' @controltap='mapcentionloc' @regionchange="functionNames" @end="functionName" :controls='maploc'>
 					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>

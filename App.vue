@@ -7,7 +7,20 @@
 		},
 		onLaunch: function() {
 			console.log('App Launch');
-		
+			var baseurl=''
+			try {
+				baseurl = uni.getStorageSync('baseurl');
+			} catch (e) {
+				// error
+			}
+			console.log('baseurl',baseurl)
+			if(baseurl==''){
+				try {
+				    uni.setStorageSync('baseurl', 'https://api.dd.ildjoy.com');
+				} catch (e) {
+				    // error
+				}
+			}		
 			if (wx.canIUse('getUpdateManager')) {
 				const updateManager = wx.getUpdateManager()
 				updateManager.onCheckForUpdate(function(res) {

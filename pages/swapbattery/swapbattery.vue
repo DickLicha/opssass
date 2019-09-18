@@ -786,6 +786,9 @@
 								this.buttonname = '更换电池'
 								this.afterelect = res.info.battery_level_after + '%'
 								this.addelect = res.info.battery_level_after - this.bikeinfo.battery_level + '%'
+								setTimeout(()=>{
+									uni.navigateBack()
+								},2000)			
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '关锁失败!',

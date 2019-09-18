@@ -2,7 +2,7 @@
 	<view>
 		<view class="base-input">
 			<view class="flewd">
-				<input class="uni-input letter-spacings input-width" maxlength="8" v-model="title" @input="hideKeyboard" type="number"
+				<input class="uni-input letter-spacings input-width base-inputh"  maxlength="8" v-model="title" @input="hideKeyboard" type="number"
 				 placeholder="请输入编号" />
 				 <img  src="../../static/image/scan2x.png" class='base-img' @click='scancode'  alt="">
 			</view>
@@ -67,7 +67,12 @@
 							} catch (e) {
 								// error
 							}
-							this.setBaseurl('https://api.dd-test.ildjoy.com')
+							try {
+							    uni.setStorageSync('baseurl', 'https://api.dd-test.ildjoy.com');
+							} catch (e) {
+							    // error
+							}
+							// this.setBaseurl('https://api.dd-test.ildjoy.com')
 							uni.showToast({
 								title: '已切换到测试环境',
 								icon: 'none',
@@ -84,7 +89,12 @@
 							return
 						}
 						if (this.title == '86350000') {
-							this.setBaseurl('https://api.dd.ildjoy.com')
+							// this.setBaseurl('https://api.dd.ildjoy.com')
+							try {
+							    uni.setStorageSync('baseurl', 'https://api.dd.ildjoy.com');
+							} catch (e) {
+							    // error
+							}
 							try {
 								uni.removeStorageSync('userinfo');
 							} catch (e) {
@@ -127,9 +137,12 @@
 <style scoped lang="scss">
 	.base-input{
 		// background-color: #007AFF;
-		height:10vh;
+		height:8vh;
 		.sure-btn{
 			margin: 10upx 20upx;
+		}
+		.base-inputh{
+			height:5vh
 		}
 		.flewd{
 			display: flex;
@@ -140,8 +153,8 @@
 			}
 		}
 		.base-img{
-			width:44upx;
-			height:44upx;
+			width:48upx;
+			height:48upx;
 			margin-top: 20upx;
 			margin-right: 30upx;
 		}

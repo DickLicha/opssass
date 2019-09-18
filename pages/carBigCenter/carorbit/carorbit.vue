@@ -61,8 +61,8 @@
 					console.log('维修记录', res.list[0])
 					if (res.status==0) {
 						this.carcenterdata1[0].val=res.list[0].creator_name
-						this.carcenterdata1[1].val=res.list[0].create_time
-						this.carcenterdata1[2].val=res.list[0].report_fault_descs[0]+' , '+res.list[0].report_fault_descs[1]
+						this.carcenterdata1[1].val=res.list[0].create_time						
+						this.carcenterdata1[2].val=res.list[0].report_fault_descs.join(',')
 						this.carcenterdata1[3].val=res.list[0].repairer_name
 					}
 				}).catch((err) => {

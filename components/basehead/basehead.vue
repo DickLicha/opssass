@@ -60,8 +60,8 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 80upx;
-		line-height: 80upx;
+		height: 6vh;
+		line-height: 6vh;
 		// background-color: #f5f5f5;
 		background-color: #555555;
 		text-align: center;

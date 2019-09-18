@@ -34,7 +34,7 @@
 		},
 		computed: mapState(['userinfo']),
 		methods: {
-			...mapMutations(['setUserinfo', 'setDirectinfo','setGobelrelogin']),
+			...mapMutations(['setUserinfo', 'setDirectinfo','setGobelrelogin','setBaseurl']),
 			// 获取字典配置信息
 			getdirectinfo() {
 				var options = {

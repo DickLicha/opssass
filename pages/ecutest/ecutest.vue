@@ -68,6 +68,13 @@
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
 			go(item) {
+				if(this.imei==''){
+					uni.showToast({
+						title:'请先扫码',
+						duration:2000,
+					})
+					return
+				}
 				uni.showLoading({
 					title: `${item.name}中`
 				});
