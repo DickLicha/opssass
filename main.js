@@ -46,7 +46,7 @@ Vue.prototype.$parkstate = function(type) {
 }
 Vue.prototype.$resourcesurl = function() {
 	// return 'http://www.fishors.com:9030'
-	return 'https://upload.dd.ildjoy.com'
+	return 'https://upload.lxys3344.xyz.com'
 }
 Vue.prototype.$invstate = function(type) {
 	let inv_name = ''
