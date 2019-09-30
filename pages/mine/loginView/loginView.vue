@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<image class="img-view" src='/static/login.png'></image>
+		<image class="img-view" src='/static/youdachuxing.png'></image>
 		<!-- <button class="login-view" open-type="getUserInfo" type="primary" @getuserinfo="getuserinfo">授权</button> -->
 		<button class="login-view" type="primary" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信用户快速登录</button>
 		<view class="bottom-view">
@@ -11,6 +11,7 @@
 </template>
 
 <script>
+	var dontloginbyphone=1
 	import {
 		mapState,
 		mapMutations
@@ -71,7 +72,7 @@
 					// res为服务端返回数据的根对象
 					console.log('获取系统版本（体验/正式）', res)
 					if(res.status==0){
-						if(res.env=='exp'){
+						if(res.env=='exp' && dontloginbyphone){
 							this.loginbyphone()
 						}else{							
 							try {

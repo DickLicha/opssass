@@ -91,7 +91,7 @@
 						if (this.title == '86350000') {
 							// this.setBaseurl('https://api.dd.ildjoy.com')
 							try {
-							    uni.setStorageSync('baseurl', 'https://api.test.lxys3344.xyz');
+							    uni.setStorageSync('baseurl', 'https://api.lxys3344.xyz');
 							} catch (e) {
 							    // error
 							}
