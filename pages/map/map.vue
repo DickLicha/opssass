@@ -234,11 +234,11 @@
 						break;
 					case '1.1':
 						this.scanbuttonname = '扫码入库'
-						this.nearbyfaultcar(this.longitude, this.latitude, 0)
+						this.nearbyfaultcar(this.longitude, this.latitude, '*')
 						this.selectcoverdata = [{
 								name: '全部故障车辆',
 								id: '0',
-								val: '0'
+								val: '*'
 							},
 							{
 								name: '未入库故障车辆',
@@ -746,7 +746,7 @@
 								self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt)
 								break
 							case '1.1':
-								self.nearbyfaultcar(res.longitude, res.latitude, 0)
+								self.nearbyfaultcar(res.longitude, res.latitude, '*')
 								break
 							case '3.1':
 								if (this.selectvals == 100) {
@@ -1083,6 +1083,10 @@
 			},
 			// 附近故障的车辆
 			nearbyfaultcar(longitude, latitude, type) {
+				var types='*'
+				if(type!='*'){
+					types=parseInt(type)
+				}
 				var options = {
 					url: '/bike/list_to_repair_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -1092,7 +1096,7 @@
 							longitude,
 							latitude
 						],
-						"inv_state": parseInt(type)
+						"inv_state": types
 						// "is_under_volt": 1
 					}
 				}
