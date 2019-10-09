@@ -9,6 +9,9 @@
 					<text>{{item.name}}</text>
 				</view>
 			</view>
+			<view class="remark-view" v-if="selectval.indexOf('99')!=-1">
+				<textarea class="area-view" value="" placeholder="备注" v-model="remark" />
+			</view>
 			<view>
 				<button class='share-button-default submit-btn' type='primary' @click='submitorder'>提交报修</button>
 			</view>
@@ -107,6 +110,7 @@
 				],
 				selectval: [],
 				selectdesc: [],
+				remark:'',
 			}
 		},
 		computed: mapState(['faultinfo', 'directinfo', 'bikeinfo']),
@@ -148,6 +152,10 @@
 				}
 			},
 			submitorder() {
+				var otherindex=this.selectval.indexOf('99')
+				if(otherindex!=-1){
+					this.selectdesc[parseInt(otherindex)]=this.remark
+				}				
 				var options = {
 					url: '/brorder/add', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -201,6 +209,21 @@
 		.borderrights {
 			color: #F6C700;
 			border: 1upx solid #F6C700;
+		}
+		.remark-view{
+			margin-top: 20upx;
+			margin-left: 40upx;
+			margin-right: 60upx;
+			height: 140upx;
+			/* border: 2upx solid gold; */
+			background-color: white;
+			.area-view{
+				margin-top: 20upx;
+				margin-left: 20upx;
+				width: calc(100% - 80upx);
+				height: 80upx;
+				// background-color: red;
+			}
 		}
 
 		/* margin-bottom: 20upx; */
