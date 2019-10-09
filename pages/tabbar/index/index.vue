@@ -1,7 +1,7 @@
 <template>
 	<view class='wrap'>
 		<view class='head-view'>
-			<image class='scan-img' @click="scaninto" src='/static/image/scan2x.png'>扫一扫</image>
+			<image class='scan-img' @click="scaninto" src='/static/image/scan2x.png'></image>
 			<text class='head-view-text'>首页</text>
 		</view>
 		<view class='common-base-view'>
