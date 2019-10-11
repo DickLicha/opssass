@@ -84,7 +84,7 @@ export default function(obj) {
 				// },300)			
 				if(res.data.status==-530){					
 					uni.showToast({
-						title: 'token验证失败，请重新登录',
+						title: 'token验证失败，请重新登录 ',
 						icon:'none',
 						duration:1000
 					});
