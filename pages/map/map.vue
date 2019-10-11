@@ -838,7 +838,7 @@
 							tmpObjs.name = res.parks[j].name
 							// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
 							var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
+							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum,res.parks[j].grade)
 							tmpObjs.type = 'stop'
 							tmpObjs.bickcount = res.parks[j].bike_count
 							tmpObjs.allkcount = res.parks[j].capacity
@@ -903,7 +903,7 @@
 							tmpObjs.name = res.parks[j].name
 							// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
 							var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
+							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum,res.parks[j].grade)
 							tmpObjs.type = 'stop'
 							tmpObjs.bickcount = res.parks[j].bike_count
 							tmpObjs.allkcount = res.parks[j].capacity

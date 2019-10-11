@@ -65,7 +65,7 @@ Vue.prototype.$invstate = function(type) {
 }
 
 
-	Vue.prototype.$imagepath = function(element, type, bikenum) {
+	Vue.prototype.$imagepath = function(element, type, bikenum,grade) {
 		var iconPath = '/static/mapicon/car_normal.png'
 		// 车辆
 		if (type == 'car') {
@@ -85,34 +85,38 @@ Vue.prototype.$invstate = function(type) {
 			else if (1 === element.is_lower_battery) {
 				iconPath = '/static/mapicon/low_elec.png'
 			}
-			// 预警
-			// else if (0 !== element.alert_state) {
-			// 	iconPath = '/static/mapicon/yujing.png'
-			// }
-			// 占用中
-			// else if (0 !== element.bus_state) {
-			// 	iconPath='/static/mapicon/bikeing.png'
-			// }			
-			// // 正常
-			// else if (0 === element.is_lower_battery && 0 === element.alert_state && 1 === element.health_state && 1 === element.is_online) {
-			// 	iconPath = '/static/mapicon/car_normal.png'
-			// }
 		}
 		// 车站
+		// else if (type == 'stop') {
+		// 	if (10 < bikenum && bikenum <= 20) {
+		// 		iconPath = '/static/mapicon/stop_10+.png'
+		// 	} else if (20 < bikenum && bikenum <= 30) {
+		// 		iconPath = '/static/mapicon/stop_20+.png'
+		// 	} else if (30 < bikenum && bikenum <= 40) {
+		// 		iconPath = '/static/mapicon/stop_30+.png'
+		// 	} else if (40 < bikenum) {
+		// 		iconPath = '/static/mapicon/stop_40+.png'
+		// 	} else if(bikenum<0){
+		// 		iconPath = '/static/mapicon/stop_0.png'
+		// 	}
+		// 	else {
+		// 		iconPath = '/static/mapicon/stop_' + bikenum + '.png'
+		// 	}
+		// }
 		else if (type == 'stop') {
 			if (10 < bikenum && bikenum <= 20) {
-				iconPath = '/static/mapicon/stop_10+.png'
+				iconPath = '/static/stop/stop_10+_'+ grade +'.png'
 			} else if (20 < bikenum && bikenum <= 30) {
-				iconPath = '/static/mapicon/stop_20+.png'
+				iconPath = '/static/stop/stop_20+_'+ grade +'.png'
 			} else if (30 < bikenum && bikenum <= 40) {
-				iconPath = '/static/mapicon/stop_30+.png'
+				iconPath = '/static/stop/stop_30+_'+ grade +'.png'
 			} else if (40 < bikenum) {
-				iconPath = '/static/mapicon/stop_40+.png'
+				iconPath = '/static/stop/stop_40+_'+ grade +'.png'
 			} else if(bikenum<0){
-				iconPath = '/static/mapicon/stop_0.png'
+				iconPath = '/static/stop/stop_0_'+ grade +'.png'
 			}
 			else {
-				iconPath = '/static/mapicon/stop_' + bikenum + '.png'
+				iconPath = '/static/stop/stop_' + bikenum + '_'+ grade +'.png'
 			}
 		}
 		return iconPath
