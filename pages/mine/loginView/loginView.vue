@@ -11,7 +11,7 @@
 </template>
 
 <script>
-	var dontloginbyphone=1
+	var dontloginbyphone=0
 	import {
 		mapState,
 		mapMutations
