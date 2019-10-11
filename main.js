@@ -87,36 +87,15 @@ Vue.prototype.$invstate = function(type) {
 			}
 		}
 		// 车站
-		// else if (type == 'stop') {
-		// 	if (10 < bikenum && bikenum <= 20) {
-		// 		iconPath = '/static/mapicon/stop_10+.png'
-		// 	} else if (20 < bikenum && bikenum <= 30) {
-		// 		iconPath = '/static/mapicon/stop_20+.png'
-		// 	} else if (30 < bikenum && bikenum <= 40) {
-		// 		iconPath = '/static/mapicon/stop_30+.png'
-		// 	} else if (40 < bikenum) {
-		// 		iconPath = '/static/mapicon/stop_40+.png'
-		// 	} else if(bikenum<0){
-		// 		iconPath = '/static/mapicon/stop_0.png'
-		// 	}
-		// 	else {
-		// 		iconPath = '/static/mapicon/stop_' + bikenum + '.png'
-		// 	}
-		// }
 		else if (type == 'stop') {
-			if (10 < bikenum && bikenum <= 20) {
-				iconPath = '/static/stop/stop_10+_'+ grade +'.png'
-			} else if (20 < bikenum && bikenum <= 30) {
-				iconPath = '/static/stop/stop_20+_'+ grade +'.png'
-			} else if (30 < bikenum && bikenum <= 40) {
-				iconPath = '/static/stop/stop_30+_'+ grade +'.png'
-			} else if (40 < bikenum) {
-				iconPath = '/static/stop/stop_40+_'+ grade +'.png'
-			} else if(bikenum<0){
-				iconPath = '/static/stop/stop_0_'+ grade +'.png'
+			if (10 < bikenum) {
+				iconPath = '/static/stop/stop_'+ grade+'_10@3x.png'
+			}
+			else if(bikenum<0){
+				iconPath = '/static/stop/stop_'+ grade+'_0@3x.png'
 			}
 			else {
-				iconPath = '/static/stop/stop_' + bikenum + '_'+ grade +'.png'
+				iconPath = '/static/stop/stop_' + grade + '_'+ bikenum +'@3x.png'
 			}
 		}
 		return iconPath
