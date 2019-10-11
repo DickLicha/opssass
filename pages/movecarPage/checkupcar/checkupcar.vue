@@ -628,7 +628,7 @@
 							}
 							tmpObjs.name = res.parks[j].name
 							var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum)
+							tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum,res.parks[j].grade)
 							tmpObjs.type = 'stop'
 							tmpObjs.bickcount = res.parks[j].bike_count
 							tmpObjs.allkcount = res.parks[j].capacity
