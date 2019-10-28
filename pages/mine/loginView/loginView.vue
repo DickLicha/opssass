@@ -72,6 +72,7 @@
 					// res为服务端返回数据的根对象
 					console.log('获取系统版本（体验/正式）', res)
 					if(res.status==0){
+						var cc=false
 						if(res.env=='exp'){
 							this.loginbyphone()
 						}else{							
