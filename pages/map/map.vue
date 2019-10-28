@@ -54,7 +54,7 @@
 					</uni-popup>
 				</view>
 				<view v-if="showcorverview.bottom" style='margin-top: 10upx;'>
-					<base-input @scanCode='scanCode(1)' @goPage='goNewPage' :title='inputval' @hidekeygo='manualsgo'></base-input>
+					<base-input @scanCode='scanCode(1)' @goPage='goNewPage'  @hidekeygo='manualsgo'></base-input>
 				</view>
 
 			</view>
@@ -330,6 +330,7 @@
 				// this.isActive = 0
 				// this.selectvals = this.selectcoverdata[0].val
 			}, 1000)
+
 		},
 		onUnload() {
 			this.mapinfo = null
@@ -747,9 +748,6 @@
 							case '1.1':
 								self.nearbyfaultcar(res.longitude, res.latitude, '*')
 								break
-							case '2':
-								self.maintainbikelist(res.longitude, res.latitude)
-								break	
 							case '3.1':
 								if (this.selectvals == 100) {
 									self.nearbymovecar(res.longitude, res.latitude, "*", '*')
@@ -807,7 +805,7 @@
 								}
 								tmpObj.name = res.list[i].name
 								// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
-								tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0,0)
+								tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
 								tmpObj.type = 'car'
 								tmpObj.width = 39
 								tmpObj.height = 48
@@ -1001,7 +999,7 @@
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
 							// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
-							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0,0)
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
 							tmpObj.width = 39
 							tmpObj.height = 48
 							this.covers.push(tmpObj)
@@ -1116,7 +1114,7 @@
 							tmpObj.width = 39
 							tmpObj.height = 48
 							// tmpObj.iconPath = '../../static/image/0-small.png'
-							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0,0)
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
 							this.covers.push(tmpObj)
 						}
 					}
@@ -1362,7 +1360,7 @@
 							tmpObj.id = res.list[i].id
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
-							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0,0)
+							tmpObj.iconPath = '../../static/mapicon/car_normal.png'
 							tmpObj.width = 39
 							tmpObj.height = 48
 							this.covers.push(tmpObj)

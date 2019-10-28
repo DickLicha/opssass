@@ -19,9 +19,9 @@
 	export default {
 		name: "Headers",
 		props: {
-			title: {
-				default: ''
-			},
+			// title: {
+			// 	default: ''
+			// },
 			hasBack: {
 				default: false
 			},
@@ -37,7 +37,8 @@
 		},
 		data(){
 			return{
-				titles:''
+				titles:'',
+				title:''
 			}
 		},
 		methods: {
