@@ -214,6 +214,7 @@
 			}
 		},
 		onShow() {
+			this.clicksuccess=false
 			setTimeout(() => {
 				this.serverice(this.longitude, this.latitude)
 				switch (this.type) {

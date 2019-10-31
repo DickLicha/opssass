@@ -72,26 +72,34 @@
 					// res为服务端返回数据的根对象
 					console.log('获取系统版本（体验/正式）', res)
 					if(res.status==0){
-						var cc=false
-						if(res.env=='exp'){
-							this.loginbyphone()
-						}else{							
-							try {
-								const value = uni.getStorageSync('userinfo');
-								console.log('value', value)
-								if (value.status == 0) {
-									uni.switchTab({
-										url: '/pages/tabbar/index/index',
-										success: res => {},
-										fail: () => {},
-										complete: () => {}
-									});
-								}
-							} catch (e) {
-								// error
-								console.log('e', e)
-							}
+						try {
+						    var realuser = uni.getStorageSync('realuser');
+							console.log(555,realuser)
+						    if(res.env=='exp' && realuser){
+						    	this.loginbyphone()
+						    }
+						    else{							
+						    	try {
+						    		const value = uni.getStorageSync('userinfo');
+						    		console.log('value', value)
+						    		if (value.status == 0) {
+						    			uni.switchTab({
+						    				url: '/pages/tabbar/index/index',
+						    				success: res => {},
+						    				fail: () => {},
+						    				complete: () => {}
+						    			});
+						    		}
+						    	} catch (e) {
+						    		// error
+						    		console.log('e', e)
+						    	}
+						    }
+						} catch (e) {
+						    // error
 						}
+						
+						
 					}
 				}).catch((err) => {
 					// 请求失败的回调

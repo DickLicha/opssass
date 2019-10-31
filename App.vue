@@ -1,4 +1,4 @@
-<script>	
+<script>
 	export default {
 		data() {
 			return {
@@ -7,20 +7,29 @@
 		},
 		onLaunch: function() {
 			console.log('App Launch');
-			var baseurl=''
+			var baseurl = '',
+				realuser = ''
 			try {
 				baseurl = uni.getStorageSync('baseurl');
+				realuser = uni.getStorageSync('realuser');
 			} catch (e) {
 				// error
 			}
-			console.log('baseurl',baseurl)
-			if(baseurl==''){
+			console.log('baseurl', realuser)
+			if (baseurl == '') {
 				try {
 				    uni.setStorageSync('baseurl', 'https://api.lxys3344.xyz');
 				} catch (e) {
-				    // error
+					// error
 				}
-			}		
+			}
+			if (realuser == '') {
+				try {
+					uni.setStorageSync('realuser', true);
+				} catch (e) {
+					// error
+				}
+			}
 			if (wx.canIUse('getUpdateManager')) {
 				const updateManager = wx.getUpdateManager()
 				updateManager.onCheckForUpdate(function(res) {
