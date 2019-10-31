@@ -151,6 +151,7 @@
 					data: {
 						// "bike_id": '',
 						"new_imei": this.swapdata[0].val,
+						"new_ecu_sn": this.swapdata[1].val,
 					}
 				}
 				this.$httpReq(options).then((res) => {
