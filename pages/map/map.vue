@@ -54,7 +54,7 @@
 					</uni-popup>
 				</view>
 				<view v-if="showcorverview.bottom" style='margin-top: 10upx;'>
-					<base-input @scanCode='scanCode(1)' @goPage='goNewPage'  @hidekeygo='manualsgo'></base-input>
+					<base-input @scanCode='scanCode(1)' @goPage='goNewPage' :title='inputval' @hidekeygo='manualsgo'></base-input>
 				</view>
 
 			</view>
@@ -90,6 +90,7 @@
 		]),
 		data() {
 			return {
+				clicksuccess:false,
 				maploc:[{
 					id:88,
 					position:{left:10,top:50,width:50,height:50},
@@ -330,7 +331,6 @@
 				// this.isActive = 0
 				// this.selectvals = this.selectcoverdata[0].val
 			}, 1000)
-
 		},
 		onUnload() {
 			this.mapinfo = null
@@ -405,16 +405,12 @@
 				}
 
 			},
-			markclick(e) {
-				console.log(3333, e)
+			markclick(e) {				
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
 					pointname = '',
-					parkid = ""
-				// var pointname=''
-				// tmpObjs.bickcount=res.parks[j].bike_count
-				// tmpObjs.allkcount=res.parks[j].capacity			
+					parkid = ""		
 				for (let k = 0; k < this.covers.length; k++) {
 					if (this.covers[k].id == e.markerId) {
 						pointtype = this.covers[k].type
@@ -448,12 +444,16 @@
 								complete: () => {}
 							});
 						} else {
-							uni.navigateTo({
-								url: `/pages/movecarPage/stopdetilview/stopdetilview?name=${pointname}&&bickcount=${bickcount}&&allcount=${allkcount}&&id=${e.markerId}`,
-								success: res => {},
-								fail: () => {},
-								complete: () => {}
-							});
+							if(this.clicksuccess==false){
+								uni.navigateTo({
+									url: `/pages/movecarPage/stopdetilview/stopdetilview?name=${pointname}&&bickcount=${bickcount}&&allcount=${allkcount}&&id=${e.markerId}`,
+									success: res => {
+										this.clicksuccess=true
+									},
+									fail: () => {},
+									complete: () => {}
+								});
+							}			
 						}
 					} else {
 						this.setBikeid(e.markerId)
@@ -748,6 +748,9 @@
 							case '1.1':
 								self.nearbyfaultcar(res.longitude, res.latitude, '*')
 								break
+							case '2':
+								self.maintainbikelist(res.longitude, res.latitude)
+								break	
 							case '3.1':
 								if (this.selectvals == 100) {
 									self.nearbymovecar(res.longitude, res.latitude, "*", '*')
@@ -805,7 +808,7 @@
 								}
 								tmpObj.name = res.list[i].name
 								// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
-								tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
+								tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0,0)
 								tmpObj.type = 'car'
 								tmpObj.width = 39
 								tmpObj.height = 48
@@ -999,7 +1002,7 @@
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
 							// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
-							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0,0)
 							tmpObj.width = 39
 							tmpObj.height = 48
 							this.covers.push(tmpObj)
@@ -1114,7 +1117,7 @@
 							tmpObj.width = 39
 							tmpObj.height = 48
 							// tmpObj.iconPath = '../../static/image/0-small.png'
-							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0)
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0,0)
 							this.covers.push(tmpObj)
 						}
 					}
@@ -1192,12 +1195,16 @@
 							this.setSn('*')
 							this.requestorder(datas)
 						} else {
-							uni.navigateTo({
-								url: this.urls,
-								success: res => {},
-								fail: () => {},
-								complete: () => {}
-							});
+							if(this.clicksuccess==false){
+								uni.navigateTo({
+									url: this.urls,
+									success: res => {
+										this.clicksuccess=true
+									},
+									fail: () => {},
+									complete: () => {}
+								});
+							}							
 						}
 					} else {
 						uni.showToast({
@@ -1360,7 +1367,7 @@
 							tmpObj.id = res.list[i].id
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
-							tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0,0)
 							tmpObj.width = 39
 							tmpObj.height = 48
 							this.covers.push(tmpObj)
