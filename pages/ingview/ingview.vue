@@ -47,6 +47,7 @@
 			}
 		},
 		methods: {
+			...mapMutations(['setBikeid','setBikeinfo']),
 			go(item) {
 				if(this.type==0){
 					uni.navigateTo({
@@ -56,12 +57,41 @@
 						complete: () => {}
 					});
 				}else{
-					uni.navigateTo({
-						url: `/pages/movecarPage/checkupcar/checkupcar?type=99&&bikeid=${item.bike_id}&&orderid=${item.id}`,
-						success: res => {},
-						fail: () => {},
-						complete: () => {}
-					});
+					this.setBikeid(item.bike_id)
+					var options = {
+						url: '/bike/info', //请求接口
+						method: 'POST', //请求方法全部大写，默认GET
+						context: '',
+						data: {}
+					}
+					this.$httpReq(options).then((res) => {
+						// 请求成功的回调
+						// res为服务端返回数据的根对象
+						if (res.status == 0) {
+							this.setBikeinfo(res.info)
+				            uni.navigateTo({
+				            	url: `/pages/movecarPage/checkupcar/checkupcar?type=99&&bikeid=${item.bike_id}&&orderid=${item.id}`,
+				            	success: res => {},
+				            	fail: () => {},
+				            	complete: () => {}
+				            });
+						} else {
+							uni.showToast({
+								title: res.message ? res.message : '获取车辆信息失败',
+								mask: false,
+								icon: 'none',
+								duration: 1500
+							});
+						}
+					}).catch((err) => {
+						// 请求失败的回调
+						console.error(err, '捕捉')
+					})
+					
+					
+					
+					
+					
 				}
 				
 			},
