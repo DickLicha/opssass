@@ -292,6 +292,12 @@
             "path" : "components/baseinput/baseinput",
             "style" : {}
         }
+        ,{
+            "path" : "pages/mine/phonelogin/phonelogin",
+            "style" : {
+				"navigationBarTitleText": "账号登录"
+			}
+        }
     ],
  //   "subPackages":
 	// [ 
