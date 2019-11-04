@@ -3,6 +3,7 @@
 		<image class="img-view" src='/static/login.png'></image>
 		<!-- <button class="login-view" open-type="getUserInfo" type="primary" @getuserinfo="getuserinfo">授权</button> -->
 		<button class="login-view" type="primary" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信用户快速登录</button>
+		<view class='login-pwd' @click="loginbypwd">账号密码登录</view>
 		<view class="bottom-view">
 			<view class="bottom-text">登录即代表同意</view>
 			<view class="click-text">《点点电单车用户协议》</view>
@@ -35,6 +36,14 @@
 		computed: mapState(['userinfo']),
 		methods: {
 			...mapMutations(['setUserinfo', 'setDirectinfo','setGobelrelogin','setBaseurl']),
+			loginbypwd(){
+				uni.navigateTo({
+					url: '/pages/mine/phonelogin/phonelogin',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
 			// 获取字典配置信息
 			getdirectinfo() {
 				var options = {
@@ -93,7 +102,6 @@
 					if(res.status==0){
 						try {
 						    var realuser = uni.getStorageSync('realuser');
-							console.log(555,realuser)
 						    if(res.env=='exp' && realuser){
 						    	this.loginbyphone()
 						    }
@@ -280,6 +288,12 @@
 		margin: 80upx 10% 0 10%;
 		background-color: greenyellow;
 		height: 88upx;
+	}
+	.login-pwd{
+		margin: 40upx 0;
+		text-align: center;
+		font-size: 34upx;
+		color: rgba(70,70,70,.8);
 	}
 
 	.phone-login-view {
