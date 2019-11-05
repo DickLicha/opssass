@@ -222,9 +222,13 @@
 					success: res => {
 						console.log('saoma', res)
 						if (type == 0) {
-							var result = res.result.split(' ')
-							this.swapdata[0].val = result[0].split(':')[1]
-							this.swapdata[1].val = result[1].split(':')[1]
+							if(res.result.indexOf(' ')==-1){
+								this.swapdata[1].val = res.result
+							}else{
+								var result = res.result.split(' ')
+								this.swapdata[0].val = result[0].split(':')[1]
+								this.swapdata[1].val = result[1].split(':')[1]
+							}							
 						} else {
 							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 							this.setSn(bikesn)
@@ -278,7 +282,7 @@
 				})
 			},
 			intostorage() {
-				if (this.swapdata[0].val == '' || this.swapdata[1].val == '' || this.swapbatterydata[0].val == '') {
+				if (this.swapdata[1].val == '' || this.swapbatterydata[0].val == '') {
 					uni.showToast({
 						title: '信息不能为空，请完善',
 						icon: 'none',

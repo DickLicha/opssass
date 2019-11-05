@@ -87,6 +87,7 @@
 					method: 'POST',
 					data: {
 						imei: this.imei,
+						sn:'',
 						index: index,
 					}
 				}
@@ -112,10 +113,13 @@
 				wx.scanCode({
 					onlyFromCamera: true,
 					success: res => {
-						var result = res.result.split(' ')
-						console.log(result, 'result')
-						var imei = result[0].split(':')[1]
-						this.imei = imei
+						if(res.result.indexOf(' ')==-1){
+							this.swapdata[1].val = res.result
+						}else{
+							var result = res.result.split(' ')
+							var imei = result[0].split(':')[1]
+							this.imei = imei
+						}						
 					},
 					fail: res => {
 
