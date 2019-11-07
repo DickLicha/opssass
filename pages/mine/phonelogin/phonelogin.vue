@@ -1,8 +1,7 @@
 <template>
 
 	<view class="contant-view">
-		<input class="input-text phone-text" type="number" v-model="phone" placeholder="请输入手机号码" focus="true" maxlength="11"
-		 @input="numberChange" />
+		<input class="input-text phone-text" type="number" v-model="phone" placeholder="请输入手机号码" focus="true" maxlength="11"/>
 		<view class="line-view"></view>
 		<view class="verification-view">
 			<input class="code-text" type="password" v-model="pwd" placeholder="请输入密码" />
@@ -15,7 +14,7 @@
 
 <script>
 	// import md5 from 'js-md5';
-	// import {hex_md5} from '../../../common/md5.js'
+	import {hex_md5} from '../../../common/md5.js'
 	export default {
 		onUnload() {
 			// clearInterval(this.countD);
