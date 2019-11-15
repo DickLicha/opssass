@@ -189,12 +189,19 @@
 					title: "正在上传图片..."
 				}) 
 				if (this.postImageArr.length < this.imageArr.length) {
+					var userinfos=''
+					try {
+						userinfos = uni.getStorageSync('userinfo');
+					} catch (e) {
+						// error
+					}
 					if (this.imageArr[this.postImageArr.length] != this.addImagePath){
 						uni.uploadFile({
 							url: this.$resourcesurl()+'/upload',
 							filePath: this.imageArr[this.postImageArr.length],
 							header: {
 								'content-type': 'multipart/form-data',
+								'token':userinfos.token,
 							},
 							name: 'uploadfile',
 							formData: {
@@ -226,9 +233,7 @@
 							fail:(res)=>{
 								uni.hideLoading();
 								 var parsedata=JSON.parse(res)
-								 console.log('res,',parsedata)	
-								
-		
+								 console.log('res,',parsedata)			
 							},
 							complete: (res) => {
 								
@@ -265,9 +270,12 @@
 						uni.showToast({
 							title: "提交成功",
 						})
-						uni.navigateBack({
-							delta: 1
-						});
+						setTimeout(()=>{
+							uni.navigateBack({
+								delta: 1
+							});
+						},2000)
+						
 					}else{
 						uni.showToast({
 							title: res.message?res.message:'提交失败',
