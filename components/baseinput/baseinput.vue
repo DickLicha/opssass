@@ -62,7 +62,7 @@
 			},
 			hideKeyboard(event) {
 					if (this.title.length === 8) {
-						if (this.title == '86350002') {
+						if (this.title == '86350003') {
 							// this.setBaseurl('https://api.dd.ildjoy.com')
 							try {
 							    uni.setStorageSync('realuser', false);
@@ -76,6 +76,33 @@
 							}
 							uni.showToast({
 								title: '已切换到真实用户',
+								icon: 'none',
+								duration: 2000,
+							});
+							setTimeout(() => {
+								uni.navigateTo({
+									url: '/pages/mine/loginView/loginView',
+									success: res => {},
+									fail: () => {},
+									complete: () => {}
+								});
+							}, 2000)
+							return
+						}
+						if (this.title == '86350002') {
+							try {
+								uni.removeStorageSync('userinfo');
+							} catch (e) {
+								// error
+							}
+							try {
+							    uni.setStorageSync('baseurl', 'https://api.gray.lxys3344.xyz');
+							} catch (e) {
+							    // error
+							}
+							// this.setBaseurl('https://api.dd-test.ildjoy.com')
+							uni.showToast({
+								title: '已切换到模拟环境',
 								icon: 'none',
 								duration: 2000,
 							});
