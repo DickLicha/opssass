@@ -222,7 +222,15 @@
 					success: res => {
 						console.log('saoma', res)
 						if (type == 0) {
-							if(res.result.indexOf(' ')==-1){
+							if(res.result.match(/\?bikesn=(.*)/)){
+								uni.showToast({
+									title: '请扫描正确的ecu码',
+									icon: 'none',
+									duration: 2000,
+								});
+								return
+							}
+							else if(res.result.indexOf(' ')==-1){								
 								this.swapdata[1].val = res.result
 							}else{
 								var result = res.result.split(' ')
@@ -230,10 +238,19 @@
 								this.swapdata[1].val = result[1].split(':')[1]
 							}							
 						} else {
-							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
-							this.setSn(bikesn)
-							this.setBikeid('*')
-							this.swapbatterydata[0].val = bikesn
+							if(res.result.match(/\?bikesn=(.*)/)){
+								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+								this.setSn(bikesn)
+								this.setBikeid('*')
+								this.swapbatterydata[0].val = bikesn
+							}else{
+								uni.showToast({
+									title: '请扫描正确的二维码',
+									icon: 'none',
+									duration: 2000,
+								});
+							}
+							
 						}
 					},
 					fail: res => {},

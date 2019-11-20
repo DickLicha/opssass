@@ -113,7 +113,15 @@
 				wx.scanCode({
 					onlyFromCamera: true,
 					success: res => {
-						if(res.result.indexOf(' ')==-1){
+						if(res.result.match(/\?bikesn=(.*)/)){
+							uni.showToast({
+								title: '请扫描正确的ecu码',
+								icon: 'none',
+								duration: 2000,
+							});
+							return
+						}
+						else if(res.result.indexOf(' ')==-1){
 							this.swapdata[1].val = res.result
 						}else{
 							var result = res.result.split(' ')
