@@ -100,72 +100,85 @@
 				if (!!name && !!_self.bikeinfo.bluetooth_token) {
 					ble.onBLECharacteristicValueChange((res) => {
 						console.log('特征值返回', res)
-						var gps = res.slice(0, 2)
-						var blestate=res.slice(-3, -2)
-						if (gps == 20) {
-							if (blestate == 0) {
+						
+						// 泰币特类型
+						if(_self.bikeinfo.ecu_model == "WA-209D"){
+							if(res=='连接成功'){
+								
+							}else if(res=='开锁成功'){
 								blueWriteState = 1
 								_self.reportblue(_self.openOrClose, 0, loadtime,'')
-							}else{
-								var bleerrstate=''
-								if(blestate==1){
-									bleerrstate='token校验失败'
-								}else if(blestate==2){
-									bleerrstate='请求内容错误'
-								}else if(blestate==3){
-									bleerrstate='请求命令错误'
-								}else if(blestate==4){
-									bleerrstate='操作失败'
-								}else if(blestate==5){
-									bleerrstate='命令不支持'
-								}else if(blestate==6){
-									bleerrstate='车辆正在骑行中'
-								}else{
-									bleerrstate='未知失败'
-								}
-								_self.reportblue(_self.openOrClose, 1, loadtime,bleerrstate)
+							}else if(res=='上锁成功'){
+								blueWriteState = 1
+								_self.reportblue(_self.openOrClose, 0, loadtime,'')
 							}
 						}
-						if (gps == 32) {
-							gpsSb = res
-							if (!!_self.bikeinfo.bluetooth_token) {
-								var str1 = ble.doCmd('21', '', _self.bikeinfo.bluetooth_token)
-								ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
-									console.log('蓝牙操作', res)
+						else{
+							var gps = res.slice(0, 2)
+							var blestate=res.slice(-3, -2)
+							if (gps == 20) {
+								if (blestate == 0) {
+									blueWriteState = 1
+									_self.reportblue(_self.openOrClose, 0, loadtime,'')
+								}else{
+									var bleerrstate=''
+									if(blestate==1){
+										bleerrstate='token校验失败'
+									}else if(blestate==2){
+										bleerrstate='请求内容错误'
+									}else if(blestate==3){
+										bleerrstate='请求命令错误'
+									}else if(blestate==4){
+										bleerrstate='操作失败'
+									}else if(blestate==5){
+										bleerrstate='命令不支持'
+									}else if(blestate==6){
+										bleerrstate='车辆正在骑行中'
+									}else{
+										bleerrstate='未知失败'
+									}
+									_self.reportblue(_self.openOrClose, 1, loadtime,bleerrstate)
+								}
+							}
+							if (gps == 32) {
+								gpsSb = res
+								if (!!_self.bikeinfo.bluetooth_token) {
+									var str1 = ble.doCmd('21', '', _self.bikeinfo.bluetooth_token)
+									ble.openLock(str1,'', function(res) {
+										console.log('蓝牙操作', res)
+									})
+								}
+							}
+							if (gps == 21) {
+								stateSb = res
+								var options = {
+									url: '/bike/report_bike_gps', //请求接口
+									method: 'POST', //请求方法全部大写，默认GET
+									context: '',
+									data: {
+										bike_id: _self.bikeinfo.id,
+										stat: stateSb,
+										gps: gpsSb,
+										tm:new Date().getTime()/1000
+									}
+								}
+								_self.$httpReq(options).then((res) => {
+									// 请求成功的回调
+									// res为服务端返回数据的根对象
+									console.log('上报', res)
+								}).catch((err) => {
+									// 请求失败的回调
+									console.error(err, '捕捉')
 								})
 							}
 						}
-						if (gps == 21) {
-							stateSb = res
-							var options = {
-								url: '/bike/report_bike_gps', //请求接口
-								method: 'POST', //请求方法全部大写，默认GET
-								context: '',
-								data: {
-									bike_id: _self.bikeinfo.id,
-									stat: stateSb,
-									gps: gpsSb,
-									tm:new Date().getTime()
-								}
-							}
-							_self.$httpReq(options).then((res) => {
-								// 请求成功的回调
-								// res为服务端返回数据的根对象
-								console.log('上报', res)
-							}).catch((err) => {
-								// 请求失败的回调
-								console.error(err, '捕捉')
-							})
-						}
-
 					})
-					ble.initBluetooth(name, (res) => {
+					ble.initBluetooth(_self.bikeinfo, (res) => {
 						_self.setBlueres(res)
 						if (!!_self.bikeinfo.bluetooth_token) {
 							var str1 = ble.doCmd('32', '', _self.bikeinfo.bluetooth_token)
-							console.log(55555)
 							setTimeout(() => {
-								ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(ress) {
+								ble.openLock(str1, '', function(ress) {
 									console.log('蓝牙操作', ress)
 								})
 							}, 0);
@@ -174,8 +187,7 @@
 					ble.onBluetoothAdapterStateChange(function(res) {
 						console.log('回调', res)
 						if (res.available == true && res.discovering == false && _self.bluestate == false) {
-							console.log(66666)
-							ble.initBluetooth(name, (res) => {
+							ble.initBluetooth(_self.bikeinfo, (res) => {
 								_self.setBlueres(res)
 							})
 						}
@@ -332,7 +344,7 @@
 								// 有token并且蓝牙已经连接
 								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
 									var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
-									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+									ble.openLock(str1, 'close', function(res) {
 										console.log('蓝牙操作', res)
 										loadtime = res.loadtime							
 									})
@@ -500,7 +512,7 @@
 								// this.setEndmove(true)
 								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1 && type==1) {
 									var str1 = ble.doCmd('20', '00', this.bikeinfo.bluetooth_token)
-									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+									ble.openLock(str1, 'open', function(res) {
 										console.log('蓝牙操作', res)
 									})
 									blueWriteState = 0

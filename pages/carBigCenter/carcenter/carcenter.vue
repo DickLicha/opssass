@@ -29,11 +29,6 @@
 			// })
 		},
 		onLoad() {
-			// var name = this.bikeinfo.bluetooth_name
-			// ble.initBluetooth(name, (res) => {
-			// 	this.setBlueres(res)
-			// })
-			// this.getcarinfo()
 			// 车型
 			this.carcenterdata1[0].val = this.bikeinfo.model
 			
@@ -381,11 +376,7 @@
 			
 			},
 			// 寻车铃
-			openring() {
-				// var str1 = doCmd('28', '09', this.bikeinfo.bluetooth_name)
-				// ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-				// 	console.log('蓝牙操作', res)
-				// })	
+			openring() {	
 				var options = {
 					url: '/bike/ring', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -411,10 +402,6 @@
 			},
 			// 单独开锁不产生绩效
 			unlockbattery() {
-				// var str1 = doCmd('34', '01', this.bikeinfo.bluetooth_name)
-				// ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
-				// 	console.log('蓝牙操作', res)
-				// })	
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {

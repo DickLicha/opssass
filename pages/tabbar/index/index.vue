@@ -25,24 +25,6 @@
 	// import ble from '../../../common/xa-bluetooth.js'
 	export default {
 		onLoad() {
-// 			var str1 = doCmd('34', '01', '0A0A0505')
-// 			ble.connectBluetooth(this, (res) => {
-// 				this.setBlueres(res)
-// 				// ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(res) {
-// 				// 	console.log('开锁', res)
-// 				// })				
-// 			})
-// 
-// 			ble.onBluetoothAdapterStateChange(function(res) {
-// 				console.log('回调', res)
-// 
-// 			})
-// 			ble.onBLEConnectionStateChange(function(res) {
-// 
-// 			})
-// 			ble.onBLECharacteristicValueChange(function(res) {
-// 
-// 			})
 		},
 		computed: mapState(['userinfo', 'blueres']),
 		onShow() {

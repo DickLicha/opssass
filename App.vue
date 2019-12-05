@@ -1,4 +1,5 @@
 <script>
+	import Utils from '@/common/uti.js';
 	export default {
 		data() {
 			return {
@@ -69,6 +70,7 @@
 
 				}
 			})
+
 			// #ifdef APP-PLUS
 			// 锁定屏幕方向
 			plus.screen.lockOrientation('portrait-primary'); //锁定
@@ -102,6 +104,16 @@
 		},
 		onShow: function() {
 			console.log('App Show')
+		},
+		methods:{
+			getutctimestring() {
+				var date = new Date()
+				var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+					date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+				var strs = new Date(now_utc)
+				console.log('timess',strs.valueOf().toString(16))
+				return strs.valueOf().toString(16)
+			}
 		},
 		onHide: function() {
 			console.log('App Hide')
