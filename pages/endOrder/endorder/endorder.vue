@@ -55,7 +55,7 @@
 		},
 		onLoad() {
 			var _self = this
-			var name = _self.bikeinfo.bluetooth_name			
+			var name = _self.bikeinfo.bluetooth_name
 			if (!!name && !!_self.bikeinfo.bluetooth_token) {
 				ble.onBLECharacteristicValueChange(function(res) {
 					console.log('特征值返回', res)
@@ -63,7 +63,7 @@
 					if (gps == 32) {
 						gpsSb = res
 						var str1 = ble.doCmd('21', '', _self.bikeinfo.bluetooth_token)
-						ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
+						ble.openLock(str1,'', function(res) {
 							console.log('蓝牙操作', res)
 						})
 					}
@@ -77,7 +77,7 @@
 								bike_id: _self.bikeinfo.id,
 								stat: stateSb,
 								gps: gpsSb,
-								tm:new Date().getTime()
+								tm:new Date().getTime()/1000
 							}
 						}
 						_self.$httpReq(options).then((res) => {
@@ -91,11 +91,11 @@
 					}
 				
 				})
-				ble.initBluetooth(name, (res) => {
+				ble.initBluetooth(_self.bikeinfo, (res) => {
 					_self.setBlueres(res)
 					var str1 = ble.doCmd('32', '', _self.bikeinfo.bluetooth_token)
 					setTimeout(() => {
-						ble.openLock(str1, _self.blueres.deviceId, _self.blueres.serviceId, _self.blueres.characterId, function(res) {
+						ble.openLock(str1, '', function(res) {
 							console.log('蓝牙操作', res)
 						})
 					}, 0);
@@ -104,7 +104,7 @@
 					console.log('回调', res)
 					if (res.available == true && res.discovering == false && _self.bluestate == false) {
 						console.log(66666)
-						ble.initBluetooth(name, (res) => {
+						ble.initBluetooth(_self.bikeinfo, (res) => {
 							_self.setBlueres(res)
 						})
 					}
@@ -196,7 +196,7 @@
 					order_id = this.bikeinfo.last_repark_order_id
 					if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
 						var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
-						ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+						ble.openLock(str1, 'open', function(res) {
 							console.log('蓝牙操作', res)
 						})
 					}										

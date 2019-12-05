@@ -585,43 +585,55 @@
 				var name = this.bikeinfo.bluetooth_name
 				var _self = this
 				if (!!name && !!_self.bikeinfo.bluetooth_token) {
-					ble.initBluetooth(name, (res) => {
+					ble.initBluetooth(_self.bikeinfo, (res) => {
 						_self.setBlueres(res)
 					})
 					ble.onBLECharacteristicValueChange(function(res) {
 						console.log('初始化监听', res)
-						var gps = res.slice(0, 2)
-						var blestate=res.slice(-3, -2)
-						if (gps == 20) {
-							if (blestate == 0) {
-								this.reportblue(10, 0, loadtime,'')
+						// 泰币特类型
+						if(_self.bikeinfo.ecu_model == "WA-209D"){
+							if(res=='连接成功'){
+								
+							}else if(res=='开锁成功'){
 								blueWriteState = 1
-							}else{
-								var bleerrstate=''
-								if(blestate==1){
-									bleerrstate='token校验失败'
-								}else if(blestate==2){
-									bleerrstate='请求内容错误'
-								}else if(blestate==3){
-									bleerrstate='请求命令错误'
-								}else if(blestate==4){
-									bleerrstate='操作失败'
-								}else if(blestate==5){
-									bleerrstate='命令不支持'
-								}else if(blestate==6){
-									bleerrstate='车辆正在骑行中'
-								}else{
-									bleerrstate='未知失败'
-								}
-								this.reportblue(10, 1, loadtime,bleerrstate)
+								_self.reportblue(_self.openOrClose, 0, loadtime,'')
+							}else if(res=='上锁成功'){
+								blueWriteState = 1
+								_self.reportblue(_self.openOrClose, 0, loadtime,'')
 							}
-						}
+						}else{
+							var gps = res.slice(0, 2)
+							var blestate=res.slice(-3, -2)
+							if (gps == 20) {
+								if (blestate == 0) {
+									this.reportblue(10, 0, loadtime,'')
+									blueWriteState = 1
+								}else{
+									var bleerrstate=''
+									if(blestate==1){
+										bleerrstate='token校验失败'
+									}else if(blestate==2){
+										bleerrstate='请求内容错误'
+									}else if(blestate==3){
+										bleerrstate='请求命令错误'
+									}else if(blestate==4){
+										bleerrstate='操作失败'
+									}else if(blestate==5){
+										bleerrstate='命令不支持'
+									}else if(blestate==6){
+										bleerrstate='车辆正在骑行中'
+									}else{
+										bleerrstate='未知失败'
+									}
+									this.reportblue(10, 1, loadtime,bleerrstate)
+								}
+							}
+						}						
 					})
 					ble.onBluetoothAdapterStateChange(function(res) {
 						console.log('回调', res)
 						if (res.available == true && res.discovering == false && _self.bluestate == false) {
-							console.log(66666)
-							ble.initBluetooth(name, (res) => {
+							ble.initBluetooth(_self.bikeinfo, (res) => {
 								_self.setBlueres(res)
 							})
 						}
