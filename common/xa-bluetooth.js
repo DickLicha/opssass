@@ -470,8 +470,8 @@ const _connectCtrl = () => {
 //获取秘钥
 const _getSecretKey = () => {
 	return new Promise(function(res, rej) {
-		// res('D9 B6 8B 9B AE D4 9E B1 21 7A D8 5B 6B 92 03 5C 4E 31 B6 9B 12 88 7A D9 8B 12 87 F7 CF 80 2E 93 ')
-		res(bluebikeinfo.bluetooth_token.replace(/(.{2})/g,'$1 '))
+		res('D9 B6 8B 9B AE D4 9E B1 21 7A D8 5B 6B 92 03 5C 4E 31 B6 9B 12 88 7A D9 8B 12 87 F7 CF 80 2E 93 ')
+		// res(bluebikeinfo.bluetooth_token.replace(/(.{2})/g,'$1 '))
 		//res(网络请求密钥);
 
 	});
