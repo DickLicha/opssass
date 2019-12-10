@@ -172,13 +172,13 @@
 				}
 			})
 		},
-		computed: mapState(['bikeinfo', 'bikeid', 'blueres', 'bluestate', 'blueconectstate','blueconectstate']),
+		computed: mapState(['bikeinfo', 'bikeid', 'blueres', 'bluestate', 'blueconectstate']),
 		onLoad(e) {
 			if (e.type != 99) {
 				var _self = this
 				var name = _self.bikeinfo.bluetooth_name
 				var devcode=_self.bikeinfo.ecu_sn
-				if ((!!name && !!_self.bikeinfo.bluetooth_token) || _self.bikeinfo.ecu_model=='WA-209D') {
+				if ((!!name && !!_self.bikeinfo.bluetooth_token)) {
 					ble.onBLECharacteristicValueChange((res)=> {
 						console.log('特征值返回', res)
 						// 泰币特类型
@@ -196,7 +196,8 @@
 								_self.reportblue(0, loadtime,'')
 							}
 							
-						}else{var gps = res.slice(0, 2)
+						}else{
+						var gps = res.slice(0, 2)
 						var blestate=res.slice(-3, -2)
 						// 开电池锁
 						if (gps == 34) {
@@ -261,7 +262,7 @@
 					// 初始化
 					ble.initBluetooth(_self.bikeinfo, (res) => {
 						_self.setBlueres(res)
-						if (!!_self.bikeinfo.bluetooth_token || _self.bikeinfo.ecu_model=='WA-209D') {
+						if (!!_self.bikeinfo.bluetooth_token) {
 							var str1 = ble.doCmd('32', '', _self.bikeinfo.bluetooth_token)
 							setTimeout(() => {
 								// ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(ress) {

@@ -666,7 +666,7 @@
 							if (res.status == 0) {
 								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
 									var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
-									ble.openLock(str1, this.blueres.deviceId, this.blueres.serviceId, this.blueres.characterId, function(res) {
+									ble.openLock(str1,'close', function(res) {
 										console.log('蓝牙操作', res)
 										loadtime = res.loadtime
 									})

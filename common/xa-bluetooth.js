@@ -208,7 +208,7 @@ const onBLECharacteristicValueChange = (callback) => {
 		// console.log('长度1', _dataLen);
 		if (bluebikeinfo.ecu_model == "WA-209D") {
 		    let resData = dataTransition.ab2hex(res.value);
-			console.log('resData', resData);
+			// console.log('resData', resData);
 		    if (resData.slice(0, 4) == 'aa10') { //<aa10550a00000000>
 		    	// console.log('指令发送成功：', resData);
 		    } else if (resData.slice(0, 3) == 'aa0' && _dataLen == 0) { //终端响应的数据，微信这里每次只接受8个字节 <aa00550a 003e4c10>
@@ -538,7 +538,7 @@ const _connectData = (data,type,callback) => {
 	// console.log('接收到的数据长度', _dataLen);
 	// console.log('内容长度', _dataContent.length);
 	if (_dataContent.length == _dataLen * 2) { //接收完该长度的字节和校验CRC成功之后再发送ACK
-	console.log('_dataContent-------',_dataContent)
+	// console.log('_dataContent-------',_dataContent)
 		let dc = _dataContent;
 		let dcArr = [];
 		// console.log('接收的数据长度字节：', dc.length / 2);
