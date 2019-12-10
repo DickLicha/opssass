@@ -208,7 +208,7 @@ const onBLECharacteristicValueChange = (callback) => {
 		// console.log('长度1', _dataLen);
 		if (bluebikeinfo.ecu_model == "WA-209D") {
 		    let resData = dataTransition.ab2hex(res.value);
-			console.log('resData', resData);
+			// console.log('resData', resData);
 		    if (resData.slice(0, 4) == 'aa10') { //<aa10550a00000000>
 		    	// console.log('指令发送成功：', resData);
 		    } else if (resData.slice(0, 3) == 'aa0' && _dataLen == 0) { //终端响应的数据，微信这里每次只接受8个字节 <aa00550a 003e4c10>
@@ -470,8 +470,8 @@ const _connectCtrl = () => {
 //获取秘钥
 const _getSecretKey = () => {
 	return new Promise(function(res, rej) {
-		res('D9 B6 8B 9B AE D4 9E B1 21 7A D8 5B 6B 92 03 5C 4E 31 B6 9B 12 88 7A D9 8B 12 87 F7 CF 80 2E 93 ')
-		// res(bluebikeinfo.bluetooth_token.replace(/(.{2})/g,'$1 '))
+		// res('D9 B6 8B 9B AE D4 9E B1 21 7A D8 5B 6B 92 03 5C 4E 31 B6 9B 12 88 7A D9 8B 12 87 F7 CF 80 2E 93 ')
+		res(bluebikeinfo.bluetooth_token.replace(/(.{2})/g,'$1 '))
 		//res(网络请求密钥);
 
 	});
@@ -538,7 +538,7 @@ const _connectData = (data,type,callback) => {
 	// console.log('接收到的数据长度', _dataLen);
 	// console.log('内容长度', _dataContent.length);
 	if (_dataContent.length == _dataLen * 2) { //接收完该长度的字节和校验CRC成功之后再发送ACK
-	console.log('_dataContent-------',_dataContent)
+	// console.log('_dataContent-------',_dataContent)
 		let dc = _dataContent;
 		let dcArr = [];
 		// console.log('接收的数据长度字节：', dc.length / 2);
