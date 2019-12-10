@@ -96,7 +96,7 @@
 								// error
 							}
 							try {
-							    uni.setStorageSync('baseurl', 'https://api.dd-test.ildjoy.com');
+							    uni.setStorageSync('baseurl', 'https://api.test.lexiangys.top');
 							} catch (e) {
 							    // error
 							}
@@ -119,7 +119,7 @@
 						if (this.title == '86350000') {
 							// this.setBaseurl('https://api.dd.ildjoy.com')
 							try {
-							    uni.setStorageSync('baseurl', 'https://api.dd.ildjoy.com');
+							    uni.setStorageSync('baseurl', 'https://api.lexiangys.top');
 							} catch (e) {
 							    // error
 							}

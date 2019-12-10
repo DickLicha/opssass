@@ -200,7 +200,7 @@
 						} catch (e) {
 							// error
 						}
-						this.setBaseurl('https://api.dd-test.ildjoy.com')
+						this.setBaseurl('https://api.test.lexiangys.top')
 						uni.showToast({
 							title: '已切换到测试环境',
 							icon: 'none',
@@ -217,7 +217,7 @@
 						return
 					}
 					if (this.carnum == '86350000') {
-						this.setBaseurl('https://api.dd.ildjoy.com')
+						this.setBaseurl('https://api.lexiangys.top')
 						try {
 							uni.removeStorageSync('userinfo');
 						} catch (e) {

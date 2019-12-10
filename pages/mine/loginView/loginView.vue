@@ -6,7 +6,7 @@
 		<view class='login-pwd' @click="loginbypwd">账号密码登录</view>
 		<view class="bottom-view">
 			<view class="bottom-text">登录即代表同意</view>
-			<view class="click-text">《点点电单车用户协议》</view>
+			<view class="click-text">《捷利达电单车用户协议》</view>
 		</view>
 	</view>
 </template>
