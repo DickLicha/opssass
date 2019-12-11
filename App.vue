@@ -19,7 +19,7 @@
 			console.log('baseurl', realuser)
 			if (baseurl == '') {
 				try {
-					uni.setStorageSync('baseurl', 'https://api.test.lexiangys.top');
+					uni.setStorageSync('baseurl', 'https://api.lexiangys.top');
 				} catch (e) {
 					// error
 				}

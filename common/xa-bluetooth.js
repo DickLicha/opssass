@@ -612,10 +612,10 @@ const _analysisBLEContent = (content) => {
 			wx.hideLoading();
 			console.log('蓝牙内容：', content);
 			wx.closeBLEConnection({
-				deviceId: _deviceId,
+				deviceId: deviceId,
 				success: function(res) {
 					console.log('主动断开连接', res);
-					_deviceId = '';
+					deviceId = '';
 					_hasReceive = false;
 					_connected = false;
 				},
