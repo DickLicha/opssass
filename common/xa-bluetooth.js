@@ -26,7 +26,7 @@ var systemtype = '',
 	_discoveryDevicesTime = 0,
 	_sendData = '', //发送的包数据
 	_tempTimer = null,
-	_glbelStateObj={}
+	_glbelStateObj = {}
 
 function ab2hex(buffer) {
 	const hexArr = Array.prototype.map.call(
@@ -47,7 +47,7 @@ function onBluetoothDeviceFound() {
 					//解密编号
 					let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
 					// console.log('machineNO',machineNO,bluebikeinfo.ecu_sn.toUpperCase().slice(0,9))
-					if (machineNO==bluebikeinfo.ecu_sn.toUpperCase().slice(0,9)) {
+					if (machineNO == bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)) {
 						coreapi(resolve, reject, res)
 					}
 				} else {
@@ -198,6 +198,9 @@ const onBluetoothAdapterStateChange = (callback) => {
 const onBLEConnectionStateChange = (callback) => {
 	wx.onBLEConnectionStateChange(function(res) {
 		// console.log('onBLEConnectionStateChange：', JSON.stringify(res));
+		if(res.connected==false){
+			store.commit('setBlueconectstate', 0)
+		}
 		callback(res);
 	})
 }
@@ -207,46 +210,46 @@ const onBLECharacteristicValueChange = (callback) => {
 		// console.log('********notify收到的数据：', dataTransition.ab2hex(res.value),new Date().getTime());		
 		// console.log('长度1', _dataLen);
 		if (bluebikeinfo.ecu_model == "WA-209D") {
-		    let resData = dataTransition.ab2hex(res.value);
+			let resData = dataTransition.ab2hex(res.value);
 			// console.log('resData', resData);
-		    if (resData.slice(0, 4) == 'aa10') { //<aa10550a00000000>
-		    	// console.log('指令发送成功：', resData);
-		    } else if (resData.slice(0, 3) == 'aa0' && _dataLen == 0) { //终端响应的数据，微信这里每次只接受8个字节 <aa00550a 003e4c10>
-		    	//16进制流水号
-		    	_sequenceId_16 = resData.slice(6, 8); //0a
+			if (resData.slice(0, 4) == 'aa10') { //<aa10550a00000000>
+				// console.log('指令发送成功：', resData);
+			} else if (resData.slice(0, 3) == 'aa0' && _dataLen == 0) { //终端响应的数据，微信这里每次只接受8个字节 <aa00550a 003e4c10>
+				//16进制流水号
+				_sequenceId_16 = resData.slice(6, 8); //0a
 				// console.log('_sequenceId_16',_sequenceId_16)
-		    	//计算数据包长度
-		    	_dataLen = parseInt(resData.slice(8, 12), 16); //003e,16=62
-		    	//计算systemState
-		    	_systemState = resData.slice(4, 6); //4c
-		    	//crc
-		    	_CRC16 = resData.slice(12, 16); //290e
-		    	// console.log("需要接收的字节长度", _dataLen);
-		    	if (resData.length > 16) {
-		    		_connectData(resData.slice(16),'ring',callback)
+				//计算数据包长度
+				_dataLen = parseInt(resData.slice(8, 12), 16); //003e,16=62
+				//计算systemState
+				_systemState = resData.slice(4, 6); //4c
+				//crc
+				_CRC16 = resData.slice(12, 16); //290e
+				// console.log("需要接收的字节长度", _dataLen);
+				if (resData.length > 16) {
+					_connectData(resData.slice(16), 'ring', callback)
 					// _ctrl('ring')
-		    	}
-		    } else if (resData.slice(0, 4) == 'aa30') {
-		    	console.log('CRC校验失败', _sendData);
-		    	wx.hideLoading();
-		    } else {
-		    	if (_dataLen > 0) {
-		    		//校验长度和crc
+				}
+			} else if (resData.slice(0, 4) == 'aa30') {
+				console.log('CRC校验失败', _sendData);
+				wx.hideLoading();
+			} else {
+				if (_dataLen > 0) {
+					//校验长度和crc
 					// console.log('othertype')
-		    		_connectData(res.value,'ring',callback)
-		    	}
-		    }
-		}else{
+					_connectData(res.value, 'ring', callback)
+				}
+			}
+		} else {
 			callback(ab2hex(res.value));
-		}		
+		}
 	})
 }
 //  写入数据
 //  开锁相关操作
-const openLock = (tocken,dowhat, success) => {
+const openLock = (tocken, dowhat, success) => {
 	starttime = Date.now()
 	if (bluebikeinfo.ecu_model == 'WA-209D') {
-		if(dowhat!=''){
+		if (dowhat != '') {
 			_ctrl(dowhat)
 		}
 	} else {
@@ -455,7 +458,7 @@ const _connectCtrl = () => {
 		let sequenceId_16 = dataTransition.getSequenceId(_sequenceId);
 		_sequenceId++;
 		let c = secretKey.toString().replace(/\s+/g, "");
-		console.log('secretKey',secretKey,c)
+		console.log('secretKey', secretKey, c)
 		let cLength = dataTransition.getSecretKeyLength(c);
 		//发送内容
 		let sendValue = `02 00 01 ${cLength}`; //02 连接命令  01连接请求 cLength秘钥长度。
@@ -464,34 +467,34 @@ const _connectCtrl = () => {
 		let header = dataTransition.header(allData, 0, '00', sequenceId_16);
 		let data = header + allData.replace(/\s+/g, "");
 		console.log('发送的连接数据：', data);
-		_sendCtrl(data,'connect');
+		_sendCtrl(data, 'connect');
 	})
 }
 //获取秘钥
 const _getSecretKey = () => {
 	return new Promise(function(res, rej) {
 		// res('D9 B6 8B 9B AE D4 9E B1 21 7A D8 5B 6B 92 03 5C 4E 31 B6 9B 12 88 7A D9 8B 12 87 F7 CF 80 2E 93 ')
-		res(bluebikeinfo.bluetooth_token.replace(/(.{2})/g,'$1 '))
+		res(bluebikeinfo.bluetooth_token.replace(/(.{2})/g, '$1 '))
 		//res(网络请求密钥);
 
 	});
 }
 //发送指令。判断是否分包发送数据
-const _sendCtrl = (data,name) => {
+const _sendCtrl = (data, name) => {
 	//保存一下发送的数据
 	_sendData = data;
 	// console.log("分包发送的数据", data)
 	//如果大于20个字节则分包发送,两个字符一个字节
 	var dataLen = Math.ceil(data.length / 40);
-	_glbelStateObj.name=name
-	_glbelStateObj.state=false
-	_hasReceive=false
+	_glbelStateObj.name = name
+	_glbelStateObj.state = false
+	_hasReceive = false
 	if (dataLen > 1) { //3
 		for (let i = 0; i < data.length; i += 40) {
 
 			let value = dataTransition.hexStringToArrayBuffer(data.slice(i, i + 40));
 			// console.log("分包发送的数据", data.slice(i, i + 40))
-            // console.log('write',value,new Date.getTime())
+			// console.log('write',value,new Date.getTime())
 			_writeBLECharacteristicValue(value);
 		}
 	} else {
@@ -528,17 +531,17 @@ const _writeBLECharacteristicValue = (value, cb) => {
 	}, 300);
 }
 //拼接数据，判断数据并发送
-const _connectData = (data,type,callback) => {
+const _connectData = (data, type, callback) => {
 	if (Object.prototype.toString.call(data) == '[object ArrayBuffer]') {
 		_dataContent += dataTransition.ab2hex(data);
 	} else {
 		_dataContent += data;
 	}
-	
+
 	// console.log('接收到的数据长度', _dataLen);
 	// console.log('内容长度', _dataContent.length);
 	if (_dataContent.length == _dataLen * 2) { //接收完该长度的字节和校验CRC成功之后再发送ACK
-	// console.log('_dataContent-------',_dataContent)
+		// console.log('_dataContent-------',_dataContent)
 		let dc = _dataContent;
 		let dcArr = [];
 		// console.log('接收的数据长度字节：', dc.length / 2);
@@ -597,42 +600,47 @@ const _analysisBLEContent = (content) => {
 				_hasReceive = true;
 				res('上锁成功');
 			}
-		}else if(content.indexOf('0300850100') > -1){
+		} else if (content.indexOf('0300850100') > -1) {
 			if (!_hasReceive) {
 				_hasReceive = true;
 				res('电池锁打开成功');
 			}
-		}
-		 else if (content.indexOf('04008524') > -1) {
+		} else if (content.indexOf('04008524') > -1) {
 			res('心跳包');
 		} else if (content.indexOf('020100') > -1) {
 			wx.hideLoading();
 			console.log('鉴权失败：', _sendData);
 		} else {
 			wx.hideLoading();
-			console.log('蓝牙内容：', content);
-			wx.closeBLEConnection({
-				deviceId: deviceId,
-				success: function(res) {
-					console.log('主动断开连接', res);
-					deviceId = '';
-					_hasReceive = false;
-					_connected = false;
-				},
-				fail: function(err) {
-					console.log('断开连接', err);
-				},
-				complete: function() {
-					wx.showToast({
-						title: content === '0300810102' ? '运动中不能上锁!' : '蓝牙操作失败，请重试!',
-						mask: true,
-						icon: 'none',
-						duration: 5000
-					})
-					//关闭蓝牙
-					//_closeBluetoothAdapter();
-				}
+			wx.showToast({
+				title: content === '0300810102' ? '运动中不能上锁!' : '蓝牙操作失败，请重试!',
+				mask: true,
+				icon: 'none',
+				duration: 5000
 			})
+			console.log('蓝牙内容：', content);
+			// wx.closeBLEConnection({
+			// 	deviceId: deviceId,
+			// 	success: function(res) {
+			// 		console.log('主动断开连接', res);
+			// 		deviceId = '';
+			// 		_hasReceive = false;
+			// 		_connected = false;
+			// 	},
+			// 	fail: function(err) {
+			// 		console.log('断开连接', err);
+			// 	},
+			// 	complete: function() {
+			// 		wx.showToast({
+			// 			title: content === '0300810102' ? '运动中不能上锁!' : '蓝牙操作失败，请重试!',
+			// 			mask: true,
+			// 			icon: 'none',
+			// 			duration: 5000
+			// 		})
+			// 		//关闭蓝牙
+			// 		//_closeBluetoothAdapter();
+			// 	}
+			// })
 		}
 	});
 }
@@ -643,19 +651,22 @@ const _ctrl = (flag) => {
 	let sendData = '';
 	if (flag == 'dianchisuo')
 		sendData = '03 00 05 01 01';
-	if (flag == 'ring')
+	else if (flag == 'ring')
 		sendData = '03 00 04 01 01';
-	if (flag === 'open') //<aa02000b 00057edb 03000201 00 >
-		// sendData = '03 00 04 01 01';
+	else if (flag === 'open') //电门锁打开
 		sendData = '03 00 02 01 00';
-	else if (flag === 'close') //<aa02000c 00058036 03000101 01 >
+	else if (flag === 'close') //设防
 		sendData = '03 00 01 01 01';
+	else if (flag === 'dmopen') //撤防
+		sendData = '03 00 01 01 00';
+	else if (flag === 'dmclose') //电门锁关闭
+		sendData = '03 00 02 01 01';
 	let header = dataTransition.header(sendData, 0, '00', sequenceId_16);
 	let data = header + sendData.replace(/\s+/g, "");
 	console.log(`发送${flag}指令`, data);
 
 	setTimeout(() => {
-		_sendCtrl(data,flag);
+		_sendCtrl(data, flag);
 	}, 500)
 }
 export default {

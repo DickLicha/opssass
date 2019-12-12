@@ -1,10 +1,24 @@
 <template>
-	<view class='wrap'>
+	<view class='wrap'>	
 		<view class='view-common'>
-			<view>
-				<text>当前车辆imei：</text>
+			<view class='ecutitle'>
+				<text>当前车辆编号:</text>
 				<text>{{imei}}</text>
 			</view>
+			<!-- <view class="uni-list">
+				<view class="uni-list-cell uni-list-cell-pd base-tarbar">
+					<view class="uni-list-cell-db">{{bleornet}}</view>
+					<switch @change="switch1Change" checked />
+				</view>
+			</view> -->
+			
+			<view >
+				<view class="uni-list-cell uni-list-cell-pd">
+					<view class='but-border' :class="{'selecttype':bleornet=='网络开'}"><text @click="changetype('网络开')" >网络</text></view>
+					<view class='but-border' :class="{'selecttype':bleornet=='蓝牙开'}"><text @click="changetype('蓝牙开')" >蓝牙</text></view>	
+				</view>
+			</view>
+			
 			<view class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
 				<text>{{item.name}}</text>
 			</view>
@@ -22,11 +36,12 @@
 	export default {
 		data() {
 			return {
+				bleornet: '网络开',
 				repairlist: [{
 						name: '开锁',
 						val: '0',
 						url: '/ecutest/unlock',
-						oper: 'open',
+						oper: 'dmopen',
 					},
 					{
 						name: '关锁',
@@ -38,7 +53,7 @@
 						name: '关电门',
 						val: '2',
 						url: '/ecutest/acc_off',
-						oper: 'close',
+						oper: 'dmclose',
 					},
 					{
 						name: '开电门',
@@ -73,11 +88,22 @@
 				imei: '',
 				isble: false,
 				// 通过ecu码规则判断类型
-				ecutype:'',
+				ecutype: '',
+				bikeinfo:'',
 			}
 		},
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
+			changetype(type){
+				this.bleornet = type
+				if(type=='蓝牙开'){
+					if(this.blueconectstate!=1){
+						if(!!this.bikeinfo){
+							this.initble(this.bikeinfo)
+						}						
+					}
+				}
+			},
 			// 通过sn获取车辆信息
 			getbikeinfobysn(sn) {
 				this.setSn('*')
@@ -97,6 +123,7 @@
 					console.log('车辆信息', res)
 					if (res.status == 0 && !!res.info.bluetooth_token) {
 						this.isble = true
+						this.bikeinfo=res.info
 						this.initble(res.info)
 					}
 				}).catch((err) => {
@@ -168,6 +195,15 @@
 						})
 					}
 				})
+				ble.onBLEConnectionStateChange(function(res){
+					console.log('蓝牙连接状态变化回调', res)
+					if(res.connected==false){
+						uni.showToast({
+							title: '连接断开请重连',
+							duration: 2000,
+						})
+					}
+				})
 				if (this.isble) {
 					ble.onBLECharacteristicValueChange((res) => {
 						console.log('特征值返回', res)
@@ -207,16 +243,16 @@
 					index = 1
 				}
 				// 走网络
-				if (this.blueconectstate != 1) {
-					var datas={}
-					if(this.ecutype=='tbt'){
-						datas={
+				if (this.blueconectstate != 1 || this.bleornet=='网络开') {
+					var datas = {}
+					if (this.ecutype == 'tbt') {
+						datas = {
 							imei: '',
 							sn: this.imei,
 							index: index,
 						}
-					}else{
-						datas={
+					} else {
+						datas = {
 							imei: this.imei,
 							sn: '',
 							index: index,
@@ -247,10 +283,10 @@
 				}
 				// 走蓝牙
 				else {
-					setTimeout(()=>{
+					setTimeout(() => {
 						uni.hideLoading()
-					},2000)					
-					ble.openLock('', item.oper, function(res) {						
+					}, 2000)
+					ble.openLock('', item.oper, function(res) {
 						console.log('蓝牙操作', res)
 						loadtime = res.loadtime
 					})
@@ -277,12 +313,12 @@
 							var result = res.result.split(' ')
 							var imei = result[0].split(':')[1]
 							this.imei = imei
-							this.ecutype='xiaoan'
+							this.ecutype = 'xiaoan'
 						} else {
 							this.imei = res.result
-							this.ecutype='tbt'
+							this.ecutype = 'tbt'
 							this.getbikeinfobysn(this.imei)
-						}						
+						}
 					},
 					fail: res => {
 
@@ -293,7 +329,7 @@
 		computed: mapState(['bluestate', 'blueconectstate', ]),
 		onLoad(e) {
 			console.log('eeee', e)
-			this.getbikeinfobysn('003451386')
+			// this.getbikeinfobysn('003451386')
 		}
 	}
 </script>
@@ -305,12 +341,34 @@
 		padding-bottom: 1upx;
 		/* height: 100vh; */
 		overflow: hidden;
-
+		.but-border{
+			border: 2upx solid rgb(246,199,0);
+			width: 200upx;
+			height: 80upx;
+			text-align: center;
+			border-radius: 12upx;
+			line-height: 80upx;
+			font-size: 40upx;
+			color:rgb(100,100,100);
+		}
+		.base-tarbar{
+			
+		}
+        .selecttype{
+			/* color:rgb(4,190,2); */
+			color:white;
+			background-color: rgb(0,122,255);
+			/* font-size: 40upx; */
+		}
 		/* margin-bottom: 20upx; */
 		.view-common {
 			margin: 30upx 22upx;
 			height: 98vh;
 			position: relative;
+			.ecutitle{
+				font-size: 34upx;
+				margin-bottom: 30upx;
+			}
 
 			.common-item {
 				background-color: white;

@@ -31,7 +31,7 @@
 		onLoad() {			
 			this.getLoginData();
 			this.getdirectinfo()
-			this.getsysversion()
+			// this.getsysversion()
 		},
 		computed: mapState(['userinfo']),
 		methods: {
