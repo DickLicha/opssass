@@ -619,28 +619,28 @@ const _analysisBLEContent = (content) => {
 				duration: 5000
 			})
 			console.log('蓝牙内容：', content);
-			wx.closeBLEConnection({
-				deviceId: _deviceId,
-				success: function(res) {
-					console.log('主动断开连接', res);
-					_deviceId = '';
-					_hasReceive = false;
-					_connected = false;
-				},
-				fail: function(err) {
-					console.log('断开连接', err);
-				},
-				complete: function() {
-					wx.showToast({
-						title: content === '0300810102' ? '运动中不能上锁!' : '蓝牙操作失败，请重试!',
-						mask: true,
-						icon: 'none',
-						duration: 5000
-					})
-					//关闭蓝牙
-					//_closeBluetoothAdapter();
-				}
-			})
+			// wx.closeBLEConnection({
+			// 	deviceId: _deviceId,
+			// 	success: function(res) {
+			// 		console.log('主动断开连接', res);
+			// 		_deviceId = '';
+			// 		_hasReceive = false;
+			// 		_connected = false;
+			// 	},
+			// 	fail: function(err) {
+			// 		console.log('断开连接', err);
+			// 	},
+			// 	complete: function() {
+			// 		wx.showToast({
+			// 			title: content === '0300810102' ? '运动中不能上锁!' : '蓝牙操作失败，请重试!',
+			// 			mask: true,
+			// 			icon: 'none',
+			// 			duration: 5000
+			// 		})
+			// 		//关闭蓝牙
+			// 		//_closeBluetoothAdapter();
+			// 	}
+			// })
 		}
 	});
 }
