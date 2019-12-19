@@ -33,10 +33,10 @@
 							<view class='normal-input' @click="choseStopLev('middle-list')">{{defaultLev}}</view>
 						</view> -->
 						<view class='border-view'>
-							<input class='normal-input' v-model="stopVolume" type="text" placeholder="车站容量">
+							<input class='normal-input' v-model="stopVolume" type="number" placeholder="车站容量">
 						</view>
 						<view class='border-view'>
-							<input class='normal-input' v-model="stopRadius" type="text" placeholder="半径">
+							<input class='normal-input' v-model="stopRadius" type="number" placeholder="半径">
 						</view>
 						<view class='border-view'>
 							<input class='normal-input' v-model="stopDesc" type="text" placeholder="描述(限50字)">
