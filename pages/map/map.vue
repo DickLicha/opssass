@@ -25,7 +25,7 @@
 				</map>
 				<view v-if="actives">
 					<view class='scroll-viewy'>
-						<base-img></base-img>
+						<base-img v-if="!editstop"></base-img>
 						<view class='border-view'>
 							<input class='normal-input' v-model="stopName" type="text" placeholder="车站名称">
 						</view>
@@ -41,9 +41,19 @@
 						<view class='border-view'>
 							<input class='normal-input' v-model="stopDesc" type="text" placeholder="描述(限50字)">
 						</view>
-						<view>
-							<button type='primary' class='share-button-default' @click="finshCreat">提交</button>
+						<view class='open-close' v-if="editstop">					 
+							<!-- <view class="uni-list-cell uni-list-cell-pd"> -->
+								<view class="opclose-text">{{openclosestop}}</view>
+								<switch checked @change="switch1Change"/>
+							<!-- </view> -->
 						</view>
+						<view v-if="editstop">
+							<button type='warn' style='margin-bottom: 20upx;' @click="delstop">删除</button>
+						</view>
+						<view>
+							<button type='primary' class='' @click="finshCreat">提交</button>
+						</view>
+						
 					</view>
 					<uni-popup :show="poptype ==='middle-list'" position="bottom" mode="fixed" @hidePopup="togglePopup('')">
 						<view :scroll-y="true" class="uni-center center-box">
@@ -175,6 +185,8 @@
 				ingtext: '挪车中车辆：1', //正在进行中订单标题
 				inglength: 0, //是否有正在进行中的订单
 				userinfo: {},
+				editstop:false,
+				openclosestop:'开启',
 			};
 		},
 		onLoad(e) {
@@ -188,8 +200,9 @@
 					this.tempweidu = res.latitude
 					setTimeout(()=> {
 						var citycenter=this.userinfo.cities[0].coordinate
-						var distances=this.getFlatternDistance(citycenter[0],citycenter[1],res.longitude,res.latitude)
+						var distances=this.getFlatternDistance(parseFloat(citycenter[0]),parseFloat(citycenter[1]),res.longitude,res.latitude)
 						// var distances=this.getFlatternDistance(119.283383,26.131703,119.285615,26.123959)
+						console.log('juli',distances)
 						if(distances/1000>30){
 							uni.showModal({
 								title: '当前距离服务区过远',
@@ -371,6 +384,13 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
+			switch1Change(e){
+				if(e.target.value){
+					this.openclosestop='开启'
+				}else{
+					this.openclosestop='关闭'
+				}
+			},
 			getRad(d){
 				var PI = Math.PI; 
 				return d*PI/180.0;
@@ -521,15 +541,27 @@
 					}
 				} else if (this.type == '9') {
 					uni.showModal({
-						title: '删除车站',
+						title: '编辑车站',
 						content: pointname,
 						showCancel: true,
 						cancelText: '取消',
-						confirmText: '删除',
+						confirmText: '编辑',
 						success: res => {
 							if (res.confirm) {
 								console.log('parkid', parkid)
-								this.deletestop(parkid)
+								// this.deletestop(parkid)
+								this.actives = true
+								this.editstop=true
+								// uni.navigateTo({
+								// 	url: '',
+								// 	success: res => {},
+								// 	fail: () => {},
+								// 	complete: () => {}
+								// });
+								this.stopName=this.mapcovers.name
+								this.stopVolume=this.mapcovers.allkcount
+								this.stopRadius=this.mapcovers.radius
+								this.stopDesc=this.mapcovers.remark
 							} else if (res.cancel) {
 								console.log('用户点击取消');
 							}
@@ -543,6 +575,25 @@
 						this.getcarinfo()
 					}
 				}
+			},
+			// 删除车站
+			delstop(){
+				uni.showModal({
+					title: '删除车站',
+					content: this.mapcovers.name,
+					showCancel: true,
+					cancelText: '取消',
+					confirmText: '删除',
+					success: res => {
+						if (res.confirm) {
+							this.deletestop(this.mapcovers.id)
+						} else if (res.cancel) {
+							console.log('用户点击取消');
+						}
+					},
+					fail: () => {},
+					complete: () => {}
+				});
 			},
 			mapcentionloc(){
 				this.mapinfo.moveToLocation()
@@ -579,6 +630,7 @@
 							duration: 3000
 						});
 						this.stoplist(this.longitude, this.latitude, '*')
+						this.actives=false
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '删除车站失败',
@@ -786,8 +838,14 @@
 					});
 					return
 				}
-				var level = parseInt(this.defaultLev.replace('级', ''))
-				this.creatStopurl(level)
+				if(!this.editstop){
+					var level = parseInt(this.defaultLev.replace('级', ''))
+					this.creatStopurl(level)
+				}else{
+					console.log(222,this.mapcovers)
+					this.updateStopurl(this.mapcovers.id)
+				}
+				
 			},
 			active(index, item) {
 				this.isActive = index
@@ -1291,6 +1349,54 @@
 					console.error(err, '捕捉')
 				})
 			},
+			// 更新车站
+			updateStopurl(id) {
+				let status=''
+				if(this.openclosestop=='开启'){
+					status=0
+				}else{
+					status=1
+				}
+				var options = {
+					url: '/park/update', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"name": this.stopName,
+						"remark": this.stopDesc,
+						"radius": parseInt(this.stopRadius),
+						"capacity": parseInt(this.stopVolume),
+						"state": status,
+						"type": "SCHOOL",
+                        "id":id
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					if (res.status == 0) {
+						uni.showToast({
+							title: '更新车站成功',
+							mask: false,
+							duration: 2500
+						});
+						setTimeout(() => {
+							this.actives = false
+						}, 2000)
+						this.stoplist(this.longitude, this.latitude, '*')
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '更新车站失败',
+							mask: false,
+							icon: 'none',
+							duration: 2500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			// 创建车站
 			creatStopurl(level) {
 				var options = {
@@ -1467,7 +1573,20 @@
 	.activemap {
 		height: 35vh !important;
 	}
-
+    .open-close{
+		display: flex;
+		background-color: rgba(225, 225, 225, .7);
+		height: 70upx;
+		line-height: 70upx;
+		// margin: 20upx 0;
+		justify-content: space-between;
+		margin-bottom: 20upx;
+		align-items: center;
+		.opclose-text{
+			margin-left: 30upx;
+			// margin-top: 20upx;
+		}
+	}
 	.movecar-view {
 		margin-top: 10upx;
 		background-color: #555555;
