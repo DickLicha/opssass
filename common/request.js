@@ -19,7 +19,8 @@ export default function(obj) {
 		// error
 	}
 	// 字段冲突过滤
-	if (obj.url == '/balert/confirm' || obj.url == '/park/del' || obj.url=='/balert/handle' || obj.url=='/bike/unlock_battery' || obj.url=='/bike/ring') {
+	if (obj.url == '/balert/confirm' || obj.url == '/park/del' || obj.url=='/balert/handle' || obj.url=='/bike/unlock_battery' 
+	|| obj.url=='/bike/ring' ||obj.url=='/bike/unlock_battery' || obj.url=='/park/update') {
 		id = obj.data.id
 	} else {
 		id = store.state.bikeid || ''

@@ -407,28 +407,28 @@
 						console.log('蓝牙操作', res)
 					})
 				}							
-				// var options = {
-				// 	url: '/bike/ring', //请求接口
-				// 	method: 'POST', //请求方法全部大写，默认GET
-				// 	context: '',
-				// 	data: {
-				// 		id: this.bikeinfo.id
-				// 	}
-				// }
-				// this.$httpReq(options).then((res) => {
-				// 	// 请求成功的回调
-				// 	// res为服务端返回数据的根对象
-				// 	console.log('寻车铃', typeof(res), res)
-				// 	if (res.status == 0) {} else {
-				// 		uni.showToast({
-				// 			icon: 'none',
-				// 			title: res.message ? res.message : '开启寻车铃失败'
-				// 		});
-				// 	}
-				// }).catch((err) => {
-				// 	// 请求失败的回调
-				// 	console.error(err, '捕捉')
-				// })
+				var options = {
+					url: '/bike/ring', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						id: this.bikeinfo.id
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('寻车铃', typeof(res), res)
+					if (res.status == 0) {} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.message ? res.message : '开启寻车铃失败'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 			togglePopup() {
 				this.poptype = ''
