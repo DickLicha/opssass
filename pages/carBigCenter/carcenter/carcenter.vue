@@ -166,12 +166,12 @@
 					{
 						name: '车辆轨迹',
 						val: '',
-						url: '/pages/map/map?type=0.1'
+						url: '/pages/map/map?type=0.1&&name=用户骑行轨迹'
 					},
 					{
 						name: '最后一次扫码时手机位置',
 						val: '',
-						url: '/pages/map/map?type=0.2'
+						url: '/pages/map/map?type=0.2&&name=最后扫码位置'
 					},
 					{
 						name: 'ECU',
