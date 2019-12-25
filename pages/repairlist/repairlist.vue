@@ -78,6 +78,7 @@
 				})
 			},
 			scanCodes(){
+				this.setBikeid('*')
 				console.log('type',this.type)
 				wx.scanCode({
 					onlyFromCamera: true,
@@ -527,6 +528,7 @@
 				 			console.log('saoma', res)
 				 			var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 				 			this.setSn(bikesn)
+							this.setBikeid('*')
 				 			this.getcarinfo()
 				 		},
 				 		fail: res => {

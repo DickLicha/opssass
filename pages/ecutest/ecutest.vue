@@ -176,7 +176,7 @@
 				var _self = this
 				// 初始化
 				ble.initBluetooth(bikeinfo, (res) => {
-					_self.setBlueres(res)
+					// _self.setBlueres(res)
 					if (!!bikeinfo.bluetooth_token) {
 						var str1 = ble.doCmd('32', '', bikeinfo.bluetooth_token)
 						setTimeout(() => {
@@ -191,7 +191,7 @@
 					console.log('回调', res)
 					if (res.available == true && res.discovering == false && _self.bluestate == false) {
 						ble.initBluetooth(bikeinfo, (res) => {
-							_self.setBlueres(res)
+							// _self.setBlueres(res)
 						})
 					}
 				})
