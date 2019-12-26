@@ -541,7 +541,7 @@ const _connectData = (data, type, callback) => {
 	// console.log('接收到的数据长度', _dataLen);
 	// console.log('内容长度', _dataContent.length);
 	if (_dataContent.length == _dataLen * 2) { //接收完该长度的字节和校验CRC成功之后再发送ACK
-		// console.log('_dataContent-------',_dataContent)
+		console.log('_dataContent-------',_dataContent)
 		let dc = _dataContent;
 		let dcArr = [];
 		// console.log('接收的数据长度字节：', dc.length / 2);
@@ -588,6 +588,15 @@ const _analysisBLEContent = (content) => {
 			if (!_connected) {
 				_connected = true;
 				res('连接成功');
+				if(content.indexOf('840a') > -1){
+					var reg=/\840a(.*)/
+					var gpsData=content.match(reg);
+					gpsData.substring(0,8)
+					var longitude=gpsData.substring(0,4)
+					var latitude=gpsData.substring(5,8)
+					console.log(longitude,latitude)
+				}
+				
 			}
 		} else if (content.indexOf('0300820100') > -1) {
 			// _glbelStateObj.name=='open' &&_glbelStateObj.state==false
