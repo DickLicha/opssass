@@ -86,7 +86,7 @@
 				blacklisted: 0,
 				blacklistedSelect: 20,
 				blacklistedArr: [
-					"1",
+					"3",
 					"7",
 					"30",
 				],
@@ -94,7 +94,8 @@
 				fine: 0,
 				fineSelect: 20,
 				fineArr: [
-					"10",
+					"3",
+					"5",
 				],
 				ordertype:0,
 				faqianjine:0,
