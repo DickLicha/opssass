@@ -115,7 +115,45 @@
 						for (let i = 0; i < res.list.length; i++) {
 							let datainfo = {}
 							datainfo.time = res.list[i].create_time
-							datainfo.action = (res.list[i].type==10)?'开锁':'关锁'
+							// datainfo.action = (res.list[i].type==10)?'开锁':'关锁'
+							switch(res.list[i].type){
+								case 10:
+								datainfo.action='开锁'
+								break
+								case 11:
+								datainfo.action='开锁'
+								break
+								case 12:
+								datainfo.action='开电门'
+								break
+								case 13:
+								datainfo.action='关电门'
+								break
+								case 18:
+								datainfo.action='播放语音'
+								break
+								case 20:
+								datainfo.action='关电池仓'
+								break
+								case 21:
+								datainfo.action='开电池仓'
+								break
+								case 0:
+								datainfo.action='扫码'
+								break
+								case 30:
+								datainfo.action='保养'
+								break
+								case 40:
+								datainfo.action='车辆健康检查'
+								break
+								case 50:
+								datainfo.action='ecu绑定'
+								break
+								case 51:
+								datainfo.action='ecu解绑'
+								break
+							}
 							datainfo.op = res.list[i].bound_order_op
 							datainfo.status = (res.list[i].success==0)?'成功':'失败'
 							datainfo.netstatus = (res.list[i].is_online==1)?'在线':'离线'
