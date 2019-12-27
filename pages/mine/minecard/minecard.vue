@@ -87,7 +87,7 @@
 							duration: 1500,
 						});
 						setTimeout(() => {
-							uni.navigateTo({
+							uni.reLaunch({
 								url: '/pages/mine/loginView/loginView',
 								success: res => {},
 								fail: () => {},

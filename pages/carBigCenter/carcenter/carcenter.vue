@@ -149,7 +149,7 @@
 						url: '/pages/carBigCenter/carorder/carorder'
 					},
 					{
-						name: '开关锁记录',
+						name: '车辆操作记录',
 						val: '',
 						url: '/pages/switchloockinfo/switchloockinfo'
 					},
