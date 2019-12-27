@@ -128,6 +128,15 @@
 							this.taskdata.push(tempobj)
 						}
 					}
+				},
+				fail:res=>{
+					console.log('fail',res)
+					uni.reLaunch({
+						url: '/pages/mine/loginView/loginView',
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
 				}
 			})
 		},

@@ -1,14 +1,6 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/mine/loginView/loginView",
-			"style": {
-				"navigationBarTitleText": "登录",
-				"navigationStyle": "custom",
-				"titleNView": false
-			}
-		},
-		{
 			"path": "pages/tabbar/index/index",
 			"style": {
 				"navigationBarTitleText": "共享电单车运维版",
@@ -21,6 +13,14 @@
 			"path": "pages/tabbar/mine/mine",
 			"style": {
 				"navigationBarTitleText": "共享电单车运维版"
+			}
+		},
+		{
+			"path": "pages/mine/loginView/loginView",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom",
+				"titleNView": false
 			}
 		},
 		{
@@ -79,7 +79,7 @@
 		}, {
 			"path": "pages/switchloockinfo/switchloockinfo",
 			"style": {
-				"navigationBarTitleText": "开关锁记录",
+				"navigationBarTitleText": "车辆操作记录",
 				"scrollIndicator": "none"
 			}
 		}, {
