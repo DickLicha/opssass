@@ -60,26 +60,6 @@
 					console.log('字典信息', res)
 					if (res.status == 0) {
 						this.setDirectinfo(res.direct)
-						// if (res.direct.version == "VERSION_FOR_AUDIT") {
-						// 	this.loginbyphone()
-						// } 
-						// else {
-							// try {
-							// 	const value = uni.getStorageSync('userinfo');
-							// 	console.log('value', value)
-							// 	if (value.status == 0) {
-							// 		uni.switchTab({
-							// 			url: '/pages/tabbar/index/index',
-							// 			success: res => {},
-							// 			fail: () => {},
-							// 			complete: () => {}
-							// 		});
-							// 	}
-							// } catch (e) {
-							// 	// error
-							// 	console.log('e', e)
-							// }
-						// }
 					}
 				}).catch((err) => {
 					// 请求失败的回调
