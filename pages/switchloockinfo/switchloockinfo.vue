@@ -118,16 +118,16 @@
 							// datainfo.action = (res.list[i].type==10)?'开锁':'关锁'
 							switch(res.list[i].type){
 								case 10:
-								datainfo.action='开锁'
+								datainfo.action='关锁'
 								break
 								case 11:
 								datainfo.action='开锁'
 								break
 								case 12:
-								datainfo.action='开电门'
+								datainfo.action='关电门'
 								break
 								case 13:
-								datainfo.action='关电门'
+								datainfo.action='开电门'
 								break
 								case 18:
 								datainfo.action='播放语音'
