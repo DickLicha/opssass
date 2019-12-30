@@ -24,10 +24,10 @@
 	} from 'vuex'
 	// import ble from '../../../common/xa-bluetooth.js'
 	export default {
-		onLoad() {
+		onLoad() {			
 		},
 		computed: mapState(['userinfo', 'blueres']),
-		onShow() {
+		onShow() {			
 			this.taskdata = []
 			// var acl = this.userinfo.acl.children
 			var acl = []
@@ -139,6 +139,7 @@
 					});
 				}
 			})
+			this.getdirectinfo()
 		},
 		data() {
 			return {
@@ -147,6 +148,7 @@
 		},
 		methods: {
 			...mapMutations(['setDirectinfo', 'setSn', 'setBikeid', 'setBikeinfo', 'setBlueres']),
+			
 			scaninto() {
 				wx.scanCode({
 					onlyFromCamera: true, //只允许相机扫码
@@ -201,7 +203,9 @@
 					url: '/config/direct', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
-					data: ''
+					data: {
+						version:'1.0.71',
+					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
