@@ -273,6 +273,17 @@
 							// 多边形						
 							this.covers = []
 						break;
+					case '0.3':
+						this.hidebutton = false
+						// this.cartrack(this.bikeinfo.last_order_id)
+						// 设置corver初始状态
+						this.showcorverview = {
+								head: false,
+								bottom: false
+							},
+							// 多边形						
+							this.covers = []
+						break;
 					case '1.1':
 						this.scanbuttonname = '扫码入库'
 						this.nearbyfaultcar(this.longitude, this.latitude, '*')

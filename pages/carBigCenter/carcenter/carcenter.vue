@@ -181,6 +181,11 @@
 						url: '/pages/map/map?type=0.2&&name=最后扫码位置'
 					},
 					{
+						name: '车辆当前位置',
+						val: '',
+						url: '/pages/map/map?type=0.3&&name=车辆当前位置'
+					},
+					{
 						name: 'ECU',
 						val: '',
 						url: '/pages/carBigCenter/ecuview/ecuview'
