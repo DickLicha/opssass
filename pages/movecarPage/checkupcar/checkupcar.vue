@@ -507,6 +507,7 @@
 							// 请求成功的回调
 							// res为服务端返回数据的根对象
 							console.log('开始订单', res)
+							this.showmap = true
 							if (res.status == 0) {
 								// this.orderid = res.info.id
 								// this.setEndmove(true)
@@ -524,9 +525,7 @@
 									}, 5000)
 								}							
 								this.ids = res.info.id
-								this.setOrderid(res.info.id)
-								this.showmap = true
-
+								this.setOrderid(res.info.id)						
 								this.getmovingbike()
 								if (this.timmer == null) {
 									this.timmer = setInterval(() => {

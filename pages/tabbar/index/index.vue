@@ -65,7 +65,8 @@
 									break
 								case 3:
 									name = '单个挪车'
-									url = '/pages/repairlist/repairlist'
+									// url = '/pages/repairlist/repairlist'
+									url = '/pages/map/map?text=全部车站&type=3.1&name=挪车'
 									text = '全部车站'
 									src = require('../../../static/image/nuo_che.png')
 									break

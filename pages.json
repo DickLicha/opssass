@@ -44,7 +44,7 @@
 		}, {
 			"path": "pages/mine/mineyhq/mineyhq",
 			"style": {
-				"navigationBarTitleText": "优惠券"
+				"navigationBarTitleText": "身份证辅助认证"
 			}
 		}, {
 			"path": "pages/mine/minecard/minecard",
