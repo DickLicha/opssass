@@ -30,6 +30,16 @@
 						val: '',
 						url:'/pages/mine/minehdrecord/minehdrecord'
 					},
+					{
+						name: '挪车记录',
+						val: '',
+						url:'/pages/movecarPage/removecarrecord/removecarrecord'
+					},
+					{
+						name: '身份证辅助认证',
+						val: '',
+						url:'/pages/mine/mineyhq/mineyhq'
+					},
 					// {
 					// 	name: '未关电机锁车辆记录',
 					// 	val: '',
