@@ -42,36 +42,48 @@
 						val: '0',
 						url: '/ecutest/unlock',
 						oper: 'dmopen',
+						xiao1:'20',
+						xiao2:'01'
 					},
 					{
 						name: '关锁',
 						val: '1',
 						url: '/ecutest/lock',
 						oper: 'close',
+						xiao1:'20',
+						xiao2:'00'
 					},
 					{
 						name: '关电门',
 						val: '2',
 						url: '/ecutest/acc_off',
 						oper: 'dmclose',
+						xiao1:'27',
+						xiao2:'00'
 					},
 					{
 						name: '开电门',
 						val: '3',
 						url: '/ecutest/acc_on',
 						oper: 'open',
+						xiao1:'27',
+						xiao2:'01'
 					},
 					{
 						name: '开电池锁',
 						val: '4',
 						url: '/ecutest/battery_unlock',
 						oper: 'dianchisuo',
+						xiao1:'34',
+						xiao2:'01'
 					},
 					{
 						name: '播放语音',
 						val: '5',
 						url: '/ecutest/voice',
 						oper: 'ring',
+						xiao1:'28',
+						xiao2:'09'
 					},
 					// {
 					// 	name: '批量测试',
@@ -176,7 +188,7 @@
 				var _self = this
 				// 初始化
 				ble.initBluetooth(bikeinfo, (res) => {
-					_self.setBlueres(res)
+					// _self.setBlueres(res)
 					if (!!bikeinfo.bluetooth_token) {
 						var str1 = ble.doCmd('32', '', bikeinfo.bluetooth_token)
 						setTimeout(() => {
@@ -191,7 +203,7 @@
 					console.log('回调', res)
 					if (res.available == true && res.discovering == false && _self.bluestate == false) {
 						ble.initBluetooth(bikeinfo, (res) => {
-							_self.setBlueres(res)
+							// _self.setBlueres(res)
 						})
 					}
 				})
@@ -286,10 +298,20 @@
 					setTimeout(() => {
 						uni.hideLoading()
 					}, 2000)
-					ble.openLock('', item.oper, function(res) {
-						console.log('蓝牙操作', res)
-						loadtime = res.loadtime
-					})
+					if(this.ecutype == 'tbt'){
+						ble.openLock('', item.oper, function(res) {
+							console.log('蓝牙操作', res)
+							// loadtime = res.loadtime
+						})
+					}else{
+						console.log('this.bikeinfo.bluetooth_token',this.bikeinfo.bluetooth_token)
+						var str1 = ble.doCmd(item.xiao1, item.xiao2, this.bikeinfo.bluetooth_token)
+						ble.openLock(str1, '', function(res) {
+							console.log('蓝牙操作', res)
+							// loadtime = res.loadtime
+						})
+					}
+					
 				}
 
 			},
