@@ -1414,7 +1414,7 @@
 						// this.setSn(this.carnum)
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
-						if (this.type == 1.1) {
+						if (this.type == 1.1 || this.type==1) {
 							var datas = {
 								"is_order_finished": 0,
 								"pno": 1,
