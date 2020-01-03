@@ -1,10 +1,24 @@
 <template>
-	<view class='wrap'>
+	<view class='wrap'>	
 		<view class='view-common'>
-			<view>
-				<text>当前车辆imei：</text>
+			<view class='ecutitle'>
+				<text>当前车辆编号:</text>
 				<text>{{imei}}</text>
 			</view>
+			<!-- <view class="uni-list">
+				<view class="uni-list-cell uni-list-cell-pd base-tarbar">
+					<view class="uni-list-cell-db">{{bleornet}}</view>
+					<switch @change="switch1Change" checked />
+				</view>
+			</view> -->
+			
+			<view >
+				<view class="uni-list-cell uni-list-cell-pd">
+					<view class='but-border' :class="{'selecttype':bleornet=='网络开'}"><text @click="changetype('网络开')" >网络</text></view>
+					<view class='but-border' :class="{'selecttype':bleornet=='蓝牙开'}"><text @click="changetype('蓝牙开')" >蓝牙</text></view>	
+				</view>
+			</view>
+			
 			<view class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
 				<text>{{item.name}}</text>
 			</view>
@@ -18,13 +32,16 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+	import ble from '@/common/xa-bluetooth.js'
 	export default {
 		data() {
 			return {
+				bleornet: '网络开',
 				repairlist: [{
 						name: '开锁',
 						val: '0',
 						url: '/ecutest/unlock',
+						oper: 'dmopen',
 						xiao1:'20',
 						xiao2:'01'
 					},
@@ -32,6 +49,7 @@
 						name: '关锁',
 						val: '1',
 						url: '/ecutest/lock',
+						oper: 'close',
 						xiao1:'20',
 						xiao2:'00'
 					},
@@ -39,6 +57,7 @@
 						name: '关电门',
 						val: '2',
 						url: '/ecutest/acc_off',
+						oper: 'dmclose',
 						xiao1:'27',
 						xiao2:'00'
 					},
@@ -46,6 +65,7 @@
 						name: '开电门',
 						val: '3',
 						url: '/ecutest/acc_on',
+						oper: 'open',
 						xiao1:'27',
 						xiao2:'01'
 					},
@@ -53,6 +73,7 @@
 						name: '开电池锁',
 						val: '4',
 						url: '/ecutest/battery_unlock',
+						oper: 'dianchisuo',
 						xiao1:'34',
 						xiao2:'01'
 					},
@@ -60,14 +81,16 @@
 						name: '播放语音',
 						val: '5',
 						url: '/ecutest/voice',
+						oper: 'ring',
 						xiao1:'28',
 						xiao2:'09'
 					},
-					{
-						name: '批量测试',
-						val: '6',
-						url: '/ecutest/bat',
-					},
+					// {
+					// 	name: '批量测试',
+					// 	val: '6',
+					// 	url: '/ecutest/bat',
+					// 	oper: 'other',
+					// },
 				],
 				order: {
 					length: ''
@@ -75,6 +98,10 @@
 				type: '',
 				userinfo: {},
 				imei: '',
+				isble: false,
+				// 通过ecu码规则判断类型
+				ecutype: '',
+				bikeinfo:'',
 			}
 		},
 		methods: {
@@ -212,10 +239,10 @@
 				}
 			},
 			go(item) {
-				if(this.imei==''){
+				if (this.imei == '') {
 					uni.showToast({
-						title:'请先扫码',
-						duration:2000,
+						title: '请先扫码',
+						duration: 2000,
 					})
 					return
 				}
@@ -223,33 +250,25 @@
 					title: `${item.name}中`
 				});
 				var index = '*'
+				// 播放语音
 				if (item.val == '5') {
 					index = 1
 				}
-				let options = {
-					url: item.url,
-					method: 'POST',
-					data: {
-						imei: this.imei,
-						sn:'',
-						index: index,
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					console.log('测试', res)
-					uni.hideLoading()
-					if (res.status == 0) {
-						uni.showToast({
-							title: `成功`,
-							icon: 'none',
-							duration: 3000
-						});
+				// 走网络
+				if (this.blueconectstate != 1 || this.bleornet=='网络开') {
+					var datas = {}
+					if (this.ecutype == 'tbt') {
+						datas = {
+							imei: '',
+							sn: this.imei,
+							index: index,
+						}
 					} else {
-						uni.showToast({
-							title: res.message ? res.message : '失败',
-							icon: 'none',
-							duration: 3000
-						});
+						datas = {
+							imei: this.imei,
+							sn: '',
+							index: index,
+						}
 					}
 					let options = {
 						url: item.url,
@@ -300,7 +319,8 @@
 				wx.scanCode({
 					onlyFromCamera: true,
 					success: res => {
-						if(res.result.match(/\?bikesn=(.*)/)){
+						console.log('shaoma', res)
+						if (res.result.match(/\?bikesn=(.*)/)) {
 							uni.showToast({
 								title: '请扫描正确的ecu码',
 								icon: 'none',
@@ -308,9 +328,10 @@
 							});
 							return
 						}
-						else if(res.result.indexOf(' ')==-1){
-							this.swapdata[1].val = res.result
-						}else{
+						// else if(res.result.indexOf(' ')==-1){
+						// 	this.swapdata[1].val = res.result
+						// }
+						else if (res.result.indexOf(' ') != -1) {
 							var result = res.result.split(' ')
 							var imei = result[0].split(':')[1]
 							this.imei = imei
@@ -328,8 +349,10 @@
 				})
 			}
 		},
+		computed: mapState(['bluestate', 'blueconectstate', ]),
 		onLoad(e) {
 			console.log('eeee', e)
+			// this.getbikeinfobysn('003451386')
 		}
 	}
 </script>
@@ -341,12 +364,34 @@
 		padding-bottom: 1upx;
 		/* height: 100vh; */
 		overflow: hidden;
-
+		.but-border{
+			border: 2upx solid rgb(246,199,0);
+			width: 200upx;
+			height: 80upx;
+			text-align: center;
+			border-radius: 12upx;
+			line-height: 80upx;
+			font-size: 40upx;
+			color:rgb(100,100,100);
+		}
+		.base-tarbar{
+			
+		}
+        .selecttype{
+			/* color:rgb(4,190,2); */
+			color:white;
+			background-color: rgb(0,122,255);
+			/* font-size: 40upx; */
+		}
 		/* margin-bottom: 20upx; */
 		.view-common {
 			margin: 30upx 22upx;
 			height: 98vh;
 			position: relative;
+			.ecutitle{
+				font-size: 34upx;
+				margin-bottom: 30upx;
+			}
 
 			.common-item {
 				background-color: white;
