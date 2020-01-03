@@ -127,7 +127,13 @@
 							var result = res.result.split(' ')
 							var imei = result[0].split(':')[1]
 							this.imei = imei
-						}						
+							this.ecutype = 'xiaoan'
+							this.getbikeinfobysn(this.imei)
+						} else {
+							this.imei = res.result
+							this.ecutype = 'tbt'
+							this.getbikeinfobysn(this.imei)
+						}
 					},
 					fail: res => {
 

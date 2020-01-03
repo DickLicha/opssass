@@ -42,7 +42,7 @@ function onBluetoothDeviceFound() {
 	return new Promise((resolve, reject) => {
 		wx.onBluetoothDeviceFound((res) => {
 			try {
-				// console.log("成功1:", res.devices[0]);
+				console.log("成功1:", res.devices[0].localName);
 				if (bluebikeinfo.ecu_model == "WA-209D") {
 					//解密编号
 					let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
