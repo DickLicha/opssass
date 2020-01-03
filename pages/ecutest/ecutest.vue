@@ -25,31 +25,43 @@
 						name: '开锁',
 						val: '0',
 						url: '/ecutest/unlock',
+						xiao1:'20',
+						xiao2:'01'
 					},
 					{
 						name: '关锁',
 						val: '1',
 						url: '/ecutest/lock',
+						xiao1:'20',
+						xiao2:'00'
 					},
 					{
 						name: '关电门',
 						val: '2',
 						url: '/ecutest/acc_off',
+						xiao1:'27',
+						xiao2:'00'
 					},
 					{
 						name: '开电门',
 						val: '3',
 						url: '/ecutest/acc_on',
+						xiao1:'27',
+						xiao2:'01'
 					},
 					{
 						name: '开电池锁',
 						val: '4',
 						url: '/ecutest/battery_unlock',
+						xiao1:'34',
+						xiao2:'01'
 					},
 					{
 						name: '播放语音',
 						val: '5',
 						url: '/ecutest/voice',
+						xiao1:'28',
+						xiao2:'09'
 					},
 					{
 						name: '批量测试',
@@ -67,6 +79,138 @@
 		},
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
+			changetype(type){
+				this.bleornet = type
+				if(type=='蓝牙开'){
+					if(this.blueconectstate!=1){
+						if(!!this.bikeinfo){
+							this.initble(this.bikeinfo)
+						}						
+					}
+				}
+			},
+			// 通过sn获取车辆信息
+			getbikeinfobysn(sn) {
+				this.setSn('*')
+				this.setBikeid('*')
+				var options = {
+					url: '/ecutest/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"sn": sn,
+						"imei": '',
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('车辆信息', res)
+					if (res.status == 0 && !!res.info.bluetooth_token) {
+						this.isble = true
+						this.bikeinfo=res.info
+						this.initble(res.info)
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			//上报蓝牙操作
+			reportblue(state, loadtime, errname) {
+				uni.getLocation({
+					type: 'wgs84',
+					success: res => {
+						var options = {
+							url: '/bike/report_bluetooth_oper', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								// "token": "xxx",
+								"bike_id": this.bikeinfo.id,
+								"bound_order_type": "BIKE_BATTERY_RECHANGE", //绑定订单类型， USER_RIDE =用户骑行订单，BIKE_REPARK=挪车订单，BIKE_BATTERY_RECHANGE=换电订单，
+								"bound_order_id": this.orderid,
+								"bound_order_op": "换电开锁", //骑行开锁，骑行关锁，挪车开锁，挪车关锁，换电开锁 。。。,
+								"type": 21, //10=关锁，11=开锁，21=开电池锁,
+								"result": { //操作结果
+									"success": state, //0=成功， 其他值失败
+									"cost": loadtime, //耗时 1000毫秒
+									"error_msg": errname //错误信息
+								},
+								"user_coordinate": [res.longitude, res.latitude]
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('上报接口', res)
+							if (res.status == 0) {}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
+				});
+			},
+			// 初始化蓝牙
+			initble(bikeinfo) {
+				var _self = this
+				// 初始化
+				ble.initBluetooth(bikeinfo, (res) => {
+					// _self.setBlueres(res)
+					if (!!bikeinfo.bluetooth_token) {
+						var str1 = ble.doCmd('32', '', bikeinfo.bluetooth_token)
+						setTimeout(() => {
+							// ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(ress) {
+							ble.openLock(str1, '', function(ress) {
+								console.log('蓝牙操作', ress)
+							})
+						}, 0);
+					}
+				})
+				ble.onBluetoothAdapterStateChange(function(res) {
+					console.log('回调', res)
+					if (res.available == true && res.discovering == false && _self.bluestate == false) {
+						ble.initBluetooth(bikeinfo, (res) => {
+							// _self.setBlueres(res)
+						})
+					}
+				})
+				ble.onBLEConnectionStateChange(function(res){
+					console.log('蓝牙连接状态变化回调', res)
+					if(res.connected==false){
+						uni.showToast({
+							title: '连接断开请重连',
+							duration: 2000,
+						})
+					}
+				})
+				if (this.isble) {
+					ble.onBLECharacteristicValueChange((res) => {
+						console.log('特征值返回', res)
+						// 泰币特类型
+						if (_self.bikeinfo.ecu_model == "WA-209D") {
+							if (res == '连接成功') {
+
+							} else if (res == '开锁成功') {
+								// blueWriteState = 1
+								// _self.reportblue(0, loadtime, '')
+							} else if (res == '上锁成功') {
+								// blueWriteState = 1
+								// _self.reportblue(0, loadtime, '')
+							} else if (res == '电池锁打开成功') {
+								// blueWriteState = 1
+								// _self.reportblue(0, loadtime, '')
+							}
+
+						}
+					})
+				}
+			},
 			go(item) {
 				if(this.imei==''){
 					uni.showToast({
@@ -107,7 +251,50 @@
 							duration: 3000
 						});
 					}
-				})
+					let options = {
+						url: item.url,
+						method: 'POST',
+						data: datas
+					}
+					this.$httpReq(options).then((res) => {
+						console.log('测试', res)
+						uni.hideLoading()
+						if (res.status == 0) {
+							uni.showToast({
+								title: `成功`,
+								icon: 'none',
+								duration: 3000
+							});
+						} else {
+							uni.showToast({
+								title: res.message ? res.message : '失败',
+								icon: 'none',
+								duration: 3000
+							});
+						}
+					})
+				}
+				// 走蓝牙
+				else {
+					setTimeout(() => {
+						uni.hideLoading()
+					}, 2000)
+					if(this.ecutype == 'tbt'){
+						ble.openLock('', item.oper, function(res) {
+							console.log('蓝牙操作', res)
+							// loadtime = res.loadtime
+						})
+					}else{
+						console.log('this.bikeinfo.bluetooth_token',this.bikeinfo.bluetooth_token)
+						var str1 = ble.doCmd(item.xiao1, item.xiao2, this.bikeinfo.bluetooth_token)
+						ble.openLock(str1, '', function(res) {
+							console.log('蓝牙操作', res)
+							// loadtime = res.loadtime
+						})
+					}
+					
+				}
+
 			},
 			scancode() {
 				wx.scanCode({

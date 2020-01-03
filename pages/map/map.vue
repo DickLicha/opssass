@@ -188,6 +188,7 @@
 				editstop:false,
 				openclosestop:'开启',
 				gobeltimestr:0,
+				timestrArr:[]
 			};
 		},
 		onLoad(e) {
@@ -894,6 +895,7 @@
 				let self = this
 				let intervaltime=(new Date()).getTime()-this.gobeltimestr
 				this.gobeltimestr=(new Date()).getTime()
+				this.timestrArr.push(this.gobeltimestr)
 				console.log('shijiancha',intervaltime)
 				if(intervaltime<900){
 					return
@@ -960,7 +962,7 @@
 									if (this.selectvals == 0) {
 										undervolt = 1
 									}
-									self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt,dis)
+									self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt,dis,this.gobeltimestr)
 									break
 								case '1.1':
 									self.nearbyfaultcar(res.longitude, res.latitude, '*')
@@ -970,12 +972,12 @@
 									break	
 								case '3.1':								
 									if (this.selectvals == 100) {
-										self.nearbymovecar(res.longitude, res.latitude, "*", '*',dis)
+										self.nearbymovecar(res.longitude, res.latitude, "*", '*',dis,this.gobeltimestr)
 									} else {
 										if (this.selectvals == 21 || this.selectvals == 11) {
-											this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals),dis)
+											this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals),dis,this.gobeltimestr)
 										} else {
-											this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals), '*',dis)
+											this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals), '*',dis,this.gobeltimestr)
 										}
 										// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
 									}
@@ -998,7 +1000,7 @@
 				
 			},
 			// 附近需要挪的车
-			nearbymovecar(longitude, latitude, reparklev, parkstate,distance) {					
+			nearbymovecar(longitude, latitude, reparklev, parkstate,distance,timestr) {					
 				var options = {
 					url: '/bike/list_to_repark_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -1016,6 +1018,9 @@
 					}
 				}
 				this.$httpReq(options).then((res) => {
+					if(timestr!=this.timestrArr[this.timestrArr.length-1]){
+					      return
+					     }
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('挪车列表', res)
@@ -1204,7 +1209,7 @@
 				})
 			},
 			// 附近需要换电的车辆
-			nearbyshortpower(max, longitude, latitude, undervolt,distance) {
+			nearbyshortpower(max, longitude, latitude, undervolt,distance,timestr) {
 				var options = {
 					url: '/bike/list_to_change_battery_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -1220,6 +1225,9 @@
 					}
 				}
 				this.$httpReq(options).then((res) => {
+					if(timestr!=this.timestrArr[this.timestrArr.length-1]){
+						return
+					}
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('附近缺电车辆', res)
@@ -1412,14 +1420,16 @@
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
 						// this.setSn(this.carnum)
-						this.setBikeid(res.info.id)
+						// this.setBikeid(res.info.id)
+						this.setBikeid('*')
 						this.setBikeinfo(res.info)
-						if (this.type == 1.1 || this.type==1) {
+						if (this.type == 1.1) {
 							var datas = {
 								"is_order_finished": 0,
 								"pno": 1,
 								"psize": 100,
 								"order_state": 0,
+								"bike_id":res.info.id
 							}
 							this.setSn('*')
 							this.requestorder(datas)
