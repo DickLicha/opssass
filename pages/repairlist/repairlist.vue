@@ -437,6 +437,7 @@
 							success: res => {
 								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 								// this.throwin(bikesn)
+								this.setBikeid('*')
 								this.setSn(bikesn)
 								this.getcarinfo()
 							},
@@ -451,6 +452,7 @@
 							success: res => {
 								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 								// this.throwin(bikesn)
+								this.setBikeid('*')
 								this.setSn(bikesn)
 								this.getcarinfo(bikesn,item.name)
 								// this.delbike(bikesn)
