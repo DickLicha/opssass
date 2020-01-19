@@ -213,11 +213,11 @@
 									var imgs = this.directinfo.res_server_url+'/'+parsedata.data.oss_name
 									this.postImageArr.push(imgs);
 									this.uploadImage();
-									setTimeout(()=>{
-									uni.navigateBack({
-										delta: 2
-									});	
-									},1500)
+									// setTimeout(()=>{
+									// uni.navigateBack({
+									// 	delta: 2
+									// });	
+									// },1500)
 								}else{
 									
 									uni.showToast({
