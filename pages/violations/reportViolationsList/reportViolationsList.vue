@@ -5,6 +5,7 @@
 			<view class="msg-view">
 				<view class="msg-list-view" v-for="(item, index) in vioList" :key="index" @click="cellClick(index)">
 					<view class="msg-item">{{getNewTime(item.create_time)}}</view>
+					<view class="msg-item">id:{{item.bike_id.substring(6,14)}}</view>
 					<view class="reason-view">{{item.violation_remark}}</view>
 					<image class="arrow-view" src="/static/image/right_arrow.png" mode=""></image>
 				</view>
@@ -50,12 +51,15 @@
 		},
 		onShow(){
 			// this.getList()
+			this.vioList=[]
+			this.pageindex=1
+			console.log(222,this.pageindex,this.pagenum)
 			this.openbattery(this.pageindex,this.pagenum)
 		},
 		methods: {
 			loadMore() {
 				if (this.resquestState < 2) {
-					if(this.pageindex<parseInt(parseInt(this.allnumber)/this.pageindex)+1){
+					if(this.pagenum<parseInt(parseInt(this.allnumber)/this.pageindex)+1){
 						// this.getartlist(this.pageindex, 10, 'add')
 						this.pageindex += 1
 						this.openbattery(this.pageindex,this.pagenum)
@@ -70,8 +74,6 @@
 			},
 			// 开锁记录
 				openbattery(page,num) {
-					console.log(5555,page,num)
-					// console.log()
 					var options = {
 						url: '/urviolation/list', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
@@ -87,6 +89,7 @@
 						// res为服务端返回数据的根对象
 						console.log('数据列表：',res);
 						if (res.status == 0) {
+							this.allnumber=res.total
 							if(!!res.list){
 								this.shownodata=false
 								this.vioList=this.vioList.concat(res.list)
@@ -180,16 +183,16 @@
 				display: flex;
 				.msg-item{
 					height: 80upx;
-					width: 30%;
+					width: 25%;
 					line-height: 80upx;
 					font-size: 28upx;
 				}
 				.reason-view{
 					height: 80upx;
-					width: 60%;
+					width: 50%;
 					line-height: 80upx;
 					font-size: 28upx;
-					text-align: right;
+					text-align: center;
 				}
 				.arrow-view{
 					margin-top: 25upx;
