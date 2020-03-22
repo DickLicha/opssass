@@ -36,6 +36,11 @@
 						url:'/pages/movecarPage/removecarrecord/removecarrecord'
 					},
 					{
+						name: '最近上传日志',
+						val: '',
+						url:'/pages/carBigCenter/uploadlog/uploadlog'
+					},
+					{
 						name: '身份证辅助认证',
 						val: '',
 						url:'/pages/mine/mineyhq/mineyhq'

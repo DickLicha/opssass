@@ -195,6 +195,11 @@
 						val: '',
 						url: '/pages/carBigCenter/batteryview/batteryview'
 					},
+					{
+						name: '最近上报日志',
+						val: '',
+						url: '/pages/carBigCenter/uploadlog/uploadlog'
+					},
 				],
 				directionStr: '垂直',
 				horizontal: 'right',

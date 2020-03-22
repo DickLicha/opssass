@@ -298,6 +298,12 @@
 				"navigationBarTitleText": "账号登录"
 			}
         }
+        ,{
+            "path" : "pages/carBigCenter/uploadlog/uploadlog",
+            "style" : {
+				"navigationBarTitleText": "最近上报日志"
+			}
+        }
     ],
  //   "subPackages":
 	// [ 
