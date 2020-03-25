@@ -1,3 +1,77 @@
+const formatetimes = (timestamp)=> {
+	var date = new Date(timestamp*1000);
+	var Y = date.getFullYear() + '-';
+	var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+	var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+	var h = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+	var m = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+	var s = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds());
+	return Y + M + D + h + m + s;
+}
+ // 日志类型 event = 3 
+ const parseSelectionName = (selections, value) => {
+   if (selections.length > 0) {
+     if (Array.isArray(value)) {
+       var names = []
+       for (let index = 0; index < selections.length; index++) {
+         const element = selections[index]
+         if (value.indexOf(element.value) > -1) {
+           names.push(element.title)
+         }
+       }
+       return names.join('\n')
+     } else {
+       for (let index = 0; index < selections.length; index++) {
+         const element = selections[index]
+         if (element.value == value) {
+           return element.title
+         }
+       }
+     }
+   }
+   return '未知'
+ }
+  const parseBitsValue = (n) => {
+    var r = []
+    var i = 0
+    while (n > 0) {
+      if (n & 0x01 === 1) {
+        r.push(i)
+      }
+      i++
+      n = n >> 1
+    }
+    return r
+  }
+  const parseSwBitsObj = (sw) => {
+    let swPosition = [
+      ['撤防','设防'],
+      ['电门关','电门开'],
+      ['后轮锁解锁','后轮锁上锁'],
+      ['电池仓锁解锁','电池仓锁上锁'],
+      ['电瓶断开','电瓶连接'],
+      ['GPS静止','GPS运动'],
+      ['车辆静止','车辆运动'],
+      ['后轮静止','后轮转动'],
+      ['功耗正常模式','低功耗模式'],
+      ['休眠正常模式','休眠模式'],
+      ['移动告警不触发语音','移动告警触发语音']
+    ] 
+    let obj = {
+      numbers: [],
+      desc: []
+    }
+    for (let index = 0; index < swPosition.length; index++) {
+		if([2,3,5,8,9].indexOf(index)>-1){
+			continue
+		}
+      const el = swPosition[index];
+      let val = sw & (1 << index) ? 1 : 0
+      obj.numbers.push(val)
+      obj.desc.push(el[val])
+    }
+    return obj
+  }
 // 车辆状态
 const eums = {
 	BIKE_FAULT_HEALTH: 0, //健康
@@ -29,21 +103,6 @@ const invstate = {
 	BIKE_INV_STATE_SCRAPED:3, //报废
 	BIKE_INV_STATE_DEPOT_REPAIRED:4 //返厂维修
 }
-// 故障状态
-// const invstate = {
-// 	BIKE_EX_OK : 0,
-//     BIKE_ALERT_LOCK_FAILED : 1, //关锁失败
-//     BIKE_ALERT_UNDER_VOLT : 2, //欠压
-//     BIKE_ALERT_OFFLINE : 4, //离线
-//     BIKE_ALERT_GPS_FAILED : 8, //定位失败
-// 	BIKE_ALERT_FAULT : 16, //故障警告
-// 	BIKE_ALERT_STOLEN : 32, //怀疑被盗
-// 	BIKE_ALERT_EX_UNLOCK : 64, //异常开锁
-// 	BIKE_ALERT_LONG_BATTERY_UNLOCKED : 128, //电池锁长时间打开
-// 	BIKE_ALERT_LONG_BATTERY_OFF : 256, //长时间电池空置
-// 	BIKE_ALERT_EX_BATTERY_OFF : 512, //电池异常空置
-// 	BIKE_ALERT_EX_LONG_UNLOCK : 1024, //超时未锁
-// }
 export {
-	eums,parkstate,invstate
+	formatetimes,eums,parkstate,invstate,parseSelectionName,parseBitsValue,parseSwBitsObj,
 }

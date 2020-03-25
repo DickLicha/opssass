@@ -1,5 +1,4 @@
 <script>
-	import Utils from '@/common/uti.js';
 	export default {
 		data() {
 			return {

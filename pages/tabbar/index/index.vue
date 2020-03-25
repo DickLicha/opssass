@@ -116,7 +116,7 @@
 									name = '仪表盘'
 									url = '/pages/echartPage/echartpage/echartpage'
 									text = ''
-									src = require('../../../static/image/che_zhan.png')
+									src = require('../../../static/image/che_zhan.png')							
 									break	
 							}
 							tempobj = {

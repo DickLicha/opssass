@@ -17,7 +17,7 @@
 
 			<view v-show=''>
 				<map class='base-map-view' :show-location='true' v-show='showmap' @markertap='markclick' :scale="scale" :latitude="latitude"
-				 :longitude="longitude" :markers="covers" :circles="circles">
+				 :longitude="longitude" :markers="covers" @controltap='mapcentionloc' :circles="circles" :controls='maploc'>
 				</map>
 			</view>
 
@@ -65,6 +65,12 @@
 				showdetil: true,
 				borders: true,
 				orderid: '',
+				maploc:[{
+					id:90,
+					position:{left:10,top:50,width:50,height:50},
+					iconPath:'../../../static/image/location.png',
+					clickable:true,
+				}],
 				swapdata: [{
 					name: '车辆编号',
 					val: ''
@@ -248,7 +254,45 @@
 			}
 		},
 		methods: {
-			...mapMutations(['setEndmove', 'setOrderid', 'setSn', 'setBlueres']),
+			...mapMutations(['setEndmove', 'setOrderid', 'setSn', 'setBlueres','setBikeinfo']),
+			mapcentionloc(){
+				this.refreshinfo()
+			},
+			// 刷新车辆信息
+			refreshinfo(){
+				var options = {
+					url: '/bike/refresh_info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('刷新车辆信息', res)
+					if (res.status == 0) {
+						this.covers = []
+						var temparr = []
+						let tmpObj = {}
+						tmpObj.latitude = res.coordinate[1]
+						tmpObj.longitude = res.coordinate[0]
+						tmpObj.iconPath = '../../../static/mapicon/car_normal.png'
+						tmpObj.type = 'car'
+						tmpObj.width = 39
+						tmpObj.height = 48
+						temparr.push(tmpObj)
+						this.covers = temparr
+			
+					} else {
+			
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			// 获取车辆信息
 			getcarinfo() {
 				var options = {
