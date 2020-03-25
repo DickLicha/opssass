@@ -1,5 +1,4 @@
 import store from '@/store'
-import Utils from '@/common/uti.js';
 var dataTransition = require('./dataTransition.js')
 var systemtype = '',
 	code = '',

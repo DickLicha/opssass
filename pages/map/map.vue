@@ -101,12 +101,20 @@
 		data() {
 			return {
 				clicksuccess:false,
-				maploc:[{
+				maploc:[
+					{
 					id:88,
 					position:{left:10,top:50,width:50,height:50},
 					iconPath:'../../static/image/location.png',
 					clickable:true,
-				}],
+				    },
+					// {
+					// id:89,
+					// position:{left:10,top:100,width:50,height:50},
+					// iconPath:'../../static/image/location.png',
+					// clickable:true,
+					// },
+				],
 				inputval: '',
 				isActive: -1,
 				selectvals: 100,
@@ -629,8 +637,37 @@
 					complete: () => {}
 				});
 			},
-			mapcentionloc(){
-				this.mapinfo.moveToLocation()
+			mapcentionloc(e){			
+				if(e.controlId==88){
+					this.mapinfo.moveToLocation()
+				}else{
+					// this.refreshinfo()
+				}
+				
+			},
+			// 刷新车辆信息
+			refreshinfo(){
+				var options = {
+					url: '/bike/refresh_info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('刷新车辆信息', res)
+					if (res.status == 0) {
+
+					} else {
+
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 			// 点击创建车站
 			creatStop() {
@@ -1389,6 +1426,7 @@
 							console.log('saoma', res)
 							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 							this.inputval = bikesn
+							console.log(this.inputval,555)
 							this.setSn(bikesn)
 							this.setBikeid('*')
 							this.getcarinfo()

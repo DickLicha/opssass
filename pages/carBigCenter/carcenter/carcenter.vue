@@ -28,78 +28,8 @@
 			// 	}
 			// })
 		},
-		onLoad() {
-			try{
-				// 车型
-				this.carcenterdata1[0].val = this.bikeinfo.model
-				
-				// 库存状态
-				this.carcenterdata1[1].val = this.$invstate(this.bikeinfo.inv_state)
-				 
-				// 车辆状态
-				let health_state =''
-				if (this.bikeinfo.health_state == 0) {
-					health_state = '健康'
-				} else{
-					health_state = '故障'
-				}
-				this.carcenterdata1[2].val = health_state
-				
-				// 位置
-				this.carcenterdata1[3].val = this.$parkstate(this.bikeinfo.park_state)
-				// 车辆业务状态
-				console.log('this.directinfo.bike_bus_state_enum',this.directinfo.bike_bus_state_enum,this.bikeinfo.bus_state)
-				this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[this.bikeinfo.bus_state]
-				if(this.bikeinfo.bus_state){
-					this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[0]
-				}
-														 
-				// 车辆运行状态
-				let is_battery_locked = ''
-				if (this.bikeinfo.is_in_motion == 0) {
-					is_battery_locked = '静止'
-				} else if (this.bikeinfo.is_in_motion == 1) {
-					is_battery_locked = '运动'
-				}
-				this.carcenterdata2[1].val = is_battery_locked
-				
-				// 网络状态
-				let is_online=''
-				if(this.bikeinfo.is_online==1){
-					is_online='在线'
-				}else if(this.bikeinfo.is_online==0){
-					is_online='离线'
-				}
-				this.carcenterdata2[2].val = is_online
-				
-				// GPS更新时间
-				this.carcenterdata2[3].val = this.bikeinfo.gps_update_time
-				
-				// SIM卡状态
-				// let sim_state=''
-				// if(this.bikeinfo.is_on_battery==0){
-				// 	sim_state='在线'
-				// }else if(this.bikeinfo.is_on_battery==1){
-				// 	sim_state='离线'
-				// }
-				// this.carcenterdata2[4].val = sim_state
-				
-				// 车锁状态
-				let is_wheel_locked = ''
-				if (this.bikeinfo.is_wheel_locked == 0) {
-					is_wheel_locked = '开'
-				} else if (this.bikeinfo.is_wheel_locked == 1) {
-					is_wheel_locked = '关'
-				}
-				this.carcenterdata2[4].val = is_wheel_locked
-				
-				// 异常状态
-				this.carcenterdata2[5].val = this.bikeinfo.alert_state_desc
-				
-			}catch(e){
-				//TODO handle the exception
-			}
-			
+		onLoad() {			
+			this.fuzhi()
 		},
 		computed: mapState(['directinfo','bikeinfo','blueres']),
 		data() {
@@ -239,7 +169,7 @@
 						active: false
 					},
 					{
-						text: '测试',
+						text: '刷新',
 						val: '6',
 						active: false
 					},
@@ -252,6 +182,96 @@
 			}
 		},
 		methods: {
+			...mapMutations(['setBikeinfo']),
+			fuzhi(){
+				try{
+					// 车型
+					this.carcenterdata1[0].val = this.bikeinfo.model
+					
+					// 库存状态
+					this.carcenterdata1[1].val = this.$invstate(this.bikeinfo.inv_state)
+					 
+					// 车辆状态
+					let health_state =''
+					if (this.bikeinfo.health_state == 0) {
+						health_state = '健康'
+					} else{
+						health_state = '故障'
+					}
+					this.carcenterdata1[2].val = health_state
+					
+					// 位置
+					this.carcenterdata1[3].val = this.$parkstate(this.bikeinfo.park_state)
+					// 车辆业务状态
+					console.log('this.directinfo.bike_bus_state_enum',this.directinfo.bike_bus_state_enum,this.bikeinfo.bus_state)
+					this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[this.bikeinfo.bus_state]
+					if(this.bikeinfo.bus_state){
+						this.carcenterdata2[0].val = this.directinfo.bike_bus_state_enum[0]
+					}
+															 
+					// 车辆运行状态
+					let is_battery_locked = ''
+					if (this.bikeinfo.is_in_motion == 0) {
+						is_battery_locked = '静止'
+					} else if (this.bikeinfo.is_in_motion == 1) {
+						is_battery_locked = '运动'
+					}
+					this.carcenterdata2[1].val = is_battery_locked
+					
+					// 网络状态
+					let is_online=''
+					if(this.bikeinfo.is_online==1){
+						is_online='在线'
+					}else if(this.bikeinfo.is_online==0){
+						is_online='离线'
+					}
+					this.carcenterdata2[2].val = is_online
+					
+					// GPS更新时间
+					this.carcenterdata2[3].val = this.bikeinfo.gps_update_time
+					
+					
+					// 车锁状态
+					let is_wheel_locked = ''
+					if (this.bikeinfo.is_wheel_locked == 0) {
+						is_wheel_locked = '开'
+					} else if (this.bikeinfo.is_wheel_locked == 1) {
+						is_wheel_locked = '关'
+					}
+					this.carcenterdata2[4].val = is_wheel_locked
+					
+					// 异常状态
+					this.carcenterdata2[5].val = this.bikeinfo.alert_state_desc
+					
+				}catch(e){
+					//TODO handle the exception
+				}
+			},
+			// 刷新车辆信息
+			refreshinfo(){
+				var options = {
+					url: '/bike/refresh_info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('刷新车辆信息', res)
+					if (res.status == 0) {
+						this.setBikeinfo(res.info)
+						this.fuzhi()
+					} else {
+			
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			gocarcenter(item) {
 				uni.navigateTo({
 					url: item.url,
@@ -310,7 +330,7 @@
 						});
 						break
 					case '6':
-						this.biketest()
+						this.refreshinfo()
 						break
 				}
 			},
