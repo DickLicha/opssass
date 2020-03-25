@@ -3,11 +3,26 @@
 		<!-- <view class="qiun-bg-white qiun-title-bar qiun-common-mt">
 			<view class="qiun-title-dot-light">用户订单图</view>
 		</view> -->
+		<view class='timeselect'>
+			<!-- <view>开始时间:</view> -->
+			<view class='timedetil' @tap="toggleTab(1)">
+				<view class='wenzi'>开始</view>
+				<view>{{start_time}}</view>
+			</view>
+			<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" value="2020-01-01 00:00:00" :isAll="true"
+			 :current="false"></yu-datetime-picker>
+			<view class='timedetil' @tap="toggleTab(2)">
+				<view class='wenzi'>结束</view>
+				<view>{{end_time}}</view>
+			</view>
+			<!-- <calendar @change="change" :startDate="initStartDate" :endDate="initEndDate" :daysCount="daysCount"></calendar> -->
+		</view>
 		<view class="qiun-charts">
 			<!--#ifndef MP-ALIPAY -->
 			<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
 			<!--#endif-->
 		</view>
+		<view><span class='aver-view'>平均车效:</span>{{avercarratio}}<span class='aver-view'>平均金额:</span>{{avermoney}}</view>
 		<view class='grid-view'>
 			<view class='flexd-posion'>
 				<view class='view-flexs switch-head'>
@@ -30,6 +45,7 @@
 <script>
 	import uCharts from '@/common/u-charts.min.js';
 	// import  { isJSON } from '@/common/checker.js';
+	import yuDatetimePicker from "@/components/yu-datetime-picker.vue"
 	var _self;
 	var canvaLineA = null;
 	export default {
@@ -39,8 +55,17 @@
 				cWidth: '',
 				cHeight: '',
 				pixelRatio: 1,
-				textarea: ''
+				textarea: '',
+				start_time:'2020-03-01 00:03:11',
+				end_time:"2020-03-20 00:03:11",
+				timeflag:0,
+				avercarratio:'',
+				avermoney:'',
+				chartlimits:0,
 			}
+		},
+		components: {
+			yuDatetimePicker,
 		},
 		onLoad() {
 			_self = this;
@@ -56,8 +81,61 @@
 			});
 			//#endif
 			this.cWidth = uni.upx2px(750);
-			this.cHeight = uni.upx2px(500);
-			this.getServerData();
+			this.cHeight = uni.upx2px(500);			
+			var date = new Date()
+			var seperator1 = "-";
+			var seperator2 = ":";
+			var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				" " + date.getHours() + seperator2 + date.getMinutes() +
+				seperator2 + date.getSeconds()
+			this.start_time=date.getFullYear() + seperator1 + month + seperator1 + '01' +
+				" " + '00' + seperator2 + '00' +
+				seperator2 + '00'
+			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				" " + '23' + seperator2 + '59' +
+				seperator2 + '59'
+			var acl = []																
+			uni.getStorage({
+				key: 'userinfo',
+				success: res => {
+					acl = res.data.acl.children
+					var onlyid = '',
+						tempobj = {},
+						src = '',
+						name = '',
+						url = '',
+						text = ''
+					for (let i = 0; i < acl.length; i++) {
+						if (acl[i].visitable == 1) {
+							onlyid = parseInt(acl[i].uri)
+							switch (onlyid) {
+								case 15:
+									if(!!acl[i].children){
+										for(var j=0;j<acl[i].children.length;j++){
+											if(acl[i].children[j].uri==15.2 && acl[i].children[j].visitable){
+												this.chartlimits=1							
+											}
+										}
+										
+									}
+									this.getServerData();
+									break
+							}
+						}
+					}
+				},
+				fail:res=>{
+					console.log('fail',res)
+					uni.reLaunch({
+						url: '/pages/mine/loginView/loginView',
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
+				}
+			})	
 		},
 		methods: {
 			getServerData() {
@@ -65,7 +143,10 @@
 					url: '/city/monitor', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
-					data: {},
+					data: {
+						start_time:this.start_time,
+						end_time:this.end_time,
+					},
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
@@ -92,40 +173,58 @@
 							name: '车效',
 							data: []
 						}
-						this.orderlist=[]
+						var allbikeeffic=0
+						var allmoney=0
+						this.orderlist = []
 						for (var i in res.user_growth) {
 							var formatetime = i.split('-')
 							var newtimes = formatetime[1] + '-' + formatetime[2]
 							datatimes.push(newtimes)
-							var orderobj={time:'',num:'',money:'',bikeper:''}
-							// user_charge_order_amount_grouth.push(res.user_charge_order_amount_grouth[i])
-							// user_growth.push(res.user_growth[i])
+							var orderobj = {
+								time: '',
+								num: '',
+								money: '',
+								bikeper: ''
+							}						
 							// 订单数
 							user_order_growth.push(res.user_order_growth[i])
 							// user_scan_qdcode.push(res.user_scan_qdcode[i])
 							// 车效
-							var bikepers=''
-							if(res.user_order_growth[i]==0 || res.bike_count_daily[i]==0){
-								bikepers=0
-							}else{
-								bikepers=parseFloat(res.user_order_growth[i]/res.bike_count_daily[i]).toFixed(1)
-								
-							}	
+							var bikepers = ''
+							if (res.user_order_growth[i] == 0 || res.bike_count_daily[i] == 0) {
+								bikepers = 0
+							} else {
+								bikepers = parseFloat(res.user_order_growth[i] / res.bike_count_daily[i]).toFixed(1)
+
+							}
+							// console.log('bikepers',bikepers,typeof(bikepers))
+							allbikeeffic+=parseFloat(bikepers)
+							allmoney+=parseFloat(res.user_order_amount_growth[i] / 100)
 							bike_count_daily.push(bikepers)
-							// 订单金额
-							user_order_amount_growth.push(res.user_order_amount_growth[i] / 100)
+							if(this.chartlimits){
+								// 订单金额
+								user_order_amount_growth.push(res.user_order_amount_growth[i] / 100)
+								orderobj.money = res.user_order_amount_growth[i] / 100
+							}else{
+								user_order_amount_growth.push(0)
+								orderobj.money = 0
+							}
+							
 							// 下方表格使用数据
-							orderobj.time=newtimes
-							orderobj.num=res.user_order_growth[i]
-							orderobj.money=res.user_order_amount_growth[i] / 100
-							orderobj.bikeper=bikepers
+							orderobj.time = newtimes
+							orderobj.num = res.user_order_growth[i]
+							
+							orderobj.bikeper = bikepers
 							this.orderlist.push(orderobj)
 						}
+						console.log('allbikeeffic',allbikeeffic,allmoney)
+						this.avercarratio=(allbikeeffic/Object.keys(res.user_growth).length).toFixed(2)
+						this.avermoney=(allmoney/Object.keys(res.user_growth).length).toFixed(2)
 						// 倒序
 						// this.orderlist.reverse()
 						orderNum.data = user_order_growth.reverse()
 						orderMoney.data = user_order_amount_growth.reverse()
-						bikeeffic.data=bike_count_daily.reverse()
+						bikeeffic.data = bike_count_daily.reverse()
 						let LineA = {
 							categories: [],
 							series: []
@@ -176,7 +275,7 @@
 						gridColor: '#CCCCCC',
 						gridType: 'dash',
 						dashLength: 8,
-						labelCount:4,
+						labelCount: 4,
 						// rotateLabel:true
 						// fontSize:8
 					},
@@ -210,6 +309,19 @@
 					}
 				});
 			},
+			
+			toggleTab(item) {
+				this.timeflag=item
+			    this.$refs.dateTime.show();  
+			},  
+			onConfirm(val) {  
+				  if(this.timeflag==1){
+					  this.start_time=val.selectRes
+				  }else{
+					  this.end_time=val.selectRes
+				  }
+				  this.getServerData()
+			}, 
 
 		}
 	}
@@ -221,6 +333,29 @@
 		width: 750upx;
 		height: 500upx;
 		background-color: #FFFFFF;
+	}
+	.aver-view{
+		margin-left: 14upx;
+		font-size: 22upx;
+		color: rgb(80,80,80);
+	}
+
+	.timeselect {
+		.wenzi {
+			font-size: 22upx;
+			color: rgb(80, 80, 80);
+			margin-right: 40upx;
+			line-height: 40upx;
+		}
+
+		display: flex;
+		justify-content: space-around;
+		height: 50upx;
+
+		.timedetil {
+			display: flex;
+			justify-content: space-around;
+		}
 	}
 
 	.charts {

@@ -93,7 +93,7 @@
 						active: false
 					},
 					{
-						text: '测试',
+						text: '刷新',
 						val: '6',
 						active: false
 					},
@@ -523,9 +523,89 @@
 						});
 						break
 					case '6':
-						this.biketest()
+						this.refreshinfo()
 						break
 				}
+			},
+			// 刷新车辆信息
+			refreshinfo(){
+				var options = {
+					url: '/bike/refresh_info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('刷新车辆信息', res)
+					if (res.status == 0) {
+						this.setBikeinfo(res.info)
+						this.beforeelec = this.bikeinfo.battery_level + '%'
+						// this.getcarinfo()
+						// 车辆编码
+						this.swapdata[0].val = this.bikeinfo.id
+						
+						// 车型
+						this.swapbatterydata[0].val = this.bikeinfo.model
+						
+						// 剩余电量
+						this.swapbatterydata[1].val = this.bikeinfo.battery_level + '%'
+						
+						// 电池状态
+						let is_on_battery = ''
+						if (this.bikeinfo.is_on_battery == 0) {
+							is_on_battery = '空置'
+						} else if (this.bikeinfo.is_on_battery == 1) {
+							is_on_battery = '装入'
+						}
+						this.swapbatterydata[2].val = is_on_battery
+						
+						// 电池锁状态
+						let is_battery_locked = ''
+						if (this.bikeinfo.is_on_battery == 0) {
+							is_battery_locked = '开'
+						} else if (this.bikeinfo.is_on_battery == 1) {
+							is_battery_locked = '关'
+						}
+						this.swapbatterydata[3].val = is_battery_locked
+						
+						// 电池电压
+						this.swapbatterydata[4].val = this.bikeinfo.battery_volt / 1000 + 'V'
+						
+						// 剩余容量
+						this.swapbatterydata[5].val = this.bikeinfo.battery_capacity / 1000 + 'Ah'
+						
+						
+						// 网络状态
+						let is_online = ''
+						if (this.bikeinfo.is_online == 0) {
+							is_online = '离线'
+						} else if (this.bikeinfo.is_online == 1) {
+							is_online = '在线'
+						}
+						this.swapbatterydata[6].val = is_online
+						
+						// gps更新时间
+						this.swapbatterydata[7].val = this.bikeinfo.gps_update_time
+						
+						// sim卡状态
+						let sim_state = ''
+						if (this.bikeinfo.is_defend_on == 1) {
+							sim_state = '是'
+						} else if (this.bikeinfo.is_defend_on == 0) {
+							sim_state = '否'
+						}
+						this.swapbatterydata[8].val = sim_state
+					} else {
+			
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 			switchBtn(hor, ver) {
 				if (hor === 0) {
