@@ -6,8 +6,8 @@
 					<view class='wenzi'>开始</view>
 					<view>{{start_time}}</view>
 				</view>
-				<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" value="2020-01-01 00:00:00" :isAll="false"
-				 :current="false"></yu-datetime-picker>
+				<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" value="2020-01-01 00:00:00" :isAll="true"
+				 :current="false"></yu-datetime-picker>				 
 				<view class='timedetil' @tap="toggleTab(2)">
 					<view class='wenzi'>结束</view>
 					<view>{{end_time}}</view>

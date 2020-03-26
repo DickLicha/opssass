@@ -351,7 +351,7 @@
 			// this.swapbatterydata[9].val = this.bikeinfo.alert_state_desc
 		},
 		methods: {
-			...mapMutations(['setSn', 'setBlueres']),
+			...mapMutations(['setSn', 'setBlueres','setBikeinfo']),
 			openlock() {
 				uni.getLocation({
 					type: 'wgs84',
@@ -598,8 +598,15 @@
 							sim_state = '否'
 						}
 						this.swapbatterydata[8].val = sim_state
+						uni.showToast({
+							title: '刷新信息成功',
+							duration: 2000,
+						});
 					} else {
-			
+			            uni.showToast({
+			            	title: '刷新信息失败',
+			            	duration: 2000,
+			            });
 					}
 				}).catch((err) => {
 					// 请求失败的回调
