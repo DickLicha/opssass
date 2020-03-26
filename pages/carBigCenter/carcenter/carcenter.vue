@@ -330,12 +330,19 @@
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
-					console.log('刷新车辆信息', res)
+					console.log('刷新车辆信息去', res)
 					if (res.status == 0) {
 						this.setBikeinfo(res.info)
 						this.fuzhi()
+						uni.showToast({
+							title: '刷新信息成功',
+							duration: 2000,
+						});
 					} else {
-			
+			            uni.showToast({
+			            	title: '刷新信息失败',
+			            	duration: 2000,
+			            });
 					}
 				}).catch((err) => {
 					// 请求失败的回调
