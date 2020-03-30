@@ -22,7 +22,7 @@
 			<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
 			<!--#endif-->
 		</view>
-		<view><span class='aver-view'>平均车效:</span>{{avercarratio}}<span class='aver-view'>平均金额:</span>{{avermoney}}</view>
+		<view><span class='aver-view'>平均车效:</span>{{avercarratio}}<span class='aver-view' v-if='chartlimits'>平均金额:</span><span v-if='chartlimits'>{{avermoney}}</span></view>
 		<view class='grid-view'>
 			<view class='flexd-posion'>
 				<view class='view-flexs switch-head'>
@@ -217,7 +217,7 @@
 							orderobj.bikeper = bikepers
 							this.orderlist.push(orderobj)
 						}
-						console.log('allbikeeffic',allbikeeffic,allmoney)
+						// console.log('allbikeeffic',allbikeeffic,typeof(allmoney),Object.keys(res.user_growth).length)
 						this.avercarratio=(allbikeeffic/Object.keys(res.user_growth).length).toFixed(2)
 						this.avermoney=(allmoney/Object.keys(res.user_growth).length).toFixed(2)
 						// 倒序
