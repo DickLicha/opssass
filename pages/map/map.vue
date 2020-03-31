@@ -1297,16 +1297,28 @@
 						temarr.push(tempobj0)
 						temarr.push(tempobj1)
 						this.covers = temarr
+						this.circles=[]
+						let circlepoint=[]
 						for (let i = 0; i < res.info.track.length; i++) {
 							var jwd = {
 								longitude: res.info.track[i][0],
 								latitude: res.info.track[i][1]
 							}
+							let circleobj={
+								longitude: res.info.track[i][0],
+								latitude: res.info.track[i][1],
+								color:'#DC143C',
+								fillColor:'#DC143C',
+								radius:4
+								
+							}
 							temparr.push(jwd)
+							circlepoint.push(circleobj)
 						}
+						this.circles=circlepoint
 						this.polyline[0].points = temparr
 						this.polyline[0].color = "#0000AA" //线的颜色
-						this.polyline[0].width = 5 //线的宽度
+						this.polyline[0].width = 3 //线的宽度
 						// dottedLine: true, //是否虚线
 						this.polyline[0].arrowLine = true
 						console.log('this.covers', this.covers);
