@@ -267,6 +267,7 @@
 			this.clicksuccess=false
 			setTimeout(() => {
 				this.serverice(this.longitude, this.latitude)
+				console.log('-------333',this.type)
 				switch (this.type) {
 					case '0':
 						this.scanbuttonname = '扫码换电'
@@ -412,7 +413,7 @@
 						]
 						break;
 				}
-			}, 1000)
+			}, 200)
 		},
 		onUnload() {
 			this.mapinfo = null
