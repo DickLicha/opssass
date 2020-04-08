@@ -5,8 +5,9 @@
 		<button class="login-view" type="primary" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信用户快速登录</button>
 		<view class='login-pwd' @click="loginbypwd">账号密码登录</view>
 		<view class="bottom-view">
-			<view class="bottom-text">登录即代表同意</view>
-			<view class="click-text">《柚达电单车用户协议》</view>
+			<!-- <view class="bottom-text">登录即代表同意</view>
+			<view class="click-text">《柚达电单车用户协议》</view> -->
+			<view class='bottom-span'>该程序为单车内部运维人员使用，使用前必须先登录</view>
 		</view>
 	</view>
 </template>
@@ -292,6 +293,9 @@
 		bottom: 40upx;
 		width: 100%;
 		height: 88upx;
+		.bottom-span{
+			color:rgb(50,50,50)
+		}
 
 		.bottom-text {
 			left: 20upx;
