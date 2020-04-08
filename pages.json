@@ -305,29 +305,18 @@
 			}
         }
         ,{
-            "path" : "pages/mine/mineyj/mineyj",
-            "style" : {}
+            "path" : "pages/tabbar/platform/platform",
+            "style" : {
+				"navigationBarTitleText": "工作台",
+				// "navigationBarTextStyle": "white",
+				// "navigationBarBackgroundColor": "#2383fb",
+				// "backgroundColor":"#2383fb",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom",
+				"titleNView": false
+			}
         }
     ],
- //   "subPackages":
-	// [ 
-	// {
- //        "root": "pagesB",
- //        "pages": [
-	// 	{
-	// 		"path": "echartPage/echartpage/echartpage",
-	// 		"style": {
-	// 			"navigationBarTitleText": "仪表盘"
-	// 		}
-	// 	}
-	// 	]
- //    }],
-	// "preloadRule": {
-	// 	"pagesB/echartPage/echartpage/echartpage": {
-	// 		"network": "all",
-	// 		"packages": ["__APP__"]
-	// 	}
-	// },
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -344,6 +333,12 @@
 				"iconPath": "static/image/renwu@2x(1).png",
 				"selectedIconPath": "static/image/renwu@2x.png",
 				"text": "任务"
+			},
+			{
+				"pagePath": "pages/tabbar/platform/platform",
+				"iconPath": "static/image/renwu@2x(1).png",
+				"selectedIconPath": "static/image/renwu@2x.png",
+				"text": "工作台"
 			},
 			{
 				"pagePath": "pages/tabbar/mine/mine",

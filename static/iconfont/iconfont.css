@@ -18,6 +18,9 @@
 .iconmima:before {
   content: "\e7b8";
 }
+.icon-jianpan:before {
+  content: "\e608";
+}
 
 .iconyonghu:before {
   content: "\e649";
