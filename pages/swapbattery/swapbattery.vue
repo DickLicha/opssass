@@ -55,18 +55,16 @@
 					buttonColor: '#007AFF'
 				},
 				content: [
-					// {
-					// 	// iconPath: '/static/component.png',
-					// 	// selectedIconPath: '/static/componentHL.png',
-					// 	text: '开锁',
-					// 	val: '-1',
-					// 	active: false
-					// },
-					// {
-					// 	text: '关锁',
-					// 	val: '0',
-					// 	active: false
-					// },
+					{
+						text: '开锁',
+						val: '-1',
+						active: false
+					},
+					{
+						text: '关锁',
+						val: '0',
+						active: false
+					},
 					{
 						text: '寻车铃',
 						val: '1',
@@ -477,10 +475,11 @@
 				this.content[e.index].active = !e.item.active
 				switch (e.item.val) {
 					case '-1':
-						this.openlock()
+						// this.openlock()
+						this.startmovecar()
 						break
 					case '0':
-						this.closelock()
+						this.endmovecars()
 						break
 					case '1':
 						this.openring()
@@ -846,6 +845,152 @@
 					// 请求失败的回调
 					console.error(err, '捕捉')
 				})
+			},
+			// 开始挪车
+			startmovecar() {
+				this.showshartmove = false
+				this.showendmove = false
+				this.openOrClose = 11
+				// this.showendmove = true
+				uni.getLocation({ //获取当前的位置坐标
+					type: 'gcj02',
+					success: (res) => {
+						console.log('位置信息', res.longitude, res.latitude)
+						var options = {
+							url: '/rporder/submit', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"bike_id": this.bikeinfo.id,
+								"user_coordinate": [res.longitude, res.latitude],
+								"channel": "xxx",
+								"bluetooth": this.blueconectstate,
+								'unlock':1,
+							}
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('开始订单', res)
+							this.showmap = true
+							if (res.status == 0) {
+								uni.showToast({
+									title: '开锁成功',
+									mask: false,
+									icon: 'none',
+									duration: 2500
+								});
+								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1 && type==1) {
+									var str1 = ble.doCmd('20', '00', this.bikeinfo.bluetooth_token)
+									ble.openLock(str1, 'open', function(res) {
+										console.log('蓝牙操作', res)
+									})
+									blueWriteState = 0
+									setTimeout(() => {
+										if (blueWriteState == 0) {
+											console.log('blueWriteState2', blueWriteState)
+											this.reportblue(this.openOrClose, 1, loadtime,'无特征值返回')
+										}
+									}, 5000)
+								}													
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '开锁失败',
+									mask: false,
+									icon: 'none',
+									duration: 2500
+								});
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: (res) => {
+						console.log('fail', res)
+					}
+				});
+			},
+			// 结束挪车
+			endmovecars() {
+				var options = {
+					url: '/bike/info', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('车辆信息', typeof(res), res)
+					if (res.status == 0) {
+						var bikeids=res.info.last_repark_order_id
+						this.setSn('*')
+						this.openOrClose = 10
+						uni.getLocation({ //获取当前的位置坐标
+							type: 'gcj02',
+							success: (res) => {
+								var options = {
+									url: '/rporder/finish', //请求接口
+									method: 'POST', //请求方法全部大写，默认GET
+									context: '',
+									data: {
+										"order_id": bikeids,
+										"park_id": '',
+										"bluetooth": this.blueconectstate,
+										"user_coordinate": [
+											res.longitude, res.latitude
+										]
+									}
+								}
+								this.$httpReq(options).then((res) => {
+									// 请求成功的回调
+									// res为服务端返回数据的根对象
+									console.log('挪车', res)
+									if (res.status == 0) {
+										// 有token并且蓝牙已经连接
+										if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
+											var str1 = ble.doCmd('20', '01', this.bikeinfo.bluetooth_token)
+											ble.openLock(str1, 'close', function(res) {
+												console.log('蓝牙操作', res)
+												loadtime = res.loadtime							
+											})
+											blueWriteState = 0
+											setTimeout(() => {
+												if (blueWriteState == 0) {
+													console.log('蓝牙写入失败', blueWriteState)
+													this.reportblue(this.openOrClose, 1, loadtime,'无特征值返回')
+												}
+											}, 5000)
+										}
+										uni.showToast({
+											title: '锁车成功',
+											mask: false,
+											duration: 3000
+										});
+									} else {
+										uni.showToast({
+											title: res.message ? res.message : '锁车失败',
+											mask: false,
+											icon: 'none',
+											duration: 3000
+										});
+									}
+								}).catch((err) => {
+									// 请求失败的回调
+									console.error(err, '捕捉')
+								})
+							},
+							fail: (res) => {
+									
+							},
+						})
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+				
 			},
 		}
 	}

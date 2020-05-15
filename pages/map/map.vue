@@ -352,7 +352,7 @@
 						// this.nearbymovecar(this.longitude, this.latitude, '*','*')
 						// this.nearbycarinfo(2)
 						this.selectcoverdata = [{
-								name: '全部车站',
+								name: '全部车辆',
 								val: '0',
 							},
 							{

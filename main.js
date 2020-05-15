@@ -71,7 +71,8 @@ Vue.prototype.$invstate = function(type) {
 		if (type == 'car') {
 			// 差+车
 			if(element.health_state==0 && element.repark_index!='0'){
-				iconPath = '/static/mapicon/car_bad+.png'
+				iconPath = '/static/mapicon/bad'+element.repark_index+'+.png'
+				// iconPath = '/static/mapicon/car_bad+.png'
 			}
 			// 失联
 			else if (0 === element.is_online) {
