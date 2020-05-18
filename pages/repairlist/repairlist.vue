@@ -155,7 +155,7 @@
 												tempobj = {
 													name: '车站挪车',
 													val: '',
-													url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
+													url: '/pages/map/map?text=全部车辆&type=3.1&name=挪车',
 												}
 												templist.push(tempobj)
 												break
@@ -687,7 +687,7 @@
 					this.repairlist = [{
 							name: '车站挪车',
 							val: '',
-							url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
+							url: '/pages/map/map?text=全部车辆&type=3.1&name=挪车',
 						},
 						{
 							name: '挪车记录',

@@ -90,13 +90,13 @@
 						val: '5',
 						active: false
 					},
+					// {
+					// 	text: '测试',
+					// 	val: '6',
+					// 	active: false
+					// },
 					{
-						text: '测试',
-						val: '6',
-						active: false
-					},
-					{
-						text: '',
+						text: '刷新',
 						val: '7',
 						active: false
 					},
@@ -350,7 +350,7 @@
 			// this.swapbatterydata[9].val = this.bikeinfo.alert_state_desc
 		},
 		methods: {
-			...mapMutations(['setSn', 'setBlueres']),
+			...mapMutations(['setSn', 'setBlueres','setBikeid']),
 			openlock() {
 				uni.getLocation({
 					type: 'wgs84',
@@ -524,6 +524,9 @@
 					case '6':
 						this.biketest()
 						break
+					case '7':
+						this.getcarinfo()
+						break	
 				}
 			},
 			switchBtn(hor, ver) {
@@ -827,6 +830,8 @@
 			},
 			// 获取车辆信息
 			getcarinfo() {
+				console.log(555,this.bikeinfo)
+				this.setBikeid(this.bikeinfo.id)
 				var options = {
 					url: '/bike/info', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -838,8 +843,19 @@
 					// res为服务端返回数据的根对象
 					console.log('车辆信息', typeof(res), res)
 					if (res.status == 0) {
-						this.afterelect = res.info.battery_level + '%'
-						this.addelect = res.info.battery_level - this.bikeinfo.battery_level + '%'
+						this.swapbatterydata[1].val = res.info.battery_level + '%'
+						uni.showToast({
+							title: res.message ? res.message : '刷新成功!',
+							icon: 'none',
+							duration: 2000
+						})
+					}
+					else{
+						uni.showToast({
+							title: res.message ? res.message : '刷新失败!',
+							icon: 'none',
+							duration: 2000
+						})
 					}
 				}).catch((err) => {
 					// 请求失败的回调
