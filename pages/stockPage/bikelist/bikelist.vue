@@ -4,7 +4,8 @@
 
 			<view class='flexd-posion'>
 				<view class='view-flexs switch-head'>
-					<view>sn</view>
+					<view>id</view>
+					<view>ecusn</view>
 					<view class='view-border-letf'>电量</view>
 					<view class='view-border-letf'>设防</view>
 					<view class='view-border-letf'>删除</view>
@@ -14,6 +15,7 @@
 			<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
 				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key='i' >
 					<view @click="gobikecenter(item.id)" style='color:green'>{{item.sn}}</view>
+					<view @click="gobikecenter(item.id)">{{item.ecu_sn}}</view>
 					<view class='view-border-letf'>{{item.battery_level}}%</view>
 					<view class='view-border-letf'>{{item.is_defend_on==0?'撤防':'设防'}}</view>
 					<!-- <view class='view-border-letf'>{{item.is_online==0?'离线':'在线'}}</view> -->
@@ -273,7 +275,10 @@
 				text-align: center;
 				align-items: center;
 				height: 44px;
-
+                
+				view{
+				font-size: 20upx!important;	
+				}
 				// justify-content: center;
 				.view-border-letf {
 					border-left: 1upx solid rgb(235, 235, 235);

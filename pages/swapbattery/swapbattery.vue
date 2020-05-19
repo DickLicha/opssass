@@ -111,7 +111,7 @@
 				}],
 				orderid: '',
 				swapbatterydata: [{
-						name: '车型:',
+						name: 'ecusn:',
 						val: ''
 					},
 					{
@@ -296,8 +296,8 @@
 			// 车辆编码
 			this.swapdata[0].val = this.bikeinfo.id
 
-			// 车型
-			this.swapbatterydata[0].val = this.bikeinfo.model
+			// ecusn
+			this.swapbatterydata[0].val = this.bikeinfo.ecu_sn
 
 			// 剩余电量
 			this.swapbatterydata[1].val = this.bikeinfo.battery_level + '%'
@@ -549,7 +549,7 @@
 						this.swapdata[0].val = this.bikeinfo.id
 						
 						// 车型
-						this.swapbatterydata[0].val = this.bikeinfo.model
+						this.swapbatterydata[0].val = this.bikeinfo.ecu_sn
 						
 						// 剩余电量
 						this.swapbatterydata[1].val = this.bikeinfo.battery_level + '%'
