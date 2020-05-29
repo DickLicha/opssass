@@ -830,7 +830,6 @@
 			},
 			// 获取车辆信息
 			getcarinfo() {
-				console.log(555,this.bikeinfo)
 				this.setBikeid(this.bikeinfo.id)
 				var options = {
 					url: '/bike/info', //请求接口
@@ -844,6 +843,52 @@
 					console.log('车辆信息', typeof(res), res)
 					if (res.status == 0) {
 						this.swapbatterydata[1].val = res.info.battery_level + '%'
+												
+						// 电池状态
+						let is_on_battery = ''
+						if (res.info.is_on_battery == 0) {
+							is_on_battery = '空置'
+						} else if (res.info.is_on_battery == 1) {
+							is_on_battery = '装入'
+						}
+						this.swapbatterydata[2].val = is_on_battery
+						
+						// 电池锁状态
+						let is_battery_locked = ''
+						if (res.info.is_on_battery == 0) {
+							is_battery_locked = '开'
+						} else if (res.info.is_on_battery == 1) {
+							is_battery_locked = '关'
+						}
+						this.swapbatterydata[3].val = is_battery_locked
+						
+						// 电池电压
+						this.swapbatterydata[4].val = res.info.battery_volt / 1000 + 'V'
+						
+						// 剩余容量
+						this.swapbatterydata[5].val = res.info.battery_capacity / 1000 + 'Ah'
+						
+						
+						// 网络状态
+						let is_online = ''
+						if (res.info.is_online == 0) {
+							is_online = '离线'
+						} else if (res.info.is_online == 1) {
+							is_online = '在线'
+						}
+						this.swapbatterydata[6].val = is_online
+						
+						// gps更新时间
+						this.swapbatterydata[7].val = res.info.gps_update_time
+						
+						// sim卡状态
+						let sim_state = ''
+						if (res.info.is_defend_on == 1) {
+							sim_state = '是'
+						} else if (res.info.is_defend_on == 0) {
+							sim_state = '否'
+						}
+						this.swapbatterydata[8].val = sim_state
 						uni.showToast({
 							title: res.message ? res.message : '刷新成功!',
 							icon: 'none',

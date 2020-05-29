@@ -86,9 +86,9 @@
 				
 				// 车锁状态
 				let is_wheel_locked = ''
-				if (this.bikeinfo. is_defend_on == 0) {
+				if (this.bikeinfo. is_defend_on == 1) {
 					is_wheel_locked = '设防'
-				} else if (this.bikeinfo. is_defend_on == 1) {
+				} else if (this.bikeinfo. is_defend_on == 0) {
 					is_wheel_locked = '撤防'
 				}
 				this.carcenterdata2[4].val = is_wheel_locked
