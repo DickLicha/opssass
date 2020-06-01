@@ -2,7 +2,7 @@
 	<view class='wrap'>
 		<view class='head-view'>
 			<image class='scan-img' @click="scaninto" src='/static/image/scan2x.png'></image>
-			<text class='head-view-text'>首页</text>
+			<text class='head-view-text'>{{headtitle}}</text>
 		</view>
 		<view class='common-base-view'>
 			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item,i)'>
@@ -29,11 +29,11 @@
 		computed: mapState(['userinfo', 'blueres']),
 		onShow() {			
 			this.taskdata = []
-			// var acl = this.userinfo.acl.children
 			var acl = []
 			uni.getStorage({
 				key: 'userinfo',
 				success: res => {
+					this.headtitle=res.data.cities[0].name || '未知城市'
 					acl = res.data.acl.children
 					var onlyid = '',
 						tempobj = {},
@@ -140,11 +140,12 @@
 					});
 				}
 			})
-			this.getdirectinfo()
+			this.getdirectinfo()	
 		},
 		data() {
 			return {
-				taskdata: []
+				taskdata: [],
+				headtitle:'首页'
 			};
 		},
 		methods: {
