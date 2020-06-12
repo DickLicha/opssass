@@ -216,6 +216,8 @@
 									  if (res.confirm) {
 									            this.setLongitude(citycenter[0])
 									            this.setLatitude(citycenter[1])
+												// this.nearbymovecar(citycenter[0], citycenter[1], parseInt(this.selectvals), '*')
+												// this.nearbymovecar(citycenter[0], citycenter[1], 1, '*')
 									        } else if (res.cancel) {
 												
 									        }
@@ -1030,7 +1032,7 @@
 						var circles = []
 						if (this.type != '9' && !!res.list) {
 							for (let i = 0; i < res.list.length; i++) {
-								let tmpObj = {}
+								var tmpObj = {}
 								tmpObj.id = res.list[i].id
 								if (!!res.list[i].coordinate) {
 									tmpObj.latitude = res.list[i].coordinate[1]
@@ -1088,9 +1090,11 @@
 								// this.covers.push(tmpObjs)
 							}
 						}
+						setTimeout(()=>{
+							this.covers = temparr
+							this.circles = circles
+						},200)
 						
-						this.covers = temparr
-						this.circles = circles
 					}
 				}).catch((err) => {
 					// 请求失败的回调
