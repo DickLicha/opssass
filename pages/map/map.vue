@@ -1090,10 +1090,12 @@
 								// this.covers.push(tmpObjs)
 							}
 						}
-						setTimeout(()=>{
-							this.covers = temparr
-							this.circles = circles
-						},200)
+						this.covers = temparr
+						this.circles = circles
+						// setTimeout(()=>{
+						// 	this.covers = temparr
+						// 	this.circles = circles
+						// },200)
 						
 					}
 				}).catch((err) => {
