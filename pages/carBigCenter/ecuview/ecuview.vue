@@ -8,20 +8,27 @@
 
 <script>
 	import itemCell from '@/components/item-cell/item-cell.vue'
+	import {
+		mapState,
+	} from 'vuex'
 	export default {
 		components:{
 			itemCell
 		},
+		computed: mapState(['bikeinfo']),
 		data() {
 			return {
 				carcenterdata1:[
 					{name:'IMEI:',val:''},
-					{name:'ECUsn产品码:',val:'777039046'},
+					{name:'ECUsn产品码:',val:''},
+					{name:'sn:',val:''},
 				]		
 			}
 		},
 		onLoad(){
-			this.getcarinfo()
+			this.carcenterdata1[0].val = this.bikeinfo.imei
+			this.carcenterdata1[1].val = this.bikeinfo.ecu_sn						             
+			this.carcenterdata1[2].val = this.bikeinfo.sn	
 		},
 		methods: {
 			gocarcenter(e){
