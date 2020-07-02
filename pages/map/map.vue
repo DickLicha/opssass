@@ -318,7 +318,9 @@
 						break;
 					case '1.1':
 						this.scanbuttonname = '扫码入库'
-						this.nearbyfaultcar(this.longitude, this.latitude, '*')
+						var setectval=(this.selectvals==100)?0:this.selectvals
+						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
+						// this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
 						this.selectcoverdata = [{
 								name: '全部故障车辆',
 								id: '0',
@@ -508,7 +510,8 @@
 						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude, undervolt)
 						break;
 					case '1.1':
-						this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
+					    var setectval=(this.selectvals==100)?0:this.selectvals
+						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
 						break;
 					case '3.1':
 						if (this.selectvals == 100) {
@@ -1002,7 +1005,9 @@
 									self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt,dis,this.gobeltimestr)
 									break
 								case '1.1':
-									self.nearbyfaultcar(res.longitude, res.latitude, '*')
+								    var setectval=(this.selectvals==100)?0:this.selectvals
+								    // this.nearbyfaultcar(this.longitude, this.latitude, setectval)
+									self.nearbyfaultcar(res.longitude, res.latitude, setectval)
 									break
 								case '2':
 									self.maintainbikelist(res.longitude, res.latitude)
@@ -1477,7 +1482,7 @@
 								"is_order_finished": 0,
 								"pno": 1,
 								"psize": 100,
-								"order_state": 0,
+								// "order_state": 0,
 								"bike_id":res.info.id
 							}
 							this.setSn('*')
