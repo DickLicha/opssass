@@ -1125,10 +1125,8 @@
 								// this.covers.push(tmpObjs)
 							}
 						}
-						setTimeout(()=>{
-							this.covers = temparr
-							this.circles = circles
-						},200)						
+						this.covers = temparr
+						this.circles = circles						
 					}
 				}).catch((err) => {
 					// 请求失败的回调
