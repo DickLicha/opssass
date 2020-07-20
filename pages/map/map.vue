@@ -621,6 +621,7 @@
 					}
 				}
 			},
+
 			// 删除车站
 			delstop(){
 				uni.showModal({
