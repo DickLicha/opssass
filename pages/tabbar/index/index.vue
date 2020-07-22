@@ -78,7 +78,8 @@
 									break
 								case 9:
 									name = '车站'
-									url = '/pages/map/map'
+									// url = '/pages/map/map'
+									url = '/pages/repairlist/repairlist'
 									text = '全部车站'
 									src = require('../../../static/image/che_zhan.png')
 									break
