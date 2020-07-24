@@ -16,7 +16,15 @@
 			<view v-if="type==0">
 				<text>车辆型号</text>
 				<view class='result-fault'>
-					<view class='result-fault-view' v-for="(item,i) in faultdata" :key="i" @click='chosefault(item,i)' :class="{'borderrights':isActive==i}">
+					<view class='result-fault-view' v-for="(item,i) in faultdata" :key="i" @click='chosefault(item,i,0)' :class="{'borderrights':isActive==i}">
+						<text>{{item.name}}</text>
+					</view>
+				</view>
+			</view>
+			<view v-if="type==0">
+				<text>电池型号</text>
+				<view class='result-fault'>
+					<view class='result-fault-view' v-for="(item,i) in batterydata" :key="i" @click='chosebattery(item,i,1)' :class="{'borderrights':isActives==i}">
 						<text>{{item.name}}</text>
 					</view>
 				</view>
@@ -47,6 +55,7 @@
 				],
 				models: 'Q5',
 				isActive: 0,
+				isActives:0,
 				title: 'uni-fab',
 				poptype: '',
 				borders: true,
@@ -62,6 +71,7 @@
 						val: '',
 					},
 				],
+				batterydata:[{name:'12Ah',val:'ZN48V12AH'},{name:'14Ah',val:'XH48V14AH'},{name:'15Ah',val:'VP48V15AH'}],
 				orderid: '',
 				type: '',
 				swapbatterydata: [{
@@ -69,6 +79,7 @@
 					val: ''
 				}],
 				btnname: '',
+				batterymodel:'ZN48V12AH',
 			}
 		},
 		components: {
@@ -101,9 +112,12 @@
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
 			chosefault(item,i) {
-				this.models = item.name
-				this.isActive=i
-				console.log('models', this.models)
+					this.models = item.name
+					this.isActive=i	
+			},
+			chosebattery(item,i) {				
+					this.batterymodel=item.val
+					this.isActives=i
 			},
 			// 换二维码
 			changesn() {
@@ -270,7 +284,8 @@
 					data: {
 						"imei": this.swapdata[0].val,
 						"ecu_sn": this.swapdata[1].val,
-						"model": models
+						"model": models,
+						"battery_model":this.batterymodel
 					}
 				}
 				this.$httpReq(options).then((res) => {
