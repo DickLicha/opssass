@@ -614,7 +614,7 @@
 					this.polylinePoints.push(temparr)
 					this.polylinePoint.push(jwd)					
 					this.polyline[0].color = "#0055ff", //线的颜色
-					this.polyline[0].width = 1, //线的宽度
+					this.polyline[0].width = 2, //线的宽度
 					this.polyline[0].arrowLine = true, //带箭头的线 开发者工具暂不支持该属性
 					this.polyline[0].points=this.polylinePoint	
 					// console.log(4444,this.polyline[0].points)			
@@ -1337,7 +1337,26 @@
 								// this.covers.push(tmpObjs)
 							}else if(res.parks[j].polygon_type==1){								
 								let circlesObjs = {}
+								let tmpObjs = {}
 								circlesObjs.points=[]
+								tmpObjs.id = res.parks[j].id
+								if (!!res.parks[j].coordinate) {
+									tmpObjs.latitude = res.parks[j].coordinate[1]
+									tmpObjs.longitude = res.parks[j].coordinate[0]
+								}
+								tmpObjs.name = res.parks[j].name
+								tmpObjs.iconPath = '/static/mapicon/stopare.png'
+								tmpObjs.type = 'stop'
+								tmpObjs.bickcount = res.parks[j].bike_count
+								tmpObjs.allkcount = res.parks[j].capacity
+								tmpObjs.radius = res.parks[j].radius
+								tmpObjs.remark = res.parks[j].remark
+								tmpObjs.grade = res.parks[j].grade
+								// tmpObjs.allkcount = res.parks[j].capacity
+								tmpObjs.width = 39
+								tmpObjs.height = 48
+								tmpObjs.parkid = res.parks[j].id
+								temparr.push(tmpObjs)
 								if (!!res.parks[j].coordinates) {
 									for(let k=0;k<res.parks[j].coordinates.length;k++){	
 										var secondtemp=res.parks[j].coordinates[k]
@@ -1345,7 +1364,7 @@
 										polygon.latitude=secondtemp[1]
 										polygon.longitude=secondtemp[0]
 										circlesObjs.points.push(polygon)
-										circlesObjs.fillColor = "#FF9F0040"
+										circlesObjs.fillColor = "#A9A9A980"
 										circlesObjs.color = "#FF9F0040"
 										circlesObjs.strokeWidth = 1
 									}
