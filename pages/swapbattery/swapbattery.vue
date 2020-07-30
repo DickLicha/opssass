@@ -1,20 +1,23 @@
 <template>
-	<view class='wrap'>
+	<view class='wrap'>	
 		<view class='view-common'>
-			<item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell>
-			<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
+			<!-- <item-cell :itemdata="swapdata" type='4' :border='borders' @itemclick='gocarcenter'></item-cell> -->
+			<!-- <item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell> -->
+			<item-cell :itemdata="swapbatterydata1" type='2' :border='borders'></item-cell>
+			<view class='collview'>						
+				<uni-collapse  accordion="true">
+				    <uni-collapse-item v-for="(i,item) in collapseData" :title="i.name">
+				        <uni-list>
+				            <uni-list-item @click='go(j.url)' v-for="(j,jtem) in i.data" :title='j.name' thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"><text>{{j.val}}</text></uni-list-item>												
+				        </uni-list>
+				    </uni-collapse-item>
+				</uni-collapse>				
+			</view>
+			
+			
 			<view class='change-battery-button' v-if='showBatteryBtn==true'>
 				<button type='primary' class='share-button-default' @click='changbattery(buttonname)'>{{buttonname}}</button>
 			</view>
-
-			<uni-popup :show="poptype ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
-				<view :scroll-y="true" class="uni-center center-box">
-					<view><text>换电前电量：</text><text>{{beforeelec}}</text></view>
-					<view><text>换电后电量：</text><text>{{afterelect}}</text></view>
-					<view><text>电量增长：</text><text>{{addelect}}</text></view>
-				</view>
-			</uni-popup>
-
 			<uni-fab ref="fab" :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction"
 			 @trigger="trigger" />
 		</view>
@@ -25,6 +28,8 @@
 	import itemCell from '@/components/item-cell/item-cell.vue'	
 	import uniFab from '@/components/uni-fab/uni-fab.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
+	// import uniCollapse from '@/components/uni-popup/uni-popup.vue'
+	// import uniCollapseItem from '@/components/uni-popup/uni-popup.vue'
 	import {
 		mapState,
 		mapMutations
@@ -110,6 +115,79 @@
 					val: ''
 				}],
 				orderid: '',
+				swapbatterydata1:[
+					{
+						name: '车辆编号:',
+						val: ''
+					},
+					{
+						name: 'esusn:',
+						val:''
+					},
+					{
+						name: '差车:',
+						val:''
+					},
+					{
+						name: '车辆状态:',
+						val:''
+					},
+					{
+						name: '设防状态:',
+						val:''
+					},
+					{
+						name: '电量:',
+						val: '',
+						time:''
+					},
+					{
+						name: '在线状态:',
+						val: '',
+						time:''
+					},
+					{
+						name: '业务状态:',
+						val: '',
+						time:''
+					},
+					{
+						name: '定位类型:',
+						val: '',
+						time:''
+					},
+					{
+						name: '最近订单时间:',
+						time: ''
+					},
+					{
+						name: '停放信息:',
+						val: '',
+						time:':1'
+					},
+				],
+				collapseData:[
+					{name:'订单信息',data:[
+						{name:'用户订单',val:'',url:'/pages/carBigCenter/carorder/carorder'},
+						{name:'车辆操作记录',val:'',url:'/pages/switchloockinfo/switchloockinfo'},
+						{name:'换电记录',val:'',url:'/pages/carBigCenter/batteriesrecord/batteriesrecord'},
+						{name:'维修记录',val:'',url:'/pages/carBigCenter/carorbit/carorbit'},
+						{name:'订单轨迹',val:'',url:'/pages/map/map?type=0.1&&name=用户骑行轨迹'},
+						{name:'车辆轨迹',val:'',url:'/pages/map/map?type=0.4&&name=车辆轨迹'},
+						{name:'最后一次扫码手机位置',val:'',url:'/pages/map/map?type=0.2&&name=最后扫码位置'},
+						{name:'车辆当前位置',val:'',url:'/pages/map/map?type=0.3&&name=车辆当前位置'},
+						]},
+					// {name:'设防信息',data:[
+					// 	{name:'是否设防:',val:'',url:''},
+					// 	{name:'电池锁:',val:'',url:''},
+					// 	]},
+					{name:'状态信息',data:[
+						// {name:'网络状态:',val:'',url:''},
+						{name:'库存状态:',val:'22',url:''},
+						{name:'异常状态:',val:'',url:''},
+						{name:'电池状态:',val:'',url:''},
+						]},				
+					],
 				swapbatterydata: [{
 						name: '车型:',
 						val: ''
@@ -156,7 +234,7 @@
 		components: {
 			itemCell,
 			uniFab,
-			uniPopup
+			uniPopup,
 		},
 		onBackPress() {
 			if (this.$refs.fab.isShow) {
@@ -172,8 +250,9 @@
 				}
 			})
 		},
-		computed: mapState(['bikeinfo', 'bikeid', 'blueres', 'bluestate', 'blueconectstate','blueconectstate']),
+		computed: mapState(['bikeinfo', 'bikeid', 'blueres', 'bluestate', 'blueconectstate','directinfo']),
 		onLoad(e) {
+			this.setbikedata(this.bikeinfo)
 			if (e.type != 99) {
 				var _self = this
 				var name = _self.bikeinfo.bluetooth_name
@@ -293,65 +372,110 @@
 			this.beforeelec = this.bikeinfo.battery_level + '%'
 			// this.getcarinfo()
 			// 车辆编码
-			this.swapdata[0].val = this.bikeinfo.id
+			// this.swapdata[0].val = this.bikeinfo.id
 
-			// 车型
-			this.swapbatterydata[0].val = this.bikeinfo.model
+			// // ecusn
+			// this.swapbatterydata[0].val = this.bikeinfo.ecu_sn
 
-			// 剩余电量
-			this.swapbatterydata[1].val = this.bikeinfo.battery_level + '%'
+			// // 剩余电量
+			// this.swapbatterydata[1].val = this.bikeinfo.battery_level + '%'
 
-			// 电池状态
-			let is_on_battery = ''
-			if (this.bikeinfo.is_on_battery == 0) {
-				is_on_battery = '空置'
-			} else if (this.bikeinfo.is_on_battery == 1) {
-				is_on_battery = '装入'
-			}
-			this.swapbatterydata[2].val = is_on_battery
+			// // 电池状态
+			// let is_on_battery = ''
+			// if (this.bikeinfo.is_on_battery == 0) {
+			// 	is_on_battery = '空置'
+			// } else if (this.bikeinfo.is_on_battery == 1) {
+			// 	is_on_battery = '装入'
+			// }
+			// this.swapbatterydata[2].val = is_on_battery
 
-			// 电池锁状态
-			let is_battery_locked = ''
-			if (this.bikeinfo.is_on_battery == 0) {
-				is_battery_locked = '开'
-			} else if (this.bikeinfo.is_on_battery == 1) {
-				is_battery_locked = '关'
-			}
-			this.swapbatterydata[3].val = is_battery_locked
+			// // 电池锁状态
+			// let is_battery_locked = ''
+			// if (this.bikeinfo.is_on_battery == 0) {
+			// 	is_battery_locked = '开'
+			// } else if (this.bikeinfo.is_on_battery == 1) {
+			// 	is_battery_locked = '关'
+			// }
+			// this.swapbatterydata[3].val = is_battery_locked
 
-			// 电池电压
-			this.swapbatterydata[4].val = this.bikeinfo.battery_volt / 1000 + 'V'
+			// // 电池电压
+			// this.swapbatterydata[4].val = this.bikeinfo.battery_volt / 1000 + 'V'
 
-			// 剩余容量
-			this.swapbatterydata[5].val = this.bikeinfo.battery_capacity / 1000 + 'Ah'
+			// // 剩余容量
+			// this.swapbatterydata[5].val = this.bikeinfo.battery_capacity / 1000 + 'Ah'
+          
+			// // 网络状态
+			// let is_online = ''
+			// if (this.bikeinfo.is_online == 0) {
+			// 	is_online = '离线'
+			// } else if (this.bikeinfo.is_online == 1) {
+			// 	is_online = '在线'
+			// }
+			// this.swapbatterydata[6].val = is_online
 
+			// // gps更新时间
+			// this.swapbatterydata[7].val = this.bikeinfo.gps_update_time
 
-			// 网络状态
-			let is_online = ''
-			if (this.bikeinfo.is_online == 0) {
-				is_online = '离线'
-			} else if (this.bikeinfo.is_online == 1) {
-				is_online = '在线'
-			}
-			this.swapbatterydata[6].val = is_online
-
-			// gps更新时间
-			this.swapbatterydata[7].val = this.bikeinfo.gps_update_time
-
-			// sim卡状态
-			let sim_state = ''
-			if (this.bikeinfo.is_defend_on == 1) {
-				sim_state = '是'
-			} else if (this.bikeinfo.is_defend_on == 0) {
-				sim_state = '否'
-			}
-			this.swapbatterydata[8].val = sim_state
+			// // sim卡状态
+			// let sim_state = ''
+			// if (this.bikeinfo.is_defend_on == 1) {
+			// 	sim_state = '是'
+			// } else if (this.bikeinfo.is_defend_on == 0) {
+			// 	sim_state = '否'
+			// }
+			// this.swapbatterydata[8].val = sim_state
 
 			// 异常状态
 			// this.swapbatterydata[9].val = this.bikeinfo.alert_state_desc
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBlueres','setBikeinfo']),
+			setbikedata(bikeinfo){
+				// 车辆id
+				this.swapbatterydata1[0].val=bikeinfo.id
+				// 车辆sn
+				this.swapbatterydata1[1].val=bikeinfo.ecu_sn
+				// 车辆差车等级
+				this.swapbatterydata1[2].val=bikeinfo.repark_index
+				// 车辆健康状态
+				this.swapbatterydata1[3].val=bikeinfo.health_state?'故障':'健康'
+				// 设防状态1设防0撤防
+				this.swapbatterydata1[4].val=bikeinfo.is_defend_on?'设防':'撤防'
+				// 车辆电量
+				this.swapbatterydata1[5].val=bikeinfo.battery_volt / 1000 + 'V'+'    '+bikeinfo.battery_level+'%'
+				this.swapbatterydata1[5].time=bikeinfo.battery_update_time
+				// 车辆在线状态
+				this.swapbatterydata1[6].val=bikeinfo.is_online?'在线':'离线'
+				this.swapbatterydata1[6].time=bikeinfo.online_update_time
+				// 车辆业务状态
+				this.swapbatterydata1[7].val = this.directinfo.bike_bus_state_enum[bikeinfo.bus_state]
+				if(this.bikeinfo.bus_state){
+					this.swapbatterydata1[7].val = this.directinfo.bike_bus_state_enum[0]
+				}
+				this.swapbatterydata1[7].time=bikeinfo.bus_update_time
+				// 车辆定位类型
+				this.swapbatterydata1[8].val=bikeinfo.locate_type
+				this.swapbatterydata1[8].time=bikeinfo.gps_update_time
+				// 车辆最近订单时间
+				this.swapbatterydata1[9].time=bikeinfo.last_order_end_time
+				// 车辆停放信息
+				var stoparename=''
+				if(bikeinfo.park_state==0){
+					// stoparename='('+this.bikeinfo.svca_name+')'
+				}else if(bikeinfo.park_state==1){
+					stoparename='('+bikeinfo.park_name+')'  
+				}else if(bikeinfo.park_state==11){
+					stoparename='('+bikeinfo.npa_name+')'
+				}
+				this.swapbatterydata1[10].val=this.$parkstate(bikeinfo.park_state)+stoparename
+				this.swapbatterydata1[10].time=bikeinfo.park_update_time
+				// 库存状态
+				this.collapseData[1].data[0].val=this.$invstate(bikeinfo.inv_state)
+				// 异常状态
+				this.collapseData[1].data[1].val=bikeinfo.alert_state_desc
+				// 电池状态
+				this.collapseData[1].data[2].val=bikeinfo.is_on_battery?'装入':'空置'
+			},
 			openlock() {
 				uni.getLocation({
 					type: 'wgs84',
@@ -397,6 +521,16 @@
 					fail: () => {},
 					complete: () => {}
 				});
+			},
+			go(url){
+				if(!!url){
+					uni.navigateTo({
+						url: url,
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
+				}	
 			},
 			// 寻车铃
 			openring() {
@@ -542,62 +676,8 @@
 					console.log('刷新车辆信息', res)
 					if (res.status == 0) {
 						this.setBikeinfo(res.info)
+						this.setbikedata(this.bikeinfo)
 						this.beforeelec = this.bikeinfo.battery_level + '%'
-						// this.getcarinfo()
-						// 车辆编码
-						this.swapdata[0].val = this.bikeinfo.id
-						
-						// 车型
-						this.swapbatterydata[0].val = this.bikeinfo.model
-						
-						// 剩余电量
-						this.swapbatterydata[1].val = this.bikeinfo.battery_level + '%'
-						
-						// 电池状态
-						let is_on_battery = ''
-						if (this.bikeinfo.is_on_battery == 0) {
-							is_on_battery = '空置'
-						} else if (this.bikeinfo.is_on_battery == 1) {
-							is_on_battery = '装入'
-						}
-						this.swapbatterydata[2].val = is_on_battery
-						
-						// 电池锁状态
-						let is_battery_locked = ''
-						if (this.bikeinfo.is_on_battery == 0) {
-							is_battery_locked = '开'
-						} else if (this.bikeinfo.is_on_battery == 1) {
-							is_battery_locked = '关'
-						}
-						this.swapbatterydata[3].val = is_battery_locked
-						
-						// 电池电压
-						this.swapbatterydata[4].val = this.bikeinfo.battery_volt / 1000 + 'V'
-						
-						// 剩余容量
-						this.swapbatterydata[5].val = this.bikeinfo.battery_capacity / 1000 + 'Ah'
-						
-						
-						// 网络状态
-						let is_online = ''
-						if (this.bikeinfo.is_online == 0) {
-							is_online = '离线'
-						} else if (this.bikeinfo.is_online == 1) {
-							is_online = '在线'
-						}
-						this.swapbatterydata[6].val = is_online
-						
-						// gps更新时间
-						this.swapbatterydata[7].val = this.bikeinfo.gps_update_time
-						
-						// sim卡状态
-						let sim_state = ''
-						if (this.bikeinfo.is_defend_on == 1) {
-							sim_state = '是'
-						} else if (this.bikeinfo.is_defend_on == 0) {
-							sim_state = '否'
-						}
-						this.swapbatterydata[8].val = sim_state
 						uni.showToast({
 							title: '刷新信息成功',
 							duration: 2000,
@@ -953,10 +1033,13 @@
 
 		/* margin-bottom: 20upx; */
 		.view-common {
+			.collview{
+				margin-top: 30upx;
+			}
 			margin: 10upx 22upx;
-			height: 98vh;
+			height: 150vh;
 			position: relative;
-
+            overflow-y: auto;
 			.change-battery-button {
 				position: fixed;
 				bottom: 3vh;

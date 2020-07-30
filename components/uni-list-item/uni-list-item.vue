@@ -8,7 +8,7 @@
 				<uni-icon :color="extraIcon.color" :size="extraIcon.size" :type="extraIcon.type"></uni-icon>
 			</view>
 			<view class="uni-list-item__content">
-				<view class="uni-list-item__content-title">{{title}}</view>
+				<view class="uni-list-item__content-title">{{title}}<slot></slot></view>
 				<view class="uni-list-item__content-note" v-if="note">{{note}}</view>
 			</view>
 			<view class="uni-list-item__extra" v-if="showBadge === true || showBadge === 'true' || showArrow === true || showArrow === 'true'||showSwitch === true || showSwitch === 'true'">
@@ -16,7 +16,7 @@
 				<switch v-if="showSwitch === true || showSwitch === 'true'" :disabled='disabled' :checked="switchChecked" @change="onSwitchChange" />
 				<uni-icon v-if="showArrow === true || showArrow === 'true'" color="#bbb" size="20" type="arrowright"></uni-icon>
 			</view>
-		</view>
+		</view>		
 	</view>
 </template>
 

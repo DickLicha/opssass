@@ -304,6 +304,10 @@
 				"navigationBarTitleText": "最近上报日志"
 			}
         }
+        ,{
+            "path" : "pages/mine/mineyj/mineyj",
+            "style" : {}
+        }
     ],
  //   "subPackages":
 	// [ 

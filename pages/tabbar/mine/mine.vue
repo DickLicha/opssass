@@ -46,35 +46,10 @@
 						url:'/pages/mine/mineyhq/mineyhq'
 					},
 					// {
-					// 	name: '未关电机锁车辆记录',
-					// 	val: '',
-					// 	url:'/pages/mine/mineyj/mineyj'
-					// },
-					// {
-					// 	name: '未关电池锁车辆记录',
-					// 	val: '',
-					// 	url:'/pages/mine/minezhmx/minezhmx'
-					// },
-					// {
-					// 	name: '员工反馈',
-					// 	val: '',
-					// 	url:'/pages/mine/minezhmx/minezhmx'
-					// },
-					// {
-					// 	name: '当前运维城市',
-					// 	val: '',
-					// 	url:'/pages/swapbattery/swapbattery'
-					// },
-					// {
 					// 	name: 'test',
 					// 	val: '',
-					// 	url:'/pages/repairPage/repaircar/repaircar'
-					// },
-					// {
-					// 	name: 'login',
-					// 	val: '',
-					// 	url:'/pages/mine/loginView/loginView'
-					// },
+					// 	url:'/pages/mine/mineyj/mineyj'
+					// },				
 				]
 			}
 		},
