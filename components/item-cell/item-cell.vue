@@ -8,6 +8,7 @@
 							<i v-if='type==3 || type==4' class="iconfont flewfour" :class='item.img'></i>
 							<text class='flextwo'>{{item.name}}</text>
 							<text class='flextree' :class="{'click-text':item.click==true}">{{item.val}}</text>
+							<text class='flexfour' v-if="item.time" >{{item.time}}</text>
 						</view>
 						<view>
 							<i v-if='type==1 || type==4' class="iconfont iconjiantou flewfour"></i>
@@ -96,11 +97,15 @@
                     	color:#F6C700
                     }
 					.flextree {
-						margin-left: 20upx;						
+						margin-left: 20upx;
+						font-size: 28upx;						
 					}
 
 					.flexfour {
 						text-align: right;
+						float: right;
+						font-size: 24upx;
+						color: rgb(120,120,120);
 					}
 				}
 				.mine-border-top {

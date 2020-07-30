@@ -93,8 +93,20 @@
 
 					</view>
 				</view>
-
-
+				<!-- 地图时间选择 -->
+				<view v-if='type==0.4' class='timeselect'>
+					<view class='timedetil' @tap="toggleTab(1)">
+						<view class='wenzi'>开始</view>
+						<view>{{start_time}}</view>
+					</view>
+					<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" value="2020-01-01 00:00:00" :isAll="true"
+					 :current="false"></yu-datetime-picker>				 
+					<view class='timedetil' @tap="toggleTab(2)">
+						<view class='wenzi'>结束</view>
+						<view>{{end_time}}</view>
+					</view>
+					<!-- <calendar @change="change" :startDate="initStartDate" :endDate="initEndDate" :daysCount="daysCount"></calendar> -->
+				</view>
 				<view v-if="showcorverview.bottom" style='margin-top: 10upx;'>
 					<base-input @scanCode='scanCode(1)' @goPage='goNewPage' :title='inputval' @hidekeygo='manualsgo'></base-input>
 				</view>
@@ -112,6 +124,7 @@
 	import baseInput from '@/components/baseinput/baseinput.vue'
 	import baseImg from '@/components/image/image.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
+	import yuDatetimePicker from "@/components/yu-datetime-picker.vue"
 	import {
 		mapState,
 		mapMutations
@@ -125,13 +138,17 @@
 			baseheader,
 			baseImg,
 			uniPopup,
-			baseInput
+			baseInput,
+			yuDatetimePicker
 		},
 		computed: mapState(['longitude', 'latitude', 'mapcovers', 'imgarr', 'bikeinfo', 'movecarorder', 'orderid',
 			'endmove', 'blueres', 'bluestate', 'blueconectstate', 'blueconectstate'
 		]),
 		data() {
 			return {
+				timeflag:0,
+				start_time: '2020-03-20 00:00:00',
+				end_time: "2020-03-20 23:00:00",
 				mapheihts:'50vh',
 				clicksuccess: false,
 				maploc: [{
@@ -243,54 +260,64 @@
 				timestrArr: [],
 				polylinePoint:[],
 				polylinePoints:[],
+				locationtime:'',
 			};
 		},
 		onLoad(e) {
-			this.mapheihts='84vh'
+			this.type = e.type
+			this.mapheihts='85vh'
 			this.polylinePoint=[]
 			this.polylinePoints=[]
-			uni.getLocation({ //获取当前的位置坐标
-				type: 'gcj02',
-				success: (res) => {
-					console.log('位置信息', res.longitude, res.latitude)
-					this.setLongitude(res.longitude)
-					this.setLatitude(res.latitude)
-					this.tempjindu = res.longitude
-					this.tempweidu = res.latitude
-					setTimeout(() => {
-						var citycenter = this.userinfo.cities[0].coordinate
-						var distances = this.getFlatternDistance(parseFloat(citycenter[0]), parseFloat(citycenter[1]), res.longitude,
-							res.latitude)
-						// var distances=this.getFlatternDistance(119.283383,26.131703,119.285615,26.123959)
-						console.log('juli', distances)
-						if (distances / 1000 > 30) {
-							uni.showModal({
-								title: '当前距离服务区过远',
-								content: '是否切换到服务区？',
-								showCancel: true,
-								cancelText: '不切换',
-								confirmText: '切换',
-								success: res => {
-									if (res.confirm) {
-										this.setLongitude(citycenter[0])
-										this.setLatitude(citycenter[1])
-									} else if (res.cancel) {
-
-									}
-								},
-								fail: () => {},
-								complete: () => {}
-							});
-
-						}
-						console.log('距离城市中心点距离为', distances)
-					}, 1000);
-
-				},
-				fail: (res) => {
-					console.log('fail', res)
-				}
-			});			
+			if(this.type!='0.3'){
+				uni.getLocation({ //获取当前的位置坐标
+					type: 'gcj02',
+					success: (res) => {
+						console.log('位置信息', res.longitude, res.latitude)
+						this.setLongitude(res.longitude)
+						this.setLatitude(res.latitude)
+						this.tempjindu = res.longitude
+						this.tempweidu = res.latitude
+						setTimeout(() => {
+							var citycenter = this.userinfo.cities[0].coordinate
+							var distances = this.getFlatternDistance(parseFloat(citycenter[0]), parseFloat(citycenter[1]), res.longitude,
+								res.latitude)
+							// var distances=this.getFlatternDistance(119.283383,26.131703,119.285615,26.123959)
+							console.log('juli', distances)
+							if (distances / 1000 > 30) {
+								uni.showModal({
+									title: '当前距离服务区过远',
+									content: '是否切换到服务区？',
+									showCancel: true,
+									cancelText: '不切换',
+									confirmText: '切换',
+									success: res => {
+										if (res.confirm) {
+											this.setLongitude(citycenter[0])
+											this.setLatitude(citycenter[1])
+										} else if (res.cancel) {
+				
+										}
+									},
+									fail: () => {},
+									complete: () => {}
+								});
+				
+							}
+							console.log('距离城市中心点距离为', distances)
+						}, 1000);
+				
+					},
+					fail: (res) => {
+						console.log('fail', res)
+					}
+				});		
+			}else{				
+				this.locationtime=setInterval(()=>{
+					this.setBikeid(this.bikeinfo.id)
+					this.getcarinfo()
+				},5000)
+			}
+				
 			// this.orderid = e.orderid
 			// this.endmove = e.endmove
 			try {
@@ -301,8 +328,7 @@
 			} catch (e) {
 				// error
 			}
-			this.headviewtext = e.text
-			this.type = e.type
+			this.headviewtext = e.text	
 			this.dowhat()
 			if (this.mapinfo == null) {
 				this.mapinfo = uni.createMapContext('firstmap')
@@ -325,6 +351,7 @@
 						break;
 					case '0.1':
 						this.hidebutton = true
+						this.mapheihts='99vh'
 						this.cartrack(this.bikeinfo.last_order_id)
 						// 设置corver初始状态
 						this.showcorverview = {
@@ -354,6 +381,8 @@
 						let tembikeinfo = {}
 						tembikeinfo.latitude = this.bikeinfo.coordinate[1]
 						tembikeinfo.longitude = this.bikeinfo.coordinate[0]
+						this.setLatitude(this.bikeinfo.coordinate[1])
+						this.setLongitude(this.bikeinfo.coordinate[0])
 						tembikeinfo.iconPath = '/static/mapicon/car_normal.png'
 						tembikeinfo.width = 39
 						tembikeinfo.height = 48
@@ -366,6 +395,32 @@
 						// 多边形						
 						// this.covers = []
 						break;
+					case '0.4':
+					    this.mapheihts='94vh'
+						this.hidebutton = true
+						// 设置corver初始状态
+						this.showcorverview = {
+							head: false,
+							bottom: false
+						}
+						var date = new Date()
+						var seperator1 = "-";
+						var seperator2 = ":";
+						var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+						var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+						var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+							" " + date.getHours() + seperator2 + date.getMinutes() +
+							seperator2 + date.getSeconds()
+						this.start_time = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+							" " + '00' + seperator2 + '00' +
+							seperator2 + '00'
+						this.end_time = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+							" " + '23' + seperator2 + '59' +
+							seperator2 + '59'
+						this.getbiketrack(this.bikeinfo.sn)	
+						// 多边形						
+						// this.covers = []
+						break;	
 					case '1.1':
 						this.scanbuttonname = '扫码入库'
 						var setectval = (this.selectvals == 100) ? 0 : this.selectvals
@@ -493,11 +548,100 @@
 					console.log(res)
 				}
 			})
+			clearInterval(this.locationtime)
+			this.locationtime=null
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
+			toggleTab(item) {
+				this.timeflag=item
+			    this.$refs.dateTime.show();  
+			}, 
+			onConfirm(val) {
+				console.log(val);
+				if (this.timeflag == 1) {
+					this.start_time = val.selectRes
+				} else {
+					this.end_time = val.selectRes
+				}
+				if (!!this.bikeinfo.sn) {
+					this.getbiketrack(this.bikeinfo.sn)
+				}
+			},
+			getbiketrack(sn){
+				var options = {
+					url: '/bike/query_track', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+				         from_xiao_an: 0,
+						 sn: sn,
+						 end_time:this.end_time,
+						 start_time:this.start_time
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('车辆轨迹', res)
+					if (res.status == 0) {
+						var temarr=[]
+						var temparr = []			
+						let tempobj0 = {},
+							tempobj1 = {}					
+						this.circles = []
+						let circlepoint = []
+						tempobj0.id = 0
+						tempobj0.longitude = res.track[0][0]
+						tempobj0.latitude = res.track[0][1]
+						tempobj0.iconPath = '/static/mapicon/start.png'
+						tempobj0.width = 39
+						tempobj0.height = 48
+						tempobj1.id = 1
+						tempobj1.longitude = res.track[res.track.length - 1][0]
+						tempobj1.latitude = res.track[res.track.length - 1][1]
+						tempobj1.iconPath = '/static/mapicon/end.png'
+						tempobj1.width = 39
+						tempobj1.height = 48
+						temarr.push(tempobj0)
+						temarr.push(tempobj1)
+						this.covers = temarr
+						this.circles = []
+						for (let i = 0; i < res.track.length; i++) {
+							var jwd = {
+								longitude: res.track[i][0],
+								latitude: res.track[i][1]
+							}
+							let circleobj = {
+								longitude: res.track[i][0],
+								latitude: res.track[i][1],
+								color: '#DC143C',
+								fillColor: '#DC143C',
+								radius: 4					
+							}
+							temparr.push(jwd)
+							circlepoint.push(circleobj)
+						}
+						this.circles = circlepoint
+						this.polyline[0].points = temparr
+						this.polyline[0].color = "#0000AA" //线的颜色
+						this.polyline[0].width = 3 //线的宽度
+						// dottedLine: true, //是否虚线
+						this.polyline[0].arrowLine = true
+						console.log('this.covers', this.covers);
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取轨迹失败',
+							icon: 'none'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			switch1Change(e) {
 				if (e.target.value) {
 					this.openclosestop = '开启'
@@ -1648,7 +1792,16 @@
 							}
 							this.setSn('*')
 							this.requestorder(datas)
-						} else {
+						}else if(this.type=='0.3'){
+							let tembikeinfo = {}
+							tembikeinfo.latitude = this.bikeinfo.coordinate[1]
+							tembikeinfo.longitude = this.bikeinfo.coordinate[0]
+							tembikeinfo.iconPath = '/static/mapicon/car_normal.png'
+							tembikeinfo.width = 39
+							tembikeinfo.height = 48
+							this.covers[0] = tembikeinfo			
+						}
+						 else {
 							if (this.clicksuccess == false) {
 								uni.navigateTo({
 									url: this.urls,
@@ -2069,6 +2222,26 @@
 
 		.btn {
 			width: 30% !important;
+		}
+	}
+	.timeselect {
+		margin-top: 12upx;
+		margin-bottom: 12upx;
+		height: 6vh;
+		.wenzi {
+			font-size: 18upx;
+			color: rgb(80, 80, 80);
+			margin-right: 20upx;
+			line-height: 40upx;
+		}
+	
+		display: flex;
+		justify-content: space-around;
+		height: 50upx;
+	
+		.timedetil {
+			display: flex;
+			justify-content: space-around;
 		}
 	}
 </style>

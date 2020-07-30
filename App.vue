@@ -18,7 +18,7 @@
 			console.log('baseurl', realuser)
 			if (baseurl == '') {
 				try {
-				    uni.setStorageSync('baseurl', 'https://api.lxys3344.xyz');
+				    uni.setStorageSync('baseurl', 'https://api.gray.lxys3344.xyz');
 				} catch (e) {
 					// error
 				}
