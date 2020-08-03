@@ -80,6 +80,9 @@
 				}
 			});
 			//#endif
+			
+			
+			
 			this.cWidth = uni.upx2px(750);
 			this.cHeight = uni.upx2px(500);			
 			var date = new Date()
@@ -91,7 +94,9 @@
 				" " + date.getHours() + seperator2 + date.getMinutes() +
 				seperator2 + date.getSeconds()
 			var fmonuth=month-1<10?'0'+(month-1):month-1
-			this.start_time=date.getFullYear() + seperator1 + fmonuth + seperator1 + strDate +
+			// 上个月的天数
+			var day=new Date(date.getFullYear(),date.getMonth(),0)					
+			this.start_time=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate() +
 				" " + '00' + seperator2 + '00' +
 				seperator2 + '00'
 			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +

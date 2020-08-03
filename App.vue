@@ -6,7 +6,7 @@
 			};
 		},
 		onLaunch: function() {
-			console.log('App Launch');
+			console.log('App Launch');		
 			var baseurl = '',
 				realuser = ''
 			try {

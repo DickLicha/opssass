@@ -73,7 +73,7 @@
 							<input class='normal-input' v-model="stopName" type="text" placeholder="停车区名称">
 						</view>
 						<view class='border-view'>
-							<input class='normal-input' v-model="stopVolume" type="text" placeholder="停车区容量">
+							<input class='normal-input' v-model="stopVolume" type="number" placeholder="停车区容量">
 						</view>
 
 						<view class='open-close' v-if="editstop">
@@ -85,7 +85,10 @@
 						<view v-if="editstop">
 							<button type='warn' style='margin-bottom: 20upx;' @click="delstop">删除</button>
 						</view>
-						<view class='creatStopServ'>
+						<view v-if="editstop">
+							<button type='primary' class='' @click="finshCreat">提交</button>
+						</view>
+						<view v-if="!editstop" class='creatStopServ'>
 							<button type='primary' class='leftBtn btn' @click="chosePoint">选择锚点</button>
 							<!-- <button type='primary' class='leftBtn btn' @click="cleanPoint">清空锚点</button> -->
 							<button type='primary' class='rightBtn btn' @click="finshCreatServ">完成创建</button>
@@ -520,10 +523,10 @@
 						]
 						break;
 					case '9.1':
-						this.mapheihts='100vh'
+                        this.actives = true
+						this.mapheihts='70vh'
 						this.showcorverview.head = false
 						this.showcorverview.bottom = false
-						this.scanbuttonname = '创建停车区'
 						this.stoplist(this.longitude, this.latitude, '*')
 						// this.selectcoverdata = [{
 						// 		name: '全部车站',
@@ -794,6 +797,7 @@
 				this.creatStopurl(0,1,"*",this.polylinePoints)				
 			},
 			markclick(e) {
+				console.log(444,this.type)
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
@@ -847,7 +851,7 @@
 						this.setBikeid(e.markerId)
 						this.getcarinfo()
 					}
-				} else if (this.type == '9') {
+				} else if (this.type == '9' || this.type=='9.1') {
 					uni.showModal({
 						title: '编辑车站',
 						content: pointname,
@@ -870,7 +874,12 @@
 								this.stopVolume = this.mapcovers.allkcount
 								this.stopRadius = this.mapcovers.radius
 								this.stopDesc = this.mapcovers.remark
-								this.mapheihts='35vh'
+								if(this.type==9){
+									this.mapheihts='35vh'
+								}else{
+									this.mapheihts='50vh'
+								}
+								
 							} else if (res.cancel) {
 								console.log('用户点击取消');
 							}
@@ -966,6 +975,7 @@
 					// res为服务端返回数据的根对象
 					console.log('删除车站', res)
 					if (res.status == 0) {
+						this.mapheihts='100vh'
 						uni.showToast({
 							title: '删除车站成功',
 							mask: false,
@@ -1315,6 +1325,9 @@
 								},
 								fail: (res) => {
 									console.log('fail' + res);
+									case '9.1':
+										this.stoplist(res.longitude, res.latitude, '*')
+										break	
 								}
 							})
 				
@@ -1873,9 +1886,11 @@
 							mask: false,
 							duration: 2500
 						});
-						setTimeout(() => {
-							this.actives = false
-						}, 2000)
+						if(this.type==9){
+							setTimeout(() => {
+								this.actives = false
+							}, 2000)
+						}			
 						this.stoplist(this.longitude, this.latitude, '*')
 					} else {
 						uni.showToast({
@@ -1913,6 +1928,7 @@
 						"polygon_type":type,
 						// "grade": level,
 						"grade": 1,
+						"visitable":3,
 						"imgs": this.imgarr
 					}
 				}
@@ -1920,14 +1936,28 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-						uni.showToast({
-							title: '创建车站成功',
-							mask: false,
-							duration: 2500
-						});
-						setTimeout(() => {
-							this.actives = false
-						}, 2000)
+						
+						if(type==0){
+							uni.showToast({
+								title: '创建车站成功',
+								mask: false,
+								duration: 2500
+							});
+							setTimeout(() => {
+								this.actives = false
+							}, 2000)
+						}else{
+							setTimeout(()=>{
+								uni.navigateBack({
+									delta: 1
+								},5000);
+							})						
+							uni.showToast({
+								title: '创建停车区成功',
+								mask: false,
+								duration: 3000
+							});
+						}					
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '创建车站失败',
@@ -1935,6 +1965,13 @@
 							icon: 'none',
 							duration: 2500
 						});
+						if(type==1){
+							setTimeout(()=>{
+								uni.navigateBack({
+									delta: 1
+								},5000);
+							})	
+						}
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -2128,7 +2165,7 @@
 		.cover-imgs {
 			position: absolute;
 			left: 46%;
-			top: 42%;
+			top: 40%;
 			width: 50upx;
 			height: auto;
 		}
