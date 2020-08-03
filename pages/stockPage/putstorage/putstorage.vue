@@ -21,14 +21,7 @@
 					</view>
 				</view>
 			</view>
-			<view v-if="type==0">
-				<text>电池型号</text>
-				<view class='result-fault'>
-					<view class='result-fault-view' v-for="(item,i) in batterydata" :key="i" @click='chosebattery(item,i,1)' :class="{'borderrights':isActives==i}">
-						<text>{{item.name}}</text>
-					</view>
-				</view>
-			</view>
+			<!-- c -->
 		</view>
 	</view>
 </template>
@@ -284,7 +277,7 @@
 						"imei": this.swapdata[0].val,
 						"ecu_sn": this.swapdata[1].val,
 						"model": models,
-						"battery_model":this.batterymodel
+						// "battery_model":this.batterymodel
 					}
 				}
 				this.$httpReq(options).then((res) => {

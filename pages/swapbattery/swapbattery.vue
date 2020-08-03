@@ -121,7 +121,7 @@
 						val: ''
 					},
 					{
-						name: 'esusn:',
+						name: 'ecusn、imei:',
 						val:''
 					},
 					{
@@ -435,13 +435,16 @@
 				// 车辆id
 				this.swapbatterydata1[0].val=bikeinfo.id
 				// 车辆sn
-				this.swapbatterydata1[1].val=bikeinfo.ecu_sn
+				this.swapbatterydata1[1].val=bikeinfo.ecu_sn+'、'+bikeinfo.imei
 				// 车辆差车等级
-				this.swapbatterydata1[2].val=bikeinfo.repark_index
+				this.swapbatterydata1[2].val=bikeinfo.repark_index?bikeinfo.repark_index+'+':'正常'
 				// 车辆健康状态
 				this.swapbatterydata1[3].val=bikeinfo.health_state?'故障':'健康'
 				// 设防状态1设防0撤防
-				this.swapbatterydata1[4].val=bikeinfo.is_defend_on?'设防':'撤防'
+				var is_defend_on=bikeinfo.is_defend_on?'设防':'撤防'
+				var is_acc_on=bikeinfo.is_acc_on?'电门开':'电门关'
+				var is_battery_locked=bikeinfo.is_battery_locked?'电池锁关':'电池锁关'
+				this.swapbatterydata1[4].val=is_defend_on+'   '+is_acc_on+'    '+is_battery_locked
 				// 车辆电量
 				this.swapbatterydata1[5].val=bikeinfo.battery_volt / 1000 + 'V'+'    '+bikeinfo.battery_level+'%'
 				this.swapbatterydata1[5].time=bikeinfo.battery_update_time
