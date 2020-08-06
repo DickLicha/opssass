@@ -8,7 +8,7 @@
 				<!-- <map class='map-base-view' :class="{activemap:actives}" :style="{height:(!showcorverview.bottom&&!actives&&!hidebutton||type==0.1?'100vh':'84vh')}" -->
 				<map class='map-base-view' :style="{height:mapheihts}"
 				 :scale="scale" id='firstmap' :latitude="latitude" :longitude="longitude" :markers="covers" :show-location='showLocation'
-				 :circles='circles' :polyline="polyline" @markertap='markclick' @controltap='mapcentionloc' :polygons='polygon' @regionchange="functionNames"
+				 :circles='circles' :include-points='includepoints' :polyline="polyline" @markertap='markclick' @controltap='mapcentionloc' :polygons='polygon' @regionchange="functionNames"
 				 @end="functionName" :controls='maploc' @tap='creatStopServ'>
 					<cover-image  src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
 					<!-- <cover-view v-if="actives" class='movecar-view'>拖动地图选择车站</cover-view> -->
@@ -67,7 +67,7 @@
 					</uni-popup>
 				</view>
 				<view v-if="type==9.1">
-					<view class='scroll-viewy'>
+					<view class='scroll-viewys'>
 						<!-- <base-img v-if="!editstop"></base-img> -->
 						<view class='border-view'>
 							<input class='normal-input' v-model="stopName" type="text" placeholder="停车区名称">
@@ -121,13 +121,14 @@
 
 <script>
 	var blueWriteState = 0,
-		loadtime = 1000
+		loadtime = 1000,distancem=10
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
 	import baseInput from '@/components/baseinput/baseinput.vue'
 	import baseImg from '@/components/image/image.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import yuDatetimePicker from "@/components/yu-datetime-picker.vue"
+	import {getborderpoint,isInPolygon } from '@/common/conf.js'
 	import {
 		mapState,
 		mapMutations
@@ -149,6 +150,7 @@
 		]),
 		data() {
 			return {
+				includepoints:[],
 				timeflag:0,
 				start_time: '2020-03-20 00:00:00',
 				end_time: "2020-03-20 23:00:00",
@@ -319,10 +321,7 @@
 					this.setBikeid(this.bikeinfo.id)
 					this.getcarinfo()
 				},5000)
-			}
-				
-			// this.orderid = e.orderid
-			// this.endmove = e.endmove
+			}				
 			try {
 				const value = uni.getStorageSync('userinfo');
 				if (value) {
@@ -523,7 +522,7 @@
 						break;
 					case '9.1':
                         this.actives = true
-						this.mapheihts='70vh'
+						this.mapheihts='78vh'
 						this.showcorverview.head = false
 						this.showcorverview.bottom = false
 						this.stoplist(this.longitude, this.latitude, '*')
@@ -756,14 +755,20 @@
 						longitude: this.tempjindu,
 						latitude: this.tempweidu
 					}
+					let circleobj = {
+						longitude: this.tempjindu,
+						latitude: this.tempweidu,
+						color: '#DC143C',
+						fillColor: '#DC143C',
+						radius: 3					
+					}
+					this.circles.push(circleobj)
+					console.log(444,this.circles)
 					var temparr=[this.tempjindu,this.tempweidu]
 					this.polylinePoints.push(temparr)
 					this.polylinePoint.push(jwd)					
-					this.polyline[0].color = "#0055ff", //线的颜色
-					this.polyline[0].width = 2, //线的宽度
-					this.polyline[0].arrowLine = true, //带箭头的线 开发者工具暂不支持该属性
-					this.polyline[0].points=this.polylinePoint	
-					// console.log(4444,this.polyline[0].points)			
+					var dbx={points:this.polylinePoint,color:'#0055ff',width:2,arrowLine:true}
+					this.polyline[1]=dbx		
 				}				
 			},
 			cleanPoint(){
@@ -789,7 +794,7 @@
 					});
 					return
 				}
-				this.polyline[0]=[]
+				this.polyline[1]=[]
 				this.polygon[0].points=this.polylinePoint
 				// this.creatStopurl(level)
 				this.polylinePoints.push(this.polylinePoints[0])
@@ -1210,7 +1215,7 @@
 			},
 			functionNames() {},
 			// 移动地图获取中心点坐标
-			functionName() {
+			functionName(e) {
 				let self = this
 				let intervaltime = (new Date()).getTime() - this.gobeltimestr
 				this.gobeltimestr = (new Date()).getTime()
@@ -1218,45 +1223,57 @@
 				if (intervaltime < 800) {
 					return
 				}
-				let distance = 500
+				let distance = 500				
 				let promise = new Promise((respon, rej) => {
 						this.mapinfo.getScale({
 							success: (res) => {
 								console.log('suofangsuccess', res)
+								
 								// distance=res.scale							
 								switch (res.scale) {
 									case 20:
 										distance = 100
+										distancem=10
 										break;
 									case 19:
 										distance = 200
+										distancem=20
 										break;
 									case 18:
 										distance = 300
+										distancem=50
 										break;
 									case 17:
 										distance = 400
+										distancem=50
 										break;
 									case 16:
 										distance = 500
+										distancem=100
 										break;
 									case 15:
 										distance = 800
+										distancem=200
 										break;
 									case 14:
 										distance = 1500
+										distancem=500
 										break;
 									case 13:
 										distance = 1800
+										distancem=1000
 										break;
 									case 12:
 										distance = 2000
+										distancem=2000
 										break;
 									case 11:
 										distance = 3000
+										distancem=5000
 										break;
 									case 10:
 										distance = 5000
+										distancem=10000
 										break;
 									default:
 										distance = 15000
@@ -1273,7 +1290,7 @@
 							success: (res) => {
 								this.tempjindu = res.longitude
 								this.tempweidu = res.latitude
-								// self.nearbycarinfo(2)
+																
 								switch (self.type) {
 									case '0':
 										var undervolt = '*'
@@ -1514,7 +1531,9 @@
 							}							
 						}
 						this.covers = temparr
-						this.circles = circles
+						if(this.type!=9.1){
+							this.circles = circles
+						}			
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -1602,6 +1621,12 @@
 							tmpObj.width = 39
 							tmpObj.height = 48
 							this.covers.push(tmpObj)
+							// var cc=getborderpoint(longitude,latitude,distancem)	
+							
+							// var bikenumber=isInPolygon([res.list[i].coordinate[0],res.list[i].coordinate[1]],cc)
+							// console.log('cc',cc,longitude,latitude,bikenumber)
+							// console.log('mark',res.list[i].coordinate[0],res.list[i].coordinate[1])
+							
 						}
 					}
 				}).catch((err) => {
@@ -2082,12 +2107,10 @@
 </script>
 
 <style lang="scss" scoped>
-	// $mapheight:40vh;
-	// .mapHeight{
-	// 	height: $mapheight!important;
-	// }
+
 	.page-body {
 		background-color: rgb(245, 245, 245);
+		overflow-y: no;
 	}
 
 	.activemap {
@@ -2140,6 +2163,26 @@
 			}
 		}
 	}
+	.scroll-viewys {
+		// height: 27vh;
+		overflow-y: hidden;
+		margin: 0 22upx;
+	
+		.border-view {
+			border: 1upx bolid black;
+			background-color: rgba(225, 225, 225, .7);
+			margin: 20upx 0;
+			height: 70upx;
+			line-height: 70upx;
+	
+			.normal-input {
+				line-height: 70upx;
+				height: 70upx;
+				padding-left: 30upx;
+				// background: yellow;
+			}
+		}
+	}
 
 	.map-base-view {
 		// height: calc(100vh - 80upx);
@@ -2149,7 +2192,7 @@
 		.cover-imgs {
 			position: absolute;
 			left: 46%;
-			top: 40%;
+			top: 42%;
 			width: 50upx;
 			height: auto;
 		}
@@ -2249,13 +2292,16 @@
 	.creatStopServ {
 		display: flex;
 		justify-content: space-between;
-
+        // height: 70upx;
 		.leftBtn {
 			color: black;
 			background-color: yellow;
+			// height: 80upx;
 		}
 
-		.ringhtBtn {}
+		.ringhtBtn {
+			// height: 80upx;
+		}
 
 		.btn {
 			width: 30% !important;

@@ -8,7 +8,7 @@
 		onLaunch: function() {
 			console.log('App Launch');		
 			var baseurl = '',
-				realuser = ''
+				realuser = ''		    
 			try {
 				baseurl = uni.getStorageSync('baseurl');
 				realuser = uni.getStorageSync('realuser');
@@ -18,7 +18,7 @@
 			console.log('baseurl', realuser)
 			if (baseurl == '') {
 				try {
-				    uni.setStorageSync('baseurl', 'https://api.lxys3344.xyz');
+				    uni.setStorageSync('baseurl', 'https://api.gray.lxys3344.xyz');
 				} catch (e) {
 					// error
 				}
@@ -60,15 +60,6 @@
 					}
 				})
 			}
-
-			uni.getSystemInfo({
-				success: res => {
-					// this.gobeldata=res.statusBarHeight
-				},
-				fail: res => {
-
-				}
-			})
 
 			// #ifdef APP-PLUS
 			// 锁定屏幕方向
