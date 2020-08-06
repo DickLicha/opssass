@@ -8,7 +8,7 @@
 		onLaunch: function() {
 			console.log('App Launch');		
 			var baseurl = '',
-				realuser = ''
+				realuser = ''		    
 			try {
 				baseurl = uni.getStorageSync('baseurl');
 				realuser = uni.getStorageSync('realuser');
@@ -60,15 +60,6 @@
 					}
 				})
 			}
-
-			uni.getSystemInfo({
-				success: res => {
-					// this.gobeldata=res.statusBarHeight
-				},
-				fail: res => {
-
-				}
-			})
 
 			// #ifdef APP-PLUS
 			// 锁定屏幕方向
