@@ -121,7 +121,7 @@
 						val: ''
 					},
 					{
-						name: 'ecusn、imei:',
+						name: 'ecu:',
 						val:''
 					},
 					{
@@ -133,7 +133,7 @@
 						val:''
 					},
 					{
-						name: '设防状态:',
+						name: '开关状态:',
 						val:''
 					},
 					{
@@ -162,6 +162,11 @@
 					},
 					{
 						name: '停放信息:',
+						val: '',
+						time:':1'
+					},
+					{
+						name: '运动状态:',
 						val: '',
 						time:':1'
 					},
@@ -435,7 +440,8 @@
 				// 车辆id
 				this.swapbatterydata1[0].val=bikeinfo.id
 				// 车辆sn
-				this.swapbatterydata1[1].val=bikeinfo.ecu_sn+'、'+bikeinfo.imei
+				// this.swapbatterydata1[1].val=bikeinfo.ecu_sn+'、'+bikeinfo.imei
+				this.swapbatterydata1[1].val=bikeinfo.ecu_sn
 				// 车辆差车等级
 				this.swapbatterydata1[2].val=bikeinfo.repark_index?bikeinfo.repark_index+'+':'正常'
 				// 车辆健康状态
@@ -473,6 +479,9 @@
 				}
 				this.swapbatterydata1[10].val=this.$parkstate(bikeinfo.park_state)+stoparename
 				this.swapbatterydata1[10].time=bikeinfo.park_update_time
+				// 运动状态
+				this.swapbatterydata1[11].val=this.bikeinfo.is_in_motion?'运动':'静止'
+				this.swapbatterydata1[11].time=bikeinfo.motion_update_time
 				// 库存状态
 				this.collapseData[1].data[0].val=this.$invstate(bikeinfo.inv_state)
 				// 异常状态
@@ -1041,7 +1050,7 @@
 				margin-top: 30upx;
 			}
 			margin: 10upx 22upx;
-			height: 150vh;
+			height: 170vh;
 			position: relative;
             overflow-y: auto;
 			.change-battery-button {

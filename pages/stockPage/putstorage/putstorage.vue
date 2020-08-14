@@ -1,11 +1,25 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<item-cell :itemdata="swapdata" type='2' :border='borders' @itemclick='gocarcenter'></item-cell>
+			<!-- <item-cell :itemdata="swapdata" type='2' :border='borders' @itemclick='gocarcenter'></item-cell> -->
+			<view>
+				<view class='text-input'>
+					<text>ECU-IMEI:</text>
+					<input type="text" v-model="ecuimei"></view>			    
+				<view class='text-input'>
+					<text>ECU-SN:</text>
+					<input type="text" v-model="ecusn">
+				</view>
+			</view>
 			<view class='change-battery-button'>
 				<button type='primary' class='share-button-default' @click='scan(0)'>{{btn1}}</button>
 			</view>
-			<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
+			<!-- <item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell> -->
+			<view>
+				<view class='text-input'>
+					<text>二维码:</text>
+					<input type="text" v-model="erweima"></view>			    
+			</view>
 			<view class='change-battery-button'>
 				<button type='primary' class='share-button-default' @click='scan(1)'>{{btn2}}</button>
 			</view>
@@ -73,6 +87,9 @@
 				}],
 				btnname: '',
 				batterymodel:'ZN48V12AH',
+				ecuimei:'',
+				ecusn:'',
+				erweima:''
 			}
 		},
 		components: {
@@ -120,8 +137,10 @@
 					context: '',
 					data: {
 						// "bike_id": '',
-						"sk": this.swapdata[0].val,
-						"new_sn": this.swapbatterydata[0].val
+						// "sk": this.swapdata[0].val,
+						"sk": this.ecuimei,
+						// "new_sn": this.swapbatterydata[0].val
+						"new_sn": this.erweima
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -157,8 +176,10 @@
 					context: '',
 					data: {
 						// "bike_id": '',
-						"new_imei": this.swapdata[0].val,
-						"new_ecu_sn": this.swapdata[1].val,
+						// "new_imei": this.swapdata[0].val,
+						"new_imei": this.ecuimei,
+						// "new_ecu_sn": this.swapdata[1].val,
+						"new_ecu_sn": this.ecusn,
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -194,8 +215,10 @@
 					context: '',
 					data: {
 						// "bike_id": '',
-						"imei": this.swapdata[0].val,
-						"ecu_sn": this.swapdata[1].val
+						// "imei": this.swapdata[0].val,
+						"imei": this.ecuimei,
+						// "ecu_sn": this.swapdata[1].val
+						"ecu_sn": this.ecusn
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -238,18 +261,22 @@
 								return
 							}
 							else if(res.result.indexOf(' ')==-1){								
-								this.swapdata[1].val = res.result
+								// this.swapdata[1].val = res.result
+								this.ecusn = res.result
 							}else{
 								var result = res.result.split(' ')
-								this.swapdata[0].val = result[0].split(':')[1]
-								this.swapdata[1].val = result[1].split(':')[1]
+								// this.swapdata[0].val = result[0].split(':')[1]
+								// this.swapdata[1].val = result[1].split(':')[1]
+								this.ecuimei = result[0].split(':')[1]
+								this.ecusn = result[1].split(':')[1]
 							}							
 						} else {
 							if(res.result.match(/\?bikesn=(.*)/)){
 								var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
 								this.setSn(bikesn)
 								this.setBikeid('*')
-								this.swapbatterydata[0].val = bikesn
+								// this.swapbatterydata[0].val = bikesn
+								this.erweima = bikesn
 							}else{
 								uni.showToast({
 									title: '请扫描正确的二维码',
@@ -274,8 +301,10 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"imei": this.swapdata[0].val,
-						"ecu_sn": this.swapdata[1].val,
+						// "imei": this.swapdata[0].val,
+						// "ecu_sn": this.swapdata[1].val,
+						"imei": this.ecuimei,
+						"ecu_sn": this.ecusn,
 						"model": models,
 						// "battery_model":this.batterymodel
 					}
@@ -290,9 +319,12 @@
 							icon: 'none',
 							duration: 2000,
 						});
-						this.swapdata[0].val = ''
-						this.swapdata[1].val = ''
-						this.swapbatterydata[0].val = ''
+						// this.swapdata[0].val = ''
+						// this.swapdata[1].val = ''
+						// this.swapbatterydata[0].val = ''
+						this.ecuimei = ''
+						this.ecusn = ''
+						this.erweima = ''
 						this.setSn('*')
 					} else {
 						uni.showToast({
@@ -307,7 +339,8 @@
 				})
 			},
 			intostorage() {
-				if (this.swapdata[1].val == '' || this.swapbatterydata[0].val == '') {
+				// if (this.swapdata[1].val == '' || this.swapbatterydata[0].val == '') {
+				if (this.ecusn == '' || this.erweima == '') {
 					uni.showToast({
 						title: '信息不能为空，请完善',
 						icon: 'none',
@@ -367,7 +400,14 @@
 			margin: 10upx 22upx;
 			height: 98vh;
 			position: relative;
-
+            .text-input{
+				display: flex;
+				margin: 20upx 0;
+				background-color: white;
+				input{
+					width:70vw
+				}
+			}
 			.change-battery-button {
 				/* position: fixed; */
 				/* bottom: 3vh; */
