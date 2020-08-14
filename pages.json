@@ -1,6 +1,18 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+		    "path" : "pages/tabbar/platform/platform",
+		    "style" : {
+				"navigationBarTitleText": "工作台",
+				// "navigationBarTextStyle": "white",
+				// "navigationBarBackgroundColor": "#2383fb",
+				// "backgroundColor":"#2383fb",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom",
+				"titleNView": false
+			}
+		},
+		{
 			"path": "pages/tabbar/index/index",
 			"style": {
 				"navigationBarTitleText": "共享电单车运维版",
@@ -302,18 +314,6 @@
             "path" : "pages/carBigCenter/uploadlog/uploadlog",
             "style" : {
 				"navigationBarTitleText": "最近上报日志"
-			}
-        }
-        ,{
-            "path" : "pages/tabbar/platform/platform",
-            "style" : {
-				"navigationBarTitleText": "工作台",
-				// "navigationBarTextStyle": "white",
-				// "navigationBarBackgroundColor": "#2383fb",
-				// "backgroundColor":"#2383fb",
-				"enablePullDownRefresh": true,
-				"navigationStyle": "custom",
-				"titleNView": false
 			}
         }
     ],

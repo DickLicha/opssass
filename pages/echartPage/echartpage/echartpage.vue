@@ -56,8 +56,8 @@
 				cHeight: '',
 				pixelRatio: 1,
 				textarea: '',
-				start_time:'2020-03-01 00:03:11',
-				end_time:"2020-03-20 00:03:11",
+				start_time:'',
+				end_time:"",
 				timeflag:0,
 				avercarratio:'',
 				avermoney:'',
@@ -194,6 +194,7 @@
 							}						
 							// 订单数
 							user_order_growth.push(res.user_order_growth[i])
+							console.log('chexiao',i,res.bike_count_daily[i])
 							// user_scan_qdcode.push(res.user_scan_qdcode[i])
 							// 车效
 							var bikepers = ''
@@ -236,6 +237,7 @@
 							series: []
 						};
 						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
+						console.log('bikeffic',typeof(bikeeffic))
 						LineA.categories = datatimes.reverse();
 						LineA.series.push(orderNum)
 						LineA.series.push(orderMoney)
