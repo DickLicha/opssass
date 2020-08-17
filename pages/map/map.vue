@@ -310,7 +310,7 @@
 						break;
 					case '1.1':
 						this.scanbuttonname = '扫码入库'
-						var setectval=(this.selectvals==100)?0:this.selectvals
+						var setectval=(this.selectvals==100)?"*":this.selectvals
 						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
 						// this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
 						this.selectcoverdata = [{
@@ -968,7 +968,7 @@
 									self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt,dis,this.gobeltimestr)
 									break
 								case '1.1':
-								    var setectval=(this.selectvals==100)?0:this.selectvals
+								    var setectval=(this.selectvals==100)?'*':this.selectvals
 								    // this.nearbyfaultcar(this.longitude, this.latitude, setectval)
 									self.nearbyfaultcar(res.longitude, res.latitude, setectval)
 									break
