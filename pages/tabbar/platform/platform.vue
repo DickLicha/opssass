@@ -82,6 +82,12 @@
 		data() {
 			return {
 				// tab: 1,
+				qxmenudata:[
+					{name:'车辆扫码',url:'',val:0}
+				],
+				start_time:'',
+				end_time:'',
+				boxdata:[],
 				userInfo: null,
 				top: null,
 				list: [],
@@ -103,7 +109,38 @@
 			}
 		},
 		onLoad() {
-			var _this=this
+			// var _this=this
+			var date = new Date()
+			var seperator1 = "-";
+			var seperator2 = ":";
+			var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				" " + date.getHours() + seperator2 + date.getMinutes() +
+				seperator2 + date.getSeconds()
+			var fmonuth=month-1<10?'0'+(month-1):month-1
+			// 上个月的天数
+			var day=new Date(date.getFullYear(),date.getMonth(),0)					
+			this.start_time=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate() +
+				" " + '00' + seperator2 + '00' +
+				seperator2 + '00'
+			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				" " + '23' + seperator2 + '59' +
+				seperator2 + '59'
+			_self = this;
+			this.cWidth = uni.upx2px(750);
+			this.cHeight = uni.upx2px(350);	
+			//#ifdef MP-ALIPAY
+			uni.getSystemInfo({
+				success: function(res) {
+					if (res.pixelRatio > 1) {
+						//正常这里给2就行，如果pixelRatio=3性能会降低一点
+						//_self.pixelRatio =res.pixelRatio;
+						_self.pixelRatio = 2;
+					}
+				}
+			});
+			//#endif
 			wx.getLocation({
 				type: 'wgs84',
 				success(res) {
@@ -127,6 +164,22 @@
 
 		},
 		onShow() {
+			var date = new Date()
+			var seperator1 = "-";
+			var seperator2 = ":";
+			var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				" " + date.getHours() + seperator2 + date.getMinutes() +
+				seperator2 + date.getSeconds()
+			var fmonuth=month-1<10?'0'+(month-1):month-1
+			// 上个月的天数
+			var day=new Date(date.getFullYear(),date.getMonth(),0)					
+			var times=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
+			this.getmonitorv2(1)
+			this.getmonitorv2('today')
+			this.getmonitorv2('all')
+			this.getHourly017(times)
 			try {
 				this.citylist = uni.getStorageSync('userinfo').cities;
 				if (value) {
@@ -135,11 +188,11 @@
 			} catch (e) {
 				// error
 			}
-			this.getServerData()
+			// this.getServerData()
 		},
 		onPullDownRefresh() {
 			// this.getList(true)
-			this.getServerData()
+			// this.getServerData()
 		},
 		onReachBottom() {
 			// this.getList()
@@ -219,7 +272,59 @@
 					// res为服务端返回数据的根对象
 					console.log('订单信息', res)
 					if (res.status == 0) {
-						this.carinfo = res.bike_stat
+						// this.carinfo = res.bike_stat					
+						var datatimes = []
+						var user_charge_order_amount_grouth = []
+						var user_growth = []
+						var user_order_growth = []
+						var user_scan_qdcode = []
+						var user_order_amount_growth = []
+						var bike_count_daily = []
+						var orderNum = {
+							name: '订单数',
+							data: []
+						}
+						var orderMoney = {
+							name: '订单金额',
+							data: []
+						}
+						var bikeeffic = {
+							name: '车效',
+							data: []
+						}
+						var allbikeeffic=0
+						var allmoney=0
+						this.orderlist = []
+						for (var i in res.user_growth) {
+							var formatetime = i.split('-')
+							var newtimes = formatetime[1] + '-' + formatetime[2]
+							datatimes.push(newtimes)
+							var orderobj = {
+								time: '',
+								num: '',
+								money: '',
+								bikeper: ''
+							}						
+							// 车效
+							var bikepers = ''
+							if (res.user_order_growth[i] == 0 || res.bike_count_daily[i] == 0) {
+								bikepers = 0
+							} else {
+								bikepers = parseFloat(res.user_order_growth[i] / res.bike_count_daily[i]).toFixed(1)
+						
+							}
+							bike_count_daily.push(bikepers)
+						}
+						bikeeffic.data = bike_count_daily.reverse()
+						let LineB = {
+							categories: [],
+							series: []
+						};
+						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
+						LineB.categories = datatimes.reverse();
+						LineB.series.push(bikeeffic)
+						_self.showLineA("canvasLineB", LineB);
+						
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取订单信息失败'
@@ -231,6 +336,176 @@
 					console.error(err, '捕捉')
 				})
 
+			},
+			getHourly017(time) {
+				var options = {
+					url: '/urorder/hourly017', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						date: time,
+					},
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('订单信息', res)
+					if (res.status == 0) {
+						// for()
+						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
+						let xdata=0
+						var datatimea=[]
+						let todayNum=[]
+						let todayData={
+							name:'今天',
+							data:[]
+						}
+						let yesterdayData={
+							name:'昨天',
+							data:[],
+							
+						}
+						let aweekagoData={
+							name:'一周',
+							data:[]
+						}
+						for(let i in res.yesterday){
+							datatimea.push(xdata+'时')							
+							yesterdayData.data.push(res.yesterday[i])							
+							xdata+=1
+							if(!!res.aweekago[i]){
+								aweekagoData.data.push(res.aweekago[i])
+							}
+							if(!!res.today[i]){
+								todayData.data.push(res.today[i])
+							}
+						}
+						let LineA = {
+							categories: [],
+							series: []
+						};
+						LineA.categories = datatimea;
+						LineA.series.push(todayData)
+						LineA.series.push(yesterdayData)
+						LineA.series.push(aweekagoData)
+						// console.log('LineA', LineA)
+						_self.showLineA("canvasLineA", LineA);
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取订单信息失败'
+						});
+					}
+			
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			
+			},
+			getmonitorv2(type) {
+				if(type==1){
+					var options = {
+						url: '/city/monitorv2', //请求接口
+						method: 'POST', //请求方法全部大写，默认GET
+						context: '',
+						data: {
+							total:1
+							// start_time:this.start_time,
+							// end_time:this.end_time,
+						},
+					}
+				}else if(type=='today'){
+					var options = {
+						url: '/city/monitorv2', //请求接口
+						method: 'POST', //请求方法全部大写，默认GET
+						context: '',
+						data: {
+							today:1,
+						},
+					}
+				}else{
+					var options = {
+						url: '/city/monitorv2', //请求接口
+						method: 'POST', //请求方法全部大写，默认GET
+						context: '',
+						data: {
+							daily:1,
+							start_time:this.start_time,
+							end_time:this.end_time,
+						},
+					}
+				}
+				
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					// console.log('monitorv2', res)
+					if (res.status == 0) {
+						if(type==1){
+							this.monitorv2 = res
+						}else if(type=='today'){
+							this.dailydata=res
+							this.boxdata=[
+								{name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+								{name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+								{name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+								{name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+								{name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+								{name:'报修车辆',val:res.bike_stat.ops_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
+								{name:'挪车数',val:res.rporder_ok_count,url:''},
+								{name:'换电数',val:res.bcorder_ok_count,url:''},
+							]
+						}else{
+							var datatimes = []
+							var user_growth = []
+							var user_order_growth = []
+							var bike_count_daily = []
+							var bikeeffic = {
+								name: '车效',
+								data: []
+							}
+							this.orderlist = []
+							for (var i in res.bcorder_ok_count_daily) {
+								var formatetime = i.split('-')
+								var newtimes = formatetime[1] + '-' + formatetime[2]
+								datatimes.push(newtimes)
+								var orderobj = {
+									time: '',
+									num: '',
+									money: '',
+									bikeper: ''
+								}						
+								// 车效
+								var bikepers = ''
+								if (res.bcorder_ok_count_daily[i] == 0 || res.bike_count_daily[i] == 0) {
+									bikepers = 0
+								} else {
+									bikepers = parseFloat(res.bcorder_ok_count_daily[i] / res.bike_count_daily[i]).toFixed(1)
+							
+								}
+								bike_count_daily.push(bikepers)
+							}
+							bikeeffic.data = bike_count_daily.reverse()
+							let LineB = {
+								categories: [],
+								series: []
+							};
+							//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
+							LineB.categories = datatimes.reverse();
+							LineB.series.push(bikeeffic)
+							_self.showLineA("canvasLineB", LineB);
+						}						
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : 'monitorv2'
+						});
+					}
+			
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			
 			},
 			go(item) {
 				uni.showModal({
@@ -261,6 +536,25 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
+						this.citylist=res.cities
+						
+						var date = new Date()
+						var seperator1 = "-";
+						var seperator2 = ":";
+						var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+						var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+						var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+							" " + date.getHours() + seperator2 + date.getMinutes() +
+							seperator2 + date.getSeconds()
+						var fmonuth=month-1<10?'0'+(month-1):month-1
+						// 上个月的天数
+						var day=new Date(date.getFullYear(),date.getMonth(),0)					
+						var times=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
+						this.getmonitorv2(1)
+						this.getmonitorv2('today')
+						this.getmonitorv2('all')
+						this.getHourly017(times)
+						
 						try {
 							uni.removeStorageSync('userinfo');
 							uni.setStorage({

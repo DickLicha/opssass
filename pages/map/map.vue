@@ -1226,65 +1226,64 @@
 				}
 				let distance = 500				
 				let promise = new Promise((respon, rej) => {
-							this.mapinfo.getScale({
-								success: (res) => {
-									console.log('suofangsuccess', res)
-									
-									// distance=res.scale							
-									switch (res.scale) {
-										case 20:
-											distance = 100
-											distancem=10
-											break;
-										case 19:
-											distance = 200
-											distancem=20
-											break;
-										case 18:
-											distance = 300
-											distancem=50
-											break;
-										case 17:
-											distance = 400
-											distancem=50
-											break;
-										case 16:
-											distance = 500
-											distancem=100
-											break;
-										case 15:
-											distance = 800
-											distancem=200
-											break;
-										case 14:
-											distance = 1500
-											distancem=500
-											break;
-										case 13:
-											distance = 1800
-											distancem=1000
-											break;
-										case 12:
-											distance = 2000
-											distancem=2000
-											break;
-										case 11:
-											distance = 3000
-											distancem=5000
-											break;
-										case 10:
-											distance = 5000
-											distancem=10000
-											break;
-										default:
-											distance = 15000
-									}
-									respon(distance)
-								},
-								fail: (res) => {
-									console.log('suofangfail', res)
+						this.mapinfo.getScale({
+							success: (res) => {
+								console.log('suofangsuccess', res)
+								
+								// distance=res.scale							
+								switch (res.scale) {
+									case 20:
+										distance = 100
+										distancem=10
+										break;
+									case 19:
+										distance = 200
+										distancem=20
+										break;
+									case 18:
+										distance = 300
+										distancem=50
+										break;
+									case 17:
+										distance = 400
+										distancem=50
+										break;
+									case 16:
+										distance = 500
+										distancem=100
+										break;
+									case 15:
+										distance = 800
+										distancem=200
+										break;
+									case 14:
+										distance = 1500
+										distancem=500
+										break;
+									case 13:
+										distance = 1800
+										distancem=1000
+										break;
+									case 12:
+										distance = 2000
+										distancem=2000
+										break;
+									case 11:
+										distance = 3000
+										distancem=5000
+										break;
+									case 10:
+										distance = 5000
+										distancem=10000
+										break;
+									default:
+										distance = 15000
 								}
-							})
+								respon(distance)
+							},
+							fail: (res) => {
+								console.log('suofangfail', res)
+							}
 						})
 					})
 					.then((dis) => {
@@ -1316,34 +1315,28 @@
 											if (this.selectvals == 21 || this.selectvals == 11) {
 												this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals), dis, this.gobeltimestr)
 											} else {
-												if (this.selectvals == 21 || this.selectvals == 11) {
-													this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals), dis, this.gobeltimestr)
-												} else {
-													this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals), '*', dis, this.gobeltimestr)
-												}
-												// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
+												this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals), '*', dis, this.gobeltimestr)
 											}
-											break
-										case '9':
-											this.stoplist(res.longitude, res.latitude, '*')
-											break
-										case '9.1':
-											this.stoplist(res.longitude, res.latitude, '*')
-											break	
-									}
-								},
-								fail: (res) => {
-									console.log('fail' + res);
+											// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
+										}
+										break
+									case '9':
+										this.stoplist(res.longitude, res.latitude, '*')
+										break
 									case '9.1':
 										this.stoplist(res.longitude, res.latitude, '*')
 										break	
 								}
-							})
-				
+							},
+							fail: (res) => {
+								console.log('fail' + res);
+							}
 						})
-						.catch(() => {
 				
-						})
+					})
+					.catch(() => {
+				
+					})
 				
 				
 				},
