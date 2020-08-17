@@ -118,6 +118,8 @@
 				qxmenudata:[
 					{name:'车辆扫码',url:'',val:0}
 				],
+				start_time:'',
+				end_time:'',
 				boxdata:[],
 				userInfo: null,
 				top: null,
@@ -151,6 +153,23 @@
 		},
 		onLoad() {
 			// var _this=this
+			var date = new Date()
+			var seperator1 = "-";
+			var seperator2 = ":";
+			var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				" " + date.getHours() + seperator2 + date.getMinutes() +
+				seperator2 + date.getSeconds()
+			var fmonuth=month-1<10?'0'+(month-1):month-1
+			// 上个月的天数
+			var day=new Date(date.getFullYear(),date.getMonth(),0)					
+			this.start_time=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate() +
+				" " + '00' + seperator2 + '00' +
+				seperator2 + '00'
+			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				" " + '23' + seperator2 + '59' +
+				seperator2 + '59'
 			_self = this;
 			this.cWidth = uni.upx2px(750);
 			this.cHeight = uni.upx2px(350);	
@@ -202,7 +221,7 @@
 			var times=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
 			this.getmonitorv2(1)
 			this.getmonitorv2('today')
-			// this.getmonitorv2('all')
+			this.getmonitorv2('all')
 			this.getHourly017(times)
 			try {
 				this.citylist = uni.getStorageSync('userinfo').cities;
@@ -279,11 +298,11 @@
 			} catch (e) {
 				// error
 			}
-			this.getServerData()
+			// this.getServerData()
 		},
 		onPullDownRefresh() {
 			// this.getList(true)
-			this.getServerData()
+			// this.getServerData()
 		},
 		onReachBottom() {
 			// this.getList()
@@ -440,8 +459,6 @@
 						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
 						LineB.categories = datatimes.reverse();
 						LineB.series.push(bikeeffic)
-						// console.log('LineB', LineB)
-						// _self.textarea = JSON.stringify(res.data.data.LineA);
 						_self.showLineA("canvasLineB", LineB);
 						
 					} else {
@@ -549,6 +566,8 @@
 						context: '',
 						data: {
 							daily:1,
+							start_time:this.start_time,
+							end_time:this.end_time,
 						},
 					}
 				}
@@ -572,6 +591,45 @@
 								{name:'挪车数',val:res.rporder_ok_count,url:''},
 								{name:'换电数',val:res.bcorder_ok_count,url:''},
 							]
+						}else{
+							var datatimes = []
+							var user_growth = []
+							var user_order_growth = []
+							var bike_count_daily = []
+							var bikeeffic = {
+								name: '车效',
+								data: []
+							}
+							this.orderlist = []
+							for (var i in res.bcorder_ok_count_daily) {
+								var formatetime = i.split('-')
+								var newtimes = formatetime[1] + '-' + formatetime[2]
+								datatimes.push(newtimes)
+								var orderobj = {
+									time: '',
+									num: '',
+									money: '',
+									bikeper: ''
+								}						
+								// 车效
+								var bikepers = ''
+								if (res.bcorder_ok_count_daily[i] == 0 || res.bike_count_daily[i] == 0) {
+									bikepers = 0
+								} else {
+									bikepers = parseFloat(res.bcorder_ok_count_daily[i] / res.bike_count_daily[i]).toFixed(1)
+							
+								}
+								bike_count_daily.push(bikepers)
+							}
+							bikeeffic.data = bike_count_daily.reverse()
+							let LineB = {
+								categories: [],
+								series: []
+							};
+							//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
+							LineB.categories = datatimes.reverse();
+							LineB.series.push(bikeeffic)
+							_self.showLineA("canvasLineB", LineB);
 						}						
 					} else {
 						uni.showToast({
@@ -631,7 +689,7 @@
 						var times=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
 						this.getmonitorv2(1)
 						this.getmonitorv2('today')
-						// this.getmonitorv2('all')
+						this.getmonitorv2('all')
 						this.getHourly017(times)
 						
 						try {

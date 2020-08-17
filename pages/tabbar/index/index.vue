@@ -113,12 +113,12 @@
 									text = ''
 									src = require('../../../static/image/che_zhan.png')
 									break
-								case 15:
-									name = '仪表盘'
-									url = '/pages/echartPage/echartpage/echartpage'
-									text = ''
-									src = require('../../../static/image/che_zhan.png')							
-									break	
+								// case 15:
+								// 	name = '仪表盘'
+								// 	url = '/pages/echartPage/echartpage/echartpage'
+								// 	text = ''
+								// 	src = require('../../../static/image/che_zhan.png')							
+								// 	break	
 							}
 							tempobj = {
 								index: onlyid,
