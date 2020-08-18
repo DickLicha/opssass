@@ -62,6 +62,33 @@
 			},
 			hideKeyboard(event) {
 					if (this.title.length === 8) {
+						if (this.title == '86350003') {
+							// this.setBaseurl('https://api.dd.ildjoy.com')
+							try {
+							    uni.setStorageSync('baseurl', 'http://api.dd-dev.ildjoy.com');
+							} catch (e) {
+							    // error
+							}
+							try {
+								uni.removeStorageSync('userinfo');
+							} catch (e) {
+								// error
+							}
+							uni.showToast({
+								title: '已切换到灰度环境',
+								icon: 'none',
+								duration: 2000,
+							});
+							setTimeout(() => {
+								uni.navigateTo({
+									url: '/pages/mine/loginView/loginView',
+									success: res => {},
+									fail: () => {},
+									complete: () => {}
+								});
+							}, 2000)
+							return
+						}
 						if (this.title == '86350002') {
 							// this.setBaseurl('https://api.dd.ildjoy.com')
 							try {
