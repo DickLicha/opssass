@@ -50,18 +50,42 @@
 									name = '换电'
 									url = '/pages/map/map'
 									text = '全部待换电'
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 1:
 									name = '维修'
 									url = '/pages/repairlist/repairlist'
 									text = '全部故障车辆'
 									src = require('../../../static/image/wei_xiu.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 2:
 									name = '保养'
 									url = '/pages/map/map'
 									text = '待保养车辆'
 									src = require('../../../static/image/bao_yang.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 3:
 									name = '单个挪车'
@@ -69,12 +93,28 @@
 									url = '/pages/map/map?text=全部车辆&type=3.1&name=挪车'
 									text = '全部车辆'
 									src = require('../../../static/image/nuo_che.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 8:
 									name = '库存管理'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/ku_cun.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 9:
 									name = '车站'
@@ -82,36 +122,84 @@
 									url = '/pages/repairlist/repairlist'
 									text = '全部车站'
 									src = require('../../../static/image/che_zhan.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 10:
 									name = '违章'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/wei_zhang.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 11:
 									name = '车辆排查'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/pai_cha.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 12:
 									name = 'ecu检测'
 									url = '/pages/ecutest/ecutest'
 									text = ''
 									src = require('../../../static/image/pai_cha.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 13:
 									name = 'ecu换绑'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/ecu_huanban.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 14:
 									name = '结束订单'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/che_zhan.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								// case 15:
 								// 	name = '仪表盘'
@@ -119,15 +207,7 @@
 								// 	text = ''
 								// 	src = require('../../../static/image/che_zhan.png')							
 								// 	break	
-							}
-							tempobj = {
-								index: onlyid,
-								src: src,
-								name: name,
-								url: url,
-								text: text
-							}
-							this.taskdata.push(tempobj)
+							}							
 						}
 					}
 				},
