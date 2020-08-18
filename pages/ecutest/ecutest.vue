@@ -3,6 +3,7 @@
 		<view class='view-common'>
 			<view class='ecutitle'>
 				<text>当前车辆编号:</text>
+				<!-- <input type="text" v-model="imei"> -->
 				<text>{{imei}}</text>
 			</view>
 			<!-- <view class="uni-list">
@@ -85,6 +86,14 @@
 						xiao1:'28',
 						xiao2:'09'
 					},
+					{
+						name: '重启',
+						val: '5',
+						url: '/ecutest/voice',
+						oper: 'reboot',
+						xiao1:'26',
+						xiao2:''
+					},
 					// {
 					// 	name: '批量测试',
 					// 	val: '6',
@@ -125,8 +134,8 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						"sn": sn,
-						"imei": '',
+						"sk":sn,
+						// "imei": '',
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -255,7 +264,7 @@
 					index = 1
 				}
 				// 走网络
-				if (this.blueconectstate != 1 || this.bleornet=='网络开') {
+				if (this.bleornet=='网络开') {
 					var datas = {}
 					if (this.ecutype == 'tbt') {
 						datas = {
