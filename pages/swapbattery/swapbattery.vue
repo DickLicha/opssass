@@ -271,13 +271,16 @@
 								
 							}else if(res=='开锁成功'){
 								blueWriteState = 1
-								_self.reportblue(0, loadtime,'')
+								// _self.reportblue(0, loadtime,'')
+								_self.operbattery(0,loadtime,'')
 							}else if(res=='上锁成功'){
 								blueWriteState = 1
-								_self.reportblue(0, loadtime,'')
+								// _self.reportblue(0, loadtime,'')
+								_self.operbattery(0,loadtime,'')
 							}else if(res=='电池锁打开成功'){
 								blueWriteState = 1
-								_self.reportblue(0, loadtime,'')
+								// _self.reportblue(0, loadtime,'')
+								_self.operbattery(0,loadtime,'')
 							}
 							
 						}else{
@@ -287,7 +290,8 @@
 						if (gps == 34) {
 							if (blestate == 0) {
 								blueWriteState = 1
-								_self.reportblue(0, loadtime,'')
+								// _self.reportblue(0, loadtime,'')
+								_self.operbattery(0,loadtime,'')
 							}else{
 								var bleerrstate=''
 								if(blestate==1){
@@ -305,7 +309,8 @@
 								}else{
 									bleerrstate='未知失败'
 								}
-								_self.reportblue(1, loadtime,bleerrstate)
+								// _self.reportblue(1, loadtime,bleerrstate)
+								_self.operbattery(1,loadtime,bleerrstate)
 							}
 						}
 						// 获取gps数据
@@ -937,12 +942,81 @@
 					}
 				});
 			},
+			// 开锁预操作
+			openpre() {		
+				var options = {
+					url: '/bcorder/pre_submit', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"bike_id": this.bikeinfo.id,
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('预开锁', res)
+					if (res.status == 0) {
+						uni.showLoading({
+							title: '开锁中'
+						});
+						if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
+							var str1 = ble.doCmd('34', '01', this.bikeinfo.bluetooth_token)
+							ble.openLock(str1,'dianchisuo',function(res) {
+								console.log('蓝牙操作', res)
+								loadtime = res.loadtime
+							})
+							blueWriteState = 0
+							setTimeout(() => {
+								if (blueWriteState = 0) {
+									// this.reportblue(1, loadtime,'无特征值返回')
+									this.operbattery(1,loadtime,'无特征值返回')
+								}
+								uni.hideLoading()
+							}, 5000)
+						}												
+						// this.orderid = res.info.id
+						uni.showModal({
+							title: '电池锁已打开，请更换电池',
+							content: '电池锁更换完毕后，会自动记录本次操作',
+							showCancel: false,
+							cancelText: '',
+							confirmText: '我知道了',
+							success: res => {
+								this.buttonname = '结束换电'
+							},
+							fail: () => {},
+							complete: () => {}
+						});
+							
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '开锁失败!',
+							icon: 'none',
+							duration: 2000
+						})
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			// 打开电池锁
 			openbattery() {
+				
+                if(!!this.bikeinfo.bluetooth_token && this.blueconectstate==1){
+					this.openpre()
+				}else{
+					this.operbattery(1,1000,'')
+				}
+				
+			},
+			// 网络开锁
+			operbattery(state,time,mess) {
 				uni.showLoading({
 					title: '开锁中'
 				});
-
+			
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
@@ -956,27 +1030,19 @@
 								"user_coordinate": [
 									res.longitude, res.latitude
 								],
-								"bluetooth": this.blueconectstate
+								"bluetooth": this.blueconectstate,
+								"bleinfo": {
+								  "success": state,
+								  "cost": time,
+								  "error_msg":mess
+								 },
 							}
 						}
 						this.$httpReq(options).then((res) => {
 							// 请求成功的回调
 							// res为服务端返回数据的根对象
 							console.log('打开电池锁', res)
-							if (res.status == 0) {
-								if (!!this.bikeinfo.bluetooth_token && this.blueconectstate==1) {
-									var str1 = ble.doCmd('34', '01', this.bikeinfo.bluetooth_token)
-									ble.openLock(str1,'dianchisuo',function(res) {
-										console.log('蓝牙操作', res)
-										loadtime = res.loadtime
-									})
-									blueWriteState = 0
-									setTimeout(() => {
-										if (blueWriteState = 0) {
-											this.reportblue(1, loadtime,'无特征值返回')
-										}
-									}, 5000)
-								}												
+							if (res.status == 0) {																		
 								this.orderid = res.info.id
 								uni.showModal({
 									title: '电池锁已打开，请更换电池',
@@ -990,7 +1056,7 @@
 									fail: () => {},
 									complete: () => {}
 								});
-
+			
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '开锁失败!',
