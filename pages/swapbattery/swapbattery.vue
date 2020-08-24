@@ -1022,7 +1022,7 @@
 			// 关闭电池锁完成订单
 			closebattery() {
 				uni.showLoading({
-					title: '开锁中'
+					title: '关锁中'
 				});
 				uni.getLocation({
 					type: 'wgs84',
@@ -1048,6 +1048,18 @@
 								this.buttonname = '更换电池'
 								this.afterelect = res.info.battery_level_after + '%'
 								this.addelect = res.info.battery_level_after - this.bikeinfo.battery_level + '%'
+								uni.showModal({
+									title: '电量变化',
+									content: '电量增长了'+this.addelect,
+									showCancel: false,
+									cancelText: '',
+									confirmText: '我知道了',
+									success: res => {
+										// this.buttonname = '关闭电池锁'
+									},
+									fail: () => {},
+									complete: () => {}
+								});
 								setTimeout(()=>{
 									uni.navigateBack()
 								},2000)			

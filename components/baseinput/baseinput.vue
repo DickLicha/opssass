@@ -65,7 +65,7 @@
 						if (this.title == '86350003') {
 							// this.setBaseurl('https://api.dd.ildjoy.com')
 							try {
-							    uni.setStorageSync('baseurl', 'http://api.dd-dev.ildjoy.com');
+							    uni.setStorageSync('baseurl', 'https://api.dd-dev.ildjoy.com');
 							} catch (e) {
 							    // error
 							}

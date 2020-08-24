@@ -85,6 +85,14 @@
 						xiao1:'28',
 						xiao2:'09'
 					},
+					{
+						name: '重启',
+						val: '6',
+						url: '/ecutest/voice',
+						oper: 'reboot',
+						xiao1:'26',
+						xiao2:''
+					},
 					// {
 					// 	name: '批量测试',
 					// 	val: '6',
@@ -122,11 +130,11 @@
 				this.setBikeid('*')
 				var options = {
 					url: '/ecutest/info', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
+					method: 'POST', //请求方法全部大写，默认cGET
 					context: '',
 					data: {
-						"sn": sn,
-						"imei": '',
+						// "sn": sn,
+						"sk":sn,
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -137,6 +145,8 @@
 						this.isble = true
 						this.bikeinfo=res.info
 						this.initble(res.info)
+					}else{
+						
 					}
 				}).catch((err) => {
 					// 请求失败的回调

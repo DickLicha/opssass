@@ -26,7 +26,7 @@
 					<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
 					<!--#endif-->
 				</view>
-				<view class="data-box">
+				<view class="data-box" v-show="tempobj.liushui">
 					<view class="data-item">
 						<view class="data-item-ct1">{{monitorv2.user_charge_amount_total/100}}</view>
 						<view class="data-item-ct2">充值总金额</view>
@@ -52,7 +52,7 @@
 						<view class="data-item-ct2">总认证用户数</view>
 					</view>
 				</view>
-				<view class="data-box">
+				<view class="data-box" v-show="tempobj.liushui">
 					<view class="data-item">
 						<view class="data-item-ct1">{{dailydata.user_charge_amount}}</view>
 						<view class="data-item-ct2">充值金额</view>
@@ -141,7 +141,8 @@
 				},
 				tempobj:{
 					chexiao:0,
-					dingdan:0
+					dingdan:0,
+					liushui:0,
 				},
 				showtx:true,
 				monitorv2:{},
@@ -274,6 +275,9 @@
 											}
 											if(acl[i].children[j].uri==15.2 && acl[i].children[j].visitable){
 												this.tempobj.dingdan=1
+											}
+											if(acl[i].children[j].uri==15.3 && acl[i].children[j].visitable){
+												this.tempobj.liushui=1
 											}
 										}							
 										break	
