@@ -69,15 +69,15 @@ Vue.prototype.$invstate = function(type) {
 		var iconPath = '/static/mapicon/car_normal.png'
 		// 车辆
 		if (type == 'car') {
-			// 差+车
-			if(element.health_state==0 && element.repark_index!='0'){
-				iconPath = '/static/mapicon/bad'+element.repark_index+'+.png'
-				// iconPath = '/static/mapicon/car_bad+.png'
-			}
 			// 失联
-			else if (0 === element.is_online) {
+			if (0 === element.is_online) {
 				iconPath = '/static/mapicon/car_fault_black.png'
 			}
+			// 差+车
+			else if(element.health_state==0 && element.repark_index!='0'){
+				iconPath = '/static/mapicon/bad'+element.repark_index+'+.png'
+				// iconPath = '/static/mapicon/car_bad+.png'
+			}			
 			// 故障
 			else if (1 === element.health_state) {
 				iconPath = '/static/mapicon/fault.png'
