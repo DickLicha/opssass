@@ -27,7 +27,8 @@
 						<view class="nav-ct">违章举报</view>
 					</navigator>
 				</view>
-				<view class="data-box">
+				<view class="data-box" v-show="limitorder.all">
+					<view class='box-title'>全部</view>
 					<view class="data-item">
 						<view class="data-item-ct1"><text>{{top.all_product_view_sum}}</text>{{carinfo.alert_count}}辆</view>
 						<view class="data-item-ct2">预警车辆</view>
@@ -41,7 +42,7 @@
 						<view class="data-item-ct1"><text>{{top.all_sales_sum}}</text>{{carinfo.under_volt_count}}辆</view>
 						<view class="data-item-ct2">缺电车辆</view>
 					</view>
-					<view class="data-item">
+					<view class="data-item">						
 						<view class="data-item-ct1"><text>{{top.all_sales_write_off}}</text>{{carinfo['24h_offline_count']}}辆</view>
 						<view class="data-item-ct2">离线车辆</view>
 					</view>
@@ -55,6 +56,68 @@
 						<view class="data-item-ct2">报修车辆</view>
 					</view>
 				</view>
+				<view class="data-box" v-show="limitorder.mon">
+					<view class='box-title'>当月</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_charge_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">充值总金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_membership_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">会员总金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.urorder_count_tomonth/100}}</view>
+						<view class="data-item-ct2">订单总金额</view>
+					</view>
+					<view class="data-item">						
+						<view class="data-item-ct1">{{monitorv2m.urorder_repark_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">订单调度总金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_count_tomonth}}</view>
+						<view class="data-item-ct2">总用户数</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_auth_count_tomonth}}</view>
+						<view class="data-item-ct2">总认证用户数</view>
+					</view>
+				</view>
+				<view class="data-box" v-show="limitorder.day">
+					<view class='box-title'>当日</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{dailydata.user_charge_amount}}</view>
+						<view class="data-item-ct2">充值金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{dailydata.user_membership_amount}}</view>
+						<view class="data-item-ct2">会员金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{dailydata.urorder_count}}</view>
+						<view class="data-item-ct2">订单金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{dailydata.urorder_repark_amount}}</view>
+						<view class="data-item-ct2">订单调度金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{dailydata.user_count}}</view>
+						<view class="data-item-ct2">用户数</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
+						<view class="data-item-ct2">认证用户数</view>
+					</view>
+				</view>
+				
+				<view class='data-box'>
+					<view class='box-title'>运维数据</view>
+					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
+						<view class="data-item-ct1">{{i.val}}</view>
+						<view class="data-item-ct2">{{i.name}}</view>
+					</view>
+				</view>			
 			</view>
 		</view>
 		<!-- <uni-load-more :status="loadStatus"></uni-load-more> -->
@@ -106,6 +169,12 @@
 					repaircar: 1,
 					kzcar: 5
 				},
+				monitorv2m:{},
+				limitorder:{
+					all:0,
+					mon:0,
+					day:0
+				}
 			}
 		},
 		onLoad() {
@@ -179,9 +248,90 @@
 			this.getmonitorv2(1)
 			this.getmonitorv2('today')
 			this.getmonitorv2('all')
+			this.getmonitorv2('mon')
 			this.getHourly017(times)
 			try {
 				this.citylist = uni.getStorageSync('userinfo').cities;
+				var acl = []
+				this.showtx=true
+				this.qxmenudata=[
+					{name:'车辆扫码',url:'',val:0}
+				]
+				uni.getStorage({
+					key: 'userinfo',
+					success: res => {
+						acl = res.data.acl.children
+						var onlyid = '',
+						tempobjs = {},
+						url = '',
+						name = '',
+						val=''
+						for (let i = 0; i < acl.length; i++) {
+							if (acl[i].visitable == 1) {
+								onlyid = parseInt(acl[i].uri)
+								switch (onlyid) {
+									case 0:
+										tempobjs = {
+											name: '附近换电',
+											url: '/pages/map/map?name=换电&text=全部换电&type=0',
+											val: 1
+										}
+										this.qxmenudata.push(tempobjs)
+										break
+									case 3:
+										tempobjs = {
+											name: '单个挪车',
+											url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
+											val: 2
+										}
+										this.qxmenudata.push(tempobjs)
+										break
+									case 10:
+										tempobjs = {
+											name: '违章举报',
+											url: '/pages/repairlist/repairlist?type=10',
+											val: 3
+										}
+										this.qxmenudata.push(tempobjs)
+										break
+									case 15:
+										for(let j=0;j<acl[i].children.length;j++){
+											if(acl[i].children[j].uri==15.1 && acl[i].children[j].visitable){
+												this.tempobj.chexiao=1
+											}
+											if(acl[i].children[j].uri==15.2 && acl[i].children[j].visitable){
+												this.tempobj.dingdan=1
+											}
+										}							
+										break
+									case 16:
+										for(let j=0;j<acl[i].children.length;j++){
+											if(acl[i].children[j].uri==16.1 && acl[i].children[j].visitable){
+												this.limitorder.all=1
+											}
+											if(acl[i].children[j].uri==16.2 && acl[i].children[j].visitable){
+												this.limitorder.mon=1
+											}
+											if(acl[i].children[j].uri==16.3 && acl[i].children[j].visitable){
+												this.limitorder.day=1
+											}
+										}							
+										break		
+								}
+								
+							}
+						}
+					},
+					fail:res=>{
+						console.log('fail',res)
+						uni.reLaunch({
+							url: '/pages/mine/loginView/loginView',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+					}
+				})
 				if (value) {
 					// this.userinfo = value
 				}
@@ -423,7 +573,17 @@
 							today:1,
 						},
 					}
-				}else{
+				}else if(type=='mon'){
+					var options = {
+						url: '/city/monitorv2', //请求接口
+						method: 'POST', //请求方法全部大写，默认GET
+						context: '',
+						data: {
+							tomonth:1,
+						},
+					}
+				}
+				else{
 					var options = {
 						url: '/city/monitorv2', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
@@ -455,6 +615,8 @@
 								{name:'挪车数',val:res.rporder_ok_count,url:''},
 								{name:'换电数',val:res.bcorder_ok_count,url:''},
 							]
+						}else if(type=='mon'){
+							this.monitorv2m=res
 						}else{
 							var datatimes = []
 							var user_growth = []
@@ -553,6 +715,7 @@
 						this.getmonitorv2(1)
 						this.getmonitorv2('today')
 						this.getmonitorv2('all')
+						this.getmonitorv2('mon')
 						this.getHourly017(times)
 						
 						try {
@@ -755,7 +918,11 @@
 		background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
-
+        .box-title{
+			text-align: center;
+			font-size: 40upx;
+			font-weight: 500;
+		}
 		.data-item {
 			display: inline-block;
 			width: 50%;

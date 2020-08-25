@@ -18,6 +18,13 @@
 			<view class='change-battery-button' v-if='showBatteryBtn==true'>
 				<button type='primary' class='share-button-default' @click='changbattery(buttonname)'>{{buttonname}}</button>
 			</view>
+			<uni-popup :show="poptype ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
+				<view :scroll-y="true" class="uni-center center-box">
+					<view><text>换电前电量：</text><text>{{beforeelec}}</text></view>
+					<view><text>换电后电量：</text><text>{{afterelect}}</text></view>
+					<view><text>电量增长：</text><text>{{addelect}}</text></view>
+				</view>
+			</uni-popup>
 			<uni-fab ref="fab" :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction"
 			 @trigger="trigger" />
 		</view>
@@ -1005,7 +1012,7 @@
 			// 关闭电池锁完成订单
 			closebattery() {
 				uni.showLoading({
-					title: '开锁中'
+					title: '关锁中'
 				});
 				uni.getLocation({
 					type: 'wgs84',
