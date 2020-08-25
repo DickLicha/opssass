@@ -26,7 +26,8 @@
 					<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
 					<!--#endif-->
 				</view>
-				<view class="data-box">
+				<view class="data-box" v-show="limitorder.all">
+					<view class='box-title'>全部</view>
 					<view class="data-item">
 						<view class="data-item-ct1">{{monitorv2.user_charge_amount_total/100}}</view>
 						<view class="data-item-ct2">充值总金额</view>
@@ -39,7 +40,7 @@
 						<view class="data-item-ct1">{{monitorv2.urorder_count_total/100}}</view>
 						<view class="data-item-ct2">订单总金额</view>
 					</view>
-					<view class="data-item">
+					<view class="data-item">						
 						<view class="data-item-ct1">{{monitorv2.urorder_repark_amount_total/100}}</view>
 						<view class="data-item-ct2">订单调度总金额</view>
 					</view>
@@ -52,7 +53,35 @@
 						<view class="data-item-ct2">总认证用户数</view>
 					</view>
 				</view>
-				<view class="data-box">
+				<view class="data-box" v-show="limitorder.mon">
+					<view class='box-title'>当月</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_charge_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">充值总金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_membership_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">会员总金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.urorder_count_tomonth/100}}</view>
+						<view class="data-item-ct2">订单总金额</view>
+					</view>
+					<view class="data-item">						
+						<view class="data-item-ct1">{{monitorv2m.urorder_repark_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">订单调度总金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_count_tomonth}}</view>
+						<view class="data-item-ct2">总用户数</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_auth_count_tomonth}}</view>
+						<view class="data-item-ct2">总认证用户数</view>
+					</view>
+				</view>
+				<view class="data-box" v-show="limitorder.day">
+					<view class='box-title'>当日</view>
 					<view class="data-item">
 						<view class="data-item-ct1">{{dailydata.user_charge_amount}}</view>
 						<view class="data-item-ct2">充值金额</view>
@@ -80,6 +109,7 @@
 				</view>
 				
 				<view class='data-box'>
+					<view class='box-title'>运维数据</view>
 					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
 						<view class="data-item-ct1">{{i.val}}</view>
 						<view class="data-item-ct2">{{i.name}}</view>
@@ -149,6 +179,12 @@
 				cWidth: '',
 				cHeight: '',
 				pixelRatio: 1,
+				monitorv2m:{},
+				limitorder:{
+					all:0,
+					mon:0,
+					day:0
+				}
 			}
 		},
 		onLoad() {
@@ -222,6 +258,7 @@
 			this.getmonitorv2(1)
 			this.getmonitorv2('today')
 			this.getmonitorv2('all')
+			this.getmonitorv2('mon')
 			this.getHourly017(times)
 			try {
 				this.citylist = uni.getStorageSync('userinfo').cities;
@@ -276,7 +313,20 @@
 												this.tempobj.dingdan=1
 											}
 										}							
-										break	
+										break
+									case 16:
+										for(let j=0;j<acl[i].children.length;j++){
+											if(acl[i].children[j].uri==16.1 && acl[i].children[j].visitable){
+												this.limitorder.all=1
+											}
+											if(acl[i].children[j].uri==16.2 && acl[i].children[j].visitable){
+												this.limitorder.mon=1
+											}
+											if(acl[i].children[j].uri==16.3 && acl[i].children[j].visitable){
+												this.limitorder.day=1
+											}
+										}							
+										break		
 								}
 								
 							}
@@ -559,7 +609,17 @@
 							today:1,
 						},
 					}
-				}else{
+				}else if(type=='mon'){
+					var options = {
+						url: '/city/monitorv2', //请求接口
+						method: 'POST', //请求方法全部大写，默认GET
+						context: '',
+						data: {
+							tomonth:1,
+						},
+					}
+				}
+				else{
 					var options = {
 						url: '/city/monitorv2', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
@@ -591,6 +651,8 @@
 								{name:'挪车数',val:res.rporder_ok_count,url:''},
 								{name:'换电数',val:res.bcorder_ok_count,url:''},
 							]
+						}else if(type=='mon'){
+							this.monitorv2m=res
 						}else{
 							var datatimes = []
 							var user_growth = []
@@ -690,6 +752,7 @@
 						this.getmonitorv2(1)
 						this.getmonitorv2('today')
 						this.getmonitorv2('all')
+						this.getmonitorv2('mon')
 						this.getHourly017(times)
 						
 						try {
@@ -1018,7 +1081,11 @@
 		background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
-
+        .box-title{
+			text-align: center;
+			font-size: 40upx;
+			font-weight: 500;
+		}
 		.data-item {
 			display: inline-block;
 			width: 32%;
