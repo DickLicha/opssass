@@ -15,7 +15,7 @@
 					</view>
 				</view>
 				<view class="qiun-charts" v-show="tempobj.dingdan && showtx">
-					<text class='titleSpan'>趋势图</text>
+					<text class='titleSpan'>订单趋势图</text>
 					<!--#ifndef MP-ALIPAY -->
 					<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
 					<!--#endif-->
@@ -83,19 +83,19 @@
 				<view class="data-box" v-show="limitorder.day">
 					<view class='box-title'>当日</view>
 					<view class="data-item">
-						<view class="data-item-ct1">{{dailydata.user_charge_amount}}</view>
+						<view class="data-item-ct1">{{dailydata.user_charge_amount/100}}</view>
 						<view class="data-item-ct2">充值金额</view>
 					</view>
 					<view class="data-item">
-						<view class="data-item-ct1">{{dailydata.user_membership_amount}}</view>
+						<view class="data-item-ct1">{{dailydata.user_membership_amount/100}}</view>
 						<view class="data-item-ct2">会员金额</view>
 					</view>
 					<view class="data-item">
-						<view class="data-item-ct1">{{dailydata.urorder_count}}</view>
+						<view class="data-item-ct1">{{dailydata.urorder_count/100}}</view>
 						<view class="data-item-ct2">订单金额</view>
 					</view>
 					<view class="data-item">
-						<view class="data-item-ct1">{{dailydata.urorder_repark_amount}}</view>
+						<view class="data-item-ct1">{{dailydata.urorder_repark_amount/100}}</view>
 						<view class="data-item-ct2">订单调度金额</view>
 					</view>
 					<view class="data-item">
@@ -220,27 +220,6 @@
 				}
 			});
 			//#endif
-			wx.getLocation({
-				type: 'wgs84',
-				success(res) {
-					console.log('位置信息', res)			
-					const requestTask3 = uni.request({
-						url: "https://apis.map.qq.com/ws/geocoder/v1/?location=" + res.latitude + "," + res.longitude +
-							"&key=ZVNBZ-ACB3S-UOEO5-6JMQK-4EMKT-XZBUX&get_poi=1",
-						data: {},
-						method: "GET",
-						header: {
-							'content-type': 'application/x-www-form-urlencoded'
-						},
-						success: function(res) {
-							console.log('weizhi', res.data);
-							_self.locaplace=res.data.result.formatted_addresses.recommend
-						}
-					});
-
-				}
-			})
-
 		},
 		onShow() {
 			var date = new Date()
@@ -348,7 +327,26 @@
 			} catch (e) {
 				// error
 			}
-			// this.getServerData()
+			wx.getLocation({
+				type: 'wgs84',
+				success(res) {
+					console.log('位置信息', res)			
+					const requestTask3 = uni.request({
+						url: "https://apis.map.qq.com/ws/geocoder/v1/?location=" + res.latitude + "," + res.longitude +
+							"&key=ZVNBZ-ACB3S-UOEO5-6JMQK-4EMKT-XZBUX&get_poi=1",
+						data: {},
+						method: "GET",
+						header: {
+							'content-type': 'application/x-www-form-urlencoded'
+						},
+						success: function(res) {
+							console.log('weizhi', res.data);
+							_self.locaplace=res.data.result.formatted_addresses.recommend
+						}
+					});
+			
+				}
+			})
 		},
 		onPullDownRefresh() {
 			// this.getList(true)
@@ -552,19 +550,34 @@
 							
 						}
 						let aweekagoData={
-							name:'一周',
+							name:'一周前',
 							data:[]
 						}
-						for(let i in res.yesterday){
-							datatimea.push(xdata+'时')							
-							yesterdayData.data.push(res.yesterday[i])							
-							xdata+=1
-							if(!!res.aweekago[i]){
-								aweekagoData.data.push(res.aweekago[i])
-							}
-							if(!!res.today[i]){
-								todayData.data.push(res.today[i])
-							}
+						var sortyesterday=[]
+						var sorttoday=[]
+						var sortaweekago=[]
+						for(var i in res.yesterday){
+							datatimea.push(xdata+'时')	
+							sortyesterday.push(i)
+							xdata+=1						
+						}						
+						sortyesterday=sortyesterday.sort()
+						for(var j=0;j<sortyesterday.length;j++){
+							yesterdayData.data.push(res.yesterday[sortyesterday[j]])
+						}
+						for(var i in res.today){
+							sorttoday.push(i)						
+						}
+						sorttoday=sorttoday.sort()
+						for(var j=0;j<sorttoday.length;j++){
+							todayData.data.push(res.today[sorttoday[j]])
+						}
+						for(var i in res.aweekago){	
+							sortaweekago.push(i)
+						}
+						sortaweekago=sortaweekago.sort()
+						for(var j=0;j<sortaweekago.length;j++){
+							aweekagoData.data.push(res.aweekago[sortaweekago[j]])
 						}
 						let LineA = {
 							categories: [],
@@ -675,10 +688,10 @@
 								}						
 								// 车效
 								var bikepers = ''
-								if (res.bcorder_ok_count_daily[i] == 0 || res.bike_count_daily[i] == 0) {
+								if (res.urorder_count_daily[i] == 0 || res.bike_count_daily[i] == 0) {
 									bikepers = 0
 								} else {
-									bikepers = parseFloat(res.bcorder_ok_count_daily[i] / res.bike_count_daily[i]).toFixed(1)
+									bikepers = parseFloat(res.urorder_count_daily[i] / res.bike_count_daily[i]).toFixed(1)
 							
 								}
 								bike_count_daily.push(bikepers)
@@ -867,7 +880,8 @@
 						// 	margin: 0,
 						// },
 						dataLabel: false,
-						dataPointShape: true,
+						dataPointShape: false,
+						// dataPointShapeType: 'hollow',
 						background: '#FFFFFF',
 						pixelRatio: _self.pixelRatio,
 						categories: chartData.categories,
@@ -921,7 +935,7 @@
 							margin: 0,
 						},
 						dataLabel: false,
-						dataPointShape: true,
+						dataPointShape: false,
 						background: '#FFFFFF',
 						pixelRatio: _self.pixelRatio,
 						categories: chartData.categories,

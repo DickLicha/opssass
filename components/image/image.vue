@@ -109,20 +109,27 @@
 								var parsedata=JSON.parse(res.data)
 								console.log('数据类型', typeof(parsedata),parsedata);
 								console.log('数据类型1', parsedata.data);
-								if(parsedata.status==0){
-									console.log('this.directinfo',this.directinfo)
-									var imgs=this.directinfo.res_server_url+'/'+parsedata.data.oss_name
-									console.log('imgs',imgs)
-									this.imgArr.push(imgs)
-									this.setImgarr(this.imgArr)
-								}else{
-									uni.showToast({
-										title: parsedata.msg?parsedata.msg:'文件上传失败',
-										mask: false,
-										icon:'none',
-										duration: 1500
-									});
+								try{
+									if(parsedata.status==0){
+										console.log('this.directinfo',this.directinfo)
+										var imgs=this.directinfo.res_server_url+'/'+parsedata.data.oss_name
+										console.log('imgs',imgs)
+										this.imgArr.push(imgs)
+										this.setImgarr(this.imgArr)
+									}else{
+										uni.showToast({
+											title: parsedata.msg?parsedata.msg:'文件上传失败',
+											mask: false,
+											icon:'none',
+											duration: 1500
+										});
+									}
+									
+								}catch(e){
+									//TODO handle the exception
+									console.log(666,e)
 								}
+								
 								
 							}
 						});
