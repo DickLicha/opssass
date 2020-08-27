@@ -273,6 +273,9 @@
 			this.mapheihts='85vh'
 			this.polylinePoint=[]
 			this.polylinePoints=[]
+			if(this.type==9){
+				this.mapheihts='100vh'
+			}
 			if(this.type!='0.3'){
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
@@ -502,8 +505,7 @@
 						break;
 					case '9':
 						this.showcorverview.head = false
-						this.showcorverview.bottom = false
-						this.mapheihts='100vh'
+						this.showcorverview.bottom = false						
 						this.scanbuttonname = '创建车站'
 						// this.nearbymovecar(this.longitude, this.latitude, '*')
 						this.stoplist(this.longitude, this.latitude, '*')
@@ -1917,7 +1919,10 @@
 			},
 			// 创建车站
 			creatStopurl(level,type,coordinate,marks) {
-				
+				this.mapheihts='100vh'
+				if(type==0){
+					marks='*'					
+				}
 				var options = {
 					url: '/park/add', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
