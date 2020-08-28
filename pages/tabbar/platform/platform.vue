@@ -27,13 +27,19 @@
 						<view class="nav-ct">违章举报</view>
 					</navigator>
 				</view>
-				<view class="qiun-charts" v-show="tempobj.dingdan && showtx">
+				<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
 					<text class='titleSpan'>订单趋势图</text>
 					<!--#ifndef MP-ALIPAY -->
 					<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
 					<!--#endif-->
 				</view>
-				<view class="qiun-charts" v-show="tempobj.chexiao && showtx">
+				<view class="qiun-charts" v-show="limitorder.ddjet && showtx">
+					<text class='titleSpan'>订单金额图</text>
+					<!--#ifndef MP-ALIPAY -->
+					<canvas canvas-id="canvasLineC" id="canvasLineC" class="charts" @touchstart="touchLineC"></canvas>
+					<!--#endif-->
+				</view>
+				<view class="qiun-charts" v-show="limitorder.cxt && showtx">
 					<text class='titleSpan'>车效图</text>
 					<!--#ifndef MP-ALIPAY -->
 					<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
@@ -41,20 +47,20 @@
 				</view>
 				<view class="data-box" v-show="limitorder.all">
 					<view class='box-title'>全部</view>
-					<view class="data-item">
+					<view class="data-item" v-if="limitorder.czje">
 						<view class="data-item-ct1"><text>{{top.all_product_view_sum}}</text>{{carinfo.alert_count}}辆</view>
 						<view class="data-item-ct2">预警车辆</view>
 					</view>
-					<view class="data-item">
+					<view class="data-item" v-if="limitorder.hykje">
 						<view class="data-item-ct1"><text>{{top.all_profit_sum}}</text>{{carinfo.to_check_count}}辆</view>
 						<view class="data-item-ct2">待排查车辆</view>
 					</view>
 					<view class="data-line"></view>
 					<view class="data-item">
-						<view class="data-item-ct1"><text>{{top.all_sales_sum}}</text>{{carinfo.under_volt_count}}辆</view>
-						<view class="data-item-ct2">缺电车辆</view>
+						<view class="data-item-ct1">{{monitorv2.urorder_paid_amount_total/100}}</view>
+						<view class="data-item-ct2">订单总金额</view>
 					</view>
-					<view class="data-item">						
+					<view class="data-item" v-if="limitorder.qxddf">						
 						<view class="data-item-ct1"><text>{{top.all_sales_write_off}}</text>{{carinfo['24h_offline_count']}}辆</view>
 						<view class="data-item-ct2">离线车辆</view>
 					</view>
@@ -63,26 +69,30 @@
 						<view class="data-item-ct1"><text>{{top.all_product_view_sum}}</text>{{carinfo.alert_fault_count}}辆</view>
 						<view class="data-item-ct2">疑似故障车辆</view>
 					</view>
-					<view class="data-item">
+					<!-- <view class="data-item">
 						<view class="data-item-ct1"><text>{{top.all_profit_sum}}</text>{{carinfo.ops_count}}辆</view>
 						<view class="data-item-ct2">报修车辆</view>
+					</view> -->
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2.urorder_count_per_bike_avg.toFixed(2)}}</view>
+						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
 				<view class="data-box" v-show="limitorder.mon">
 					<view class='box-title'>当月</view>
-					<view class="data-item">
+					<view class="data-item" v-if="limitorder.czje">
 						<view class="data-item-ct1">{{monitorv2m.user_charge_amount_tomonth/100}}</view>
 						<view class="data-item-ct2">充值总金额</view>
 					</view>
-					<view class="data-item">
+					<view class="data-item" v-if="limitorder.hykje">
 						<view class="data-item-ct1">{{monitorv2m.user_membership_amount_tomonth/100}}</view>
 						<view class="data-item-ct2">会员总金额</view>
 					</view>
 					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2m.urorder_count_tomonth/100}}</view>
+						<view class="data-item-ct1">{{monitorv2m.urorder_paid_amount_tomonth/100}}</view>
 						<view class="data-item-ct2">订单总金额</view>
 					</view>
-					<view class="data-item">						
+					<view class="data-item" v-if="limitorder.qxddf">						
 						<view class="data-item-ct1">{{monitorv2m.urorder_repark_amount_tomonth/100}}</view>
 						<view class="data-item-ct2">订单调度总金额</view>
 					</view>
@@ -90,26 +100,30 @@
 						<view class="data-item-ct1">{{monitorv2m.user_count_tomonth}}</view>
 						<view class="data-item-ct2">总用户数</view>
 					</view>
-					<view class="data-item">
+					<!-- <view class="data-item">
 						<view class="data-item-ct1">{{monitorv2m.user_auth_count_tomonth}}</view>
 						<view class="data-item-ct2">总认证用户数</view>
+					</view> -->
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2.urorder_count_per_bike_avg.toFixed(2)}}</view>
+						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
 				<view class="data-box" v-show="limitorder.day">
 					<view class='box-title'>当日</view>
-					<view class="data-item">
+					<view class="data-item" v-if="limitorder.czje">
 						<view class="data-item-ct1">{{dailydata.user_charge_amount/100}}</view>
 						<view class="data-item-ct2">充值金额</view>
 					</view>
-					<view class="data-item">
+					<view class="data-item" v-if="limitorder.hykje">
 						<view class="data-item-ct1">{{dailydata.user_membership_amount/100}}</view>
 						<view class="data-item-ct2">会员金额</view>
 					</view>
 					<view class="data-item">
-						<view class="data-item-ct1">{{dailydata.urorder_count/100}}</view>
+						<view class="data-item-ct1">{{dailydata.urorder_paid_amount/100}}</view>
 						<view class="data-item-ct2">订单金额</view>
 					</view>
-					<view class="data-item">
+					<view class="data-item" v-if="limitorder.qxddf">
 						<view class="data-item-ct1">{{dailydata.urorder_repark_amount/100}}</view>
 						<view class="data-item-ct2">订单调度金额</view>
 					</view>
@@ -117,9 +131,13 @@
 						<view class="data-item-ct1">{{dailydata.user_count}}</view>
 						<view class="data-item-ct2">用户数</view>
 					</view>
-					<view class="data-item">
+					<!-- <view class="data-item">
 						<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
 						<view class="data-item-ct2">认证用户数</view>
+					</view> -->
+					<view class="data-item">
+						<view class="data-item-ct1">{{(dailydata.urorder_count/dailydata.bike_count).toFixed(2)}}</view>
+						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
 				
@@ -149,6 +167,8 @@
 		mapMutations
 	} from 'vuex'
 	// const app = getApp()
+	var _self;
+	var canvaLineA = null,canvaLineB=null,canvaLineC=null
 	export default {
 		components: {
 			uniPopup,
@@ -185,7 +205,13 @@
 				limitorder:{
 					all:0,
 					mon:0,
-					day:0
+					day:0,
+					ddqst:0,//订单趋势图
+					ddjet:0,//订单金额图
+					cxt:0,//车效图
+					qxddf:0,//骑行调度费
+					czje:0,//充值金额
+					hykje:0,//会员卡金额
 				}
 			}
 		},
@@ -306,6 +332,25 @@
 											if(acl[i].children[j].uri==16.3 && acl[i].children[j].visitable){
 												this.limitorder.day=1
 											}
+											if(acl[i].children[j].uri==16.4 && acl[i].children[j].visitable){
+												this.limitorder.ddqst=1
+											}
+											if(acl[i].children[j].uri==16.5 && acl[i].children[j].visitable){
+												this.limitorder.ddjet=1
+											}
+											if(acl[i].children[j].uri==16.6 && acl[i].children[j].visitable){
+												this.limitorder.cxt=1
+											}
+											if(acl[i].children[j].uri==16.7 && acl[i].children[j].visitable){
+												this.limitorder.qxddf=1
+											}
+											if(acl[i].children[j].uri==16.8 && acl[i].children[j].visitable){
+												this.limitorder.czje=1
+											}
+											if(acl[i].children[j].uri==16.9 && acl[i].children[j].visitable){
+												this.limitorder.hykje=1						
+												
+											}
 										}							
 										break		
 								}
@@ -359,6 +404,14 @@
 		},
 		methods: {
 			...mapMutations([ 'setSn', 'setBikeid']),
+			touchLineC(e) {
+				canvaLineC.touchLegend(e);
+				canvaLineC.showToolTip(e, {
+					format: function(item, category) {
+						return category + ' ' + item.name + ':' + item.data
+					}
+				});
+			},
 			scaninto(type,url) {
 				if(type==0){
 					wx.scanCode({
@@ -416,86 +469,6 @@
 					// 请求失败的回调
 					console.error(err, '捕捉')
 				})
-			},
-			getServerData() {
-				var options = {
-					url: '/city/monitor', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						// start_time:this.start_time,
-						// end_time:this.end_time,
-					},
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('订单信息', res)
-					if (res.status == 0) {
-						// this.carinfo = res.bike_stat					
-						var datatimes = []
-						var user_charge_order_amount_grouth = []
-						var user_growth = []
-						var user_order_growth = []
-						var user_scan_qdcode = []
-						var user_order_amount_growth = []
-						var bike_count_daily = []
-						var orderNum = {
-							name: '订单数',
-							data: []
-						}
-						var orderMoney = {
-							name: '订单金额',
-							data: []
-						}
-						var bikeeffic = {
-							name: '车效',
-							data: []
-						}
-						var allbikeeffic=0
-						var allmoney=0
-						this.orderlist = []
-						for (var i in res.user_growth) {
-							var formatetime = i.split('-')
-							var newtimes = formatetime[1] + '-' + formatetime[2]
-							datatimes.push(newtimes)
-							var orderobj = {
-								time: '',
-								num: '',
-								money: '',
-								bikeper: ''
-							}						
-							// 车效
-							var bikepers = ''
-							if (res.user_order_growth[i] == 0 || res.bike_count_daily[i] == 0) {
-								bikepers = 0
-							} else {
-								bikepers = parseFloat(res.user_order_growth[i] / res.bike_count_daily[i]).toFixed(1)
-						
-							}
-							bike_count_daily.push(bikepers)
-						}
-						bikeeffic.data = bike_count_daily.reverse()
-						let LineB = {
-							categories: [],
-							series: []
-						};
-						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
-						LineB.categories = datatimes.reverse();
-						LineB.series.push(bikeeffic)
-						_self.showLineA("canvasLineB", LineB);
-						
-					} else {
-						uni.showToast({
-							title: res.message ? res.message : '获取订单信息失败'
-						});
-					}
-
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
-
 			},
 			getHourly017(time) {
 				var options = {
@@ -647,40 +620,53 @@
 							var user_growth = []
 							var user_order_growth = []
 							var bike_count_daily = []
+							var urorder_paid_amount_daily=[]
 							var bikeeffic = {
 								name: '车效',
 								data: []
 							}
+							var ddje = {
+								name: '订单金额',
+								data: []
+							}
 							this.orderlist = []
-							for (var i in res.bcorder_ok_count_daily) {
-								var formatetime = i.split('-')
+							var temptime=[]
+							for(var i in res.bcorder_ok_count_daily){
+								temptime.push(i)
+							}
+							temptime=temptime.sort()
+							for(var l=0;l<temptime.length;l++){
+								var formatetime = temptime[l].split('-')
 								var newtimes = formatetime[1] + '-' + formatetime[2]
-								datatimes.push(newtimes)
-								var orderobj = {
-									time: '',
-									num: '',
-									money: '',
-									bikeper: ''
-								}						
-								// 车效
+								datatimes.push(newtimes)	
 								var bikepers = ''
-								if (res.urorder_count_daily[i] == 0 || res.bike_count_daily[i] == 0) {
+								if (res.urorder_count_daily[temptime[l]] == 0 || res.bike_count_daily[temptime[l]] == 0) {
 									bikepers = 0
 								} else {
-									bikepers = parseFloat(res.urorder_count_daily[i] / res.bike_count_daily[i]).toFixed(1)
-							
+									bikepers = parseFloat(res.urorder_count_daily[temptime[l]] / res.bike_count_daily[temptime[l]]).toFixed(1)										
 								}
 								bike_count_daily.push(bikepers)
+								urorder_paid_amount_daily.push(res.urorder_paid_amount_daily[temptime[l]]/100)
 							}
-							bikeeffic.data = bike_count_daily.reverse()
+							bikeeffic.data = bike_count_daily
+							ddje.data=urorder_paid_amount_daily
 							let LineB = {
 								categories: [],
 								series: []
 							};
+							let LineC = {
+								categories: [],
+								series: []
+							};
 							//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
-							LineB.categories = datatimes.reverse();
+							LineB.categories = datatimes
 							LineB.series.push(bikeeffic)
 							_self.showLineA("canvasLineB", LineB);
+							
+							LineC.categories = datatimes
+							LineC.series.push(ddje)
+							_self.showLineA("canvasLineC", LineC);
+							
 						}						
 					} else {
 						uni.showToast({
@@ -888,8 +874,64 @@
 							}
 						}
 					});
-				}else{
+				}else if(canvasId=='canvasLineB'){
 					canvaLineB = new uCharts({
+						$this: _self,
+						canvasId: canvasId,
+						title:{
+							name:'趋势图',
+							fontSize:20
+						},
+						type: 'area',
+						fontSize: 11,
+						padding: [15, 15, 0, 15],
+						legend: {
+							show: true,
+							padding: 5,
+							lineHeight: 11,
+							margin: 0,
+						},
+						dataLabel: false,
+						dataPointShape: false,
+						background: '#FFFFFF',
+						pixelRatio: _self.pixelRatio,
+						categories: chartData.categories,
+						series: chartData.series,
+						animation: true,
+						xAxis: {
+							type: 'calibration',
+							gridColor: '#CCCCCC',
+							gridType: 'dash',
+							dashLength: 8,
+							labelCount: 4,
+							rotateLabel:true,
+							scrollShow:true,
+							// disabled:true,
+							// itemCount:3
+							// fontSize:5
+						},
+						yAxis: {
+							gridType: 'dash',
+							gridColor: '#CCCCCC',
+							dashLength: 8,
+							splitNumber: 5,
+							// min: 10,\\\
+							// max: 180,
+							format: (val) => {
+								// return val.toFixed(0) + '元'
+								return val.toFixed(0)
+							}
+						},
+						width: _self.cWidth * _self.pixelRatio,
+						height: _self.cHeight * _self.pixelRatio,
+						extra: {
+							line: {
+								type: 'straight'
+							}
+						}
+					});
+				}else{
+					canvaLineC = new uCharts({
 						$this: _self,
 						canvasId: canvasId,
 						title:{
