@@ -65,7 +65,8 @@
 						if (this.title == '86350002') {
 							// this.setBaseurl('https://api.dd.ildjoy.com')
 							try {
-							    uni.setStorageSync('realuser', false);
+								uni.setStorageSync('baseurl', 'https://api.gray.lexiangys.top');
+							    // uni.setStorageSync('realuser', false);
 							} catch (e) {
 							    // error
 							}
@@ -75,7 +76,7 @@
 								// error
 							}
 							uni.showToast({
-								title: '已切换到真实用户',
+								title: '已切换到灰度',
 								icon: 'none',
 								duration: 2000,
 							});
