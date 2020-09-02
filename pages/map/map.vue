@@ -106,7 +106,7 @@
 
 <script>
 	var blueWriteState = 0,
-		loadtime = 1000
+		loadtime = 1000,distancem=10
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
 	import baseInput from '@/components/baseinput/baseinput.vue'
