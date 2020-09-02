@@ -1080,23 +1080,23 @@
 									this.reportblue(10, 0, loadtime, '')
 									blueWriteState = 1
 								} else {
-									var bleerrstate = ''
-									if (blestate == 1) {
-										bleerrstate = 'token校验失败'
-									} else if (blestate == 2) {
-										bleerrstate = '请求内容错误'
-									} else if (blestate == 3) {
-										bleerrstate = '请求命令错误'
-									} else if (blestate == 4) {
-										bleerrstate = '操作失败'
-									} else if (blestate == 5) {
-										bleerrstate = '命令不支持'
-									} else if (blestate == 6) {
-										bleerrstate = '车辆正在骑行中'
-									} else {
-										bleerrstate = '未知失败'
-									}
-									this.reportblue(10, 1, loadtime, bleerrstate)
+									// var bleerrstate = ''
+									// if (blestate == 1) {
+									// 	bleerrstate = 'token校验失败'
+									// } else if (blestate == 2) {
+									// 	bleerrstate = '请求内容错误'
+									// } else if (blestate == 3) {
+									// 	bleerrstate = '请求命令错误'
+									// } else if (blestate == 4) {
+									// 	bleerrstate = '操作失败'
+									// } else if (blestate == 5) {
+									// 	bleerrstate = '命令不支持'
+									// } else if (blestate == 6) {
+									// 	bleerrstate = '车辆正在骑行中'
+									// } else {
+									// 	bleerrstate = '未知失败'
+									// }
+									// this.reportblue(10, 1, loadtime, bleerrstate)
 								}
 							}
 						}

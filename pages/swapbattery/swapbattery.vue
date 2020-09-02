@@ -300,24 +300,24 @@
 								// _self.reportblue(0, loadtime,'')
 								_self.operbattery(0,loadtime,'')
 							}else{
-								var bleerrstate=''
-								if(blestate==1){
-									bleerrstate='token校验失败'
-								}else if(blestate==2){
-									bleerrstate='请求内容错误'
-								}else if(blestate==3){
-									bleerrstate='请求命令错误'
-								}else if(blestate==4){
-									bleerrstate='操作失败'
-								}else if(blestate==5){
-									bleerrstate='命令不支持'
-								}else if(blestate==6){
-									bleerrstate='车辆正在骑行中'
-								}else{
-									bleerrstate='未知失败'
-								}
-								// _self.reportblue(1, loadtime,bleerrstate)
-								_self.operbattery(1,loadtime,bleerrstate)
+								// var bleerrstate=''
+								// if(blestate==1){
+								// 	bleerrstate='token校验失败'
+								// }else if(blestate==2){
+								// 	bleerrstate='请求内容错误'
+								// }else if(blestate==3){
+								// 	bleerrstate='请求命令错误'
+								// }else if(blestate==4){
+								// 	bleerrstate='操作失败'
+								// }else if(blestate==5){
+								// 	bleerrstate='命令不支持'
+								// }else if(blestate==6){
+								// 	bleerrstate='车辆正在骑行中'
+								// }else{
+								// 	bleerrstate='未知失败'
+								// }
+								// // _self.reportblue(1, loadtime,bleerrstate)
+								// _self.operbattery(1,loadtime,bleerrstate)
 							}
 						}
 						// 获取gps数据
@@ -920,27 +920,27 @@
 							})
 							blueWriteState = 0
 							setTimeout(() => {
-								if (blueWriteState = 0) {
-									// this.reportblue(1, loadtime,'无特征值返回')
+								console.log(333,blueWriteState)
+								if (blueWriteState == 0) {
 									this.operbattery(1,loadtime,'无特征值返回')
+								}else{
+									uni.showModal({
+										title: '电池锁已打开，请更换电池',
+										content: '电池锁更换完毕后，会自动记录本次操作',
+										showCancel: false,
+										cancelText: '',
+										confirmText: '我知道了',
+										success: res => {
+											this.buttonname = '结束换电'
+										},
+										fail: () => {},
+										complete: () => {}
+									});
 								}
 								uni.hideLoading()
 							}, 5000)
 						}												
-						// this.orderid = res.info.id
-						uni.showModal({
-							title: '电池锁已打开，请更换电池',
-							content: '电池锁更换完毕后，会自动记录本次操作',
-							showCancel: false,
-							cancelText: '',
-							confirmText: '我知道了',
-							success: res => {
-								this.buttonname = '结束换电'
-							},
-							fail: () => {},
-							complete: () => {}
-						});
-							
+						// this.orderid = res.info.id													
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '开锁失败!',
@@ -967,8 +967,7 @@
 			operbattery(state,time,mess) {
 				uni.showLoading({
 					title: '开锁中'
-				});
-			
+				});			
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {

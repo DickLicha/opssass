@@ -140,30 +140,30 @@
 									}
 									
 								}else{
-									var bleerrstate=''
-									if(blestate==1){
-										bleerrstate='token校验失败'
-									}else if(blestate==2){
-										bleerrstate='请求内容错误'
-									}else if(blestate==3){
-										bleerrstate='请求命令错误'
-									}else if(blestate==4){
-										bleerrstate='操作失败'
-									}else if(blestate==5){
-										bleerrstate='命令不支持'
-									}else if(blestate==6){
-										bleerrstate='车辆正在骑行中'
-									}else{
-										bleerrstate='未知失败'
-									}
-									console.log('caozuo蓝牙失败',bleerrstate)
-									// _self.reportblue(_self.openOrClose, 1, loadtime,bleerrstate)
-									if(_self.openOrClose == 11){
-										console.log(3333)
-										_self.opercar(allmovetype,1,loadtime,bleerrstate)
-									}else{
-										_self.endmoveopr(parkid,1,loadtime,bleerrstate)
-									}
+									// var bleerrstate=''
+									// if(blestate==1){
+									// 	bleerrstate='token校验失败'
+									// }else if(blestate==2){
+									// 	bleerrstate='请求内容错误'
+									// }else if(blestate==3){
+									// 	bleerrstate='请求命令错误'
+									// }else if(blestate==4){
+									// 	bleerrstate='操作失败'
+									// }else if(blestate==5){
+									// 	bleerrstate='命令不支持'
+									// }else if(blestate==6){
+									// 	bleerrstate='车辆正在骑行中'
+									// }else{
+									// 	bleerrstate='未知失败'
+									// }
+									// console.log('caozuo蓝牙失败',bleerrstate)
+									// // _self.reportblue(_self.openOrClose, 1, loadtime,bleerrstate)
+									// if(_self.openOrClose == 11){
+									// 	console.log(3333)
+									// 	_self.opercar(allmovetype,1,loadtime,bleerrstate)
+									// }else{
+									// 	_self.endmoveopr(parkid,1,loadtime,bleerrstate)
+									// }
 								}
 							}
 							if (gps == 32) {
