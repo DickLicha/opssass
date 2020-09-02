@@ -1067,109 +1067,120 @@
 				}
 				let distance = 500
 				let promise = new Promise((respon, rej) => {
-						this.mapinfo.getScale({
-							success: (res) => {
-								console.log('suofangsuccess', res)
-								// distance=res.scale							
-								switch (res.scale) {
-									case 20:
-										distance = 100
-										break;
-									case 19:
-										distance = 200
-										break;
-									case 18:
-										distance = 300
-										break;
-									case 17:
-										distance = 400
-										break;
-									case 16:
-										distance = 500
-										break;
-									case 15:
-										distance = 800
-										break;
-									case 14:
-										distance = 1500
-										break;
-									case 13:
-										distance = 1800
-										break;
-									case 12:
-										distance = 2000
-										break;
-									case 11:
-										distance = 3000
-										break;
-									case 10:
-										distance = 5000
-										break;
-									default:
-										distance = 15000
-								}
-								respon(distance)
-							},
-							fail: (res) => {
-								console.log('suofangfail', res)
-							}
-						})
-					})
-				})
-				.then((dis)=>{
-					this.mapinfo.getCenterLocation({
-						success: (res) => {
-							this.tempjindu = res.longitude
-							this.tempweidu = res.latitude
-							// self.nearbycarinfo(2)
-							switch (self.type) {
-								case '0':
-									var undervolt = '*'
-									if (this.selectvals == 0) {
-										undervolt = 1
+							this.mapinfo.getScale({
+								success: (res) => {
+									console.log('suofangsuccess', res)
+									
+									// distance=res.scale							
+									switch (res.scale) {
+										case 20:
+											distance = 100
+											distancem=10
+											break;
+										case 19:
+											distance = 200
+											distancem=20
+											break;
+										case 18:
+											distance = 300
+											distancem=50
+											break;
+										case 17:
+											distance = 400
+											distancem=50
+											break;
+										case 16:
+											distance = 500
+											distancem=100
+											break;
+										case 15:
+											distance = 800
+											distancem=200
+											break;
+										case 14:
+											distance = 1500
+											distancem=500
+											break;
+										case 13:
+											distance = 1800
+											distancem=1000
+											break;
+										case 12:
+											distance = 2000
+											distancem=2000
+											break;
+										case 11:
+											distance = 3000
+											distancem=5000
+											break;
+										case 10:
+											distance = 5000
+											distancem=10000
+											break;
+										default:
+											distance = 15000
 									}
-									self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt,dis,this.gobeltimestr)
-									break
-								case '1.1':
-								    var setectval=(this.selectvals==100)?'*':this.selectvals
-								    // this.nearbyfaultcar(this.longitude, this.latitude, setectval)
-									self.nearbyfaultcar(res.longitude, res.latitude, setectval)
-									break
-								case '2':
-									self.maintainbikelist(res.longitude, res.latitude)
-									break	
-								case '3.1':								
-									if (this.selectvals == 100) {
-										self.nearbymovecar(res.longitude, res.latitude, "*", '*',dis,this.gobeltimestr)
-									} else {
-										if (this.selectvals == 21 || this.selectvals == 11) {
-											this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals),dis,this.gobeltimestr)
-										} else {
-											if (this.selectvals == 21 || this.selectvals == 11) {
-												this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals), dis, this.gobeltimestr)
-											} else {
-												this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals), '*', dis, this.gobeltimestr)
-											}
-											// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
-										}
-										break
-									case '9':
-										this.stoplist(res.longitude, res.latitude, '*')
-										break
+									respon(distance)
+								},
+								fail: (res) => {
+									console.log('suofangfail', res)
 								}
-							},
-							fail: (res) => {
-								console.log('fail' + res);
-							}
+							})
 						})
-
-					})
-					.catch(() => {
-
-					})
-
-
-			},
+						.then((dis) => {
+							this.mapinfo.getCenterLocation({
+								success: (res) => {
+									this.tempjindu = res.longitude
+									this.tempweidu = res.latitude
+																	
+									switch (self.type) {
+										case '0':
+											var undervolt = '*'
+											if (this.selectvals == 0) {
+												undervolt = 1
+											}
+											self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt, dis, this.gobeltimestr)
+											break
+										case '1.1':
+											var setectval = (this.selectvals == 100) ? 0 : this.selectvals
+											// this.nearbyfaultcar(this.longitude, this.latitude, setectval)
+											self.nearbyfaultcar(res.longitude, res.latitude, setectval)
+											break
+										case '2':
+											self.maintainbikelist(res.longitude, res.latitude)
+											break
+										case '3.1':
+											if (this.selectvals == 100) {
+												self.nearbymovecar(res.longitude, res.latitude, "*", '*', dis, this.gobeltimestr)
+											} else {
+												if (this.selectvals == 21 || this.selectvals == 11) {
+													this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals), dis, this.gobeltimestr)
+												} else {
+													this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals), '*', dis, this.gobeltimestr)
+												}
+												// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
+											}
+											break
+										case '9':
+											this.stoplist(res.longitude, res.latitude, '*')
+											break
+										case '9.1':
+											this.stoplist(res.longitude, res.latitude, '*')
+											break	
+									}
+								},
+								fail: (res) => {
+									console.log('fail' + res);
+								}
+							})
+				
+						})
+						.catch(() => {
+				
+						})
+				
+				
+				},
 			// 附近需要挪的车
 			nearbymovecar(longitude, latitude, reparklev, parkstate, distance, timestr) {
 				var options = {
