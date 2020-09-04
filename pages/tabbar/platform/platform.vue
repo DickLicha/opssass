@@ -224,7 +224,7 @@
 			var fmonuth=month-1<10?'0'+(month-1):month-1
 			// 上个月的天数
 			var day=new Date(date.getFullYear(),date.getMonth(),0)					
-			this.start_time=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate() +
+			this.start_time=date.getFullYear() + seperator1 + month + seperator1 + "01" +
 				" " + '00' + seperator2 + '00' +
 				seperator2 + '00'
 			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +
@@ -885,7 +885,7 @@
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
-							splitNumber: 5,
+							// splitNumber: 5,
 							// min: 10,\\\
 							// max: 180,
 							format: (val) => {
@@ -946,7 +946,7 @@
 							// max: 180,
 							format: (val) => {
 								// return val.toFixed(0) + '元'
-								return val.toFixed(0)
+								return val.toFixed(1)
 							}
 						},
 						width: _self.cWidth * _self.pixelRatio,
@@ -985,8 +985,8 @@
 							type: 'calibration',
 							gridColor: '#CCCCCC',
 							gridType: 'dash',
-							dashLength: 8,
-							labelCount: 4,
+							// dashLength: 8,
+							// labelCount: 4,
 							rotateLabel:true,
 							scrollShow:true,
 							// disabled:true,
@@ -1000,6 +1000,7 @@
 							splitNumber: 5,
 							// min: 10,\\\
 							// max: 180,
+							// disabled:true,
 							format: (val) => {
 								// return val.toFixed(0) + '元'
 								return val.toFixed(0)
