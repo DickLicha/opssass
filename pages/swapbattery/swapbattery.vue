@@ -6,9 +6,9 @@
 			<item-cell :itemdata="swapbatterydata1" type='2' :border='borders'></item-cell>
 			<view class='collview'>						
 				<uni-collapse  accordion="true">
-				    <uni-collapse-item v-for="(i,item) in collapseData" :title="i.name">
+				    <uni-collapse-item v-for="(i,item) in collapseData" :title="i.name" :key='i'>
 				        <uni-list>
-				            <uni-list-item @click='go(j.url)' v-for="(j,jtem) in i.data" :title='j.name' thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"><text>{{j.val}}</text></uni-list-item>												
+				            <uni-list-item @click='go(j.url)' v-for="(j,jtem) in i.data" :key="j" :title='j.name' thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"><text>{{j.val}}</text></uni-list-item>												
 				        </uni-list>
 				    </uni-collapse-item>
 				</uni-collapse>				
@@ -35,7 +35,7 @@
 	import itemCell from '@/components/item-cell/item-cell.vue'	
 	import uniFab from '@/components/uni-fab/uni-fab.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
-	// import uniCollapse from '@/components/uni-popup/uni-popup.vue'
+	import {getcarinfodetil,getheaderinfo} from '@/common/conf.js'
 	// import uniCollapseItem from '@/components/uni-popup/uni-popup.vue'
 	import {
 		mapState,
@@ -263,25 +263,74 @@
 				var name = _self.bikeinfo.bluetooth_name
 				var devcode=_self.bikeinfo.ecu_sn
 				if ((!!name && !!_self.bikeinfo.bluetooth_token)) {
+					var headerinfo={}
+					var uploadflag=true
 					ble.onBLECharacteristicValueChange((res)=> {
 						console.log('特征值返回', res)
 						// 泰币特类型
-						if(_self.bikeinfo.ecu_model == "WA-209D"){
-							if(res=='连接成功'){
-								
-							}else if(res=='开锁成功'){
+						if(_self.bikeinfo.ecu_model == "WA-209D"){							
+							if(res.name=='连接成功'){
+								headerinfo=getheaderinfo(res)					
+								if(res.val.indexOf('8102')>-1){
+									
+								}								
+							}else if(res.name=='开锁成功'){
 								blueWriteState = 1
 								// _self.reportblue(0, loadtime,'')
 								_self.operbattery(0,loadtime,'')
-							}else if(res=='上锁成功'){
+							}else if(res.name=='上锁成功'){
 								blueWriteState = 1
 								// _self.reportblue(0, loadtime,'')
 								_self.operbattery(0,loadtime,'')
-							}else if(res=='电池锁打开成功'){
+							}else if(res.name=='电池锁打开成功'){
 								blueWriteState = 1
 								// _self.reportblue(0, loadtime,'')
 								_self.operbattery(0,loadtime,'')
-							}
+							}else if(res.name=='心跳包'){
+								console.log('uploadflag--->',uploadflag)
+								if(uploadflag){
+									uploadflag=false
+									var cc=getcarinfodetil(res)
+										console.log('headerinfo',headerinfo)
+										var options = {
+											url: '/bike/ble_report_gpsv2', //请求接口
+											method: 'POST', //请求方法全部大写，默认GET
+											context: '',
+											data: {
+												"bike_id": _self.bikeinfo.id,
+												"gsm_signal_strength" : cc.gsm_signal_strength,//gsm信号强度
+												"satellite" : cc.satellite, //卫星数量
+												"is_online" : 1, //是否在线
+												"battery_volt" : cc.battery_volt, //电压
+												"is_defend_on" : headerinfo.is_defend_on, //设防
+												"is_acc_on" : 1,	//电门
+												"is_wheel_locked" : 1, //车轮锁
+												"is_sleeping" : headerinfo.is_sleeping,		//是否休眠
+												"is_in_motion" : headerinfo.is_in_motion,		//是否运动
+												"trip_miles" : cc.trip_miles,		//里程
+												"gps_flag" : cc.gps_flag,			//0=定位失败，1=定位成功，2=缓存定位
+												"locate_type" : cc.locate_type, 	//定位类型 gps lbs
+												"gps" :
+													{
+														"gps_update_time" : "2020-07-07 07:00:00",
+														"coordinate" : cc.coordinate,
+														"speed" : cc.speed,
+														"course" : cc.course,
+														"hdop" : ''
+													},
+												"lbs" :{"cellid":cc.cellid,"lac":cc.lac,"mcc":cc.mcc,"mnc":cc.mnc}
+											}
+										}
+										_self.$httpReq(options).then((res) => {
+											// 请求成功的回调
+											// res为服务端返回数据的根对象
+											console.log('上报gpsv2', res)
+										}).catch((err) => {
+											// 请求失败的回调
+											console.error(err, '捕捉')
+										})
+									}
+								}									
 							
 						}else{
 						var gps = res.slice(0, 2)
@@ -344,7 +393,8 @@
 								// 请求失败的回调
 								console.error(err, '捕捉')
 							})
-						}}
+						}
+						}
 						
 
 					})
@@ -355,10 +405,10 @@
 							var str1 = ble.doCmd('32', '', _self.bikeinfo.bluetooth_token)
 							setTimeout(() => {
 								// ble.openLock(str1, res.deviceId, res.serviceId, res.characterId, function(ress) {
-								ble.openLock(str1,'', function(ress) {
+								ble.openLock(str1,'gps', function(ress) {
 									console.log('蓝牙操作', ress)
 								})
-							}, 0);
+							}, 4000);
 						}
 					})
 					ble.onBluetoothAdapterStateChange(function(res) {
@@ -443,7 +493,7 @@
 			...mapMutations(['setSn', 'setBlueres','setBikeid']),
 			setbikedata(bikeinfo){
 				// 车辆id
-				this.swapbatterydata1[0].val=bikeinfo.id
+				this.swapbatterydata1[0].val=bikeinfo.sn
 				// 车辆sn
 				this.swapbatterydata1[1].val=bikeinfo.ecu_sn+'、'+bikeinfo.imei
 				// 车辆差车等级

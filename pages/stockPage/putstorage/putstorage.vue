@@ -73,6 +73,7 @@
 				}],
 				btnname: '',
 				batterymodel:'ZN48V12AH',
+				ecu_model:'WA-209D'
 			}
 		},
 		components: {
@@ -238,12 +239,18 @@
 								});
 								return
 							}
+							// 太比特ecu
 							else if(res.result.indexOf(' ')==-1){								
 								this.swapdata[1].val = res.result
-							}else{
+								this.ecu_model='WA-209D'
+							}
+							// 小安ecu
+							else
+							{
 								var result = res.result.split(' ')
 								this.swapdata[0].val = result[0].split(':')[1]
 								this.swapdata[1].val = result[1].split(':')[1]
+								this.ecu_model='AT-MX3F'
 							}							
 						} else {
 							if(res.result.match(/\?bikesn=(.*)/)){
@@ -266,7 +273,7 @@
 				});
 			},
 			// 入库
-			rukustate(models) {
+			rukustate(models,ecu_model) {
 				uni.showLoading({
 					title: '入库中'
 				});
@@ -278,6 +285,7 @@
 						"imei": this.swapdata[0].val,
 						"ecu_sn": this.swapdata[1].val,
 						"model": models,
+						"ecu_model":ecu_model,
 						// "battery_model":this.batterymodel
 					}
 				}
@@ -317,7 +325,7 @@
 					return
 				}
 				if (this.type == 0) {
-					this.rukustate(this.models)
+					this.rukustate(this.models,this.ecu_model)
 				} else if (this.type == 1) {
 					this.changesn()
 				} else if (this.type == 2) {

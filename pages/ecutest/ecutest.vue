@@ -230,15 +230,15 @@
 						console.log('特征值返回', res)
 						// 泰币特类型
 						if (_self.bikeinfo.ecu_model == "WA-209D") {
-							if (res == '连接成功') {
+							if (res.name == '连接成功') {
 
-							} else if (res == '开锁成功') {
+							} else if (res.name == '开锁成功') {
 								// blueWriteState = 1
 								// _self.reportblue(0, loadtime, '')
-							} else if (res == '上锁成功') {
+							} else if (res.name == '上锁成功') {
 								// blueWriteState = 1
 								// _self.reportblue(0, loadtime, '')
-							} else if (res == '电池锁打开成功') {
+							} else if (res.name == '电池锁打开成功') {
 								// blueWriteState = 1
 								// _self.reportblue(0, loadtime, '')
 							}
@@ -266,17 +266,19 @@
 				// 走网络
 				if (this.bleornet=='网络开') {
 					var datas = {}
-					if (this.ecutype == 'tbt') {
+					if (this.ecutype == 'WA-209D') {
 						datas = {
 							imei: '',
 							sn: this.imei,
 							index: index,
+							ecu_model:this.ecutype
 						}
 					} else {
 						datas = {
 							imei: this.imei,
 							sn: '',
 							index: index,
+							ecu_model:this.ecutype
 						}
 					}
 					let options = {
@@ -307,7 +309,7 @@
 					setTimeout(() => {
 						uni.hideLoading()
 					}, 2000)
-					if(this.ecutype == 'tbt'){
+					if(this.ecutype == 'WA-209D'){
 						ble.openLock('', item.oper, function(res) {
 							console.log('蓝牙操作', res)
 							// loadtime = res.loadtime
@@ -344,11 +346,11 @@
 							var result = res.result.split(' ')
 							var imei = result[0].split(':')[1]
 							this.imei = imei
-							this.ecutype = 'xiaoan'
+							this.ecutype = 'AT-MX3F'
 							this.getbikeinfobysn(this.imei)
 						} else {
 							this.imei = res.result
-							this.ecutype = 'tbt'
+							this.ecutype = 'WA-209D'
 							this.getbikeinfobysn(this.imei)
 						}
 					},

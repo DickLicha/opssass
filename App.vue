@@ -1,4 +1,7 @@
 <script>
+	// import {
+	// 	getcarinfodetil,ex16hex,getheaderinfo
+	// } from './common/conf.js'
 	export default {
 		data() {
 			return {
@@ -6,7 +9,24 @@
 			};
 		},
 		onLaunch: function() {
-			console.log('App Launch');		
+			console.log('App Launch');
+			// var b2 = ex16hex('2d34');
+			// var flag_1 = (b2 >> 13) & 1; // 1=实时定位，0=历史定位
+			// var flag_2 = (b2 >> 12) & 1; //1=定位成功，0=定位失败		
+			// var course = b2 & 0b1111111111; //航向
+			// console.log(333,course,flag_1,flag_2)
+			
+			// var data=0b11010101
+			// var is_sleeping1=(data >> 4) & 1
+			// console.log('data12-->',is_sleeping1)
+			// var is_sleeping2=(data >> 5) & 1
+			// console.log('data13-->',is_sleeping2)
+			
+			// var kk={name:1,val:'0400852400000000000000002400090009134001cc0059d700cd6400020400000000000000000000'}
+			// var dd={name:1,val:'aa02d50a002769b8050002010181021340840a00'}
+			// var cc=getcarinfodetil(kk)
+			// dd=getheaderinfo(dd)
+			// console.log('cc',cc,dd)
 			var baseurl = '',
 				realuser = ''		    
 			try {

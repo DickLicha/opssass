@@ -1063,12 +1063,12 @@
 						console.log('初始化监听', res)
 						// 泰币特类型
 						if (_self.bikeinfo.ecu_model == "WA-209D") {
-							if (res == '连接成功') {
+							if (res.name == '连接成功') {
 
-							} else if (res == '开锁成功') {
+							} else if (res.name == '开锁成功') {
 								blueWriteState = 1
 								_self.reportblue(_self.openOrClose, 0, loadtime, '')
-							} else if (res == '上锁成功') {
+							} else if (res.name == '上锁成功') {
 								blueWriteState = 1
 								_self.reportblue(_self.openOrClose, 0, loadtime, '')
 							}

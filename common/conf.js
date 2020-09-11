@@ -149,6 +149,158 @@ const formatetimes = (timestamp)=> {
 	  [point[3].x,point[2].y]]
 	  return points
   }
+  // 获取gps及电量等信息
+  const getcarinfodetil=(res)=>{
+	  let carinfo={}
+	  // 电量
+	  let reg1=/\8524(.*)/
+	  var gpsData=res.val.match(reg1)[0];
+	  gpsData=gpsData.substring(4,50)
+	  var battery_volt=gpsData.substr(26,4)
+	  // 16进制转10进制
+	  battery_volt=ex16hex(battery_volt)*10
+	  carinfo.battery_volt=battery_volt
+	  
+	  // 经纬度
+	  // 经度		
+	  let jind=ex16hex(gpsData.substr(0,8))
+	  console.log('jind1',jind)
+	  jind=jind/1800000
+	  // let jind1=parseInt(jind)
+	  // let jind2=(parseFloat(jind)-jind1).toFixed(6)
+	  // jind=jind.toString()
+	  // let newjind=jind1+'°'+jind2.substring(2,4)+'.'+jind2.substring(4,8)+'’'
+	  
+	  // 纬度
+	  let weid=ex16hex(gpsData.substr(8,8))
+	  weid=weid/1800000
+	  // let weid1=parseInt(weid)
+	  // let weid2=(parseFloat(weid)-weid1).toFixed(6)
+	  // weid=weid.toString()
+	  // let newweid=weid1+'°'+weid2.substring(2,4)+'.'+weid2.substring(4,8)+'’'																		
+	  var coordinate=[jind,weid]
+	  carinfo.coordinate=coordinate
+	  
+	  // 航向
+	  let course=ex16hex(gpsData.substr(16,4))
+	  var flag_1 = (course >> 13) & 1; // 1=实时定位，0=历史定位
+	  var flag_2 = (course >> 12) & 1; //1=定位成功，0=定位失败		
+	  course = course & 0b1111111111; //航向
+	  carinfo.locate_type=flag_2?'gps':'lbs'
+	  carinfo.gps_flag=flag_2
+	  carinfo.course=course
+	  // 速度
+	  // var speed=ex16hex(gpsData.substr(20,2))
+	  
+	  // 卫星数量
+	  var satellite=ex16hex(gpsData.substr(20,2))
+	  carinfo.satellite=satellite
+	  
+	  // gsm信号强调
+	  var gsm_signal_strength=ex16hex(gpsData.substr(22,2))
+	  carinfo.gsm_signal_strength=gsm_signal_strength
+	  
+	  // 基站信息
+	  var cellid=ex16hex(gpsData.substr(30,4))
+	  var lac=ex16hex(gpsData.substr(34,2))
+	  var mcc=ex16hex(gpsData.substr(36,4))
+	  var mnc=ex16hex(gpsData.substr(40,6))
+	  carinfo.cellid=cellid
+	  carinfo.lac=lac
+	  carinfo.mcc=mcc
+	  carinfo.mnc=mnc
+	  
+	  // 控制器相关
+	  // 里程
+	  var trip_miles=ex16hex(gpsData.substr(46,4))
+	  // 速度
+	  var speed=ex16hex(gpsData.substr(46,4))
+	  carinfo.trip_miles=trip_miles
+	  carinfo.speed=speed
+	  
+	  return carinfo
+  }
+  const getheaderinfo=(value)=>{
+	  var data=ex16hex(value.val.substr(4,2))
+	  // data=data.toString(2)
+	  console.log('data',data)
+	  // 设防
+	  var is_defend_on=data & 1
+	  
+	  // 电门
+	  var is_acc_on=(data >> 3) & 1
+	  
+	  // 车轮锁
+	  var is_wheel_locked=''
+	  
+	  // 是否休眠
+	  var is_sleeping1=(data >> 4) & 1
+	  var is_sleeping2=(data >> 5) & 1
+	  var is_sleeping=2*is_sleeping2+is_sleeping1
+	  
+	  
+	  // 是否运动
+	  var is_in_motion=(data >> 1) & 1
+	  return {is_defend_on:is_defend_on,
+	  is_sleeping:is_sleeping,
+	  is_in_motion:is_in_motion
+	  }
+  }
+  // 16进制转10进制
+  const ex16hex=(value)=>{
+	    value = stripscript(value);
+	      value = value.replace("0x","");
+	    var arr = value.split("");
+	    arr = arr.reverse();
+	    var len = arr.length;
+	    var res = 0;
+		arr.forEach(function(i,v){
+			var num = hex_change(i);
+			res += muti16(num, v);
+		})
+	    return res;
+  }
+  // 字符转16进制数字
+  const hex_change = function(v){
+      var res;
+      switch(v){
+        case "a": res = 10;break;
+      case "b": res = 11;break;
+      case "c": res = 12;break;
+      case "d": res = 13;break;
+      case "e": res = 14;break;
+      case "f": res = 15;break;
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9": res = Number(v);break;
+      default: res = 0;break;
+    }
+    return res;
+  }
+  // 过滤所有特殊字符
+  const stripscript = function(s) {
+      var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？↵\r\n]");
+          var rs = "";
+      for (var i = 0; i < s.length; i++) {
+          rs = rs + s.substr(i, 1).replace(pattern, '');
+      }
+      return rs;
+  }
+  
+  // 返回 v 乘以 n 个 16 的积
+  const muti16 = function(v, n){
+    var temp = v;
+      for(var i = 0; i < n; i++){
+      temp *= 16;
+    }
+    return temp;
+  }
   const parseBitsValue = (n) => {
     var r = []
     var i = 0
@@ -222,5 +374,6 @@ const invstate = {
 	BIKE_INV_STATE_DEPOT_REPAIRED:4 //返厂维修
 }
 export {
-	formatetimes,eums,parkstate,invstate,parseSelectionName,parseBitsValue,parseSwBitsObj,isInPolygon,getLonAndLat,getborderpoint
+	formatetimes,eums,parkstate,invstate,parseSelectionName,parseBitsValue,parseSwBitsObj,
+	isInPolygon,getLonAndLat,getborderpoint,getcarinfodetil,ex16hex,getheaderinfo
 }
