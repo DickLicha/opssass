@@ -193,11 +193,11 @@ const formatetimes = (timestamp)=> {
 	  // var speed=ex16hex(gpsData.substr(20,2))
 	  
 	  // 卫星数量
-	  var satellite=ex16hex(gpsData.substr(20,2))
+	  var satellite=ex16hex(gpsData.substr(22,2))
 	  carinfo.satellite=satellite
 	  
 	  // gsm信号强调
-	  var gsm_signal_strength=ex16hex(gpsData.substr(22,2))
+	  var gsm_signal_strength=ex16hex(gpsData.substr(20,2))
 	  carinfo.gsm_signal_strength=gsm_signal_strength
 	  
 	  // 基站信息
