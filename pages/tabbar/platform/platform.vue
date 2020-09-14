@@ -20,18 +20,24 @@
 					<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
 					<!--#endif-->
 				</view>
-				<view class="qiun-charts" v-show="limitorder.ddjet && showtx">
-					<text class='titleSpan'>订单金额图</text>
-					<!--#ifndef MP-ALIPAY -->
-					<canvas canvas-id="canvasLineC" id="canvasLineC" class="charts" @touchstart="touchLineC"></canvas>
-					<!--#endif-->
+				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt) && showtx">
+					<view class='timeselect-detil'>
+						<view class='timeselect-inner' @click="active(i,item)" :class="{'borderrights':item==isActive}" v-for="(i,item) in timeselect" :key='item'>{{i.name}}</view>
+					</view>
+					<view class="qiun-charts" v-show="limitorder.ddjet && showtx">
+						<text class='titleSpan'>订单金额图</text>
+						<!--#ifndef MP-ALIPAY -->
+						<canvas canvas-id="canvasLineC" id="canvasLineC" class="charts" @touchstart="touchLineC"></canvas>
+						<!--#endif-->
+					</view>
+					<view class="qiun-charts" v-show="limitorder.cxt && showtx">
+						<text class='titleSpan'>车效图</text>
+						<!--#ifndef MP-ALIPAY -->
+						<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
+						<!--#endif-->
+					</view>
 				</view>
-				<view class="qiun-charts" v-show="limitorder.cxt && showtx">
-					<text class='titleSpan'>车效图</text>
-					<!--#ifndef MP-ALIPAY -->
-					<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
-					<!--#endif-->
-				</view>
+				
 				<view class="data-box" v-show="tempobj.liushui">
 					<view class="data-item" v-if="limitorder.czje">
 						<view class="data-item-ct1">{{monitorv2.user_charge_amount_total/100}}</view>
@@ -58,7 +64,7 @@
 						<view class="data-item-ct2">总认证用户数</view>
 					</view> -->
 					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2.urorder_count_per_bike_avg.toFixed(2)}}</view>
+						<view class="data-item-ct1">{{monitorv2m.urorder_count_per_bike_avg}}</view>
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
@@ -88,7 +94,7 @@
 						<view class="data-item-ct2">认证用户数</view>
 					</view> -->
 					<view class="data-item">
-						<view class="data-item-ct1">{{(dailydata.urorder_count/dailydata.bike_count).toFixed(2)}}</view>
+						<view class="data-item-ct1">{{Number((dailydata.urorder_count/dailydata.bike_count).toFixed(2))}}</view>
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
@@ -167,24 +173,7 @@
 			}
 		},
 		onLoad() {
-			// var _this=this
-			var date = new Date()
-			var seperator1 = "-";
-			var seperator2 = ":";
-			var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-			var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
-				" " + date.getHours() + seperator2 + date.getMinutes() +
-				seperator2 + date.getSeconds()
-			var fmonuth=month-1<10?'0'+(month-1):month-1
-			// 上个月的天数
-			var day=new Date(date.getFullYear(),date.getMonth(),0)					
-			this.start_time=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate() +
-				" " + '00' + seperator2 + '00' +
-				seperator2 + '00'
-			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +
-				" " + '23' + seperator2 + '59' +
-				seperator2 + '59'
+			// var _this=this		
 			_self = this;
 			this.cWidth = uni.upx2px(750);
 			this.cHeight = uni.upx2px(350);	
@@ -222,6 +211,7 @@
 
 		},
 		onShow() {
+			this.timecalc(0)
 			var date = new Date()
 			var seperator1 = "-";
 			var seperator2 = ":";
@@ -570,6 +560,7 @@
 					if (res.status == 0) {
 						if(type==1){
 							this.monitorv2 = res
+							this.monitorv2.urorder_count_per_bike_avg=res.urorder_count_per_bike_avg.toFixed(2)
 						}else if(type=='today'){
 							this.dailydata=res
 							this.boxdata=[
@@ -582,6 +573,7 @@
 								{name:'挪车数',val:res.rporder_ok_count,url:''},
 								{name:'换电数',val:res.bcorder_ok_count,url:''},
 							]
+							this.monitorv2m.urorder_count_per_bike_avg=res.urorder_count_per_bike_avg.toFixed(2)
 						}else{
 							var datatimes = []
 							var user_growth = []
@@ -828,7 +820,7 @@
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
-							splitNumber: 5,
+							// splitNumber: 5,
 							// min: 10,\\\
 							// max: 180,
 							format: (val) => {
@@ -876,20 +868,18 @@
 							labelCount: 4,
 							rotateLabel:true,
 							scrollShow:true,
-							// disabled:true,
-							// itemCount:3
-							// fontSize:5
 						},
 						yAxis: {
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
 							splitNumber: 5,
+							min:0,
 							// min: 10,\\\
 							// max: 180,
 							format: (val) => {
 								// return val.toFixed(0) + '元'
-								return val.toFixed(0)
+								return val.toFixed(1)
 							}
 						},
 						width: _self.cWidth * _self.pixelRatio,
@@ -932,17 +922,16 @@
 							labelCount: 4,
 							rotateLabel:true,
 							scrollShow:true,
-							// disabled:true,
-							// itemCount:3
-							// fontSize:5
 						},
 						yAxis: {
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
 							splitNumber: 5,
+							min:0,
 							// min: 10,\\\
 							// max: 180,
+							// disabled:true,
 							format: (val) => {
 								// return val.toFixed(0) + '元'
 								return val.toFixed(0)
@@ -1015,6 +1004,31 @@
 		.index-top-box {
 			position: relative;
 			z-index: 1;
+			.timeselect-view{
+				// margin: 0 6upx;
+				// border: 2upx solid red;
+				// border-radius: 10upx;
+				.timeselect-detil{
+					display: flex;
+					justify-content: space-around;					
+					.timeselect-inner{
+						// border: 2upx solid black;
+						border-radius: 12upx;
+						width: 110upx;
+						height: 54upx;
+						line-height: 54upx;
+						text-align: center;
+						background-color: #1aad19;
+						color:white
+						// height: 80upx;
+					}
+					.borderrights{
+						color:#F5A623!important;
+						background-color: white;
+						border:2upx solid #F5A623;
+					}
+				}
+			}
 		}
 
 		.theme-bg {
