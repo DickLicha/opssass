@@ -10,22 +10,9 @@
 					</view>
 				</view>
 				<view class="nav flex-box">
-					<view class="flex" @tap="scaninto(0)">
-						<!-- <view class="nav-icon iconfont icon-saoma"></view> -->
-						<view class="nav-ct">车辆扫码</view>
+					<view class="flex" v-for="(i,item) in qxmenudata" @tap="scaninto(i.val,i.url)" :key='item'>
+						<view class="nav-ct">{{i.name}}</view>
 					</view>
-					<navigator class="flex" url="../code/code" @tap="scaninto(1,'/pages/map/map?text=全部车站&type=3.1&name=挪车')">
-						<!-- <view class="nav-icon iconfont iconyonghu"></view> -->
-						<view class="nav-ct">附近挪车</view>
-					</navigator>
-					<navigator class="flex" url="../checkSale/list" @tap="scaninto(2,'/pages/map/map?name=换电&text=全部换电&type=0')">
-						<!-- <view class="nav-icon iconfont icon-jilu"></view> -->
-						<view class="nav-ct">附近换电</view>
-					</navigator>
-					<navigator class="flex" url="../balance/index" @tap="scaninto(3,'/pages/repairlist/repairlist?type=10')">
-						<!-- <view class="nav-icon iconfont icon-yk_jiesuantai"></view> -->
-						<view class="nav-ct">违章举报</view>
-					</navigator>
 				</view>
 				<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
 					<text class='titleSpan'>订单趋势图</text>
@@ -33,48 +20,52 @@
 					<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
 					<!--#endif-->
 				</view>
-				<view class="qiun-charts" v-show="limitorder.ddjet && showtx">
-					<text class='titleSpan'>订单金额图</text>
-					<!--#ifndef MP-ALIPAY -->
-					<canvas canvas-id="canvasLineC" id="canvasLineC" class="charts" @touchstart="touchLineC"></canvas>
-					<!--#endif-->
+				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt) && showtx">
+					<view class='timeselect-detil'>
+						<view class='timeselect-inner' @click="active(i,item)" :class="{'borderrights':item==isActive}" v-for="(i,item) in timeselect" :key='item'>{{i.name}}</view>
+					</view>
+					<view class="qiun-charts" v-show="limitorder.ddjet && showtx">
+						<text class='titleSpan'>订单金额图</text>
+						<!--#ifndef MP-ALIPAY -->
+						<canvas canvas-id="canvasLineC" id="canvasLineC" class="charts" @touchstart="touchLineC"></canvas>
+						<!--#endif-->
+					</view>
+					<view class="qiun-charts" v-show="limitorder.cxt && showtx">
+						<text class='titleSpan'>车效图</text>
+						<!--#ifndef MP-ALIPAY -->
+						<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
+						<!--#endif-->
+					</view>
 				</view>
-				<view class="qiun-charts" v-show="limitorder.cxt && showtx">
-					<text class='titleSpan'>车效图</text>
-					<!--#ifndef MP-ALIPAY -->
-					<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
-					<!--#endif-->
-				</view>
+				
 				<view class="data-box" v-show="limitorder.all">
 					<view class='box-title'>全部</view>
 					<view class="data-item" v-if="limitorder.czje">
-						<view class="data-item-ct1"><text>{{top.all_product_view_sum}}</text>{{carinfo.alert_count}}辆</view>
-						<view class="data-item-ct2">预警车辆</view>
+						<view class="data-item-ct1">{{monitorv2.user_charge_amount_total/100}}</view>
+						<view class="data-item-ct2">充值总金额</view>
 					</view>
 					<view class="data-item" v-if="limitorder.hykje">
-						<view class="data-item-ct1"><text>{{top.all_profit_sum}}</text>{{carinfo.to_check_count}}辆</view>
-						<view class="data-item-ct2">待排查车辆</view>
+						<view class="data-item-ct1">{{monitorv2.user_membership_amount_total/100}}</view>
+						<view class="data-item-ct2">会员总金额</view>
 					</view>
-					<view class="data-line"></view>
 					<view class="data-item">
 						<view class="data-item-ct1">{{monitorv2.urorder_paid_amount_total/100}}</view>
 						<view class="data-item-ct2">订单总金额</view>
 					</view>
 					<view class="data-item" v-if="limitorder.qxddf">						
-						<view class="data-item-ct1"><text>{{top.all_sales_write_off}}</text>{{carinfo['24h_offline_count']}}辆</view>
-						<view class="data-item-ct2">离线车辆</view>
+						<view class="data-item-ct1">{{monitorv2.urorder_repark_amount_total/100}}</view>
+						<view class="data-item-ct2">订单调度总金额</view>
 					</view>
-
 					<view class="data-item">
-						<view class="data-item-ct1"><text>{{top.all_product_view_sum}}</text>{{carinfo.alert_fault_count}}辆</view>
-						<view class="data-item-ct2">疑似故障车辆</view>
+						<view class="data-item-ct1">{{monitorv2.user_count_total}}</view>
+						<view class="data-item-ct2">总用户数</view>
 					</view>
 					<!-- <view class="data-item">
-						<view class="data-item-ct1"><text>{{top.all_profit_sum}}</text>{{carinfo.ops_count}}辆</view>
-						<view class="data-item-ct2">报修车辆</view>
+						<view class="data-item-ct1">{{monitorv2.user_auth_count_total}}</view>
+						<view class="data-item-ct2">总认证用户数</view>
 					</view> -->
 					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2.urorder_count_per_bike_avg.toFixed(2)}}</view>
+						<view class="data-item-ct1">{{monitorv2.urorder_count_per_bike_avg}}</view>
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
@@ -105,7 +96,7 @@
 						<view class="data-item-ct2">总认证用户数</view>
 					</view> -->
 					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2.urorder_count_per_bike_avg.toFixed(2)}}</view>
+						<view class="data-item-ct1">{{monitorv2m.urorder_count_per_bike_avg}}</view>
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
@@ -136,7 +127,7 @@
 						<view class="data-item-ct2">认证用户数</view>
 					</view> -->
 					<view class="data-item">
-						<view class="data-item-ct1">{{(dailydata.urorder_count/dailydata.bike_count).toFixed(2)}}</view>
+						<view class="data-item-ct1">{{Number((dailydata.urorder_count/dailydata.bike_count).toFixed(2))}}</view>
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
@@ -149,10 +140,10 @@
 					</view>
 				</view>			
 			</view>
-		</view>
+		</view>			
 		<!-- <uni-load-more :status="loadStatus"></uni-load-more> -->
 		<uni-popup :show="type ==='middle-list'" position="bottom" mode="fixed" @hidePopup="togglePopup('')">
-			<view :scroll-y="true" class="uni-center center-box" style="height:350upx">
+			<view :scroll-y="true" class="uni-center center-box" style="height:350upx;overflow-y: auto;">
 				<item-cell :itemdata="citylist" type='4' @itemclick='go'></item-cell>
 			</view>
 		</uni-popup>
@@ -162,6 +153,7 @@
 <script>
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import itemCell from '@/components/item-cell/item-cell.vue'
+	import uCharts from '@/common/u-charts.min.js';
 	import {
 		mapState,
 		mapMutations
@@ -201,6 +193,16 @@
 					repaircar: 1,
 					kzcar: 5
 				},
+				tempobj:{
+					chexiao:0,
+					dingdan:0
+				},
+				showtx:true,
+				monitorv2:{},
+				dailydata:{},
+				cWidth: '',
+				cHeight: '',
+				pixelRatio: 1,
 				monitorv2m:{},
 				limitorder:{
 					all:0,
@@ -212,28 +214,18 @@
 					qxddf:0,//骑行调度费
 					czje:0,//充值金额
 					hykje:0,//会员卡金额
-				}
+				},
+				timeselect:[
+					{name:'当月',val:0},
+					{name:'上个月',val:1},
+					{name:'三个月',val:3},
+					{name:'半年',val:6},
+					],
+				isActive:0	
 			}
 		},
 		onLoad() {
-			// var _this=this
-			var date = new Date()
-			var seperator1 = "-";
-			var seperator2 = ":";
-			var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-			var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
-				" " + date.getHours() + seperator2 + date.getMinutes() +
-				seperator2 + date.getSeconds()
-			var fmonuth=month-1<10?'0'+(month-1):month-1
-			// 上个月的天数
-			var day=new Date(date.getFullYear(),date.getMonth(),0)					
-			this.start_time=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate() +
-				" " + '00' + seperator2 + '00' +
-				seperator2 + '00'
-			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +
-				" " + '23' + seperator2 + '59' +
-				seperator2 + '59'
+			// var _this=this		
 			_self = this;
 			this.cWidth = uni.upx2px(750);
 			this.cHeight = uni.upx2px(350);	
@@ -250,6 +242,7 @@
 			//#endif
 		},
 		onShow() {
+			this.timecalc(0)
 			var date = new Date()
 			var seperator1 = "-";
 			var seperator2 = ":";
@@ -404,6 +397,57 @@
 		},
 		methods: {
 			...mapMutations([ 'setSn', 'setBikeid']),
+			gourl(url){
+				if(!!url){
+					uni.navigateTo({
+						url: url,
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
+				}
+			},
+			timecalc(type){
+				var date = new Date()
+				var seperator1 = "-";
+				var seperator2 = ":";
+				var month0 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1;
+				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;				
+				var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+				// var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				// 	" " + date.getHours() + seperator2 + date.getMinutes() +
+				// 	seperator2 + date.getSeconds()
+				// var fmonuth=month-1<10?'0'+(month-1):month-1
+				// 上个月的天数
+				var day=new Date(date.getFullYear(),date.getMonth(),0)					
+				this.start_time=date.getFullYear() + seperator1 + month0 + seperator1 + "01" +
+					" " + '00' + seperator2 + '00' +
+					seperator2 + '00'
+				this.end_time=date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
+					" " + '23' + seperator2 + '59' +
+					seperator2 + '59'
+			},
+			active(i,item){
+				this.isActive=item
+				this.timecalc(i.val)
+				this.getmonitorv2('all')				
+			},
+			touchLineA(e) {
+				canvaLineA.touchLegend(e);
+				canvaLineA.showToolTip(e, {
+					format: function(item, category) {
+						return category + ' ' + item.name + ':' + item.data
+					}
+				});
+			},
+			touchLineB(e) {
+				canvaLineB.touchLegend(e);
+				canvaLineB.showToolTip(e, {
+					format: function(item, category) {
+						return category + ' ' + item.name + ':' + item.data
+					}
+				});
+			},
 			touchLineC(e) {
 				canvaLineC.touchLegend(e);
 				canvaLineC.showToolTip(e, {
@@ -601,6 +645,7 @@
 					if (res.status == 0) {
 						if(type==1){
 							this.monitorv2 = res
+							this.monitorv2.urorder_count_per_bike_avg=res.urorder_count_per_bike_avg.toFixed(2)
 						}else if(type=='today'){
 							this.dailydata=res
 							this.boxdata=[
@@ -615,6 +660,7 @@
 							]
 						}else if(type=='mon'){
 							this.monitorv2m=res
+							this.monitorv2m.urorder_count_per_bike_avg=res.urorder_count_per_bike_avg.toFixed(2)
 						}else{
 							var datatimes = []
 							var user_growth = []
@@ -697,6 +743,7 @@
 				});
 			},
 			changcity(id) {
+				this.showtx=true
 				var options = {
 					url: '/staff/switch_city', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -750,11 +797,14 @@
 							duration: 1500
 						});
 						this.type = ''
-						setTimeout(() => {
-							uni.switchTab({
-								url: '/pages/tabbar/index/index',
-							})
-						}, 2000)
+						// setTimeout(() => {
+						// 	uni.redirectTo({
+						// 		url: '/pages/tabbar/platform/platform',
+						// 		success: res => {},
+						// 		fail: () => {},
+						// 		complete: () => {}
+						// 	});
+						// }, 2000)
 
 					} else {
 						uni.showToast({
@@ -771,10 +821,11 @@
 			},
 			showbotpop() {
 				this.type = 'middle-list'
+				this.showtx=false
 			},
 			togglePopup(type) {
 				this.type = type
-
+				this.showtx=true
 			},
 			getList(reset = false) {
 				if (reset) {
@@ -858,7 +909,7 @@
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
-							splitNumber: 5,
+							// splitNumber: 5,
 							// min: 10,\\\
 							// max: 180,
 							format: (val) => {
@@ -906,20 +957,18 @@
 							labelCount: 4,
 							rotateLabel:true,
 							scrollShow:true,
-							// disabled:true,
-							// itemCount:3
-							// fontSize:5
 						},
 						yAxis: {
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
 							splitNumber: 5,
+							min:0,
 							// min: 10,\\\
 							// max: 180,
 							format: (val) => {
 								// return val.toFixed(0) + '元'
-								return val.toFixed(0)
+								return val.toFixed(1)
 							}
 						},
 						width: _self.cWidth * _self.pixelRatio,
@@ -962,17 +1011,16 @@
 							labelCount: 4,
 							rotateLabel:true,
 							scrollShow:true,
-							// disabled:true,
-							// itemCount:3
-							// fontSize:5
 						},
 						yAxis: {
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
 							splitNumber: 5,
+							min:0,
 							// min: 10,\\\
 							// max: 180,
+							// disabled:true,
 							format: (val) => {
 								// return val.toFixed(0) + '元'
 								return val.toFixed(0)
@@ -1018,6 +1066,17 @@
 </script>
 
 <style lang="scss" scoped>
+	.qiun-charts {
+		// width: 750upx;
+		// height: 350upx;
+		text-align: center;
+		background-color: #FFFFFF;
+		.charts {
+			width: 750upx;
+			height: 350upx;
+			background-color: #FFFFFF;
+		}
+	}
 	.index-top {
 		position: relative;
 		padding-top: 10rpx;
@@ -1027,13 +1086,38 @@
 			top: 0;
 			left: 0;
 			right: 0;
-			height: 512rpx;
+			height: 400rpx;
 			background-color: rgb(0, 120, 245);
 		}
 
 		.index-top-box {
 			position: relative;
 			z-index: 1;
+			.timeselect-view{
+				// margin: 0 6upx;
+				// border: 2upx solid red;
+				// border-radius: 10upx;
+				.timeselect-detil{
+					display: flex;
+					justify-content: space-around;					
+					.timeselect-inner{
+						// border: 2upx solid black;
+						border-radius: 12upx;
+						width: 110upx;
+						height: 54upx;
+						line-height: 54upx;
+						text-align: center;
+						background-color: #1aad19;
+						color:white
+						// height: 80upx;
+					}
+					.borderrights{
+						color:#F5A623!important;
+						background-color: white;
+						border:2upx solid #F5A623;
+					}
+				}
+			}
 		}
 
 		.theme-bg {
@@ -1093,7 +1177,7 @@
 
 	.data-box {
 		font-size: 0;
-		margin: 0 26rpx;
+		margin: 14rpx 26rpx;
 		background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
@@ -1104,15 +1188,15 @@
 		}
 		.data-item {
 			display: inline-block;
-			width: 50%;
+			width: 32%;
 			text-align: center;
-			padding: 40rpx 0;
+			padding: 14rpx 0;
 
 			.data-item-ct1 {
 				font-size: 28rpx;
 
 				text {
-					font-weight: 600;
+					font-weight: 800;
 					font-size: 32rpx;
 				}
 			}
