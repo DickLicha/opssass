@@ -217,7 +217,7 @@ const formatetimes = (timestamp)=> {
 	  var speed=ex16hex(gpsData.substr(46,4))
 	  carinfo.trip_miles=trip_miles
 	  carinfo.speed=speed
-	  
+	  console.log('carinfo------>',carinfo)
 	  return carinfo
   }
   const getheaderinfo=(value)=>{
