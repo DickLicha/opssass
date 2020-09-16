@@ -106,7 +106,6 @@ const szKey3 = [0x35, 0x41, 0x32, 0x42, 0x33, 0x43, 0x36, 0x44, 0x39, 0x45,
 ];
 //解密 ，参数16进制
 const encrypt = (number) => {
-	console.log('time---.>----1',Date.parse(new Date()))
 var timestamp = Date.parse(new Date());
 var timestamp1 = ''
   number = number.toUpperCase()
@@ -119,7 +118,6 @@ var timestamp1 = ''
     for (let j = 0; j < 16; j++) {
       if (number.charAt(i).charCodeAt() == szKey3[j]){
 		  out_number += String.fromCharCode(0x2A + j)
-		  console.log('time---.>----2',Date.parse(new Date()))
 	  } //字符转ascii码
         
       else{
