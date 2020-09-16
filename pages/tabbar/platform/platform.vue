@@ -475,9 +475,12 @@
 						var sorttoday=[]
 						var sortaweekago=[]
 						for(var i in res.yesterday){
-							datatimea.push(xdata+'时')	
+							// datatimea.push(xdata+'时')	
 							sortyesterday.push(i)
-							xdata+=1						
+							// xdata+=1						
+						}
+						for(var s=0;s<24;s++){
+							datatimea.push(s+'时')
 						}						
 						sortyesterday=sortyesterday.sort()
 						for(var j=0;j<sortyesterday.length;j++){
@@ -505,8 +508,12 @@
 						LineA.series.push(todayData)
 						LineA.series.push(yesterdayData)
 						LineA.series.push(aweekagoData)
-						// console.log('LineA', LineA)
+						// if(!!todayData.data.length && !!yesterdayData.data.length && !!aweekagoData.data.length){
+						// 	_self.showLineA("canvasLineA", LineA);
+						// }
 						_self.showLineA("canvasLineA", LineA);
+						console.log('LineA', LineA)
+						
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取订单信息失败'

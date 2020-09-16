@@ -763,7 +763,7 @@
 						latitude: this.tempweidu,
 						color: '#DC143C',
 						fillColor: '#DC143C',
-						radius: 3					
+						radius: 1					
 					}
 					this.circles.push(circleobj)
 					console.log(444,this.circles)

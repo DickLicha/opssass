@@ -113,12 +113,20 @@
 									text = ''
 									src = require('../../../static/image/che_zhan.png')
 									break
-								// case 15:
-								// 	name = '仪表盘'
-								// 	url = '/pages/echartPage/echartpage/echartpage'
-								// 	text = ''
-								// 	src = require('../../../static/image/che_zhan.png')							
-								// 	break	
+								case 15:
+									name = '仪表盘'
+									url = '/pages/echartPage/echartpage/echartpage'
+									text = ''
+									src = require('../../../static/image/che_zhan.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)						
+									break	
 							}
 							tempobj = {
 								index: onlyid,
