@@ -2,6 +2,8 @@
 	// import {
 	// 	getcarinfodetil,ex16hex,getheaderinfo
 	// } from './common/conf.js'
+	// import ble from '../../common/xa-bluetooth.js'
+	var dataTransition = require('./common/dataTransition.js')
 	export default {
 		data() {
 			return {
@@ -10,23 +12,121 @@
 		},
 		onLaunch: function() {
 			console.log('App Launch');
-			// var b2 = ex16hex('2d34');
-			// var flag_1 = (b2 >> 13) & 1; // 1=实时定位，0=历史定位
-			// var flag_2 = (b2 >> 12) & 1; //1=定位成功，0=定位失败		
-			// var course = b2 & 0b1111111111; //航向
-			// console.log(333,course,flag_1,flag_2)
 			
-			// var data=0b11010101
-			// var is_sleeping1=(data >> 4) & 1
-			// console.log('data12-->',is_sleeping1)
-			// var is_sleeping2=(data >> 5) & 1
-			// console.log('data13-->',is_sleeping2)
+			var bluealldevice=[]
+			function onBluetoothDeviceFounds() {
+				return new Promise((resolve, reject) => {
+					wx.onBluetoothDeviceFound((res) => {
+						try {		
+							let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
+							console.log("success1:", res.devices[0],machineNO);
+							res.machineNO=machineNO
+							bluealldevice.push(res)						
+						} catch (e) {
+							//TODO handle the exception
+							console.log('error', e)
+							reject({
+								fail: '异常失败' + e
+							})
+						}
+					})
+				})
+			}
 			
-			// var kk={name:1,val:'0400852400000000000000002400090009134001cc0059d700cd6400020400000000000000000000'}
-			// var dd={name:1,val:'aa02d50a002769b8050002010181021340840a00'}
-			// var cc=getcarinfodetil(kk)
-			// dd=getheaderinfo(dd)
-			// console.log('cc',cc,dd)
+			wx.closeBluetoothAdapter({
+				success(res) {
+					console.log('关闭蓝牙成功', res)
+					uni.getSystemInfo({
+						success: function(res) {
+							// systemtype = res.platform
+							// bluebikeinfo = bikeinfo
+							// var _this=e
+							wx.openBluetoothAdapter({
+								success: (res) => {
+									console.log(" ======== 初始化蓝牙 (成功) =======", res);
+									// store.commit("setBluestate", true);
+									//  开始搜索设备
+									wx.startBluetoothDevicesDiscovery({
+										success: (res) => {
+											console.log(" 开始搜索设备", res);
+											// return onBluetoothDeviceFound;
+											// console.log('onBluetoothDeviceFound',onBluetoothDeviceFound())
+											onBluetoothDeviceFounds().then((val) => {
+												console.log("查询返回结果", val);
+												isok(val)
+											}).catch((err) => {
+												console.log('蓝牙reject', err)
+											})
+											setTimeout(()=>{
+												wx.stopBluetoothDevicesDiscovery({
+													success: (res) => {
+														console.log("关闭成功");
+													}
+												})
+												uni.setStorage({
+													key: 'bluealldevice',
+													data: bluealldevice,
+													success: res => {
+														console.log('successputdata',res)
+													},
+													fail: res => {
+												        console.log('errputdata',res)
+													}
+												})	
+												var bluealldevices = uni.getStorageSync('bluealldevice');
+												console.log('bluealldevice',bluealldevices)
+											},8000)
+											
+										},
+										fail: (res) => {
+											console.log("搜索设备失败", res);
+											// uni.hideLoading()
+											uni.showToast({
+												title: '搜索蓝牙失败',
+												icon: 'none',
+												duration: 3000
+											});
+										}
+									})
+									// return startBluetoothDevicesDiscovery;
+								},
+								fail: (res) => {
+									// uni.hideLoading()
+									console.log(" ======== 初始化蓝牙（失败） =======", res);
+									uni.showToast({
+										title: '初始化蓝牙失败请手动打开蓝牙',
+										icon: 'none',
+										duration: 3000
+									});
+								}
+							})
+						},
+					})
+				},
+				fail: (res) => {
+					console.log('关闭蓝牙失败', res)
+				}
+			})
+			
+			
+			// let bluedevice={
+			// 	advertisData:'003451386',
+			// 	deviceid:'FF:6F:38:51:34:00',
+			// 	devices:[{deviceId:'FF:6F:38:51:34:00'}],
+			// 	localName:'22'
+			// }
+			
+			// for(var i=0;i<100;i++){
+			// 	let bluedevice2={
+			// 		advertisData:111111111+i,
+			// 		deviceid:'FF:6F:38:51:24:02',
+			// 		localName:'22'
+			// 	}
+			// 	bluealldevice.push(bluedevice2)
+			// }
+			// bluealldevice.push(bluedevice)
+					
+			// console.log('blues',blues)
 			var baseurl = '',
 				realuser = ''		    
 			try {

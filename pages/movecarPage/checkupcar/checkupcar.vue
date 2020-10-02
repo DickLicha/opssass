@@ -96,6 +96,7 @@
 				],
 				ids: '',
 				openOrClose: 100,
+				uploadflag:true,
 			}
 		},
 		components: {
@@ -108,7 +109,7 @@
 				var name = _self.bikeinfo.bluetooth_name
 				if (!!name && !!_self.bikeinfo.bluetooth_token) {
 					var headerinfo={}
-					var uploadflag=true
+					this.uploadflag=true
 					ble.onBLECharacteristicValueChange((res) => {
 						console.log('特征值返回', res,_self.openOrClose)						
 						// 泰币特类型
@@ -126,8 +127,8 @@
 								_self.endmoveopr(parkid,0,loadtime,res)
 							}
 							else if(res.name=='心跳包'){
-									if(uploadflag){
-										uploadflag=false
+									if(this.uploadflag){
+										this.uploadflag=false
 										var cc=getcarinfodetil(res)
 											console.log('headerinfo',headerinfo)
 											var options = {
@@ -256,7 +257,7 @@
 								ble.openLock(str1,'gps', function(ress) {
 									console.log('蓝牙操作', ress)
 								})
-							}, 4000);
+							}, 1);
 						}
 					})
 					ble.onBluetoothAdapterStateChange(function(res) {
@@ -497,9 +498,18 @@
 				})				
 			},
 			// 结束挪车
-			endmovecars(parkid) {
+			endmovecars(parkid) {				
 				if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
 					this.presubmit(parkid)
+					if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
+						var str1 = ble.doCmd('32', '', this.bikeinfo.bluetooth_token)
+						this.uploadflag=true
+						setTimeout(() => {
+							ble.openLock(str1,'gps', function(ress) {
+								console.log('蓝牙操作', ress)
+							})
+							}, 4000);
+						}
 					}else{
 					this.endmoveopr(parkid,1,'','')	
 					}				
@@ -558,7 +568,7 @@
 									uni.navigateBack({
 										delta: 2
 									});
-								}, 2500)
+								}, 4500)
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '挪车失败',

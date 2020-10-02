@@ -40,7 +40,7 @@
 						src = '',
 						name = '',
 						url = '',
-						text = ''
+						text = ''						
 					for (let i = 0; i < acl.length; i++) {
 						if (acl[i].visitable == 1) {
 							onlyid = parseInt(acl[i].uri)
@@ -214,7 +214,17 @@
 										text: text
 									}
 									this.taskdata.push(tempobj)						
-									break	
+									break
+								case 17:
+									tempobj = {
+										index: 100,
+										src: require('../../../static/image/nuo_che.png'),
+										name: '车辆监控',
+										url: '/pages/map/map?text=车俩监控&type=10&name=车辆监控',
+										text: '车辆监控'
+									}
+									this.taskdata.push(tempobj)						
+									break			
 							}							
 						}
 					}

@@ -1,5 +1,7 @@
 import store from '@/store'
 var dataTransition = require('./dataTransition.js')
+// var bluealldevice = uni.getStorageSync('bluealldevice');
+// var bluealldevice = uni.getStorage('bluealldevice');
 var systemtype = '',
 	code = '',
 	starttime = '',
@@ -39,31 +41,88 @@ function ab2hex(buffer) {
 
 function onBluetoothDeviceFound() {
 	return new Promise((resolve, reject) => {
-		wx.onBluetoothDeviceFound((res) => {
-			try {
-				console.log("成功1:", res.devices[0].localName);
-				if (bluebikeinfo.ecu_model == "WA-209D") {
-					//解密编号
-					let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
-					// console.log('machineNO',machineNO,bluebikeinfo.ecu_sn.toUpperCase().slice(0,9))
-					if (machineNO == bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)) {
-						coreapi(resolve, reject, res)
+		
+		try{
+			var bluealldevice = uni.getStorageSync('bluealldevice');
+			console.log('bluealldevice',bluealldevice)
+			if(bluealldevice){
+				for(var i=0;i<bluealldevice.length;i++){
+					try {
+						console.log("成功1:", bluealldevice[i].devices[0]);
+						if (bluebikeinfo.ecu_model == "WA-209D") {
+							//解密编号
+							// let machineNO = dataTransition.encrypt(dataTransition.ab2hex(bluealldevice[i].devices[0].advertisData).slice(4, 13));
+							// console.log('machineNO',machineNO)
+							if (bluealldevice[i].machineNO == bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)) {
+								coreapi(resolve, reject, bluealldevice[i])
+								console.log("成功2:", bluealldevice[i].devices[0]);
+							}
+						} else {
+							if (bluealldevice[i].devices[0].localName == bluebikeinfo.bluetooth_name) {
+								coreapi(resolve, reject, bluealldevice[i])
+							}
+						}
+					} catch (e) {
+						//TODO handle the exception
+						console.log('error', e)
+						reject({
+							fail: '异常失败' + e
+						})
 					}
-				} else {
-					if (res.devices[0].localName == bluebikeinfo.bluetooth_name) {
-						coreapi(resolve, reject, res)
-					}
+					
+					
+					
+					// try{
+					// 	if(bluealldevice[i].advertisData==bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)){
+					// 		coreapi(resolve, reject, bluealldevice[i])
+					// 		return
+					// 	}
+					// }catch(e){
+					// 	console.log('error', e)
+					// 	reject({
+					// 		fail: '异常失败' + e
+					// 	})
+					// }
+					
 				}
-			} catch (e) {
-				//TODO handle the exception
-				console.log('error', e)
-				reject({
-					fail: '异常失败' + e
-				})
 			}
-		})
+		}
+		catch(e){
+			
+		}
+		
+		
 	})
 }
+
+// function onBluetoothDeviceFound() {
+// 	return new Promise((resolve, reject) => {
+// 		wx.onBluetoothDeviceFound((res) => {
+// 			try {
+// 				console.log("成功1:", res.devices[0]);
+// 				if (bluebikeinfo.ecu_model == "WA-209D") {
+// 					//解密编号
+// 					let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
+// 					console.log('machineNO',machineNO)
+// 					if (machineNO == bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)) {
+// 						coreapi(resolve, reject, res)
+// 						console.log("成功2:", res.devices[0]);
+// 					}
+// 				} else {
+// 					if (res.devices[0].localName == bluebikeinfo.bluetooth_name) {
+// 						coreapi(resolve, reject, res)
+// 					}
+// 				}
+// 			} catch (e) {
+// 				//TODO handle the exception
+// 				console.log('error', e)
+// 				reject({
+// 					fail: '异常失败' + e
+// 				})
+// 			}
+// 		})
+// 	})
+// }
 // 蓝牙操作核心函数
 function coreapi(resolve, reject, res) {
 	deviceId = res.devices[0].deviceId;

@@ -656,14 +656,22 @@
 						}else if(type=='today'){
 							this.dailydata=res
 							this.boxdata=[
-								{name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'报修车辆',val:res.bike_stat.ops_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
-								{name:'挪车数',val:res.rporder_ok_count,url:''},
-								{name:'换电数',val:res.bcorder_ok_count,url:''},
+								// {name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=车辆监控&text=预警车辆&type=10&alert_state=-1'},
+								// {name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/repairlist/repairlist?type=11'},
+								// {name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+								// {name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=车辆监控&text=离线车辆&type=10&is_online=0'},
+								// {name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=车辆监控&text=疑似故障&type=10&&alert_state=16'},
+								// {name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
+								// {name:'挪车数',val:res.rporder_ok_count,url:''},
+								// {name:'换电数',val:res.bcorder_ok_count,url:''},
+							{name:'预警车辆',val:res.bike_stat.alert_count,url:''},
+							{name:'待排查车辆',val:res.bike_stat.to_check_count,url:''},
+							{name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+							{name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:''},
+							{name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:''},
+							{name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
+							{name:'挪车数',val:res.rporder_ok_count,url:''},
+							{name:'换电数',val:res.bcorder_ok_count,url:''},
 							]
 						}else if(type=='mon'){
 							this.monitorv2m=res

@@ -12,10 +12,32 @@
 				 @end="functionName" :controls='maploc' @tap='creatStopServ'>
 					<cover-image  src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
 					<!-- <cover-view v-if="actives" class='movecar-view'>拖动地图选择车站</cover-view> -->
-					<cover-view v-if="showmapselect" class='map-select-view'>
-						<cover-view class='select-list'>
+					<cover-view v-if="showmapselect"  class='map-select-view'>
+						<!-- <cover-view class='select-list'>
 							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i,item)" :class="{'borderrights':i==isActive}"
-							 :key=i>{{item.name}}</cover-view>
+							 :key='i'>{{item.name}}</cover-view>
+						</cover-view> -->
+						
+						<!-- <cover-view class='select-list' v-for="(it,j) in selectcoverdata" :key='j'>
+							<cover-view v-for="(item,i) in it" @click="active(i,item,it,j)" :class="{'borderrights':(j.toString()+i.toString())===isActive}"
+							 :key='i'>{{item.name}}</cover-view>
+						</cover-view> -->
+						
+						<cover-view class='select-list' >
+							<cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)" :class="{'borderrights':i===isActive0}">{{item.name}}</cover-view>
+						</cover-view>
+						<cover-view class='select-list' >
+							<cover-view v-for="(item,i) in selectcoverdata[1]" :key='i' @click="active(i,item,1)" :class="{'borderrights':i===isActive1}">{{item.name}}</cover-view>
+						</cover-view>
+						<cover-view class='select-list' >
+							<cover-view v-for="(item,i) in selectcoverdata[2]" :key='i' @click="active(i,item,2)" :class="{'borderrights':i===isActive2}"
+							>{{item.name}}</cover-view>
+						</cover-view>
+						<cover-view class='select-list' >
+							<cover-view v-for="(item,i) in selectcoverdata[3]" :key='i' @click="active(i,item,3)" :class="{'borderrights':i===isActive3}">{{item.name}}</cover-view>
+						</cover-view>
+						<cover-view class='select-list' >
+							<cover-view v-for="(item,i) in selectcoverdata[4]" :key='i' @click="active(i,item,4)" :class="{'borderrights':i===isActive4}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
@@ -121,7 +143,7 @@
 
 <script>
 	var blueWriteState = 0,
-		loadtime = 1000,distancem=10
+		loadtime = 1000,distancem=10,distance=200
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
 	import baseInput from '@/components/baseinput/baseinput.vue'
@@ -175,7 +197,11 @@
 					// },
 				],
 				inputval: '',
-				isActive: -1,
+				isActive0: -1,
+				isActive1: -1,
+				isActive2: -1,
+				isActive3: -1,
+				isActive4: -1,
 				selectvals: 100,
 				stopName: '',
 				defaultLev: '1级',
@@ -198,41 +224,59 @@
 				mapinfo: null,
 				scale: '18', //缩放级别5-18
 				showLocation: true,
-				selectcoverdata: [{
-						name: '全部换电',
-						id: '0',
-						val: 100,
-					},
-					{
-						name: '所有35%以下',
-						id: '1',
-						val: 35,
-					},
-					{
-						name: '所有30%以下',
-						id: '2',
-						val: 30,
-					},
-					{
-						name: '所有20%以下',
-						id: '3',
-						val: 20,
-					},
-					{
-						name: '所有10%以下',
-						id: '4',
-						val: 10,
-					},
-					// {
-					// 	name: '低于可用里程',
-					// 	id: '5',
-					// 	active: false
-					// },
-					{
-						name: '欠压车辆',
-						id: '6',
-						val: 0,
-					},
+				selectcoverdata: [
+					[
+						{
+							name: '全部换电',
+							id: '0',
+							val: 100,
+						},
+						{
+							name: '所有35%以下',
+							id: '1',
+							val: 35,
+						},
+						{
+							name: '所有30%以下',
+							id: '2',
+							val: 30,
+						},
+						{
+							name: '所有20%以下',
+							id: '3',
+							val: 20,
+						},
+						{
+							name: '所有10%以下',
+							id: '4',
+							val: 10,
+						},
+						// {
+						// 	name: '低于可用里程',
+						// 	id: '5',
+						// 	active: false
+						// },
+						{
+							name: '欠压车辆',
+							id: '6',
+							val: 0,
+						},
+						{
+							name: '离线车辆',
+							id: '7',
+							val: 7,
+						},
+						{
+							name: '预警车辆',
+							id: '8',
+							val: 8,
+						},
+						{
+							name: '疑似故障',
+							id: '9',
+							val: 9,
+						},
+					]					
 				],
 				covers: [],
 				circles: [],
@@ -266,9 +310,24 @@
 				polylinePoint:[],
 				polylinePoints:[],
 				locationtime:'',
+				onloaddata:{},
+				bikestate:{
+					bus_state:'*',
+					battery_level_max:'*',
+					is_under_volt:"*",
+					battery_model:'*',
+					alert_state:'*',
+					repark_index:"*",
+					inv_state:"*",
+					health_state:'*',
+					to_be_maintained:'*',
+					show_park:'*',
+					park_state:'*'
+				},
 			};
 		},
 		onLoad(e) {
+			this.onloaddata=e
 			this.type = e.type
 			this.mapheihts='85vh'
 			this.polylinePoint=[]
@@ -432,21 +491,24 @@
 						var setectval=(this.selectvals==100)?"*":this.selectvals
 						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
 						// this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
-						this.selectcoverdata = [{
-								name: '全部故障车辆',
-								id: '0',
-								val: '*'
-							},
-							{
-								name: '未入库故障车辆',
-								id: '1',
-								val: '0'
-							},
-							{
-								name: '已入库故障车辆',
-								id: '2',
-								val: '2'
-							},
+						this.selectcoverdata = [
+							[
+								{
+										name: '全部故障车辆',
+										id: '0',
+										val: '*'
+									},
+									{
+										name: '未入库故障车辆',
+										id: '1',
+										val: '0'
+									},
+									{
+										name: '已入库故障车辆',
+										id: '2',
+										val: '2'
+									},
+							]						
 						]
 						break;
 					case '2':
@@ -473,34 +535,37 @@
 						}
 						// this.nearbymovecar(this.longitude, this.latitude, '*','*')
 						// this.nearbycarinfo(2)
-						this.selectcoverdata = [{
-								name: '全部车辆',
-								val: '0',
-							},
-							{
-								name: '1+不动车辆',
-								val: '1',
-							},
-							{
-								name: '2+不动车辆',
-								val: '2',
-							},
-							{
-								name: '3+不动车辆',
-								val: '3',
-							},
-							{
-								name: '4+不动车辆',
-								val: '4',
-							},
-							{
-								name: '禁停区内车辆',
-								val: '11',
-							},
-							{
-								name: '服务区外车辆',
-								val: '21',
-							},
+						this.selectcoverdata = [
+							[
+								{
+									name: '全部车辆',
+									val: '0',
+								},
+								{
+									name: '1+不动车辆',
+									val: '1',
+								},
+								{
+									name: '2+不动车辆',
+									val: '2',
+								},
+								{
+									name: '3+不动车辆',
+									val: '3',
+								},
+								{
+									name: '4+不动车辆',
+									val: '4',
+								},
+								{
+									name: '禁停区内车辆',
+									val: '11',
+								},
+								{
+									name: '服务区外车辆',
+									val: '21',
+								},
+							]							
 						]
 						break;
 					case '9':
@@ -509,18 +574,21 @@
 						this.scanbuttonname = '创建车站'
 						// this.nearbymovecar(this.longitude, this.latitude, '*')
 						this.stoplist(this.longitude, this.latitude, '*')
-						this.selectcoverdata = [{
-								name: '全部车站',
-								id: '0',
-							},
-							{
-								name: '已开启车站',
-								id: '0',
-							},
-							{
-								name: '已关闭车站',
-								id: '0',
-							},
+						this.selectcoverdata = [
+							[
+								{
+									name: '全部车站',
+									id: '0',
+								},
+								{
+									name: '已开启车站',
+									id: '0',
+								},
+								{
+									name: '已关闭车站',
+									id: '0',
+								},
+							]							
 						]
 						break;
 					case '9.1':
@@ -529,20 +597,132 @@
 						this.showcorverview.head = false
 						this.showcorverview.bottom = false
 						this.stoplist(this.longitude, this.latitude, '*')
-						// this.selectcoverdata = [{
-						// 		name: '全部车站',
-						// 		id: '0',
-						// 	},
-						// 	{
-						// 		name: '已开启车站',
-						// 		id: '0',
-						// 	},
-						// 	{
-						// 		name: '已关闭车站',
-						// 		id: '0',
-						// 	},
-						// ]
 						break;
+					case '10':
+						console.log(222,this.onloaddata)				
+						if(!!this.onloaddata.alert_state){
+							this.bikestate.alert_state=parseInt(this.onloaddata.alert_state)
+						}
+						if(!!this.onloaddata.is_online){
+							this.bikestate.is_online=parseInt(this.onloaddata.is_online)
+						}
+					
+						var models=this.userinfo.city.battery_models
+						var battery_m=[{name:'全部',val:'*'}]
+						for(var i=0;i<models.length;i++){
+							var temp={name:models[i][0],val:models[i][1]}
+							battery_m.push(temp)
+						}				
+						this.selectcoverdata=[
+							[{
+								name: '全部换电',
+								id: '0',
+								val: 100,
+							},
+							{
+								name: '所有35%以下',
+								id: '1',
+								val: 35,
+							},
+							{
+								name: '所有20%以下',
+								id: '3',
+								val: 20,
+							},
+							{
+								name: '所有10%以下',
+								id: '4',
+								val: 10,
+							},
+							{
+								name: '欠压车辆',
+								id: '6',
+								val: 0,
+							}],
+							[
+								{
+									name: '全部车辆',
+									id: '7',
+									val: 1,
+								},
+								{
+									name: '离线车辆',
+									id: '7',
+									val: 2,
+								},
+								{
+									name: '预警车辆',
+									id: '8',
+									val: 3,
+								},
+								
+							],
+							[
+								{
+									name: '全部车辆',
+									val: '0',
+								},
+								{
+									name: '1+不动车辆',
+									val: '1',
+								},
+								{
+									name: '2+不动车辆',
+									val: '2',
+								},
+								{
+									name: '禁停区内车辆',
+									val: '11',
+								},
+								{
+									name: '服务区外车辆',
+									val: '21',
+								},
+								{
+									name: '疑似故障',
+									id: '9',
+									val: 9,
+								},
+							],
+							[
+							{
+								name: '全部',
+								val: '44',
+							},
+							{
+								name: '天能',
+								val: '44',
+							},
+							{
+								name: '卓能',
+								val: '45',
+							},],
+							[
+								{
+									name: '全部',
+									val: '50',
+								},
+								{
+									name: '换电中',
+									val: '50',
+								},
+								{
+									name: '挪车中',
+									val: '51',
+								},
+								{
+									name: '骑行中',
+									val: '51',
+								},
+								{
+									name: '空闲',
+									val: '51',
+								},
+							]
+						]
+						this.selectcoverdata[3]=battery_m
+						this.nearbybike(this.longitude, this.latitude)
+						break;	
 				}
 			}, 200)
 		},
@@ -563,7 +743,56 @@
 			toggleTab(item) {
 				this.timeflag=item
 			    this.$refs.dateTime.show();  
-			}, 
+			},
+			// 附近的车
+			nearbybike(longitude, latitude){
+				var options = {
+					url: '/bike/nearby', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+				         "coordinate" : [longitude, latitude],
+				                   "distance" : 3000,
+				                   "bus_state" : this.bikestate.bus_state, //业务状态
+				                   "battery_level_max" : this.bikestate.battery_level_max, //最高电压
+				                   "is_under_volt" : this.bikestate.is_under_volt, //是否低电
+				                   "battery_model" : this.bikestate.battery_model,
+				                   // "battery_model" : ["xxxx","yyyy"],
+				                   "is_online" : this.bikestate.is_online, //是否在线
+				                   "alert_state" : this.bikestate.alert_state, //异常状态
+				                   "repark_index" : this.bikestate.repark_index, //差车指数
+				                   "inv_state" : this.bikestate.inv_state, //库存状态
+				                   "health_state" : this.bikestate.health_state, //健康状态 
+				                   "to_be_maintained" : this.bikestate.to_be_maintained, //待保养
+				                   "show_park" : this.bikestate.show_park,//是否显示车站
+								   'park_state':this.bikestate.park_state
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('附近车辆信息', res)
+					if (res.status == 0) {
+						this.covers = []
+						for (let i = 0; i < res.list.length; i++) {
+							let tmpObj = {}
+							tmpObj.id = res.list[i].id
+							tmpObj.latitude = res.list[i].coordinate[1]
+							tmpObj.longitude = res.list[i].coordinate[0]
+							// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0, 0)
+							tmpObj.width = 39
+							tmpObj.height = 48
+							this.covers.push(tmpObj)
+						}			
+					} else {
+				
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			onConfirm(val) {
 				console.log(val);
 				if (this.timeflag == 1) {
@@ -722,6 +951,7 @@
 			},
 			selectsure() {
 				this.showmapselect = false
+				console.log(333,this.showmapselect)
 				switch (this.type) {
 					case '0':
 						var undervolt = '*'
@@ -745,6 +975,9 @@
 								this.nearbymovecar(this.longitude, this.latitude, parseInt(this.selectvals), '*')
 							}
 						}
+						break
+					case '10':
+					    this.nearbybike(this.longitude, this.latitude)
 						break
 				}
 
@@ -781,6 +1014,7 @@
 				   this.polygon[0].points=[]
 			},
 			finshCreatServ(){
+				var temp={}
 				if (this.stopName == '') {
 					uni.showToast({
 						title: '车站名称不能为空',
@@ -798,7 +1032,9 @@
 					return
 				}
 				this.polyline[1]=[]
-				this.polygon[0].points=this.polylinePoint
+				temp.points=this.polylinePoint
+				// this.polygon[0].points=this.polylinePoint
+				this.polygon[0]=temp
 				// this.creatStopurl(level)
 				this.polylinePoints.push(this.polylinePoints[0])
 				this.creatStopurl(0,1,"*",this.polylinePoints)				
@@ -1207,14 +1443,82 @@
 				}
 
 			},
-			active(index, item) {
-				this.isActive = index
-				this.selectvals = item.val
+			active(index, item,num) {
+				// this.isActive = index
+			    // 换电
+				if(num==0){
+					this.isActive0=index
+					this.bikestate.is_under_volt='*'
+					this.selectvals = item.val
+					if(item.val==0){
+					this.bikestate.is_under_volt=1	
+					}else{
+						this.bikestate.battery_level_max=item.val						
+					}										
+				}
+				//离线预警
+				else if(num==1)
+				{
+					this.isActive1=index
+					this.bikestate.is_online='*'
+					this.bikestate.alert_state='*'					
+					if(index==0){						
+					}else if(index==1){
+						this.bikestate.is_online=0
+					}else if(index==2){
+						this.bikestate.alert_state=-1
+					}						
+				}
+				// 挪车
+				else if(num==2){
+					this.isActive2=index
+					this.bikestate.repark_index='*'
+					this.bikestate.park_state='*'
+					this.bikestate.alert_state='*'
+					if(index==0){
+						// this.bikestate.repark_index='*'
+					}else if(index==1){
+						this.bikestate.repark_index=1
+					}else if(index==2){
+						this.bikestate.repark_index=2
+					}else if(index==3){
+						this.bikestate.park_state=11
+					}else if(index==4){
+						this.bikestate.park_state=21
+					}else if(index==5){
+						this.bikestate.alert_state=16
+					}
+					
+				}
+				// 电池型号
+				else if(num==3){
+					this.isActive3=index
+					// this.bikestate.battery_model="*"
+					this.bikestate.battery_model=item.val
+					// if(index==0){
+						
+					// }else{
+					// 	this.bikestate.battery_model=item.val
+					// }
+				}
+				// 业务状态
+				else if(num==4){
+					this.isActive4=index
+					this.bikestate.bus_state='*'
+					if(index==0){
+						
+					}else if(index==1){
+						this.bikestate.bus_state=30
+					}else if(index==2){
+						this.bikestate.bus_state=20
+					}else if(index==3){
+						this.bikestate.bus_state=11
+					}else if(index==4){
+						this.bikestate.bus_state=0
+					}
+				}		
 				this.headviewtext = item.name
-				// for (let i = 0; i < this.selectcoverdata.length; i++) {
-				// 	this.selectcoverdata[i].active = false
-				// }
-				// this.selectcoverdata[index].active = true
+                console.log(44444,item)
 			},
 			functionNames() {},
 			// 移动地图获取中心点坐标
@@ -1226,7 +1530,7 @@
 				if (intervaltime < 800) {
 					return
 				}
-				let distance = 500				
+				// let distance = 500				
 				let promise = new Promise((respon, rej) => {
 						this.mapinfo.getScale({
 							success: (res) => {
@@ -1327,6 +1631,9 @@
 										break
 									case '9.1':
 										this.stoplist(res.longitude, res.latitude, '*')
+										break
+									case '10':
+										this.nearbybike(res.longitude, res.latitude)
 										break	
 								}
 							},
@@ -1452,6 +1759,7 @@
 							longitude,
 							latitude
 						],
+						"distance": distance,
 						"flag": 2
 						// "is_under_volt": 1
 					}
@@ -1464,6 +1772,7 @@
 						this.covers = []
 						var temparr = []
 						var circles = []
+						this.polygon=[]
 						for (let j = 0; j < res.parks.length; j++) {
 							if(res.parks[j].polygon_type==0){
 								let tmpObjs = {}
@@ -1591,6 +1900,19 @@
 			},
 			// 附近需要换电的车辆
 			nearbyshortpower(max, longitude, latitude, undervolt, distance, timestr) {
+				var is_online=1
+				var alert_state="*"
+				if(max==7 || this.onloaddata.is_online==0){
+					is_online=0
+				}
+				if(max==8){
+					alert_state=-1
+					max=100
+				}
+				if(max==9){
+					alert_state=16
+					max=100
+				}
 				var options = {
 					url: '/bike/list_to_change_battery_nearby', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -1602,7 +1924,9 @@
 						],
 						"battery_level_max": max,
 						"distance": distance,
-						"is_under_volt": undervolt
+						"is_under_volt": undervolt,
+						"is_online":is_online,
+						"alert_state":alert_state
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -1805,6 +2129,9 @@
 					case '3.1':
 						this.urls = '/pages/movecarPage/checkupcar/checkupcar'
 						break;
+					case '10':
+						this.urls = '/pages/swapbattery/swapbattery?type=0'
+						break;	
 				}
 			},
 			// 获取车辆信息
@@ -2258,11 +2585,12 @@
 			font-size: 40upx;
 			background-color: #efeff2;
 			font-size: 14px;
-
+            overflow-y: scroll;
+			scroll-top:40;
 			.select-sure {
-				margin-top: 30upx;
-				height: 90upx;
-				line-height: 80upx;
+				margin-top: 16upx;
+				height: 80upx;
+				line-height: 75upx;
 				width: 90%;
 				background-color: #F6C700;
 				border-radius: 8upx;
@@ -2274,9 +2602,10 @@
 				// justify-content: space-around;
 				flex-wrap: wrap;
 				background-color: white;
-
+                margin-bottom: 14upx;
 				cover-view {
-					width: calc(50% - 4upx);
+					// width: calc(50% - 10upx);
+					width: 32.5%;
 					border: 1upx solid rgba(245, 245, 245, 1);
 					height: 80upx;
 					line-height: 80upx;
