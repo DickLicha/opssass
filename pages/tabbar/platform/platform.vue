@@ -411,7 +411,7 @@
 				var date = new Date()
 				var seperator1 = "-";
 				var seperator2 = ":";
-				var month0 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1;
+				var month0 = date.getMonth() + 1-type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1-type;
 				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;				
 				var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
 				// var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
