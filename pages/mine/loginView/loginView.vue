@@ -32,7 +32,17 @@
 		onLoad() {			
 			this.getLoginData();
 			this.getdirectinfo()
-			this.getsysversion()
+			const value = uni.getStorageSync('userinfo');
+			console.log('value', value)
+			if (value.status == 0) {
+				uni.switchTab({
+					url: '/pages/tabbar/index/index',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			}
+			// this.getsysversion()
 		},
 		computed: mapState(['userinfo']),
 		methods: {

@@ -118,14 +118,14 @@
 									url = '/pages/echartPage/echartpage/echartpage'
 									text = ''
 									src = require('../../../static/image/che_zhan.png')
-									tempobj = {
-										index: onlyid,
-										src: src,
-										name: name,
-										url: url,
-										text: text
-									}
-									this.taskdata.push(tempobj)						
+									// tempobj = {
+									// 	index: onlyid,
+									// 	src: src,
+									// 	name: name,
+									// 	url: url,
+									// 	text: text
+									// }
+									// this.taskdata.push(tempobj)						
 									break	
 							}
 							tempobj = {

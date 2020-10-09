@@ -13,10 +13,20 @@
 					<cover-image  src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
 					<!-- <cover-view v-if="actives" class='movecar-view'>拖动地图选择车站</cover-view> -->
 					<cover-view v-if="showmapselect" class='map-select-view'>
-						<cover-view class='select-list'>
+						<!-- <cover-view class='select-list'>
 							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i,item)" :class="{'borderrights':i==isActive}"
 							 :key=i>{{item.name}}</cover-view>
+						</cover-view> -->
+						<!-- 测试 -->
+						<cover-view class='select-list' >
+							<cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)" :class="{'borderrights':i===isActive0}">{{item.name}}</cover-view>
 						</cover-view>
+						<cover-view class='select-list' >
+							<cover-view v-for="(item,i) in selectcoverdata[1]" :key='i' @click="active(i,item,1)" :class="{'borderrights':i===isActive1}">{{item.name}}</cover-view>
+						</cover-view>
+						
+						
+						
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
 					<cover-view v-show="(type==3.1 || type==3 || type==0) && inglength>0" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
@@ -25,6 +35,7 @@
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view> -->
 						<cover-view v-if="!showcorverview.bottom&&!actives&&!hidebutton" class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
 					</cover-view>
+										
 				</map>
 				<view v-if="actives && type==9">
 					<view class='scroll-viewy'>
@@ -150,6 +161,8 @@
 		]),
 		data() {
 			return {
+				isActive0:0,
+				isActive1:0,
 				includepoints:[],
 				timeflag:0,
 				start_time: '2020-03-20 00:00:00',
@@ -198,42 +211,62 @@
 				mapinfo: null,
 				scale: '18', //缩放级别5-18
 				showLocation: true,
-				selectcoverdata: [{
-						name: '全部换电',
-						id: '0',
-						val: 100,
-					},
-					{
-						name: '所有35%以下',
-						id: '1',
-						val: 35,
-					},
-					{
-						name: '所有30%以下',
-						id: '2',
-						val: 30,
-					},
-					{
-						name: '所有20%以下',
-						id: '3',
-						val: 20,
-					},
-					{
-						name: '所有10%以下',
-						id: '4',
-						val: 10,
-					},
-					// {
-					// 	name: '低于可用里程',
-					// 	id: '5',
-					// 	active: false
-					// },
-					{
-						name: '欠压车辆',
-						id: '6',
-						val: 0,
-					},
-				],
+				selectcoverdata: [
+					[{
+							name: '全部换电',
+							id: '0',
+							val: 100,
+						},
+						{
+							name: '所有35%以下',
+							id: '1',
+							val: 35,
+						},
+						{
+							name: '所有30%以下',
+							id: '2',
+							val: 30,
+						},
+						{
+							name: '所有20%以下',
+							id: '3',
+							val: 20,
+						},
+						{
+							name: '所有10%以下',
+							id: '4',
+							val: 10,
+						},
+						// {
+						// 	name: '低于可用里程',
+						// 	id: '5',
+						// 	active: false
+						// },
+						{
+							name: '欠压车辆',
+							id: '6',
+							val: 0,
+						},
+					],
+					[
+						{
+							name: '全部',
+							id: '1',
+							val: 35,
+						},
+						{
+							name: '星恒',
+							id: 'XH48V14AH',
+							val: 30,
+						},
+						{
+							name: '卓能',
+							id: 'ZN48V12AH',
+							val: 20,
+						},
+					]
+				]
+				,
 				covers: [],
 				circles: [],
 				polyline: [{ //指定一系列坐标点，从数组第一项连线至最后一项
@@ -432,21 +465,23 @@
 						var setectval = (this.selectvals == 100) ? 0 : this.selectvals
 						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
 						// this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
-						this.selectcoverdata = [{
-								name: '全部故障车辆',
-								id: '0',
-								val: '*'
-							},
-							{
-								name: '未入库故障车辆',
-								id: '1',
-								val: '0'
-							},
-							{
-								name: '已入库故障车辆',
-								id: '2',
-								val: '2'
-							},
+						this.selectcoverdata = [
+							[{
+									name: '全部故障车辆',
+									id: '0',
+									val: '*'
+								},
+								{
+									name: '未入库故障车辆',
+									id: '1',
+									val: '0'
+								},
+								{
+									name: '已入库故障车辆',
+									id: '2',
+									val: '2'
+								},
+							]
 						]
 						var setectval=(this.selectvals==100)?"*":this.selectvals
 						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
@@ -475,35 +510,38 @@
 						}
 						// this.nearbymovecar(this.longitude, this.latitude, '*','*')
 						// this.nearbycarinfo(2)
-						this.selectcoverdata = [{
-								name: '全部车站',
-								val: '0',
-							},
-							{
-								name: '1+不动车辆',
-								val: '1',
-							},
-							{
-								name: '2+不动车辆',
-								val: '2',
-							},
-							{
-								name: '3+不动车辆',
-								val: '3',
-							},
-							{
-								name: '4+不动车辆',
-								val: '4',
-							},
-							{
-								name: '禁停区内车辆',
-								val: '11',
-							},
-							{
-								name: '服务区外车辆',
-								val: '21',
-							},
+						this.selectcoverdata = [
+							[{
+									name: '全部车站',
+									val: '0',
+								},
+								{
+									name: '1+不动车辆',
+									val: '1',
+								},
+								{
+									name: '2+不动车辆',
+									val: '2',
+								},
+								{
+									name: '3+不动车辆',
+									val: '3',
+								},
+								{
+									name: '4+不动车辆',
+									val: '4',
+								},
+								{
+									name: '禁停区内车辆',
+									val: '11',
+								},
+								{
+									name: '服务区外车辆',
+									val: '21',
+								},
+							]
 						]
+						
 						break;
 					case '9':
 						this.showcorverview.head = false
@@ -511,19 +549,22 @@
 						this.scanbuttonname = '创建车站'
 						// this.nearbymovecar(this.longitude, this.latitude, '*')
 						this.stoplist(this.longitude, this.latitude, '*')
-						this.selectcoverdata = [{
-								name: '全部车站',
-								id: '0',
-							},
-							{
-								name: '已开启车站',
-								id: '0',
-							},
-							{
-								name: '已关闭车站',
-								id: '0',
-							},
+						this.selectcoverdata = [
+							[{
+									name: '全部车站',
+									id: '0',
+								},
+								{
+									name: '已开启车站',
+									id: '0',
+								},
+								{
+									name: '已关闭车站',
+									id: '0',
+								},
+							]
 						]
+						
 						break;
 					case '9.1':
                         this.actives = true
@@ -1210,8 +1251,14 @@
 				}
 
 			},
-			active(index, item) {
-				this.isActive = index
+			active(index, item,num) {
+				if(num==0){
+					this.isActive0=index
+				}else{
+					this.isActive1=index
+					this.battery_model=item.id
+					console.log('battery_model',this.battery_model)
+				}
 				this.selectvals = item.val
 				this.headviewtext = item.name
 				// for (let i = 0; i < this.selectcoverdata.length; i++) {
@@ -1605,7 +1652,8 @@
 						],
 						"battery_level_max": max,
 						"distance": distance,
-						"is_under_volt": undervolt
+						"is_under_volt": undervolt,
+						'battery_model':this.battery_model
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -2277,14 +2325,15 @@
 				// justify-content: space-around;
 				flex-wrap: wrap;
 				background-color: white;
-
+			    margin-bottom: 14upx;
 				cover-view {
-					width: calc(50% - 4upx);
+					// width: calc(50% - 10upx);
+					width: 32.5%;
 					border: 1upx solid rgba(245, 245, 245, 1);
 					height: 80upx;
 					line-height: 80upx;
 				}
-
+			
 				.borderrights {
 					// border-right: 1upx solid gray;
 					color: #F6C700;
