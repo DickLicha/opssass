@@ -41,7 +41,7 @@
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
-					<cover-view v-if="getorder()" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
+					<cover-view v-show="(type==3.1 || type==3) && inglength>0" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
 					<cover-view class='map-cover-view'>
 						<!-- <cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view> -->
@@ -487,9 +487,7 @@
 						// this.covers = []
 						break;	
 					case '1.1':
-						this.scanbuttonname = '扫码入库'
-						var setectval=(this.selectvals==100)?"*":this.selectvals
-						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
+						this.scanbuttonname = '扫码入库'		
 						// this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
 						this.selectcoverdata = [
 							[
@@ -510,6 +508,8 @@
 									},
 							]						
 						]
+						var setectval=(this.selectvals==100)?"*":this.selectvals
+						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
 						break;
 					case '2':
 						this.showcorverview = {
@@ -961,7 +961,7 @@
 						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude, undervolt)
 						break;
 					case '1.1':
-						var setectval = (this.selectvals == 100) ? 0 : this.selectvals
+						var setectval = (this.selectvals == 100) ? '*' : this.selectvals
 						this.nearbyfaultcar(this.longitude, this.latitude, setectval)
 						break;
 					case '3.1':
@@ -1607,7 +1607,7 @@
 										self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt, dis, this.gobeltimestr)
 										break
 									case '1.1':
-										var setectval = (this.selectvals == 100) ? 0 : this.selectvals
+										var setectval = (this.selectvals == 100) ? "*" : this.selectvals
 										// this.nearbyfaultcar(this.longitude, this.latitude, setectval)
 										self.nearbyfaultcar(res.longitude, res.latitude, setectval)
 										break

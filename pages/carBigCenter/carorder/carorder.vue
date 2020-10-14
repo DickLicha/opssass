@@ -45,11 +45,12 @@
 			this.carcenterdata1[4].val = this.bikeinfo.last_order_end_time
 			
 			// 订单状态
-			if(this.bikeinfo.last_order_id!=''){
-				this.carcenterdata1[5].val = '已结束'
-			}else{
-				this.carcenterdata1[5].val = '空闲'
-			}
+			this.carcenterdata1[5].val = this.$bus_state(this.bikeinfo.bus_state)
+			// if(this.bikeinfo.last_order_id!=''){
+			// 	this.carcenterdata1[5].val = '已结束'
+			// }else{
+			// 	this.carcenterdata1[5].val = '空闲'
+			// }
 		},
 		methods: {
 			gocarcenter(e){
