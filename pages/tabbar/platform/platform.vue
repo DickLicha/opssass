@@ -138,6 +138,23 @@
 						<view class="data-item-ct1">{{i.val}}</view>
 						<view class="data-item-ct2">{{i.name}}</view>
 					</view>
+				</view>
+				
+				<view class='grid-view' v-if="limitorder.ddjet || limitorder.cxt">
+					<view class='flexd-posion'>
+						<view class='view-flexs switch-head'>
+							<view>日期</view>
+							<view class='view-border-letf'>订单数</view>
+							<view class='view-border-letf'>订单金额</view>
+							<view class='view-border-letf'>车效</view>
+						</view>
+					</view>
+					<view class='view-flexs view-border-bottom' v-for="(item,i) in orderlist" :key='i'>
+						<view>{{item.time}}</view>
+						<view class='view-border-letf'>{{item.num}}</view>
+						<view class='view-border-letf'>{{item.money}}</view>
+						<view class='view-border-letf'>{{item.bikeper}}</view>
+					</view>
 				</view>			
 			</view>
 		</view>			
@@ -221,7 +238,8 @@
 					{name:'三个月',val:3},
 					{name:'半年',val:6},
 					],
-				isActive:0	
+				isActive:0,
+				orderlist:[]	
 			}
 		},
 		onLoad() {
@@ -675,7 +693,7 @@
 								name: '订单金额',
 								data: []
 							}
-							this.orderlist = []
+							this.orderlist = []	
 							var temptime=[]
 							for(var i in res.bcorder_ok_count_daily){
 								temptime.push(i)
@@ -693,7 +711,19 @@
 								}
 								bike_count_daily.push(bikepers)
 								urorder_paid_amount_daily.push(res.urorder_paid_amount_daily[temptime[l]]/100)
+								var orderobj = {
+									time: '',
+									num: '',
+									money: '',
+									bikeper: ''
+								}
+								orderobj.time=newtimes
+								orderobj.num=res.urorder_count_daily[temptime[l]]
+								orderobj.money=res.urorder_paid_amount_daily[temptime[l]]/100
+								orderobj.bikeper=bikepers
+								this.orderlist.push(orderobj)
 							}
+							this.orderlist.reverse()
 							bikeeffic.data = bike_count_daily
 							ddje.data=urorder_paid_amount_daily
 							let LineB = {
@@ -704,6 +734,7 @@
 								categories: [],
 								series: []
 							};
+							
 							//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
 							LineB.categories = datatimes
 							LineB.series.push(bikeeffic)
@@ -1227,6 +1258,40 @@
 
 			text {
 				border-bottom: $uni-theme-color 4rpx solid;
+			}
+		}
+	}
+	.grid-view {
+		margin-top: 30upx;
+	
+		.flexd-posion {
+			background-color: rgb(225, 225, 225);
+		}
+	
+		.view-border-bottom {
+			border-bottom: 1upx solid rgb(235, 235, 235);
+		}
+	
+		.switch-head {
+			height: 90upx;
+			line-height: 90upx;
+		}
+	
+		.view-flexs {
+			display: flex;
+			// left: 0;
+			width: 100%;
+			text-align: center;
+			align-items: center;
+	
+			// justify-content: center;
+			.view-border-letf {
+				border-left: 1upx solid rgb(235, 235, 235);
+				height: 60upx;
+			}
+	
+			view {
+				width: 30%;
 			}
 		}
 	}
