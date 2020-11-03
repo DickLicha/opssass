@@ -15,7 +15,7 @@
 					</view>
 				</view>
 				<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
-					<text class='titleSpan'>趋势图</text>
+					<text class='titleSpan'>订单趋势图</text>
 					<!--#ifndef MP-ALIPAY -->
 					<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
 					<!--#endif-->
@@ -38,7 +38,8 @@
 					</view>
 				</view>
 				
-				<view class="data-box" v-show="tempobj.liushui">
+				<view class="data-box" v-show="limitorder.all">
+					<view class='box-title'>全部</view>
 					<view class="data-item" v-if="limitorder.czje">
 						<view class="data-item-ct1">{{monitorv2.user_charge_amount_total/100}}</view>
 						<view class="data-item-ct2">充值总金额</view>
@@ -48,10 +49,10 @@
 						<view class="data-item-ct2">会员总金额</view>
 					</view>
 					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2.urorder_count_total/100}}</view>
+						<view class="data-item-ct1">{{monitorv2.urorder_paid_amount_total/100}}</view>
 						<view class="data-item-ct2">订单总金额</view>
 					</view>
-					<view class="data-item">
+					<view class="data-item" v-if="limitorder.qxddf">						
 						<view class="data-item-ct1">{{monitorv2.urorder_repark_amount_total/100}}</view>
 						<view class="data-item-ct2">订单调度总金额</view>
 					</view>
@@ -64,11 +65,43 @@
 						<view class="data-item-ct2">总认证用户数</view>
 					</view> -->
 					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2.urorder_count_per_bike_avg}}</view>
+						<view class="data-item-ct2">平均车效</view>
+					</view>
+				</view>
+				<view class="data-box" v-show="limitorder.mon">
+					<view class='box-title'>当月</view>
+					<view class="data-item" v-if="limitorder.czje">
+						<view class="data-item-ct1">{{monitorv2m.user_charge_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">充值总金额</view>
+					</view>
+					<view class="data-item" v-if="limitorder.hykje">
+						<view class="data-item-ct1">{{monitorv2m.user_membership_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">会员总金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.urorder_paid_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">订单总金额</view>
+					</view>
+					<view class="data-item" v-if="limitorder.qxddf">						
+						<view class="data-item-ct1">{{monitorv2m.urorder_repark_amount_tomonth/100}}</view>
+						<view class="data-item-ct2">订单调度总金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_count_tomonth}}</view>
+						<view class="data-item-ct2">总用户数</view>
+					</view>
+					<!-- <view class="data-item">
+						<view class="data-item-ct1">{{monitorv2m.user_auth_count_tomonth}}</view>
+						<view class="data-item-ct2">总认证用户数</view>
+					</view> -->
+					<view class="data-item">
 						<view class="data-item-ct1">{{monitorv2m.urorder_count_per_bike_avg}}</view>
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
-				<view class="data-box" v-show="tempobj.liushui">
+				<view class="data-box" v-show="limitorder.day">
+					<view class='box-title'>当日</view>
 					<view class="data-item" v-if="limitorder.czje">
 						<view class="data-item-ct1">{{dailydata.user_charge_amount/100}}</view>
 						<view class="data-item-ct2">充值金额</view>
@@ -100,6 +133,7 @@
 				</view>
 				
 				<view class='data-box'>
+					<view class='box-title'>运维数据</view>
 					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
 						<view class="data-item-ct1">{{i.val}}</view>
 						<view class="data-item-ct2">{{i.name}}</view>
@@ -126,7 +160,7 @@
 	} from 'vuex'
 	// const app = getApp()
 	var _self;
-	var canvaLineA = null,canvaLineB=null
+	var canvaLineA = null,canvaLineB=null,canvaLineC=null
 	export default {
 		components: {
 			uniPopup,
@@ -161,8 +195,7 @@
 				},
 				tempobj:{
 					chexiao:0,
-					dingdan:0,
-					liushui:0,
+					dingdan:0
 				},
 				showtx:true,
 				monitorv2:{},
@@ -170,6 +203,25 @@
 				cWidth: '',
 				cHeight: '',
 				pixelRatio: 1,
+				monitorv2m:{},
+				limitorder:{
+					all:0,
+					mon:0,
+					day:0,
+					ddqst:0,//订单趋势图
+					ddjet:0,//订单金额图
+					cxt:0,//车效图
+					qxddf:0,//骑行调度费
+					czje:0,//充值金额
+					hykje:0,//会员卡金额
+				},
+				timeselect:[
+					{name:'当月',val:0},
+					{name:'上个月',val:1},
+					{name:'三个月',val:3},
+					{name:'半年',val:6},
+					],
+				isActive:0	
 			}
 		},
 		onLoad() {
@@ -188,27 +240,6 @@
 				}
 			});
 			//#endif
-			wx.getLocation({
-				type: 'wgs84',
-				success(res) {
-					console.log('位置信息', res)			
-					const requestTask3 = uni.request({
-						url: "https://apis.map.qq.com/ws/geocoder/v1/?location=" + res.latitude + "," + res.longitude +
-							"&key=ZVNBZ-ACB3S-UOEO5-6JMQK-4EMKT-XZBUX&get_poi=1",
-						data: {},
-						method: "GET",
-						header: {
-							'content-type': 'application/x-www-form-urlencoded'
-						},
-						success: function(res) {
-							console.log('weizhi', res.data);
-							_self.locaplace=res.data.result.formatted_addresses.recommend
-						}
-					});
-
-				}
-			})
-
 		},
 		onShow() {
 			this.timecalc(0)
@@ -227,6 +258,7 @@
 			this.getmonitorv2(1)
 			this.getmonitorv2('today')
 			this.getmonitorv2('all')
+			this.getmonitorv2('mon')
 			this.getHourly017(times)
 			try {
 				this.citylist = uni.getStorageSync('userinfo').cities;
@@ -280,8 +312,18 @@
 											if(acl[i].children[j].uri==15.2 && acl[i].children[j].visitable){
 												this.tempobj.dingdan=1
 											}
-											if(acl[i].children[j].uri==15.3 && acl[i].children[j].visitable){
-												this.tempobj.liushui=1
+										}							
+										break
+									case 16:
+										for(let j=0;j<acl[i].children.length;j++){
+											if(acl[i].children[j].uri==16.1 && acl[i].children[j].visitable){
+												this.limitorder.all=1
+											}
+											if(acl[i].children[j].uri==16.2 && acl[i].children[j].visitable){
+												this.limitorder.mon=1
+											}
+											if(acl[i].children[j].uri==16.3 && acl[i].children[j].visitable){
+												this.limitorder.day=1
 											}
 											if(acl[i].children[j].uri==16.4 && acl[i].children[j].visitable){
 												this.limitorder.ddqst=1
@@ -303,7 +345,7 @@
 												
 											}
 										}							
-										break	
+										break		
 								}
 								
 							}
@@ -365,6 +407,32 @@
 					});
 				}
 			},
+			timecalc(type){
+				var date = new Date()
+				var seperator1 = "-";
+				var seperator2 = ":";
+				var month0 = date.getMonth() + 1-type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1-type;
+				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;				
+				var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+				// var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
+				// 	" " + date.getHours() + seperator2 + date.getMinutes() +
+				// 	seperator2 + date.getSeconds()
+				// var fmonuth=month-1<10?'0'+(month-1):month-1
+				// 上个月的天数
+				var day=new Date(date.getFullYear(),date.getMonth(),0)					
+				this.start_time=date.getFullYear() + seperator1 + month0 + seperator1 + "01" +
+					" " + '00' + seperator2 + '00' +
+					seperator2 + '00'
+				this.end_time=date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
+					" " + '23' + seperator2 + '59' +
+					seperator2 + '59'
+				console.log('time',this.start_time,this.start_time)	
+			},
+			active(i,item){
+				this.isActive=item
+				this.timecalc(i.val)
+				this.getmonitorv2('all')				
+			},
 			touchLineA(e) {
 				canvaLineA.touchLegend(e);
 				canvaLineA.showToolTip(e, {
@@ -376,6 +444,14 @@
 			touchLineB(e) {
 				canvaLineB.touchLegend(e);
 				canvaLineB.showToolTip(e, {
+					format: function(item, category) {
+						return category + ' ' + item.name + ':' + item.data
+					}
+				});
+			},
+			touchLineC(e) {
+				canvaLineC.touchLegend(e);
+				canvaLineC.showToolTip(e, {
 					format: function(item, category) {
 						return category + ' ' + item.name + ':' + item.data
 					}
@@ -547,7 +623,17 @@
 							today:1,
 						},
 					}
-				}else{
+				}else if(type=='mon'){
+					var options = {
+						url: '/city/monitorv2', //请求接口
+						method: 'POST', //请求方法全部大写，默认GET
+						context: '',
+						data: {
+							tomonth:1,
+						},
+					}
+				}
+				else{
 					var options = {
 						url: '/city/monitorv2', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
@@ -571,15 +657,25 @@
 						}else if(type=='today'){
 							this.dailydata=res
 							this.boxdata=[
-								{name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								{name:'报修车辆',val:res.bike_stat.ops_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
-								{name:'挪车数',val:res.rporder_ok_count,url:''},
-								{name:'换电数',val:res.bcorder_ok_count,url:''},
+								// {name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=车辆监控&text=预警车辆&type=10&alert_state=-1'},
+								// {name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/repairlist/repairlist?type=11'},
+								// {name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+								// {name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=车辆监控&text=离线车辆&type=10&is_online=0'},
+								// {name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=车辆监控&text=疑似故障&type=10&&alert_state=16'},
+								// {name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
+								// {name:'挪车数',val:res.rporder_ok_count,url:''},
+								// {name:'换电数',val:res.bcorder_ok_count,url:''},
+							{name:'预警车辆',val:res.bike_stat.alert_count,url:''},
+							{name:'待排查车辆',val:res.bike_stat.to_check_count,url:''},
+							{name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+							{name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:''},
+							{name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:''},
+							{name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
+							{name:'挪车数',val:res.rporder_ok_count,url:''},
+							{name:'换电数',val:res.bcorder_ok_count,url:''},
 							]
+						}else if(type=='mon'){
+							this.monitorv2m=res
 							this.monitorv2m.urorder_count_per_bike_avg=res.urorder_count_per_bike_avg.toFixed(2)
 						}else{
 							var datatimes = []
@@ -693,6 +789,7 @@
 						this.getmonitorv2(1)
 						this.getmonitorv2('today')
 						this.getmonitorv2('all')
+						this.getmonitorv2('mon')
 						this.getHourly017(times)
 						
 						try {
@@ -807,7 +904,8 @@
 						// 	margin: 0,
 						// },
 						dataLabel: false,
-						dataPointShape: true,
+						dataPointShape: false,
+						// dataPointShapeType: 'hollow',
 						background: '#FFFFFF',
 						pixelRatio: _self.pixelRatio,
 						categories: chartData.categories,
@@ -861,7 +959,7 @@
 							margin: 0,
 						},
 						dataLabel: false,
-						dataPointShape: true,
+						dataPointShape: false,
 						background: '#FFFFFF',
 						pixelRatio: _self.pixelRatio,
 						categories: chartData.categories,
@@ -1099,7 +1197,11 @@
 		background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
-
+        .box-title{
+			text-align: center;
+			font-size: 40upx;
+			font-weight: 500;
+		}
 		.data-item {
 			display: inline-block;
 			width: 32%;
