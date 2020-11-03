@@ -25,6 +25,15 @@
 					<view><text>电量增长：</text><text>{{addelect}}</text></view>
 				</view>
 			</uni-popup>
+			<uni-popup :show="poptypes ==='battery-model'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
+				<view :scroll-y="true" class="uni-center center-box">
+					<view class='battery-title'><text>请选择电池型号：</text></view>
+					<view class='battery-view'>
+						<view class='detil-view' :class="{'batteryactive':activeclass==item}" v-for="(i,item) in batterymodel" :key='i' @click="chosebattery(item,i)"><text>{{i[0]}}</text></view>
+					</view>		
+					<view></view>
+				</view>
+			</uni-popup>
 			<uni-fab ref="fab" :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction"
 			 @trigger="trigger" />
 		</view>
@@ -50,6 +59,10 @@
 	export default {
 		data() {
 			return {
+				activeclass:0,
+				batterymodel:[],
+				batterym:'',
+				poptypes:1,
 				showBatteryBtn: true,
 				beforeelec: 0,
 				afterelect: 0,
@@ -115,6 +128,7 @@
 				],
 				borders: true,
 				buttonname: '更换电池',
+				// buttonname: '结束换电',
 				swapdata: [{
 					name: '车辆编号:',
 					val: ''
@@ -260,6 +274,14 @@
 		computed: mapState(['bikeinfo', 'bikeid', 'blueres', 'bluestate', 'blueconectstate','directinfo']),
 		onLoad(e) {
 			this.setbikedata(this.bikeinfo)
+			try {
+				const value = uni.getStorageSync('userinfo');
+				if (value) {
+					this.batterymodel =value.city.battery_models
+				}
+			} catch (e) {
+				// error
+			}
 			if (e.type != 99) {
 				var _self = this
 				var name = _self.bikeinfo.bluetooth_name
@@ -535,6 +557,58 @@
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBlueres','setBikeid']),
+			chosebattery(i,item){
+				this.activeclass=i
+				this.batterym=item[1]
+				uni.showLoading({
+					title: '关锁中'
+				});
+				uni.getLocation({
+					type: 'wgs84',
+					success: res => {
+						this.setSn('*')
+						var options = {
+							url: '/bcorder/finish', //请求接口
+							method: 'POST', //请求方法全部大写，默认GET
+							context: '',
+							data: {
+								"order_id": this.orderid,
+								"user_coordinate": [
+									res.longitude, res.latitude
+								],
+								"battery_model":this.batterym
+							},
+						}
+						this.$httpReq(options).then((res) => {
+							// 请求成功的回调
+							// res为服务端返回数据的根对象
+							console.log('关锁完成订单电池锁', res)
+							if (res.status == 0) {
+								this.poptype = 'middle-list'
+								this.buttonname = '更换电池'
+								this.afterelect = res.info.battery_level_after + '%'
+								this.addelect = res.info.battery_level_after - this.bikeinfo.battery_level + '%'
+								setTimeout(()=>{
+									uni.navigateBack()
+								},2000)			
+							} else {
+								uni.showToast({
+									title: res.message ? res.message : '关锁失败!',
+									icon: 'none',
+									duration: 2000
+								})
+							}
+						}).catch((err) => {
+							// 请求失败的回调
+							console.error(err, '捕捉')
+						})
+					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
+				});
+			},
 			setbikedata(bikeinfo){
 				// 车辆id
 				this.swapbatterydata1[0].val=bikeinfo.sn
@@ -673,6 +747,7 @@
 			},
 			togglePopup() {
 				this.poptype = ''
+				this.poptypes = 1
 			},
 			// 关锁
 			closelock() {
@@ -1295,7 +1370,7 @@
                 if(!!this.bikeinfo.bluetooth_token && this.blueconectstate==1){
 					this.openpre()
 				}else{
-					this.operbattery(1,1000,'')
+					this.operbattery(2,1000,'')
 				}
 				
 			},
@@ -1304,6 +1379,15 @@
 				uni.showLoading({
 					title: '开锁中'
 				});
+				var bleinfo={}
+				bleinfo={
+					"success": state,
+					"cost": time,
+					"error_msg":mess
+				}
+				if(state==2){
+					bleinfo='*'
+				}
 			    console.log(99999,state,time,mess)
 				uni.getLocation({
 					type: 'wgs84',
@@ -1319,11 +1403,7 @@
 									res.longitude, res.latitude
 								],
 								"bluetooth": this.blueconectstate,
-								"bleinfo": {
-								  "success": state,
-								  "cost": time,
-								  "error_msg":mess
-								 },
+								"bleinfo":bleinfo,
 							}
 						}
 						this.$httpReq(options).then((res) => {
@@ -1369,62 +1449,17 @@
 			},
 			// 关闭电池锁完成订单
 			closebattery() {
-				if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
-					var str1 = ble.doCmd('32', '', this.bikeinfo.bluetooth_token)
-					this.uploadflag=true
-					setTimeout(() => {
-						ble.openLock(str1,'gps', function(ress) {
-							console.log('蓝牙操作', ress)
-						})
-						}, 1);
-					}			
-				uni.showLoading({
-					title: '关锁中'
-				});
-				uni.getLocation({
-					type: 'wgs84',
-					success: res => {
-						this.setSn('*')
-						var options = {
-							url: '/bcorder/finish', //请求接口
-							method: 'POST', //请求方法全部大写，默认GET
-							context: '',
-							data: {
-								"order_id": this.orderid,
-								"user_coordinate": [
-									res.longitude, res.latitude
-								]
-							},
-						}
-						this.$httpReq(options).then((res) => {
-							// 请求成功的回调
-							// res为服务端返回数据的根对象
-							console.log('关锁完成订单电池锁', res)
-							if (res.status == 0) {
-								this.poptype = 'middle-list'
-								this.buttonname = '更换电池'
-								this.afterelect = res.info.battery_level_after + '%'
-								this.addelect = res.info.battery_level_after - this.bikeinfo.battery_level + '%'
-								setTimeout(()=>{
-									uni.navigateBack()
-								},2000)			
-							} else {
-								uni.showToast({
-									title: res.message ? res.message : '关锁失败!',
-									icon: 'none',
-									duration: 2000
-								})
-							}
-						}).catch((err) => {
-							// 请求失败的回调
-							console.error(err, '捕捉')
-						})
-					},
-					fail: () => {},
-					complete: () => {
-						uni.hideLoading()
-					}
-				});
+				this.poptypes='battery-model'
+				// if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
+				// 	var str1 = ble.doCmd('32', '', this.bikeinfo.bluetooth_token)
+				// 	this.uploadflag=true
+				// 	setTimeout(() => {
+				// 		ble.openLock(str1,'gps', function(ress) {
+				// 			console.log('蓝牙操作', ress)
+				// 		})
+				// 		}, 1);
+				// 	}			
+			
 
 			},
 			// 获取车辆信息
@@ -1720,8 +1755,8 @@
 
 		.center-box {
 			font-size: 34upx;
-			height: 140upx;
-			width: 240upx;
+			height: 180upx;
+			width: 320upx;
 		}
 
 		/* margin-bottom: 20upx; */
@@ -1737,6 +1772,30 @@
 				position: fixed;
 				bottom: 3vh;
 				width: 706upx;
+			}
+			.battery-title{
+				font-size: 28upx;
+			}
+			.battery-view{
+				margin-top: 20upx;
+				display: flex;
+				justify-content: space-between;
+				.detil-view{
+					border: 1upx solid rgb(80,80,80);
+					border-radius: 10upx;
+					width: 30%;
+					height: 80upx;
+					line-height: 80upx;
+					color: rgb(80,80,80);
+				}
+				.batteryactive{
+					color:white ;
+					background-color: rgb(0,122,255);
+					width: 32%;
+					line-height: 74upx;
+					border-color: white;
+					
+				}
 			}
 		}
 	}

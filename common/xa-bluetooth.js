@@ -611,6 +611,7 @@ const _connectData = (data, type, callback) => {
 			_analysisBLEContent(dc).then((response) => {
 				callback(response)
 				if (response.name === '连接成功') {
+					store.commit('setBlueconectstate', 1)
 					_dataLen = 0;
 					_CRC16 = '';
 					_dataContent = '';

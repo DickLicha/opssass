@@ -750,7 +750,7 @@
 					this.premovecar(type)
 				}else{
 					console.log(5555)
-					this.opercar(type,1,100,'')
+					this.opercar(type,'','','')
 				}
 				
 			},
@@ -759,6 +759,16 @@
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {
+						var bleinfo={}
+						if(successorfail==''){
+							bleinfo='*'
+						}else{
+							bleinfo={
+								"success": successorfail,
+								"cost": time,
+								"error_msg": errmess
+							}
+						}
 						console.log('位置信息', res.longitude, res.latitude)
 						var options = {
 							url: '/rporder/submit', //请求接口
@@ -771,11 +781,7 @@
 								"bluetooth": this.blueconectstate,
 								'unlock':type,
 								// 执行成功传的值不成功不传
-								"bleinfo": {
-								  "success": successorfail,
-								  "cost": time,
-								  "error_msg": errmess
-								 },
+								"bleinfo":bleinfo
 							}
 						}
 						this.$httpReq(options).then((res) => {
