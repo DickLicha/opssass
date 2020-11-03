@@ -19,7 +19,7 @@
 						</cover-view>
 						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
 					</cover-view>
-					<cover-view v-show="(type==3.1 || type==3) && inglength>0" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
+					<cover-view v-show="(type==3.1 || type==3 || type==0) && inglength>0" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
 					<cover-view class='map-cover-view'>
 						<!-- <cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view> -->
