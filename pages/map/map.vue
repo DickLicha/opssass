@@ -2020,7 +2020,7 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('附近缺电车辆', res)
-					if (res.status == 0) {
+					if (res.status == 0 && res.list.length!=0) {
 						this.covers = []
 						for (let i = 0; i < res.list.length; i++) {
 							let tmpObj = {}
@@ -2394,8 +2394,8 @@
 							setTimeout(() => {
 								uni.navigateBack({
 									delta: 1
-								}, 5000);
-							})
+								});
+							},5000)
 						}
 					}
 				}).catch((err) => {

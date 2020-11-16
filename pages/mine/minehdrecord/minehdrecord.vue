@@ -1,35 +1,72 @@
 <template>
 	<view class='wrap'>
+		<view class='sechead'>
+			<view class='sectitle' @click='titleclick(1)' :class="{'selectclass':isselect==1}">汇总</view>
+			<view class='sectitle' @click='titleclick(2)' :class="{'selectclass':isselect==2}">详细</view>
+		</view> 
 		<view class='view-commons'>
-
-			<view class='flexd-posion'>
-				<view class='view-flexs switch-head'>
-					<view>时间</view>
-					<view class='view-border-letf'>车辆id</view>
-					<view class='view-border-letf'>换前</view>
-					<view class='view-border-letf'>换后</view>
-				</view>
-			</view>
-
-			<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
-				<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key='i'>
-					<view>{{item.create_time}}</view>
-					<view class='view-border-letf'>{{item.bike_id}}</view>
-					<view class='view-border-letf'>{{item.battery_level_before}}%</view>
-					<view class='view-border-letf'>{{item.battery_level_after}}%</view>
-				</view>
-				<uni-load-more :loadingType="resquestState"></uni-load-more>
-			</scroll-view>
-			
-			<uni-popup  :show="type ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">		
-				<view :scroll-y="true" class="uni-center center-box">
-					<view v-for="(item, index) in itemcells" :key="index"  class="list-item">
-						<!-- <item-cell :itemdata="faulttype" type='4' :border='borders'></item-cell> -->
-						<text>{{item.name}}</text>
-						<text class='second-text'>{{item.val}}</text>
+			<view v-if="isselect==1">
+				<view class='flexd-posion'>
+					<view class='view-flexs switch-head'>
+						<view>时间</view>
+						<view class='view-border-letf'>换电数</view>
+						<view class='view-border-letf'>有效数</view>
+						<view class='view-border-letf'>有效率</view>
 					</view>
 				</view>
-			</uni-popup>
+				
+				<scroll-view >
+					<view class='view-flexs view-border-bottom' v-for="(item,i) in switchdatatotal" :key='i'>
+						<view>{{item.date}}</view>
+						<view class='view-border-letf'>{{item.total_count}}</view>
+						<view class='view-border-letf'>{{item.valid_count}}</view>
+						<view class='view-border-letf'>{{item.offic}}%</view>
+						<!-- <view class='view-border-letf'>{{item.valid_count==0?0:(item.valid_count/item.total_count)}}%</view> -->
+					</view>
+					<!-- <uni-load-more :loadingType="resquestState"></uni-load-more> -->
+				</scroll-view>
+				
+				<uni-popup  :show="type ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">		
+					<view :scroll-y="true" class="uni-center center-box">
+						<view v-for="(item, index) in itemcells" :key="index"  class="list-item">
+							<!-- <item-cell :itemdata="faulttype" type='4' :border='borders'></item-cell> -->
+							<text>{{item.name}}</text>
+							<text class='second-text'>{{item.val}}</text>
+						</view>
+					</view>
+				</uni-popup>
+			</view>
+			<view v-if="isselect==2">
+				<view class='flexd-posion'>
+					<view class='view-flexs switch-head'>
+						<view>时间</view>
+						<view class='view-border-letf'>车辆id</view>
+						<view class='view-border-letf'>换前</view>
+						<view class='view-border-letf'>换后</view>
+					</view>
+				</view>
+				
+				<scroll-view class='listscrow' lower-threshold='20' scroll-y @scrolltolower="loadMore">
+					<view class='view-flexs view-border-bottom' v-for="(item,i) in switchloockdata" :key='i'>
+						<view>{{item.create_time}}</view>
+						<view class='view-border-letf'>{{item.bike_id}}</view>
+						<view class='view-border-letf'>{{item.battery_level_before}}%</view>
+						<view class='view-border-letf'>{{item.battery_level_after}}%</view>
+					</view>
+					<uni-load-more :loadingType="resquestState"></uni-load-more>
+				</scroll-view>
+				
+				<uni-popup  :show="type ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">		
+					<view :scroll-y="true" class="uni-center center-box">
+						<view v-for="(item, index) in itemcells" :key="index"  class="list-item">
+							<!-- <item-cell :itemdata="faulttype" type='4' :border='borders'></item-cell> -->
+							<text>{{item.name}}</text>
+							<text class='second-text'>{{item.val}}</text>
+						</view>
+					</view>
+				</uni-popup>
+			</view>
+			
 		</view>
 	</view>
 </template>
@@ -42,6 +79,8 @@
 	export default {
 		data() {
 			return {
+				isselect:1,
+				switchdatatotal:[],
 				switchloockdata: [],
 				resquestState: 0,
 				pageindex:1,
@@ -68,6 +107,9 @@
 			togglePopup(type) {
 				this.type = type
 				
+			},
+			titleclick(index){
+				this.isselect=index
 			},
 			detilpop(item,i,type){
 				this.type=type
@@ -124,13 +166,47 @@
 					console.error(err, '捕捉')
 				})
 			},
+			// 换电汇总
+			batterytotal(userid) {
+				this.setSn('*')
+				var options = {
+					url: '/bcorder/user_monthly_stat', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						user_id:userid
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('换电汇总', res)
+					if (res.status == 0) {
+						for(var i=0;i<res.info.length;i++){
+							var temarr=res.info[i]
+							temarr.offic=res.info[i].valid_count==0?0:(res.info[i].valid_count*100/res.info[i].total_count).toFixed(2)
+							this.switchdatatotal.push(temarr)
+						}
+						// this.switchdatatotal=res.info
+						// this.switchloockdata=this.switchloockdata.concat(res.list)
+					} else {
+						uni.showToast({
+							title: '无记录'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 		},
-		onLoad() {
+		onLoad() {			
 			try {
 				var value = uni.getStorageSync('userinfo');
 				if (value) {
 					this.userid=value.userinfo.id
 					this.openbattery(this.pageindex,this.pagenum)
+					this.batterytotal(this.userid)
 				}
 			} catch (e) {
 				// error
@@ -157,12 +233,30 @@
 		padding-top: 1upx;
 		// height: 100vh;
 		background-color: rgb(245, 245, 245);
-
+        .sechead{
+			margin-top: 8upx;
+        	display: flex;
+        	justify-content: space-around;			
+        .sectitle{
+        	border: 2upx solid black;
+        	border-radius: 6upx;
+        	height: 70upx;
+        	line-height: 70upx;
+        	width: 120upx;
+        	text-align: center;
+			color: rgb(50,50,50);
+			border-color: rgb(50,50,50);
+        }
+			.selectclass{
+				background-color:rgb(26,173,25);
+				color: white;
+				border-color: white;
+			}
+        }
 		.view-commons {
 			margin: 10upx 22upx;
 			position: relative;
-			background-color: white;
-
+			background-color: white;           
 			.switch-head {
 				height: 90upx;
 				line-height: 90upx;

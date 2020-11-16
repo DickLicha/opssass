@@ -30,7 +30,11 @@
 					<view class='battery-title'><text>请选择电池型号：</text></view>
 					<view class='battery-view'>
 						<view class='detil-view' :class="{'batteryactive':activeclass==item}" v-for="(i,item) in batterymodel" :key='i' @click="chosebattery(item,i)"><text>{{i[0]}}</text></view>
-					</view>		
+					</view>
+					<view><view class='battery-view'>
+						<view class='detil-view sure-btn' @click='surechosebtn'><text>确定</text></view>
+						<view class='detil-view cancel-btn' @click="togglePopup('')"><text>取消</text></view>
+					</view></view>		
 					<view></view>
 				</view>
 			</uni-popup>
@@ -559,7 +563,9 @@
 			...mapMutations(['setSn', 'setBlueres','setBikeid']),
 			chosebattery(i,item){
 				this.activeclass=i
-				this.batterym=item[1]
+				this.batterym=item[1]	
+			},
+			surechosebtn(){
 				uni.showLoading({
 					title: '关锁中'
 				});
@@ -1448,8 +1454,59 @@
 				});
 			},
 			// 关闭电池锁完成订单
-			closebattery() {
-				this.poptypes='battery-model'
+			closebattery() {				
+				if(this.batterymodel.length<2){
+					uni.showLoading({
+						title: '关锁中'
+					});
+					uni.getLocation({
+						type: 'wgs84',
+						success: res => {
+							this.setSn('*')
+							var options = {
+								url: '/bcorder/finish', //请求接口
+								method: 'POST', //请求方法全部大写，默认GET
+								context: '',
+								data: {
+									"order_id": this.orderid,
+									"user_coordinate": [
+										res.longitude, res.latitude
+									],
+									"battery_model":this.batterym
+								},
+							}
+							this.$httpReq(options).then((res) => {
+								// 请求成功的回调
+								// res为服务端返回数据的根对象
+								console.log('关锁完成订单电池锁', res)
+								if (res.status == 0) {
+									this.poptype = 'middle-list'
+									this.buttonname = '更换电池'
+									this.afterelect = res.info.battery_level_after + '%'
+									this.addelect = res.info.battery_level_after - this.bikeinfo.battery_level + '%'
+									setTimeout(()=>{
+										uni.navigateBack()
+									},2000)			
+								} else {
+									uni.showToast({
+										title: res.message ? res.message : '关锁失败!',
+										icon: 'none',
+										duration: 2000
+									})
+								}
+							}).catch((err) => {
+								// 请求失败的回调
+								console.error(err, '捕捉')
+							})
+						},
+						fail: () => {},
+						complete: () => {
+							uni.hideLoading()
+						}
+					});
+				}else{
+					this.poptypes='battery-model'
+				}
 				// if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1) {
 				// 	var str1 = ble.doCmd('32', '', this.bikeinfo.bluetooth_token)
 				// 	this.uploadflag=true
@@ -1460,7 +1517,6 @@
 				// 		}, 1);
 				// 	}			
 			
-
 			},
 			// 获取车辆信息
 			getcarinfo() {
@@ -1755,7 +1811,7 @@
 
 		.center-box {
 			font-size: 34upx;
-			height: 180upx;
+			height: 270upx;
 			width: 320upx;
 		}
 
@@ -1786,15 +1842,23 @@
 					width: 30%;
 					height: 80upx;
 					line-height: 80upx;
-					color: rgb(80,80,80);
+					color: rgb(80,80,80);		
+				}
+				.sure-btn{
+					background-color:rgb(0,122,255) ;
+					color: white;
+					width: 45%;
+				}
+				.cancel-btn{
+					width: 45%;
 				}
 				.batteryactive{
-					color:white ;
-					background-color: rgb(0,122,255);
+					/* color:white ; */
+					/* background-color: rgb(0,122,255); */
 					width: 32%;
 					line-height: 74upx;
-					border-color: white;
-					
+					/* border-color: rgb(246,199,0); */
+					border: 4upx solid rgb(246,199,0);
 				}
 			}
 		}

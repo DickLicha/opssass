@@ -29,7 +29,7 @@
 				<view class="time-view">
 					<view class="t-view">禁用时间</view>
 					<view class="f-view" v-for="(item, index) in blacklistedArr" :key="index" :class="{'f-select-view': blacklistedSelect == index}" @click="blackBtnClick(index)">
-						{{item}}天
+						{{item.name}}
 					</view>
 				</view>
 				<view class="time-view">
@@ -85,10 +85,17 @@
 				//  处罚天数
 				blacklisted: 0,
 				blacklistedSelect: 20,
+				// blacklistedArr: [
+				// 	"3",
+				// 	"7",
+				// 	"30",
+				// 	"永久"
+				// ],
 				blacklistedArr: [
-					"3",
-					"7",
-					"30",
+					{name:'3天',val:3},
+					{name:'7天',val:7},
+					{name:'30天',val:30},
+					{name:'永久',val:1000000},
 				],
 				//  处罚金额
 				fine: 0,
@@ -169,7 +176,7 @@
 				}
 				var agreestate=1
 				if (this.blacklistedSelect != 20) {
-					this.blacklisted = this.blacklistedArr[this.blacklistedSelect] * 24 * 3600;
+					this.blacklisted = this.blacklistedArr[this.blacklistedSelect].val * 24 * 3600;
 					if(this.blacklisted!=0){
 						agreestate=10
 					}
@@ -269,7 +276,7 @@
 				this.type = e;
 			},
 			blackBtnClick(e){
-				console.log(e);
+				console.log(333,e);
 				if(this.lahestate){
 					uni.showToast({
 						title: '该订单已拉黑！',
@@ -412,11 +419,11 @@
 		.time-view{
 			display: flex;
 			margin-top: 30upx;
-			margin-left: 20upx;
-			margin-right: 20upx;
+			margin-left: 10upx;
+			margin-right: 10upx;
 			height: 88upx;
 			.t-view{
-				width: 130upx;
+				width: 150upx;
 				height: 70upx;
 				line-height: 70upx;
 			}
