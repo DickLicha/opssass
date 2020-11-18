@@ -966,7 +966,8 @@ uni-view {
 	font-size: 26upx;
 	flex-direction: column;
 	background-color: #fff;
-}
+	width:100%;
+}    
 
 .layer-body {
 	flex-direction: column;

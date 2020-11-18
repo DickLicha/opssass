@@ -9,14 +9,15 @@
 				<view class='wenzi'>开始</view>
 				<view>{{start_time}}</view>
 			</view>
-			<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" value="2020-01-01 00:00:00" :isAll="true"
+			<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" :value=value :isAll="true"
 			 :current="false"></yu-datetime-picker>
 			<view class='timedetil' @tap="toggleTab(2)">
 				<view class='wenzi'>结束</view>
 				<view>{{end_time}}</view>
 			</view>
-			<!-- <calendar @change="change" :startDate="initStartDate" :endDate="initEndDate" :daysCount="daysCount"></calendar> -->
+			
 		</view>
+		<!-- <date-picker @change="change" :startDate="initStartDate" :endDate="initEndDate" ></date-picker> -->
 		<view class="qiun-charts">
 			<!--#ifndef MP-ALIPAY -->
 			<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
@@ -46,26 +47,30 @@
 	import uCharts from '@/common/u-charts.min.js';
 	// import  { isJSON } from '@/common/checker.js';
 	import yuDatetimePicker from "@/components/yu-datetime-picker.vue"
+	// import datePicker from "@/components/date-picker/date-picker.vue"
 	var _self;
 	var canvaLineA = null;
 	export default {
 		data() {
 			return {
+				// initStartDate:'2020-11-11',
+				// initEndDate:'2020-11-12',
 				orderlist: [],
 				cWidth: '',
 				cHeight: '',
 				pixelRatio: 1,
 				textarea: '',
-				start_time:'2020-03-01 00:03:11',
-				end_time:"2020-03-20 00:03:11",
+				start_time:'',
+				end_time:"",
 				timeflag:0,
 				avercarratio:'',
 				avermoney:'',
 				chartlimits:0,
+				value:''
 			}
 		},
 		components: {
-			yuDatetimePicker,
+			yuDatetimePicker
 		},
 		onLoad() {
 			_self = this;
@@ -102,6 +107,9 @@
 			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +
 				" " + '23' + seperator2 + '59' +
 				seperator2 + '59'
+			this.value=date.getFullYear() + seperator1 + month + seperator1 + '01' +
+				" " + '00' + seperator2 + '00' +
+				seperator2 + '00'
 			var acl = []																
 			uni.getStorage({
 				key: 'userinfo',

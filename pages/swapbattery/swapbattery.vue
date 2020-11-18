@@ -1418,23 +1418,24 @@
 							console.log('打开电池锁', res)
 							if (res.status == 0) {																		
 								this.orderid = res.info.id
-								uni.showModal({
-									title: '电池锁已打开，请更换电池',
-									content: '电池锁更换完毕后，会自动记录本次操作',
-									showCancel: false,
-									cancelText: '',
-									confirmText: '我知道了',
-									success: res => {
-										this.buttonname = '结束换电'
-									},
-									fail: () => {},
-									complete: () => {
-										// setTimeout(()=>{
-										// 	uni.navigateBack()
-										// },2000)											
-									}
-								});
-			
+								if(state!=0){
+									uni.showModal({
+										title: '电池锁已打开，请更换电池',
+										content: '电池锁更换完毕后，会自动记录本次操作',
+										showCancel: false,
+										cancelText: '',
+										confirmText: '我知道了',
+										success: res => {
+											this.buttonname = '结束换电'
+										},
+										fail: () => {},
+										complete: () => {
+											// setTimeout(()=>{
+											// 	uni.navigateBack()
+											// },2000)											
+										}
+									});
+								}	
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '开锁失败!',
