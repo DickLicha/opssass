@@ -14,6 +14,42 @@
 						<view class="nav-ct">{{i.name}}</view>
 					</view>
 				</view>
+				
+				<!-- 新加的 -->
+				<view class="data-box" >					
+					<view class= 'out-box' v-for="(i,item) in bigcontdetil" :key='item'>
+						<view class='inner-box'>
+							<view class='inner-head'>
+								<view class='inner-head-left'>{{i.lefttitle}}</view>
+								<view class='inner-head-right'>{{i.righttitle}}</view>
+							</view>
+							<view class='inner-line'></view>
+							<view class='inner-son' v-for="(j,items) in i.dataarr" :key='items'>
+								<view class='inner-son-detil'><text>{{j.name}}{{j.val}}</text></view>
+							</view>
+						</view>
+					</view>					
+				</view>
+				
+				<!-- <view class="data-box" >
+					<view class= 'out-box'>
+						<view class='inner-box'>
+							<view class='inner-head'>
+								<view class='inner-head-left'>huandian</view>
+								<view class='inner-head-right'>777</view>
+							</view>
+							<view class='inner-line'></view>
+							<view class='inner-son'>
+								<view class='inner-son-detil'><text>666666</text></view>
+								<view class='inner-son-detil'><text>555555</text></view>
+								<view class='inner-son-detil'><text>777777</text></view>
+								<view class='inner-son-detil'><text>666666</text></view>
+								<view class='inner-son-detil'><text>666666</text></view>
+							</view>
+						</view>
+					</view>					
+				</view> -->
+				
 				<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
 					<text class='titleSpan'>订单趋势图</text>
 					<!--#ifndef MP-ALIPAY -->
@@ -37,7 +73,7 @@
 						<!--#endif-->
 					</view>
 				</view>
-				
+									
 				<view class="data-box" v-show="limitorder.all">
 					<view class='box-title'>全部</view>
 					<view class="data-item" v-if="limitorder.czje">
@@ -131,7 +167,7 @@
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
-				
+												
 				<view class='data-box'>
 					<view class='box-title'>运维数据</view>
 					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
@@ -169,6 +205,22 @@
 		data() {
 			return {
 				// tab: 1,
+				bigcontdetil:[
+					{lefttitle:'换电',righttitle:'待换电数量：117',dataarr:[
+					{name:'电量10%以下|',val:10},
+					{name:'电量20%以下|',val:10},
+					{name:'电量30%以下|',val:10},
+					{name:'电量40%以下|',val:10},
+					],
+					},
+					{lefttitle:'挪车',righttitle:'待挪车数量：117',dataarr:[
+					{name:'1+|',val:10},
+					{name:'2+|',val:10},
+					{name:'3+|',val:10},
+					{name:'4+|',val:10},
+					],
+					},
+					],
 				qxmenudata:[
 					{name:'车辆扫码',url:'',val:0}
 				],
@@ -1197,6 +1249,53 @@
 		background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
+		.out-box{
+			margin-top: 20upx;
+			.inner-box{
+				// margin: 10upx;
+				border: soild white 2upx;
+				border-radius: 6upx;
+				background-color: #fffafa;
+				margin-top: 20upx;
+				.inner-head{
+					font-size: 32upx;
+					font-weight: 500;
+					display: flex;
+					justify-content: space-between;
+					.inner-head-left{
+						
+					}
+					.inner-head-right{
+						
+					}
+				}
+				.inner-line{
+					 width: 100%;
+					 height: 2upx;
+					 border-top: solid #ACC0D8 2upx;
+			         margin-top: 8upx;
+				}
+				.inner-son{
+					margin-top: 10upx;
+					display: flex;
+					// justify-content: center;
+					flex-wrap: wrap;
+					text-align: center;
+					.inner-son-detil{
+						text-align: center;
+						width: 31%;
+						line-height: 70upx;
+						height: 70upx;
+						border-radius: 8upx;
+						border: solid white 2upx;
+						background-color: rgb(3,169,245);
+						color: white;
+						margin:2upx;
+					}
+				}
+			}
+		}
+		
         .box-title{
 			text-align: center;
 			font-size: 40upx;

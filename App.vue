@@ -19,8 +19,10 @@
 					wx.onBluetoothDeviceFound((res) => {
 						try {		
 							let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
-							console.log("success1:", res.devices[0],machineNO);
+							// console.log("success1:", res.devices[0],machineNO);
+							// console.log("success1:", res);
 							res.machineNO=machineNO
+							// res.localName=res
 							bluealldevice.push(res)						
 						} catch (e) {
 							//TODO handle the exception
@@ -73,8 +75,6 @@
 												        console.log('errputdata',res)
 													}
 												})	
-												var bluealldevices = uni.getStorageSync('bluealldevice');
-												console.log('bluealldevice',bluealldevices)
 											},8000)
 											
 										},
@@ -107,26 +107,6 @@
 					console.log('关闭蓝牙失败', res)
 				}
 			})
-			
-			
-			// let bluedevice={
-			// 	advertisData:'003451386',
-			// 	deviceid:'FF:6F:38:51:34:00',
-			// 	devices:[{deviceId:'FF:6F:38:51:34:00'}],
-			// 	localName:'22'
-			// }
-			
-			// for(var i=0;i<100;i++){
-			// 	let bluedevice2={
-			// 		advertisData:111111111+i,
-			// 		deviceid:'FF:6F:38:51:24:02',
-			// 		localName:'22'
-			// 	}
-			// 	bluealldevice.push(bluedevice2)
-			// }
-			// bluealldevice.push(bluedevice)
-					
-			// console.log('blues',blues)
 			var baseurl = '',
 				realuser = ''		    
 			try {

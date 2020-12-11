@@ -48,16 +48,19 @@ function onBluetoothDeviceFound() {
 			if(bluealldevice){
 				for(var i=0;i<bluealldevice.length;i++){
 					try {
-						console.log("成功1:", bluealldevice[i].devices[0]);
+						// console.log("成功1:", bluealldevice[i].devices[0]);
+						// console.log("成功1:", bluealldevice[i].devices[0]);
 						if (bluebikeinfo.ecu_model == "WA-209D") {
 							//解密编号
 							// let machineNO = dataTransition.encrypt(dataTransition.ab2hex(bluealldevice[i].devices[0].advertisData).slice(4, 13));
 							// console.log('machineNO',machineNO)
 							if (bluealldevice[i].machineNO == bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)) {
 								coreapi(resolve, reject, bluealldevice[i])
-								console.log("成功2:", bluealldevice[i].devices[0]);
+								// console.log("成功2:", bluealldevice[i].devices[0]);
 							}
 						} else {
+							
+							// if (bluealldevice[i].devices[0].localName == bluebikeinfo.bluetooth_name) {
 							if (bluealldevice[i].devices[0].localName == bluebikeinfo.bluetooth_name) {
 								coreapi(resolve, reject, bluealldevice[i])
 							}

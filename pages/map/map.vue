@@ -13,15 +13,6 @@
 					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
 					<!-- <cover-view v-if="actives" class='movecar-view'>拖动地图选择车站</cover-view> -->
 					<cover-view v-if="showmapselect" class='map-select-view'>
-						<!-- <cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata" @click="active(i,item)" :class="{'borderrights':i==isActive}"
-							 :key='i'>{{item.name}}</cover-view>
-						</cover-view> -->
-
-						<!-- <cover-view class='select-list' v-for="(it,j) in selectcoverdata" :key='j'>
-							<cover-view v-for="(item,i) in it" @click="active(i,item,it,j)" :class="{'borderrights':(j.toString()+i.toString())===isActive}"
-							 :key='i'>{{item.name}}</cover-view>
-						</cover-view> -->
 
 						<cover-view class='select-list'>
 							<cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)" :class="{'borderrights':i===isActive0}">{{item.name}}</cover-view>
@@ -46,6 +37,7 @@
 						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view> -->
 						<cover-view v-if="!showcorverview.bottom&&!actives&&!hidebutton" class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
 					</cover-view>
+					
 				</map>
 				<view v-if="actives && type==9">
 					<view class='scroll-viewy'>
@@ -235,22 +227,22 @@
 							val: 100,
 						},
 						{
-							name: '所有35%以下',
+							name: '35%以下',
 							id: '1',
 							val: 35,
 						},
 						{
-							name: '所有30%以下',
+							name: '30%以下',
 							id: '2',
 							val: 30,
 						},
 						{
-							name: '所有20%以下',
+							name: '20%以下',
 							id: '3',
 							val: 20,
 						},
 						{
-							name: '所有10%以下',
+							name: '10%以下',
 							id: '4',
 							val: 10,
 						},
@@ -432,22 +424,22 @@
 									val: 100,
 								},
 								{
-									name: '所有35%以下',
+									name: '35%以下',
 									id: '1',
 									val: 35,
 								},
 								{
-									name: '所有30%以下',
+									name: '30%以下',
 									id: '2',
 									val: 30,
 								},
 								{
-									name: '所有20%以下',
+									name: '20%以下',
 									id: '3',
 									val: 20,
 								},
 								{
-									name: '所有10%以下',
+									name: '10%以下',
 									id: '4',
 									val: 10,
 								},
@@ -1761,6 +1753,7 @@
 						this.covers = []
 						var temparr = []
 						var circles = []
+						var all=res.list.length,up1=0,up2=0,up3=0,up4=5,up5=0,up6=0
 						if (this.type != '9' && !!res.list) {
 							for (let i = 0; i < res.list.length; i++) {
 								let tmpObj = {}
@@ -1777,16 +1770,27 @@
 								tmpObj.height = 48
 								temparr.push(tmpObj)
 								// this.covers.push(tmpObj)
+								if(res.list[i].repark_index==1){
+									up1++
+								}
+								if(res.list[i].repark_index==2){
+									up2++
+								}
+								if(res.list[i].repark_index==3){
+									up3++
+								}
+								if(res.list[i].repark_index==4){
+									up4++
+								}
+								if(res.list[i].park_state==11){
+									up5++
+								}
+								if(res.list[i].park_state==21){
+									up6++
+								}
 							}
+							this.selectcoverdata = [							[{									name: '全部车辆'+'('+all+')',									val: '0',								},								{									name: '1+不动车辆'+'('+up1+')',									val: '1',								},								{									name: '2+不动车辆'+'('+up2+')',									val: '2',								},								{									name: '3+不动车辆'+'('+up3+')',									val: '3',								},								{									name: '4+不动车辆'+'('+up4+')',									val: '4',								},								{									name: '禁停区内车辆'+'('+up5+')',									val: '11',								},								{									name: '服务区外车辆'+'('+up6+')',									val: '21',								},							]						]
 						}
-						// circles: [{ //在地图上显示圆
-						// 		latitude: 26.0627,
-						// 		longitude: 119.31414,
-						// 		fillColor: "#FFC41F", //填充颜色
-						// 		color: "#12A1DD", //描边的颜色
-						// 		radius: 200, //半径
-						// 		strokeWidth: 2 //描边的宽度
-						// 	}],
 						if (!!res.parks) {
 							for (let j = 0; j < res.parks.length; j++) {
 								let tmpObjs = {}
@@ -2020,25 +2024,29 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					console.log('附近缺电车辆', res)
-					if (res.status == 0 && res.list.length!=0) {
-						this.covers = []
+					this.covers = []
+					var all=res.list.length,under35=0,under30=0,under20=0,under10=0
+					if (res.status == 0 && res.list.length!=0) {											
 						for (let i = 0; i < res.list.length; i++) {
 							let tmpObj = {}
 							tmpObj.id = res.list[i].id
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
-							// tmpObj.iconPath = '../../static/mapicon/car_normal.png'
 							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0, 0)
 							tmpObj.width = 39
 							tmpObj.height = 48
 							this.covers.push(tmpObj)
-							// var cc=getborderpoint(longitude,latitude,distancem)	
-
-							// var bikenumber=isInPolygon([res.list[i].coordinate[0],res.list[i].coordinate[1]],cc)
-							// console.log('cc',cc,longitude,latitude,bikenumber)
-							// console.log('mark',res.list[i].coordinate[0],res.list[i].coordinate[1])
-
+                            if(res.list[i].battery_level<35){
+								under35++
+							}if(res.list[i].battery_level<30){
+								under30++
+							}if(res.list[i].battery_level<20){
+								under20++
+							}if(res.list[i].battery_level<10){
+								under10++
+							}
 						}
+						this.selectcoverdata = [							[{									name: '全部换电('+all+')',									id: '0',									val: 100,								},								{									name: '35%以下('+under35+')',									id: '1',									val: 35,								},								{									name: '30%以下('+under30+')',									id: '2',									val: 30,								},								{									name: '20%以下('+under20+')',									id: '3',									val: 20,								},								{									name: '10%以下('+under10+')',									id: '4',									val: 10,								},								// {								// 	name: '低于可用里程',								// 	id: '5',								// 	active: false								// },								{									name: '欠压车辆',									id: '6',									val: 0,								},								{									name: '离线车辆',									id: '7',									val: 7,								},								{									name: '预警车辆',									id: '8',									val: 8,								},								{									name: '疑似故障',									id: '9',									val: 9,								},							],						]
 					}
 				}).catch((err) => {
 					// 请求失败的回调

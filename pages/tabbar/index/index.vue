@@ -5,7 +5,7 @@
 			<text class='head-view-text'>{{headtitle}}</text>
 		</view>
 		<view class='common-base-view'>
-			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item,i)'>
+			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item,i)' :key=i>
 				<!-- <view class='task-view-img'><i class="iconfont icondanche" style='font-size: 70upx;'></i></view> -->
 				<view class='task-view-img'>
 					<image class="" style='width:120upx;height: 120upx;' :src='item.src'></image>
@@ -228,6 +228,19 @@
 							}							
 						}
 					}
+					name = '批量挪车'
+					// url = '/pages/lotsizemove/lotsizemove'
+					url = '/pages/movecarPage/checkupcar/checkupcar?type=101'
+					text = '批量挪车'
+					src = require('../../../static/image/wei_xiu.png')
+					tempobj = {
+						index: onlyid,
+						src: src,
+						name: name,
+						url: url,
+						text: text
+					}
+					this.taskdata.push(tempobj)
 				},
 				fail:res=>{
 					console.log('fail',res)
@@ -390,7 +403,7 @@
 <style lang="scss" scoped>
 	.wrap {
 		// position: relative;
-		height: calc(160vh);
+		height: calc(180vh);
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;
 		overflow-y: hidden;
