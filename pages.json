@@ -316,12 +316,12 @@
 				"titleNView": false
 			}
         }
-        ,{
-            "path" : "pages/lotsizemove/lotsizemove",
-            "style" : {
-				"navigationBarTitleText": "批量挪车"
-			}
-        }
+   //      ,{
+   //          "path" : "pages/lotsizemove/lotsizemove",
+   //          "style" : {
+			// 	"navigationBarTitleText": "批量挪车"
+			// }
+   //      }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

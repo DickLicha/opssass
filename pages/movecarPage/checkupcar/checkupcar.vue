@@ -27,7 +27,7 @@
 							<view class='view-flexs switch-head' @click='checkboxchange'>
 								<view>车辆编号</view>
 								<view class='view-border-letf'>状态</view>
-								<view class='view-border-letf'>电量</view>
+								<view class='view-border-letf'>imei</view>
 								<checkbox class='view-border-letf' refs='checkid' :checked='isallselect' ></checkbox>
 							</view>
 						</view>
@@ -36,7 +36,7 @@
 							<view class='view-flexs view-border-bottom' v-for="(item,i) in switchdatatotal" :key='i' @click='itemclick(i,item.isselect)'>
 								<view>{{item.sn}}</view>
 								<view class='view-border-letf'>{{item.state}}</view>
-								<view class='view-border-letf'>{{item.charge}}</view>
+								<view class='view-border-letf'>{{item.imei}}</view>
 								<checkbox class='view-border-letf'  :checked='item.isselect'></checkbox>								
 							</view>
 						</scroll-view>
@@ -47,7 +47,7 @@
 					</view>
 					
 					<view class='moveview'>
-						<view class='startmove' @click="startmoveall">开始挪车</view>
+						<view class='startmove' :class="{'grayclass':isclick==1}" @click="startmoveallclick">开始挪车</view>
 					</view>
 				</view>
 			</view>
@@ -86,6 +86,7 @@
 	export default {
 		data() {
 			return {
+				isclick:0,
 				// 批量结束挪车索引
 				endcarindex:0,
 				// 批量开始挪车索引
@@ -176,7 +177,6 @@
 					// error
 				}				
 				setTimeout(() => {
-					console.log(3333,this.switchdatatotal)
 					if(this.switchdatatotal.length>0){
 						console.log(444)
 						this.bikeid=this.switchdatatotal[0].id
@@ -421,25 +421,53 @@
 			}
 		},
 		methods: {
-			...mapMutations(['setEndmove', 'setOrderid', 'setSn', 'setBlueres', 'setBikeinfo']),
+			...mapMutations(['setEndmove', 'setOrderid', 'setSn', 'setBlueres', 'setBikeinfo','setBikeid']),
 			mapcentionloc() {
 				this.refreshinfo()
 			},
+			startmoveallclick(){				if(this.plncble(0)==1){					uni.showToast({						title: '未有可操作车辆！'					});					return				}
+				if(this.isclick==0){
+					this.isclick=1
+					uni.showLoading({
+						
+					})
+					this.startmoveall()
+				}				
+			},
+			scanCode(type) {
+				if (type == 1) {
+					wx.scanCode({
+						onlyFromCamera: true, //只允许相机扫码
+						success: res => {
+							console.log('saoma', res)
+							var bikesn = res.result.match(/\?bikesn=(.*)/)[1]
+							this.inputval = bikesn
+							console.log(this.inputval, 555)
+							this.setSn(bikesn)
+							this.setBikeid('*')
+							this.getcarinfo()
+						},
+						fail: res => {},
+						complete: res => {}
+					});
+				} else {
+					uni.navigateTo({
+						url: `/pages/manualscan/manualscan?urls=${this.urls}&&type=${this.type}`
+					})
+				}
+			
+			},
 			startmoveall(){
 				var _self=this
-				_self.openOrClose = 11
-				this.bikeid=this.switchdatatotal[0].id
-				var isslectcar=false
+				_self.openOrClose = 11	
 				var movecar=this.plncble(0)
-				// if(Object.keys(this.plncble(0))!=0){
-				// 	this.startmoveall()
-				// }
 				if(movecar==1){
 					uni.showToast({
 						title: '未有可操作车辆！'
 					});
 					return
 				}
+				this.bikeid=this.switchdatatotal[0].id				
 				setTimeout(()=>{
 					if (this.blueconectstate == 1) {
 						this.premovecar()
@@ -541,7 +569,10 @@
 								isselect: true,
 								// is_defend_on:res.list[i].is_defend_on,
 								is_moved:true,
-								orderid:res.list[i].id
+								imei:res.list[i].imei,
+								orderid:res.list[i].id,
+								startindex:0,
+								endindex:0,
 							})
 							// this.moveorder.push(res.list[i].id)
 							// this.setMovebikearr(this.switchdatatotal)
@@ -622,6 +653,7 @@
 								});
 								return
 							}
+							this.isclick=0
 							this.switchdatatotal.push({
 								sn: res.info.sn,
 								id:res.info.id,
@@ -633,7 +665,10 @@
 								ecu_model:res.info.ecu_model,
 								bluetooth_token:res.info.bluetooth_token,
 								ecu_sn:res.info.ecu_sn,
-								bluetooth_name:res.info.bluetooth_name
+								imei:res.info.imei,
+								bluetooth_name:res.info.bluetooth_name,
+								startindex:0,
+								endindex:0,
 							})
 							console.log(666,this.switchdatatotal)
 						}else{
@@ -684,12 +719,6 @@
 						success: res => {
 							if (res.confirm) {
 								if(this.type==101){
-									// if(this.remarkcarindex!=0 && this.remarkcarindex<this.switchdatatotal.length){
-									// 	uni.showToast({
-									// 		title: '还有未提交订单！'
-									// 	});
-									// 	return
-									// }
 									if(this.blueconectstate == 1){
 										
 									}
@@ -708,6 +737,12 @@
 											title: '请选择车辆！'
 										});
 									}else{
+										if(this.isclick==1){
+											uni.showToast({
+												title: '正在提交订单'
+											});
+											return
+										}
 										var _self=this
 										var endcar=_self.plncble(1)
 										ble.initBluetooth(endcar, (res) => {
@@ -715,17 +750,8 @@
 											_self.setBlueres(res) 
 											// console.log('bleinfo',_self.blueres,_self.switchdatatotal,_self.endcarindex)
 											_self.openOrClose = 10								
-										})
-										
+										})										
 										this.endmovecars(parkid,endcar.orderid)
-										// ble.initBluetooth(_self.switchdatatotal[_self.endcarindex], (res) => {			
-										// 	res.carinfo=_self.switchdatatotal[_self.endcarindex].sn
-										// 	_self.setBlueres(res) 
-										// 	console.log('bleinfo',_self.blueres,_self.switchdatatotal,_self.endcarindex)
-										// 	_self.openOrClose = 10								
-										// })
-
-										// this.endmovecars(parkid,this.switchdatatotal[this.endcarindex].orderid)
 									}																											
 								}else{
 									this.endmovecars(parkid)
@@ -899,8 +925,11 @@
 							console.log('挪车333333', res)
 							if (res.status == 0) {
 
-								if(this.type==101){									for(var i=0;i<this.switchdatatotal.length;i++){										if(this.switchdatatotal[i].sn==res.info.bike_sn){											this.switchdatatotal.splice(i,1)										}									}
+								if(this.type==101){									for(var i=0;i<this.switchdatatotal.length;i++){										if(this.switchdatatotal[i].sn==res.info.bike_sn){
+																						this.switchdatatotal.splice(i,1)
+											console.log(4444,this.switchdatatotal)										}									}
 									if(this.plncble(1)!=1){
+										console.log(11111)
 											this.endmoveopr(parkid, 1, '', '',this.plncble(1).orderid)
 									}																	}
 								uni.showToast({
@@ -923,6 +952,13 @@
 									icon: 'none',
 									duration: 3000
 								});
+								if(this.type==101){						
+									if(this.plncble(1)!=1){
+										console.log(2222)
+										this.endmoveopr(parkid, 1, '', '',this.plncble(1).orderid)
+									}
+									
+								}
 							}
 						}).catch((err) => {
 							// 请求失败的回调
@@ -1140,23 +1176,19 @@
 			plncble(type){
 				// type=0 开始挪车type=1结束挪车
 				var carstate=1
-				for(var i=0;i<this.switchdatatotal.length;i++){
-					if(type==0 && !this.switchdatatotal[i].is_moved && this.switchdatatotal[i].isselect){
+				for(var i=0;i<this.switchdatatotal.length;i++){				
+					if(type==0 && !this.switchdatatotal[i].is_moved && this.switchdatatotal[i].isselect && this.switchdatatotal[i].startindex<10){
 						carstate=this.switchdatatotal[i]
-						// console.log(8888,carstate)
+						this.switchdatatotal[i].startindex+=1		
 						return carstate
 					}
-					if(type==1 && !!this.switchdatatotal[i].orderid && this.switchdatatotal[i].isselect){
+					if(type==1 && !!this.switchdatatotal[i].orderid && this.switchdatatotal[i].isselect && this.switchdatatotal[i].endindex<10){
 						carstate=this.switchdatatotal[i]
+						this.switchdatatotal[i].endindex+=1
 						return carstate
 					}
 				}
 				return carstate
-				// setTimeout(()=>{
-				// 	uni.showToast({
-				// 		title: '未有可操作车辆！'
-				// 	});
-				// },200)
 			},
 			// 挪车具体操作
 			opercar(type, successorfail, time, errmess, snid) {
@@ -1190,7 +1222,7 @@
 								"user_coordinate": [res.longitude, res.latitude],
 								"channel": "xxx",
 								"bluetooth": _self.blueconectstate,
-								'unlock': type,
+								'unlock': 0,
 								// 执行成功传的值不成功不传
 								"bleinfo": bleinfo
 							}
@@ -1205,6 +1237,9 @@
 								if(this.type==101){
 									if(this.plncble(0)!=1){
 										this.startmoveall()
+									}else{
+										this.isclick=0
+										uni.hideLoading()
 									}																		
 								}
 								
@@ -1303,7 +1338,8 @@
 					context: '',
 					data: {
 						bike_id: this.bikeid,
-						user_coordinate: [this.longitude, this.latitude]
+						user_coordinate: [this.longitude, this.latitude],
+						park_visitable_flag:2
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -1392,6 +1428,10 @@
         		color: white;
         		border-color: white;
         	}
+			.grayclass{
+				background-color: gray;
+				color: black;
+			}
         }
 		.moving-view {
 			margin-top: 12upx;

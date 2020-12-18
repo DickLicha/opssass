@@ -4,8 +4,9 @@
 			<view class="index-top-bg theme-bg"></view>
 			<view class="index-top-box">
 				<view style='margin-top: 100upx;'>
-					<view class="nav nav-head" >
-						<navigator class="store" @click="showbotpop" url="../selectStore/selectStore">{{citylist[0].name||'未知城市'}}<text class="iconfont icon-xiajian"></text></navigator>
+					<view class="nav nav-head">
+						<navigator class="store" @click="showbotpop" url="../selectStore/selectStore">{{citylist[0].name||'未知城市'}}<text
+							 class="iconfont icon-xiajian"></text></navigator>
 						<text class="address">{{locaplace||'未获取'}}</text>
 					</view>
 				</view>
@@ -14,42 +15,23 @@
 						<view class="nav-ct">{{i.name}}</view>
 					</view>
 				</view>
-				
+
 				<!-- 新加的 -->
-				<view class="data-box" >					
-					<view class= 'out-box' v-for="(i,item) in bigcontdetil" :key='item'>
-						<view class='inner-box'>
+				<view class="data-box">
+					<view class='out-box' >
+						<view class='inner-box' v-for="(i,item) in bigcontdetil" :key='item'>
 							<view class='inner-head'>
 								<view class='inner-head-left'>{{i.lefttitle}}</view>
 								<view class='inner-head-right'>{{i.righttitle}}</view>
 							</view>
 							<view class='inner-line'></view>
-							<view class='inner-son' v-for="(j,items) in i.dataarr" :key='items'>
-								<view class='inner-son-detil'><text>{{j.name}}{{j.val}}</text></view>
-							</view>
-						</view>
-					</view>					
-				</view>
-				
-				<!-- <view class="data-box" >
-					<view class= 'out-box'>
-						<view class='inner-box'>
-							<view class='inner-head'>
-								<view class='inner-head-left'>huandian</view>
-								<view class='inner-head-right'>777</view>
-							</view>
-							<view class='inner-line'></view>
 							<view class='inner-son'>
-								<view class='inner-son-detil'><text>666666</text></view>
-								<view class='inner-son-detil'><text>555555</text></view>
-								<view class='inner-son-detil'><text>777777</text></view>
-								<view class='inner-son-detil'><text>666666</text></view>
-								<view class='inner-son-detil'><text>666666</text></view>
+								<view class='inner-son-detil' v-for="(j,items) in i.dataarr" :key='items'><text>{{j.name}}{{j.val}}</text></view>
 							</view>
 						</view>
-					</view>					
-				</view> -->
-				
+					</view>
+				</view>
+
 				<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
 					<text class='titleSpan'>订单趋势图</text>
 					<!--#ifndef MP-ALIPAY -->
@@ -58,7 +40,8 @@
 				</view>
 				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt) && showtx">
 					<view class='timeselect-detil'>
-						<view class='timeselect-inner' @click="active(i,item)" :class="{'borderrights':item==isActive}" v-for="(i,item) in timeselect" :key='item'>{{i.name}}</view>
+						<view class='timeselect-inner' @click="active(i,item)" :class="{'borderrights':item==isActive}" v-for="(i,item) in timeselect"
+						 :key='item'>{{i.name}}</view>
 					</view>
 					<view class="qiun-charts" v-show="limitorder.ddjet && showtx">
 						<text class='titleSpan'>订单金额图</text>
@@ -73,7 +56,7 @@
 						<!--#endif-->
 					</view>
 				</view>
-									
+
 				<view class="data-box" v-show="limitorder.all">
 					<view class='box-title'>全部</view>
 					<view class="data-item" v-if="limitorder.czje">
@@ -88,7 +71,7 @@
 						<view class="data-item-ct1">{{monitorv2.urorder_paid_amount_total/100}}</view>
 						<view class="data-item-ct2">订单总金额</view>
 					</view>
-					<view class="data-item" v-if="limitorder.qxddf">						
+					<view class="data-item" v-if="limitorder.qxddf">
 						<view class="data-item-ct1">{{monitorv2.urorder_repark_amount_total/100}}</view>
 						<view class="data-item-ct2">订单调度总金额</view>
 					</view>
@@ -119,7 +102,7 @@
 						<view class="data-item-ct1">{{monitorv2m.urorder_paid_amount_tomonth/100}}</view>
 						<view class="data-item-ct2">订单总金额</view>
 					</view>
-					<view class="data-item" v-if="limitorder.qxddf">						
+					<view class="data-item" v-if="limitorder.qxddf">
 						<view class="data-item-ct1">{{monitorv2m.urorder_repark_amount_tomonth/100}}</view>
 						<view class="data-item-ct2">订单调度总金额</view>
 					</view>
@@ -167,16 +150,16 @@
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
-												
+
 				<view class='data-box'>
 					<view class='box-title'>运维数据</view>
 					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
 						<view class="data-item-ct1">{{i.val}}</view>
 						<view class="data-item-ct2">{{i.name}}</view>
 					</view>
-				</view>			
+				</view>
 			</view>
-		</view>			
+		</view>
 		<!-- <uni-load-more :status="loadStatus"></uni-load-more> -->
 		<uni-popup :show="type ==='middle-list'" position="bottom" mode="fixed" @hidePopup="togglePopup('')">
 			<view :scroll-y="true" class="uni-center center-box" style="height:350upx;overflow-y: auto;">
@@ -196,7 +179,9 @@
 	} from 'vuex'
 	// const app = getApp()
 	var _self;
-	var canvaLineA = null,canvaLineB=null,canvaLineC=null
+	var canvaLineA = null,
+		canvaLineB = null,
+		canvaLineC = null
 	export default {
 		components: {
 			uniPopup,
@@ -205,13 +190,27 @@
 		data() {
 			return {
 				// tab: 1,
-				bigcontdetil:[
-					{lefttitle:'换电',righttitle:'待换电数量：117',dataarr:[
-					{name:'电量10%以下|',val:10},
-					{name:'电量20%以下|',val:10},
-					{name:'电量30%以下|',val:10},
-					{name:'电量40%以下|',val:10},
-					],
+				testdata: [111, 222, 333, 444, 555],
+				bigcontdetil: [{
+						lefttitle: '换电',
+						righttitle: '待换电数量：117',
+						dataarr: [{
+								name: '电量10%以下|',
+								val: 10
+							},
+							{
+								name: '电量20%以下|',
+								val: 10
+							},
+							{
+								name: '电量30%以下|',
+								val: 10
+							},
+							{
+								name: '电量40%以下|',
+								val: 10
+							},
+						],
 					},
 					{lefttitle:'挪车',righttitle:'待挪车数量：117',dataarr:[
 					{name:'1+|',val:10},
@@ -220,13 +219,15 @@
 					{name:'4+|',val:10},
 					],
 					},
-					],
-				qxmenudata:[
-					{name:'车辆扫码',url:'',val:0}
 				],
-				start_time:'',
-				end_time:'',
-				boxdata:[],
+				qxmenudata: [{
+					name: '车辆扫码',
+					url: '',
+					val: 0
+				}],
+				start_time: '',
+				end_time: '',
+				boxdata: [],
 				userInfo: null,
 				top: null,
 				list: [],
@@ -236,7 +237,7 @@
 				checkSaleData: null,
 				type: '',
 				citylist: [],
-				locaplace:'',
+				locaplace: '',
 				carinfo: {
 					shortelec: 3,
 					fault: 4,
@@ -245,42 +246,53 @@
 					repaircar: 1,
 					kzcar: 5
 				},
-				tempobj:{
-					chexiao:0,
-					dingdan:0
+				tempobj: {
+					chexiao: 0,
+					dingdan: 0
 				},
-				showtx:true,
-				monitorv2:{},
-				dailydata:{},
+				showtx: true,
+				monitorv2: {},
+				dailydata: {},
 				cWidth: '',
 				cHeight: '',
 				pixelRatio: 1,
-				monitorv2m:{},
-				limitorder:{
-					all:0,
-					mon:0,
-					day:0,
-					ddqst:0,//订单趋势图
-					ddjet:0,//订单金额图
-					cxt:0,//车效图
-					qxddf:0,//骑行调度费
-					czje:0,//充值金额
-					hykje:0,//会员卡金额
+				monitorv2m: {},
+				limitorder: {
+					all: 0,
+					mon: 0,
+					day: 0,
+					ddqst: 0, //订单趋势图
+					ddjet: 0, //订单金额图
+					cxt: 0, //车效图
+					qxddf: 0, //骑行调度费
+					czje: 0, //充值金额
+					hykje: 0, //会员卡金额
 				},
-				timeselect:[
-					{name:'当月',val:0},
-					{name:'上个月',val:1},
-					{name:'三个月',val:3},
-					{name:'半年',val:6},
-					],
-				isActive:0	
+				timeselect: [{
+						name: '当月',
+						val: 0
+					},
+					{
+						name: '上个月',
+						val: 1
+					},
+					{
+						name: '三个月',
+						val: 3
+					},
+					{
+						name: '半年',
+						val: 6
+					},
+				],
+				isActive: 0
 			}
 		},
 		onLoad() {
-			// var _this=this		
+			var _this = this
 			_self = this;
 			this.cWidth = uni.upx2px(750);
-			this.cHeight = uni.upx2px(350);	
+			this.cHeight = uni.upx2px(350);
 			//#ifdef MP-ALIPAY
 			uni.getSystemInfo({
 				success: function(res) {
@@ -303,10 +315,10 @@
 			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
 				" " + date.getHours() + seperator2 + date.getMinutes() +
 				seperator2 + date.getSeconds()
-			var fmonuth=month-1<10?'0'+(month-1):month-1
+			var fmonuth = month - 1 < 10 ? '0' + (month - 1) : month - 1
 			// 上个月的天数
-			var day=new Date(date.getFullYear(),date.getMonth(),0)					
-			var times=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
+			var day = new Date(date.getFullYear(), date.getMonth(), 0)
+			var times = date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
 			this.getmonitorv2(1)
 			this.getmonitorv2('today')
 			this.getmonitorv2('all')
@@ -315,19 +327,21 @@
 			try {
 				this.citylist = uni.getStorageSync('userinfo').cities;
 				var acl = []
-				this.showtx=true
-				this.qxmenudata=[
-					{name:'车辆扫码',url:'',val:0}
-				]
+				this.showtx = true
+				this.qxmenudata = [{
+					name: '车辆扫码',
+					url: '',
+					val: 0
+				}]
 				uni.getStorage({
 					key: 'userinfo',
 					success: res => {
 						acl = res.data.acl.children
 						var onlyid = '',
-						tempobjs = {},
-						url = '',
-						name = '',
-						val=''
+							tempobjs = {},
+							url = '',
+							name = '',
+							val = ''
 						for (let i = 0; i < acl.length; i++) {
 							if (acl[i].visitable == 1) {
 								onlyid = parseInt(acl[i].uri)
@@ -357,54 +371,54 @@
 										this.qxmenudata.push(tempobjs)
 										break
 									case 15:
-										for(let j=0;j<acl[i].children.length;j++){
-											if(acl[i].children[j].uri==15.1 && acl[i].children[j].visitable){
-												this.tempobj.chexiao=1
+										for (let j = 0; j < acl[i].children.length; j++) {
+											if (acl[i].children[j].uri == 15.1 && acl[i].children[j].visitable) {
+												this.tempobj.chexiao = 1
 											}
-											if(acl[i].children[j].uri==15.2 && acl[i].children[j].visitable){
-												this.tempobj.dingdan=1
+											if (acl[i].children[j].uri == 15.2 && acl[i].children[j].visitable) {
+												this.tempobj.dingdan = 1
 											}
-										}							
+										}
 										break
 									case 16:
-										for(let j=0;j<acl[i].children.length;j++){
-											if(acl[i].children[j].uri==16.1 && acl[i].children[j].visitable){
-												this.limitorder.all=1
+										for (let j = 0; j < acl[i].children.length; j++) {
+											if (acl[i].children[j].uri == 16.1 && acl[i].children[j].visitable) {
+												this.limitorder.all = 1
 											}
-											if(acl[i].children[j].uri==16.2 && acl[i].children[j].visitable){
-												this.limitorder.mon=1
+											if (acl[i].children[j].uri == 16.2 && acl[i].children[j].visitable) {
+												this.limitorder.mon = 1
 											}
-											if(acl[i].children[j].uri==16.3 && acl[i].children[j].visitable){
-												this.limitorder.day=1
+											if (acl[i].children[j].uri == 16.3 && acl[i].children[j].visitable) {
+												this.limitorder.day = 1
 											}
-											if(acl[i].children[j].uri==16.4 && acl[i].children[j].visitable){
-												this.limitorder.ddqst=1
+											if (acl[i].children[j].uri == 16.4 && acl[i].children[j].visitable) {
+												this.limitorder.ddqst = 1
 											}
-											if(acl[i].children[j].uri==16.5 && acl[i].children[j].visitable){
-												this.limitorder.ddjet=1
+											if (acl[i].children[j].uri == 16.5 && acl[i].children[j].visitable) {
+												this.limitorder.ddjet = 1
 											}
-											if(acl[i].children[j].uri==16.6 && acl[i].children[j].visitable){
-												this.limitorder.cxt=1
+											if (acl[i].children[j].uri == 16.6 && acl[i].children[j].visitable) {
+												this.limitorder.cxt = 1
 											}
-											if(acl[i].children[j].uri==16.7 && acl[i].children[j].visitable){
-												this.limitorder.qxddf=1
+											if (acl[i].children[j].uri == 16.7 && acl[i].children[j].visitable) {
+												this.limitorder.qxddf = 1
 											}
-											if(acl[i].children[j].uri==16.8 && acl[i].children[j].visitable){
-												this.limitorder.czje=1
+											if (acl[i].children[j].uri == 16.8 && acl[i].children[j].visitable) {
+												this.limitorder.czje = 1
 											}
-											if(acl[i].children[j].uri==16.9 && acl[i].children[j].visitable){
-												this.limitorder.hykje=1						
-												
+											if (acl[i].children[j].uri == 16.9 && acl[i].children[j].visitable) {
+												this.limitorder.hykje = 1
+
 											}
-										}							
-										break		
+										}
+										break
 								}
-								
+
 							}
 						}
 					},
-					fail:res=>{
-						console.log('fail',res)
+					fail: res => {
+						console.log('fail', res)
 						uni.reLaunch({
 							url: '/pages/mine/loginView/loginView',
 							success: res => {},
@@ -422,7 +436,7 @@
 			wx.getLocation({
 				type: 'wgs84',
 				success(res) {
-					console.log('位置信息', res)			
+					console.log('位置信息', res)
 					const requestTask3 = uni.request({
 						url: "https://apis.map.qq.com/ws/geocoder/v1/?location=" + res.latitude + "," + res.longitude +
 							"&key=ZVNBZ-ACB3S-UOEO5-6JMQK-4EMKT-XZBUX&get_poi=1",
@@ -433,10 +447,10 @@
 						},
 						success: function(res) {
 							console.log('weizhi', res.data);
-							_self.locaplace=res.data.result.formatted_addresses.recommend
+							_self.locaplace = res.data.result.formatted_addresses.recommend
 						}
 					});
-			
+
 				}
 			})
 		},
@@ -448,9 +462,9 @@
 			// this.getList()
 		},
 		methods: {
-			...mapMutations([ 'setSn', 'setBikeid']),
-			gourl(url){
-				if(!!url){
+			...mapMutations(['setSn', 'setBikeid']),
+			gourl(url) {
+				if (!!url) {
 					uni.navigateTo({
 						url: url,
 						success: res => {},
@@ -459,31 +473,31 @@
 					});
 				}
 			},
-			timecalc(type){
+			timecalc(type) {
 				var date = new Date()
 				var seperator1 = "-";
 				var seperator2 = ":";
-				var month0 = date.getMonth() + 1-type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1-type;
-				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;				
+				var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 - type;
+				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
 				var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
 				// var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
 				// 	" " + date.getHours() + seperator2 + date.getMinutes() +
 				// 	seperator2 + date.getSeconds()
 				// var fmonuth=month-1<10?'0'+(month-1):month-1
 				// 上个月的天数
-				var day=new Date(date.getFullYear(),date.getMonth(),0)					
-				this.start_time=date.getFullYear() + seperator1 + month0 + seperator1 + "01" +
+				var day = new Date(date.getFullYear(), date.getMonth(), 0)
+				this.start_time = date.getFullYear() + seperator1 + month0 + seperator1 + "01" +
 					" " + '00' + seperator2 + '00' +
 					seperator2 + '00'
-				this.end_time=date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
+				this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
 					" " + '23' + seperator2 + '59' +
 					seperator2 + '59'
-				console.log('time',this.start_time,this.start_time)	
+				console.log('time', this.start_time, this.start_time)
 			},
-			active(i,item){
-				this.isActive=item
+			active(i, item) {
+				this.isActive = item
 				this.timecalc(i.val)
-				this.getmonitorv2('all')				
+				this.getmonitorv2('all')
 			},
 			touchLineA(e) {
 				canvaLineA.touchLegend(e);
@@ -509,8 +523,8 @@
 					}
 				});
 			},
-			scaninto(type,url) {
-				if(type==0){
+			scaninto(type, url) {
+				if (type == 0) {
 					wx.scanCode({
 						onlyFromCamera: true, //只允许相机扫码
 						success: res => {
@@ -523,7 +537,7 @@
 						fail: res => {},
 						complete: res => {}
 					});
-				}else{
+				} else {
 					uni.navigateTo({
 						url: url,
 						success: res => {},
@@ -531,7 +545,7 @@
 						complete: () => {}
 					});
 				}
-				
+
 			},
 			// 获取车辆信息
 			getcarinfo() {
@@ -583,49 +597,49 @@
 					if (res.status == 0) {
 						// for()
 						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
-						let xdata=0
-						var datatimea=[]
-						let todayNum=[]
-						let todayData={
-							name:'今天',
-							data:[]
+						let xdata = 0
+						var datatimea = []
+						let todayNum = []
+						let todayData = {
+							name: '今天',
+							data: []
 						}
-						let yesterdayData={
-							name:'昨天',
-							data:[],
-							
+						let yesterdayData = {
+							name: '昨天',
+							data: [],
+
 						}
-						let aweekagoData={
-							name:'一周前',
-							data:[]
+						let aweekagoData = {
+							name: '一周前',
+							data: []
 						}
-						var sortyesterday=[]
-						var sorttoday=[]
-						var sortaweekago=[]
-						for(var i in res.yesterday){
+						var sortyesterday = []
+						var sorttoday = []
+						var sortaweekago = []
+						for (var i in res.yesterday) {
 							// datatimea.push(xdata+'时')	
 							sortyesterday.push(i)
 							// xdata+=1						
 						}
-						for(var s=0;s<24;s++){
-							datatimea.push(s+'时')
-						}						
-						sortyesterday=sortyesterday.sort()
-						for(var j=0;j<sortyesterday.length;j++){
+						for (var s = 0; s < 24; s++) {
+							datatimea.push(s + '时')
+						}
+						sortyesterday = sortyesterday.sort()
+						for (var j = 0; j < sortyesterday.length; j++) {
 							yesterdayData.data.push(res.yesterday[sortyesterday[j]])
 						}
-						for(var i in res.today){
-							sorttoday.push(i)						
+						for (var i in res.today) {
+							sorttoday.push(i)
 						}
-						sorttoday=sorttoday.sort()
-						for(var j=0;j<sorttoday.length;j++){
+						sorttoday = sorttoday.sort()
+						for (var j = 0; j < sorttoday.length; j++) {
 							todayData.data.push(res.today[sorttoday[j]])
 						}
-						for(var i in res.aweekago){	
+						for (var i in res.aweekago) {
 							sortaweekago.push(i)
 						}
-						sortaweekago=sortaweekago.sort()
-						for(var j=0;j<sortaweekago.length;j++){
+						sortaweekago = sortaweekago.sort()
+						for (var j = 0; j < sortaweekago.length; j++) {
 							aweekagoData.data.push(res.aweekago[sortaweekago[j]])
 						}
 						let LineA = {
@@ -641,74 +655,106 @@
 						// }
 						_self.showLineA("canvasLineA", LineA);
 						console.log('LineA', LineA)
-						
+
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取订单信息失败'
 						});
 					}
-			
+
 				}).catch((err) => {
 					// 请求失败的回调
 					console.error(err, '捕捉')
 				})
-			
+
 			},
 			getmonitorv2(type) {
-				if(type==1){
+				if (type == 1) {
 					var options = {
 						url: '/city/monitorv2', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
 						context: '',
 						data: {
-							total:1
+							total: 1
 							// start_time:this.start_time,
 							// end_time:this.end_time,
 						},
 					}
-				}else if(type=='today'){
+				} else if (type == 'today') {
 					var options = {
 						url: '/city/monitorv2', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
 						context: '',
 						data: {
-							today:1,
+							today: 1,
 						},
 					}
-				}else if(type=='mon'){
+				} else if (type == 'mon') {
 					var options = {
 						url: '/city/monitorv2', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
 						context: '',
 						data: {
-							tomonth:1,
+							tomonth: 1,
+						},
+					}
+				} else {
+					var options = {
+						url: '/city/monitorv2', //请求接口
+						method: 'POST', //请求方法全部大写，默认GET
+						context: '',
+						data: {
+							daily: 1,
+							start_time: this.start_time,
+							end_time: this.end_time,
 						},
 					}
 				}
-				else{
-					var options = {
-						url: '/city/monitorv2', //请求接口
-						method: 'POST', //请求方法全部大写，默认GET
-						context: '',
-						data: {
-							daily:1,
-							start_time:this.start_time,
-							end_time:this.end_time,
-						},
-					}
-				}
-				
+
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					// console.log('monitorv2', res)
 					if (res.status == 0) {
-						if(type==1){
+						if (type == 1) {
 							this.monitorv2 = res
-							this.monitorv2.urorder_count_per_bike_avg=res.urorder_count_per_bike_avg.toFixed(2)
-						}else if(type=='today'){
-							this.dailydata=res
-							this.boxdata=[
+							this.monitorv2.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
+						} else if (type == 'today') {
+							var battery=res.bike_stat.battery_dist
+							console.log(444,Object.keys(battery)[0],Object.keys(battery)[0],Object.keys(battery)[1],Object.keys(battery)[2])
+							var allmovecar=res.bike_stat.repark_index_0+res.bike_stat.repark_index_1+res.bike_stat.repark_index_2+res.bike_stat.repark_index_3
+							this.dailydata = res
+							this.bigcontdetil=[{
+									lefttitle: '换电',
+									righttitle: '待换电数量：'+res.bike_stat.battery_to_change_count,
+									dataarr: [
+										{
+											name: `${Object.keys(battery)[0]}%|`,
+											val: battery[Object.keys(battery)[0]]
+										},
+										{
+											name: `${Object.keys(battery)[1]}%|`,
+											val: battery[Object.keys(battery)[1]]
+										},
+										{
+											name: `${Object.keys(battery)[2]}%|`,
+											val: battery[Object.keys(battery)[2]]
+										},
+										{
+											name: `${Object.keys(battery)[3]}%|`,
+											val: battery[Object.keys(battery)[3]]
+										},
+									],
+								},
+								{lefttitle:'挪车',righttitle:'待挪车数量：'+allmovecar,dataarr:[
+								{name:'差1+|',val:res.bike_stat.repark_index_0},
+								{name:'差2+|',val:res.bike_stat.repark_index_1},
+								{name:'差3+|',val:res.bike_stat.repark_index_2},
+								{name:'差4+|',val:res.bike_stat.repark_index_3},
+								],
+								},
+							],
+							this.boxdata = [
 								// {name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=车辆监控&text=预警车辆&type=10&alert_state=-1'},
 								// {name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/repairlist/repairlist?type=11'},
 								// {name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
@@ -717,24 +763,56 @@
 								// {name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
 								// {name:'挪车数',val:res.rporder_ok_count,url:''},
 								// {name:'换电数',val:res.bcorder_ok_count,url:''},
-							{name:'预警车辆',val:res.bike_stat.alert_count,url:''},
-							{name:'待排查车辆',val:res.bike_stat.to_check_count,url:''},
-							{name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-							{name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:''},
-							{name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:''},
-							{name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
-							{name:'挪车数',val:res.rporder_ok_count,url:''},
-							{name:'换电数',val:res.bcorder_ok_count,url:''},
+								{
+									name: '预警车辆',
+									val: res.bike_stat.alert_count,
+									url: ''
+								},
+								{
+									name: '待排查车辆',
+									val: res.bike_stat.to_check_count,
+									url: ''
+								},
+								{
+									name: '缺电车辆',
+									val: res.bike_stat.under_volt_count,
+									url: '/pages/map/map?name=换电&text=全部换电&type=0'
+								},
+								{
+									name: '离线车辆',
+									val: res.bike_stat['24h_offline_count'],
+									url: ''
+								},
+								{
+									name: '疑似故障车辆',
+									val: res.bike_stat.alert_fault_count,
+									url: ''
+								},
+								{
+									name: '报修车辆',
+									val: res.bike_stat.fault_count,
+									url: '/pages/map/map?name=维修&text=全部故障车辆&type=1.1'
+								},
+								{
+									name: '挪车数',
+									val: res.rporder_ok_count,
+									url: ''
+								},
+								{
+									name: '换电数',
+									val: res.bcorder_ok_count,
+									url: ''
+								},
 							]
-						}else if(type=='mon'){
-							this.monitorv2m=res
-							this.monitorv2m.urorder_count_per_bike_avg=res.urorder_count_per_bike_avg.toFixed(2)
-						}else{
+						} else if (type == 'mon') {
+							this.monitorv2m = res
+							this.monitorv2m.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
+						} else {
 							var datatimes = []
 							var user_growth = []
 							var user_order_growth = []
 							var bike_count_daily = []
-							var urorder_paid_amount_daily=[]
+							var urorder_paid_amount_daily = []
 							var bikeeffic = {
 								name: '车效',
 								data: []
@@ -744,26 +822,26 @@
 								data: []
 							}
 							this.orderlist = []
-							var temptime=[]
-							for(var i in res.bcorder_ok_count_daily){
+							var temptime = []
+							for (var i in res.bcorder_ok_count_daily) {
 								temptime.push(i)
 							}
-							temptime=temptime.sort()
-							for(var l=0;l<temptime.length;l++){
+							temptime = temptime.sort()
+							for (var l = 0; l < temptime.length; l++) {
 								var formatetime = temptime[l].split('-')
 								var newtimes = formatetime[1] + '-' + formatetime[2]
-								datatimes.push(newtimes)	
+								datatimes.push(newtimes)
 								var bikepers = ''
 								if (res.urorder_count_daily[temptime[l]] == 0 || res.bike_count_daily[temptime[l]] == 0) {
 									bikepers = 0
 								} else {
-									bikepers = parseFloat(res.urorder_count_daily[temptime[l]] / res.bike_count_daily[temptime[l]]).toFixed(1)										
+									bikepers = parseFloat(res.urorder_count_daily[temptime[l]] / res.bike_count_daily[temptime[l]]).toFixed(1)
 								}
 								bike_count_daily.push(bikepers)
-								urorder_paid_amount_daily.push(res.urorder_paid_amount_daily[temptime[l]]/100)
+								urorder_paid_amount_daily.push(res.urorder_paid_amount_daily[temptime[l]] / 100)
 							}
 							bikeeffic.data = bike_count_daily
-							ddje.data=urorder_paid_amount_daily
+							ddje.data = urorder_paid_amount_daily
 							let LineB = {
 								categories: [],
 								series: []
@@ -776,23 +854,23 @@
 							LineB.categories = datatimes
 							LineB.series.push(bikeeffic)
 							_self.showLineA("canvasLineB", LineB);
-							
+
 							LineC.categories = datatimes
 							LineC.series.push(ddje)
 							_self.showLineA("canvasLineC", LineC);
-							
-						}						
+
+						}
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : 'monitorv2'
 						});
 					}
-			
+
 				}).catch((err) => {
 					// 请求失败的回调
 					console.error(err, '捕捉')
 				})
-			
+
 			},
 			go(item) {
 				uni.showModal({
@@ -811,7 +889,7 @@
 				});
 			},
 			changcity(id) {
-				this.showtx=true
+				this.showtx = true
 				var options = {
 					url: '/staff/switch_city', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -824,8 +902,8 @@
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-						this.citylist=res.cities
-						
+						this.citylist = res.cities
+
 						var date = new Date()
 						var seperator1 = "-";
 						var seperator2 = ":";
@@ -834,16 +912,16 @@
 						var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
 							" " + date.getHours() + seperator2 + date.getMinutes() +
 							seperator2 + date.getSeconds()
-						var fmonuth=month-1<10?'0'+(month-1):month-1
+						var fmonuth = month - 1 < 10 ? '0' + (month - 1) : month - 1
 						// 上个月的天数
-						var day=new Date(date.getFullYear(),date.getMonth(),0)					
-						var times=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
+						var day = new Date(date.getFullYear(), date.getMonth(), 0)
+						var times = date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
 						this.getmonitorv2(1)
 						this.getmonitorv2('today')
 						this.getmonitorv2('all')
 						this.getmonitorv2('mon')
 						this.getHourly017(times)
-						
+
 						try {
 							uni.removeStorageSync('userinfo');
 							uni.setStorage({
@@ -889,11 +967,11 @@
 			},
 			showbotpop() {
 				this.type = 'middle-list'
-				this.showtx=false
+				this.showtx = false
 			},
 			togglePopup(type) {
 				this.type = type
-				this.showtx=true
+				this.showtx = true
 			},
 			getList(reset = false) {
 				if (reset) {
@@ -942,7 +1020,7 @@
 				})
 			},
 			showLineA(canvasId, chartData) {
-				if(canvasId=='canvasLineA'){
+				if (canvasId == 'canvasLineA') {
 					canvaLineA = new uCharts({
 						$this: _self,
 						canvasId: canvasId,
@@ -969,7 +1047,7 @@
 							gridType: 'dash',
 							dashLength: 8,
 							labelCount: 4,
-							rotateLabel:true
+							rotateLabel: true
 							// rotateLabel:true
 							// fontSize:8
 						},
@@ -993,13 +1071,13 @@
 							}
 						}
 					});
-				}else if(canvasId=='canvasLineB'){
+				} else if (canvasId == 'canvasLineB') {
 					canvaLineB = new uCharts({
 						$this: _self,
 						canvasId: canvasId,
-						title:{
-							name:'趋势图',
-							fontSize:20
+						title: {
+							name: '趋势图',
+							fontSize: 20
 						},
 						type: 'area',
 						fontSize: 11,
@@ -1023,15 +1101,15 @@
 							gridType: 'dash',
 							dashLength: 8,
 							labelCount: 4,
-							rotateLabel:true,
-							scrollShow:true,
+							rotateLabel: true,
+							scrollShow: true,
 						},
 						yAxis: {
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
 							splitNumber: 5,
-							min:0,
+							min: 0,
 							// min: 10,\\\
 							// max: 180,
 							format: (val) => {
@@ -1047,13 +1125,13 @@
 							}
 						}
 					});
-				}else{
+				} else {
 					canvaLineC = new uCharts({
 						$this: _self,
 						canvasId: canvasId,
-						title:{
-							name:'趋势图',
-							fontSize:20
+						title: {
+							name: '趋势图',
+							fontSize: 20
 						},
 						type: 'area',
 						fontSize: 11,
@@ -1077,15 +1155,15 @@
 							gridType: 'dash',
 							dashLength: 8,
 							labelCount: 4,
-							rotateLabel:true,
-							scrollShow:true,
+							rotateLabel: true,
+							scrollShow: true,
 						},
 						yAxis: {
 							gridType: 'dash',
 							gridColor: '#CCCCCC',
 							dashLength: 8,
 							splitNumber: 5,
-							min:0,
+							min: 0,
 							// min: 10,\\\
 							// max: 180,
 							// disabled:true,
@@ -1103,8 +1181,8 @@
 						}
 					});
 				}
-				
-			
+
+
 			},
 			scanCode() {
 				uni.scanCode({
@@ -1139,12 +1217,14 @@
 		// height: 350upx;
 		text-align: center;
 		background-color: #FFFFFF;
+
 		.charts {
 			width: 750upx;
 			height: 350upx;
 			background-color: #FFFFFF;
 		}
 	}
+
 	.index-top {
 		position: relative;
 		padding-top: 10rpx;
@@ -1161,14 +1241,17 @@
 		.index-top-box {
 			position: relative;
 			z-index: 1;
-			.timeselect-view{
+
+			.timeselect-view {
+
 				// margin: 0 6upx;
 				// border: 2upx solid red;
 				// border-radius: 10upx;
-				.timeselect-detil{
+				.timeselect-detil {
 					display: flex;
-					justify-content: space-around;					
-					.timeselect-inner{
+					justify-content: space-around;
+
+					.timeselect-inner {
 						// border: 2upx solid black;
 						border-radius: 12upx;
 						width: 110upx;
@@ -1176,13 +1259,13 @@
 						line-height: 54upx;
 						text-align: center;
 						background-color: #1aad19;
-						color:white
-						// height: 80upx;
+						color: white // height: 80upx;
 					}
-					.borderrights{
-						color:#F5A623!important;
+
+					.borderrights {
+						color: #F5A623 !important;
 						background-color: white;
-						border:2upx solid #F5A623;
+						border: 2upx solid #F5A623;
 					}
 				}
 			}
@@ -1249,58 +1332,63 @@
 		background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
-		.out-box{
+
+		.out-box {
 			margin-top: 20upx;
-			.inner-box{
+
+			.inner-box {
 				// margin: 10upx;
 				border: soild white 2upx;
 				border-radius: 6upx;
 				background-color: #fffafa;
 				margin-top: 20upx;
-				.inner-head{
+
+				.inner-head {
 					font-size: 32upx;
 					font-weight: 500;
 					display: flex;
 					justify-content: space-between;
-					.inner-head-left{
-						
-					}
-					.inner-head-right{
-						
-					}
+
+					.inner-head-left {}
+
+					.inner-head-right {}
 				}
-				.inner-line{
-					 width: 100%;
-					 height: 2upx;
-					 border-top: solid #ACC0D8 2upx;
-			         margin-top: 8upx;
+
+				.inner-line {
+					width: 100%;
+					height: 2upx;
+					border-top: solid #ACC0D8 2upx;
+					margin-top: 8upx;
 				}
-				.inner-son{
+
+				.inner-son {
 					margin-top: 10upx;
 					display: flex;
 					// justify-content: center;
 					flex-wrap: wrap;
 					text-align: center;
-					.inner-son-detil{
+
+					.inner-son-detil {
 						text-align: center;
-						width: 31%;
+						width: 32%;
 						line-height: 70upx;
 						height: 70upx;
 						border-radius: 8upx;
 						border: solid white 2upx;
-						background-color: rgb(3,169,245);
+						background-color: rgb(3, 169, 245);
 						color: white;
-						margin:2upx;
+						margin: 2upx;
 					}
 				}
 			}
 		}
-		
-        .box-title{
+
+		.box-title {
 			text-align: center;
 			font-size: 40upx;
 			font-weight: 500;
 		}
+
 		.data-item {
 			display: inline-block;
 			width: 32%;
