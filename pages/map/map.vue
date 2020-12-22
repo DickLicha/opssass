@@ -406,6 +406,7 @@
 				switch (this.type) {
 					case '0':
 						var models = this.userinfo.city.battery_models
+						var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps.reverse()
 						var battery_m = [{
 							name: '全部',
 							val: '*'
@@ -417,37 +418,60 @@
 							}
 							battery_m.push(temp)
 						}
+						// this.selectcoverdata = [
+						// 	[{
+						// 			name: '全部换电',
+						// 			id: '0',
+						// 			val: 100,
+						// 		},
+						// 		{
+						// 			name: '35%以下',
+						// 			id: '1',
+						// 			val: 35,
+						// 		},
+						// 		{
+						// 			name: '30%以下',
+						// 			id: '2',
+						// 			val: 30,
+						// 		},
+						// 		{
+						// 			name: '20%以下',
+						// 			id: '3',
+						// 			val: 20,
+						// 		},
+						// 		{
+						// 			name: '10%以下',
+						// 			id: '4',
+						// 			val: 10,
+						// 		},
+						// 		{
+						// 			name: '欠压车辆',
+						// 			id: '6',
+						// 			val: 0,
+						// 		},
+						// 		{
+						// 			name: '离线车辆',
+						// 			id: '7',
+						// 			val: 7,
+						// 		},
+						// 		{
+						// 			name: '预警车辆',
+						// 			id: '8',
+						// 			val: 8,
+						// 		},
+						// 		{
+						// 			name: '疑似故障',
+						// 			id: '9',
+						// 			val: 9,
+						// 		},
+						// 	],
+						// ]
 						this.selectcoverdata = [
 							[{
 									name: '全部换电',
 									id: '0',
 									val: 100,
 								},
-								{
-									name: '35%以下',
-									id: '1',
-									val: 35,
-								},
-								{
-									name: '30%以下',
-									id: '2',
-									val: 30,
-								},
-								{
-									name: '20%以下',
-									id: '3',
-									val: 20,
-								},
-								{
-									name: '10%以下',
-									id: '4',
-									val: 10,
-								},
-								// {
-								// 	name: '低于可用里程',
-								// 	id: '5',
-								// 	active: false
-								// },
 								{
 									name: '欠压车辆',
 									id: '6',
@@ -470,6 +494,14 @@
 								},
 							],
 						]
+						for(var i=0;i<battery_level_to_change_steps.length;i++){
+							var tempobj={
+								name:battery_level_to_change_steps[i]+'%以下',
+								id:battery_level_to_change_steps[i],
+								val:battery_level_to_change_steps[i]
+							}
+							this.selectcoverdata[0].push(tempobj)
+						}
 						this.selectcoverdata[1] = battery_m
 						this.scanbuttonname = '扫码换电'
 						this.changeingbattery()
