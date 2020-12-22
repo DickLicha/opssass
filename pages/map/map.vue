@@ -29,13 +29,11 @@
 						<cover-view class='select-list'>
 							<cover-view v-for="(item,i) in selectcoverdata[4]" :key='i' @click="active(i,item,4)" :class="{'borderrights':i===isActive4}">{{item.name}}</cover-view>
 						</cover-view>
-						<cover-view class='select-sure' @click="selectsure">确定</cover-view>
+						<cover-view class='select-sure' @click.native="selectsure">确定</cover-view>
 					</cover-view>
 					<cover-view v-show="(type==3.1 || type==3 || type==0) && inglength>0" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
-					<cover-view class='map-cover-view'>
-						<!-- <cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(0)">手动输入</cover-view>
-						<cover-view v-if="showcorverview.bottom" class='scan-button' @click="scanCode(1)">{{scanbuttonname}}</cover-view> -->
-						<cover-view v-if="!showcorverview.bottom&&!actives&&!hidebutton" class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
+					<cover-view class='map-cover-view' v-if="!showcorverview.bottom&&!actives&&!hidebutton">
+						<cover-view  class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
 					</cover-view>
 					
 				</map>
