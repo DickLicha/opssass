@@ -182,7 +182,7 @@
 						this.bikeid=this.switchdatatotal[0].id
 						this.getmovingbike()
 					}				
-				}, 300);
+				}, 3000);
 				// return
 			}
 			// else if(e.type==100){
@@ -205,10 +205,16 @@
 					ble.onBLECharacteristicValueChange((res) => {
 						console.log('特征值返回', res, _self.openOrClose)
 						var ecu_model=_self.bikeinfo.ecu_model
+						console.log(1111,ecu_model)
 						if(_self.type==101){
 							// ecu_model=_self.switchdatatotal[_self.remarkcarindex].ecu_model
-							ecu_model=_self.plncble(0).ecu_model
+							if(_self.openOrClose==11){
+								ecu_model=_self.plncble(0).ecu_model
+							}else{
+								ecu_model=_self.plncble(1).ecu_model
+							}							
 						}
+						console.log(2222,ecu_model)
 						// 泰币特类型
 						if (ecu_model == "WA-209D") {
 							if (res.name == '连接成功') {
@@ -271,7 +277,8 @@
 								}
 							}
 
-						} else {
+						} else//小安
+						{
 							var gps = res.slice(0, 2)
 							var blestate = res.slice(-3, -2)
 							if (gps == 20) {
@@ -953,8 +960,7 @@
 									duration: 3000
 								});
 								if(this.type==101){						
-									if(this.plncble(1)!=1){
-										console.log(2222)
+									if(this.plncble(1)!=1){								
 										this.endmoveopr(parkid, 1, '', '',this.plncble(1).orderid)
 									}
 									
@@ -1138,11 +1144,11 @@
 							// this.ids = res.info.id
 							// this.setOrderid(res.info.id)						
 							this.getmovingbike()
-							if (this.timmer == null) {
-								this.timmer = setInterval(() => {
-									this.getmovingbike()
-								}, 3000)
-							}
+							// if (this.timmer == null) {
+							// 	this.timmer = setInterval(() => {
+							// 		this.getmovingbike()
+							// 	}, 3000)
+							// }
 						}
 					}
 					 else {
@@ -1193,6 +1199,7 @@
 			// 挪车具体操作
 			opercar(type, successorfail, time, errmess, snid) {
 				var _self=this
+				var types=type
 				uni.getLocation({ //获取当前的位置坐标
 					type: 'gcj02',
 					success: (res) => {
@@ -1206,12 +1213,14 @@
 								"error_msg": errmess
 							}
 						}
+						console.log(333222,bleinfo)
 						var id = _self.bikeid
 						// if (snid) {
 						// 	id = snid
 						// }
 						if(_self.type==101){
 							id=this.plncble(0).id
+							types=0
 						}
 						var options = {
 							url: '/rporder/submit', //请求接口
@@ -1222,7 +1231,7 @@
 								"user_coordinate": [res.longitude, res.latitude],
 								"channel": "xxx",
 								"bluetooth": _self.blueconectstate,
-								'unlock': 0,
+								'unlock': types,
 								// 执行成功传的值不成功不传
 								"bleinfo": bleinfo
 							}
@@ -1260,11 +1269,11 @@
 								_self.ids = res.info.id
 								_self.setOrderid(res.info.id)
 								_self.getmovingbike()
-								if (_self.timmer == null && _self.type!=101) {
-									_self.timmer = setInterval(() => {
-										_self.getmovingbike()
-									}, 3000)
-								}
+								// if (_self.timmer == null && _self.type!=101) {
+								// 	_self.timmer = setInterval(() => {
+								// 		_self.getmovingbike()
+								// 	}, 3000)
+								// }
 
 								// uni.navigateBack({
 								// 	delta: 1

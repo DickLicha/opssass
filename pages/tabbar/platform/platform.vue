@@ -1,7 +1,9 @@
 <template>
 	<view>
 		<view class="index-top">
-			<view class="index-top-bg theme-bg"></view>
+			<view class="index-top-bg theme-bg">
+
+			</view>
 			<view class="index-top-box">
 				<view style='margin-top: 100upx;'>
 					<view class="nav nav-head">
@@ -18,7 +20,7 @@
 
 				<!-- 新加的 -->
 				<view class="data-box">
-					<view class='out-box' >
+					<view class='out-box'>
 						<view class='inner-box' v-for="(i,item) in bigcontdetil" :key='item'>
 							<view class='inner-head'>
 								<view class='inner-head-left'>{{i.lefttitle}}</view>
@@ -26,11 +28,21 @@
 							</view>
 							<view class='inner-line'></view>
 							<view class='inner-son'>
-								<view class='inner-son-detil' v-for="(j,items) in i.dataarr" :key='items'><text>{{j.name}}{{j.val}}</text></view>
+								<view class='inner-son-detil' v-for="(j,items) in i.dataarr" :key='items'><text>{{j.name}}</text><text></text><text
+									 style='font-size: 20px;'>{{j.val}}</text></view>
 							</view>
 						</view>
 					</view>
 				</view>
+
+				<view class='data-box'>
+					<view class='box-title'>运维数据</view>
+					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
+						<view class="data-item-ct1">{{i.val}}</view>
+						<view class="data-item-ct2">{{i.name}}</view>
+					</view>
+				</view>
+
 
 				<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
 					<text class='titleSpan'>订单趋势图</text>
@@ -56,7 +68,6 @@
 						<!--#endif-->
 					</view>
 				</view>
-
 				<view class="data-box" v-show="limitorder.all">
 					<view class='box-title'>全部</view>
 					<view class="data-item" v-if="limitorder.czje">
@@ -150,14 +161,72 @@
 						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
-
-				<view class='data-box'>
-					<view class='box-title'>运维数据</view>
-					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
-						<view class="data-item-ct1">{{i.val}}</view>
-						<view class="data-item-ct2">{{i.name}}</view>
+				<!-- 昨天 -->
+				<view class="data-box" v-show="limitorder.yesterday">
+					<view class='box-title'>昨天</view>
+					<view class="data-item" v-if="limitorder.czje">
+						<view class="data-item-ct1">{{monitorv3data.yesterday.user_charge_amount/100}}</view>
+						<view class="data-item-ct2">充值金额</view>
+					</view>
+					<view class="data-item" v-if="limitorder.hykje">
+						<view class="data-item-ct1">{{monitorv3data.yesterday.user_membership_amount/100}}</view>
+						<view class="data-item-ct2">会员金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv3data.yesterday.urorder_paid_amount/100}}</view>
+						<view class="data-item-ct2">订单金额</view>
+					</view>
+					<view class="data-item" v-if="limitorder.qxddf">
+						<view class="data-item-ct1">{{monitorv3data.yesterday.urorder_repark_amount/100}}</view>
+						<view class="data-item-ct2">订单调度金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv3data.yesterday.user_count}}</view>
+						<view class="data-item-ct2">用户数</view>
+					</view>
+					<!-- <view class="data-item">
+		        		<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
+		        		<view class="data-item-ct2">认证用户数</view>
+		        	</view> -->
+					<view class="data-item">
+						<view class="data-item-ct1">{{Number((monitorv3data.yesterday.urorder_count/monitorv3data.yesterday.bike_count).toFixed(2))}}</view>
+						<view class="data-item-ct2">平均车效</view>
 					</view>
 				</view>
+				<!-- 一周前 -->
+				<view class="data-box" v-show="limitorder.aweekago">
+					<view class='box-title'>一周前</view>
+					<view class="data-item" v-if="limitorder.czje">
+						<view class="data-item-ct1">{{monitorv3data.aweek.user_charge_amount/100}}</view>
+						<view class="data-item-ct2">充值金额</view>
+					</view>
+					<view class="data-item" v-if="limitorder.hykje">
+						<view class="data-item-ct1">{{monitorv3data.aweek.user_membership_amount/100}}</view>
+						<view class="data-item-ct2">会员金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv3data.aweek.urorder_paid_amount/100}}</view>
+						<view class="data-item-ct2">订单金额</view>
+					</view>
+					<view class="data-item" v-if="limitorder.qxddf">
+						<view class="data-item-ct1">{{monitorv3data.aweek.urorder_repark_amount/100}}</view>
+						<view class="data-item-ct2">订单调度金额</view>
+					</view>
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv3data.aweek.user_count}}</view>
+						<view class="data-item-ct2">用户数</view>
+					</view>
+					<!-- <view class="data-item">
+						<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
+						<view class="data-item-ct2">认证用户数</view>
+					</view> -->
+					<view class="data-item">
+						<view class="data-item-ct1">{{monitorv3data.aweek.urorder_count_per_bike_avg.toFixed(2)}}</view>
+						<view class="data-item-ct2">平均车效</view>
+					</view>
+				</view>
+
+
 			</view>
 		</view>
 		<!-- <uni-load-more :status="loadStatus"></uni-load-more> -->
@@ -190,34 +259,49 @@
 		data() {
 			return {
 				// tab: 1,
+				monitorv3data: {},
 				testdata: [111, 222, 333, 444, 555],
 				bigcontdetil: [{
 						lefttitle: '换电',
 						righttitle: '待换电数量：117',
 						dataarr: [{
-								name: '电量10%以下|',
+								name: '电量10%以下:',
 								val: 10
 							},
 							{
-								name: '电量20%以下|',
+								name: '电量20%以下:',
 								val: 10
 							},
 							{
-								name: '电量30%以下|',
+								name: '电量30%以下:',
 								val: 10
 							},
 							{
-								name: '电量40%以下|',
+								name: '电量40%以下:',
 								val: 10
 							},
 						],
 					},
-					{lefttitle:'挪车',righttitle:'待挪车数量：117',dataarr:[
-					{name:'1+|',val:10},
-					{name:'2+|',val:10},
-					{name:'3+|',val:10},
-					{name:'4+|',val:10},
-					],
+					{
+						lefttitle: '挪车',
+						righttitle: '待挪车数量：117',
+						dataarr: [{
+								name: '1+:',
+								val: 10
+							},
+							{
+								name: '2+:',
+								val: 10
+							},
+							{
+								name: '3+:',
+								val: 10
+							},
+							{
+								name: '4+:',
+								val: 10
+							},
+						],
 					},
 				],
 				qxmenudata: [{
@@ -261,6 +345,8 @@
 					all: 0,
 					mon: 0,
 					day: 0,
+					yesterday: 0,
+					aweekago: 0,
 					ddqst: 0, //订单趋势图
 					ddjet: 0, //订单金额图
 					cxt: 0, //车效图
@@ -319,6 +405,7 @@
 			// 上个月的天数
 			var day = new Date(date.getFullYear(), date.getMonth(), 0)
 			var times = date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
+			this.getmonitorv3()
 			this.getmonitorv2(1)
 			this.getmonitorv2('today')
 			this.getmonitorv2('all')
@@ -382,32 +469,40 @@
 										break
 									case 16:
 										for (let j = 0; j < acl[i].children.length; j++) {
-											if (acl[i].children[j].uri == 16.1 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.1' && acl[i].children[j].visitable) {
 												this.limitorder.all = 1
 											}
-											if (acl[i].children[j].uri == 16.2 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === "16.2" && acl[i].children[j].visitable) {
 												this.limitorder.mon = 1
 											}
-											if (acl[i].children[j].uri == 16.3 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.3' && acl[i].children[j].visitable) {
 												this.limitorder.day = 1
 											}
-											if (acl[i].children[j].uri == 16.4 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.4' && acl[i].children[j].visitable) {
 												this.limitorder.ddqst = 1
 											}
-											if (acl[i].children[j].uri == 16.5 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.5' && acl[i].children[j].visitable) {
 												this.limitorder.ddjet = 1
 											}
-											if (acl[i].children[j].uri == 16.6 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.6' && acl[i].children[j].visitable) {
 												this.limitorder.cxt = 1
 											}
-											if (acl[i].children[j].uri == 16.7 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.7' && acl[i].children[j].visitable) {
 												this.limitorder.qxddf = 1
 											}
-											if (acl[i].children[j].uri == 16.8 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.8' && acl[i].children[j].visitable) {
 												this.limitorder.czje = 1
 											}
-											if (acl[i].children[j].uri == 16.9 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.9' && acl[i].children[j].visitable) {
 												this.limitorder.hykje = 1
+
+											}
+											if (acl[i].children[j].uri === '16.10' && acl[i].children[j].visitable) {
+												this.limitorder.yesterday = 1
+
+											}
+											if (acl[i].children[j].uri === '16.11' && acl[i].children[j].visitable) {
+												this.limitorder.aweekago = 1
 
 											}
 										}
@@ -668,6 +763,37 @@
 				})
 
 			},
+			// v3接口
+			getmonitorv3() {
+				var options = {
+					url: '/city/monitorv3', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						yesterday: 1,
+						bike: 1,
+						aweek: 1
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					if (res.status == 0) {
+						this.monitorv3data = res
+						console.log(2222, res)
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取信息失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
 			getmonitorv2(type) {
 				if (type == 1) {
 					var options = {
@@ -720,90 +846,105 @@
 							this.monitorv2 = res
 							this.monitorv2.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
 						} else if (type == 'today') {
-							var battery=res.bike_stat.battery_dist
-							console.log(444,Object.keys(battery)[0],Object.keys(battery)[0],Object.keys(battery)[1],Object.keys(battery)[2])
-							var allmovecar=res.bike_stat.repark_index_0+res.bike_stat.repark_index_1+res.bike_stat.repark_index_2+res.bike_stat.repark_index_3
+							var battery = res.bike_stat.battery_dist
+							console.log(444, Object.keys(battery)[0], Object.keys(battery)[0], Object.keys(battery)[1], Object.keys(
+								battery)[2])
+							var allmovecar = res.bike_stat.repark_index_0 + res.bike_stat.repark_index_1 + res.bike_stat.repark_index_2 +
+								res.bike_stat.repark_index_3
 							this.dailydata = res
-							this.bigcontdetil=[{
-									lefttitle: '换电',
-									righttitle: '待换电数量：'+res.bike_stat.battery_to_change_count,
-									dataarr: [
-										{
-											name: `${Object.keys(battery)[0]}%|`,
-											val: battery[Object.keys(battery)[0]]
-										},
-										{
-											name: `${Object.keys(battery)[1]}%|`,
-											val: battery[Object.keys(battery)[1]]
-										},
-										{
-											name: `${Object.keys(battery)[2]}%|`,
-											val: battery[Object.keys(battery)[2]]
-										},
-										{
-											name: `${Object.keys(battery)[3]}%|`,
-											val: battery[Object.keys(battery)[3]]
-										},
-									],
-								},
-								{lefttitle:'挪车',righttitle:'待挪车数量：'+allmovecar,dataarr:[
-								{name:'差1+|',val:res.bike_stat.repark_index_0},
-								{name:'差2+|',val:res.bike_stat.repark_index_1},
-								{name:'差3+|',val:res.bike_stat.repark_index_2},
-								{name:'差4+|',val:res.bike_stat.repark_index_3},
+							this.bigcontdetil = [{
+										lefttitle: '换电',
+										righttitle: '待换电数量：' + res.bike_stat.battery_to_change_count,
+										dataarr: [{
+												name: `${Object.keys(battery)[0]}%: `,
+												val: battery[Object.keys(battery)[0]]
+											},
+											{
+												name: `${Object.keys(battery)[1]}%: `,
+												val: battery[Object.keys(battery)[1]]
+											},
+											{
+												name: `${Object.keys(battery)[2]}%: `,
+												val: battery[Object.keys(battery)[2]]
+											},
+											{
+												name: `${Object.keys(battery)[3]}%: `,
+												val: battery[Object.keys(battery)[3]]
+											},
+										],
+									},
+									{
+										lefttitle: '挪车',
+										righttitle: '待挪车数量：' + allmovecar,
+										dataarr: [{
+												name: '差1+: ',
+												val: res.bike_stat.repark_index_0
+											},
+											{
+												name: '差2+: ',
+												val: res.bike_stat.repark_index_1
+											},
+											{
+												name: '差3+: ',
+												val: res.bike_stat.repark_index_2
+											},
+											{
+												name: '差4+: ',
+												val: res.bike_stat.repark_index_3
+											},
+										],
+									},
 								],
-								},
-							],
-							this.boxdata = [
-								// {name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=车辆监控&text=预警车辆&type=10&alert_state=-1'},
-								// {name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/repairlist/repairlist?type=11'},
-								// {name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-								// {name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=车辆监控&text=离线车辆&type=10&is_online=0'},
-								// {name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=车辆监控&text=疑似故障&type=10&&alert_state=16'},
-								// {name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
-								// {name:'挪车数',val:res.rporder_ok_count,url:''},
-								// {name:'换电数',val:res.bcorder_ok_count,url:''},
-								{
-									name: '预警车辆',
-									val: res.bike_stat.alert_count,
-									url: ''
-								},
-								{
-									name: '待排查车辆',
-									val: res.bike_stat.to_check_count,
-									url: ''
-								},
-								{
-									name: '缺电车辆',
-									val: res.bike_stat.under_volt_count,
-									url: '/pages/map/map?name=换电&text=全部换电&type=0'
-								},
-								{
-									name: '离线车辆',
-									val: res.bike_stat['24h_offline_count'],
-									url: ''
-								},
-								{
-									name: '疑似故障车辆',
-									val: res.bike_stat.alert_fault_count,
-									url: ''
-								},
-								{
-									name: '报修车辆',
-									val: res.bike_stat.fault_count,
-									url: '/pages/map/map?name=维修&text=全部故障车辆&type=1.1'
-								},
-								{
-									name: '挪车数',
-									val: res.rporder_ok_count,
-									url: ''
-								},
-								{
-									name: '换电数',
-									val: res.bcorder_ok_count,
-									url: ''
-								},
-							]
+								this.boxdata = [
+									// {name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=车辆监控&text=预警车辆&type=10&alert_state=-1'},
+									// {name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/repairlist/repairlist?type=11'},
+									// {name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+									// {name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=车辆监控&text=离线车辆&type=10&is_online=0'},
+									// {name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=车辆监控&text=疑似故障&type=10&&alert_state=16'},
+									// {name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
+									// {name:'挪车数',val:res.rporder_ok_count,url:''},
+									// {name:'换电数',val:res.bcorder_ok_count,url:''},
+									{
+										name: '预警车辆',
+										val: res.bike_stat.alert_count,
+										url: ''
+									},
+									{
+										name: '待排查车辆',
+										val: res.bike_stat.to_check_count,
+										url: ''
+									},
+									{
+										name: '缺电车辆',
+										val: res.bike_stat.under_volt_count,
+										url: '/pages/map/map?name=换电&text=全部换电&type=0'
+									},
+									{
+										name: '离线车辆',
+										val: res.bike_stat['24h_offline_count'],
+										url: ''
+									},
+									{
+										name: '疑似故障车辆',
+										val: res.bike_stat.alert_fault_count,
+										url: ''
+									},
+									{
+										name: '报修车辆',
+										val: res.bike_stat.fault_count,
+										url: '/pages/map/map?name=维修&text=全部故障车辆&type=1.1'
+									},
+									{
+										name: '挪车数',
+										val: res.rporder_ok_count,
+										url: ''
+									},
+									{
+										name: '换电数',
+										val: res.bcorder_ok_count,
+										url: ''
+									},
+								]
 						} else if (type == 'mon') {
 							this.monitorv2m = res
 							this.monitorv2m.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)

@@ -97,11 +97,16 @@
 			var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
 			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
 				" " + date.getHours() + seperator2 + date.getMinutes() +
-				seperator2 + date.getSeconds()
+				seperator2 + date.getSeconds()			
 			var fmonuth=month-1<10?'0'+(month-1):month-1
 			// 上个月的天数
-			var day=new Date(date.getFullYear(),date.getMonth(),0)					
-			this.start_time=date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate() +
+			var day=new Date(date.getFullYear(),date.getMonth(),0)
+			var startyear=date.getFullYear()
+			if(month=='01'){
+				fmonuth=12
+				startyear=startyear-1
+			}								
+			this.start_time=startyear + seperator1 + fmonuth + seperator1 + day.getDate() +
 				" " + '00' + seperator2 + '00' +
 				seperator2 + '00'
 			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +

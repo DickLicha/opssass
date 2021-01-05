@@ -228,18 +228,18 @@
 							}							
 						}
 					}
-					// name = '批量挪车'
-					// // url = '/pages/lotsizemove/lotsizemove'
-					// url = '/pages/movecarPage/checkupcar/checkupcar?type=101'
-					// text = '批量挪车'
-					// src = require('../../../static/image/wei_xiu.png')
-					// tempobj = {
-					// 	index: onlyid,
-					// 	src: src,
-					// 	name: name,
-					// 	url: url,
-					// 	text: text
-					// }
+					name = '批量挪车'
+					// url = '/pages/lotsizemove/lotsizemove'
+					url = '/pages/movecarPage/checkupcar/checkupcar?type=101'
+					text = '批量挪车'
+					src = require('../../../static/image/wei_xiu.png')
+					tempobj = {
+						index: onlyid,
+						src: src,
+						name: name,
+						url: url,
+						text: text
+					}
 					// this.taskdata.push(tempobj)
 				},
 				fail:res=>{
