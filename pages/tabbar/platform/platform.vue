@@ -21,6 +21,7 @@
 					<!--#endif-->
 				</view>
 				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt) && showtx">
+				
 					<view class='timeselect-detil'>
 						<view class='timeselect-inner' @click="active(i,item)" :class="{'borderrights':item==isActive}" v-for="(i,item) in timeselect" :key='item'>{{i.name}}</view>
 					</view>
