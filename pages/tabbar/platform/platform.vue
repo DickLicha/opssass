@@ -21,7 +21,24 @@
 					<!--#endif-->
 				</view>
 				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt) && showtx">
-				
+					
+					<!-- 新增 -->
+					<view class='timeselect'>
+						<!-- <view>开始时间:</view> -->
+						<view class='timedetil' @tap="toggleTab(1)">
+							<view class='wenzi'>开始</view>
+							<view>{{start_time}}</view>
+						</view>
+						<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" :value=value :isAll="true"
+						 :current="false"></yu-datetime-picker>
+						<view class='timedetil' @tap="toggleTab(2)">
+							<view class='wenzi'>结束</view>
+							<view>{{end_time}}</view>
+						</view>
+						
+					</view>
+					
+					
 					<view class='timeselect-detil'>
 						<view class='timeselect-inner' @click="active(i,item)" :class="{'borderrights':item==isActive}" v-for="(i,item) in timeselect" :key='item'>{{i.name}}</view>
 					</view>
@@ -169,6 +186,7 @@
 </template>
 
 <script>
+	import yuDatetimePicker from "@/components/yu-datetime-picker.vue"
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import uCharts from '@/common/u-charts.min.js';
@@ -182,13 +200,58 @@
 	export default {
 		components: {
 			uniPopup,
-			itemCell
+			itemCell,
+			yuDatetimePicker
 		},
 		data() {
 			return {
 				// tab: 1,
-				qxmenudata:[
-					{name:'车辆扫码',url:'',val:0}
+				timeflag:0,
+				value:'',
+				monitorv3data: {},
+				testdata: [111, 222, 333, 444, 555],
+				bigcontdetil: [{
+						lefttitle: '换电',
+						righttitle: '待换电数量：117',
+						dataarr: [{
+								name: '电量10%以下:',
+								val: 10
+							},
+							{
+								name: '电量20%以下:',
+								val: 10
+							},
+							{
+								name: '电量30%以下:',
+								val: 10
+							},
+							{
+								name: '电量40%以下:',
+								val: 10
+							},
+						],
+					},
+					{
+						lefttitle: '挪车',
+						righttitle: '待挪车数量：117',
+						dataarr: [{
+								name: '1+:',
+								val: 10
+							},
+							{
+								name: '2+:',
+								val: 10
+							},
+							{
+								name: '3+:',
+								val: 10
+							},
+							{
+								name: '4+:',
+								val: 10
+							},
+						],
+					},
 				],
 				start_time:'',
 				end_time:'',
@@ -415,9 +478,22 @@
 			// this.getList()
 		},
 		methods: {
-			...mapMutations([ 'setSn', 'setBikeid']),
-			gourl(url){
-				if(!!url){
+			...mapMutations(['setSn', 'setBikeid']),
+			toggleTab(item) {
+				this.timeflag=item
+			    this.$refs.dateTime.show();  
+			}, 
+			onConfirm(val) {
+				  if(this.timeflag==1){
+					  this.start_time=val.selectRes
+				  }else{
+					  this.end_time=val.selectRes
+				  }
+				  this.getmonitorv2('all')
+				  // this.getServerData()
+			}, 
+			gourl(url) {
+				if (!!url) {
 					uni.navigateTo({
 						url: url,
 						success: res => {},
@@ -430,21 +506,30 @@
 				var date = new Date()
 				var seperator1 = "-";
 				var seperator2 = ":";
-				var month0 = date.getMonth() + 1-type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1-type;
-				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;				
+				var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 - type;
+				var startyear=date.getFullYear()
+				if(month0=='00'||month0=='0-1'||month0=='0-2'||month0=='0-3'||month0=='0-4'||month0=='0-5'){
+					month0 = date.getMonth() + 13 - type < 10 ? "0" + (date.getMonth() + 13 - type) : date.getMonth() + 13 - type;
+					startyear=startyear-1
+				}
+				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
 				var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
 				// var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
 				// 	" " + date.getHours() + seperator2 + date.getMinutes() +
 				// 	seperator2 + date.getSeconds()
 				// var fmonuth=month-1<10?'0'+(month-1):month-1
 				// 上个月的天数
-				var day=new Date(date.getFullYear(),date.getMonth(),0)					
-				this.start_time=date.getFullYear() + seperator1 + month0 + seperator1 + "01" +
+				var day = new Date(date.getFullYear(), date.getMonth(), 0)
+				this.start_time = startyear + seperator1 + month0 + seperator1 + "01" +
 					" " + '00' + seperator2 + '00' +
 					seperator2 + '00'
 				this.end_time=date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
 					" " + '23' + seperator2 + '59' +
 					seperator2 + '59'
+				this.value=date.getFullYear() + seperator1 + month1 + seperator1 + '01' +
+					" " + '00' + seperator2 + '00' +
+					seperator2 + '00'	
+				console.log('time', this.start_time, this.start_time)
 			},
 			active(i,item){
 				this.isActive=item
@@ -1125,7 +1210,26 @@
 		.index-top-box {
 			position: relative;
 			z-index: 1;
-			.timeselect-view{
+
+			.timeselect-view {
+                 // 新增
+				 .timeselect {
+				 	.wenzi {
+				 		font-size: 22upx;
+				 		color: rgb(80, 80, 80);
+				 		margin-right: 40upx;
+				 		line-height: 40upx;
+				 	}
+				 
+				 	display: flex;
+				 	justify-content: space-around;
+				 	height: 50upx;
+				 
+				 	.timedetil {
+				 		display: flex;
+				 		justify-content: space-around;
+				 	}
+				 }
 				// margin: 0 6upx;
 				// border: 2upx solid red;
 				// border-radius: 10upx;
