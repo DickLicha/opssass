@@ -17,7 +17,7 @@
 					<picker-view-column>
 						<view class="yu-datetime-item" v-for="(item,index) in dateObj.days" :key="index">{{item}}日</view>
 					</picker-view-column>
-					<picker-view-column>
+					<!-- <picker-view-column>
 						<view class="yu-datetime-item" v-for="(item,index) in dateObj.hours" :key="index">{{item}}时</view>
 					</picker-view-column>
 					<picker-view-column>
@@ -25,7 +25,7 @@
 					</picker-view-column>
 					<picker-view-column>
 						<view class="yu-datetime-item" v-for="(item,index) in dateObj.seconds" :key="index">{{item}}秒</view>
-					</picker-view-column>
+					</picker-view-column> -->
 				</picker-view>
 				<picker-view v-else :indicator-style="itemHeight" :value="dateValues" @change="bindDateChange">
 					<picker-view-column class="yu-picker-column">
@@ -101,7 +101,7 @@
 			let hours = []
 			let minutes = []
 			let seconds = []
-			for (let i = month; i <= month + 2; i++) {//获取包括当前月份在内的3个月内的日期
+			for (let i = month; i <= month + 2; i++) { //获取包括当前月份在内的3个月内的日期
 				let localMonth = i;
 				let localYear = year;
 				if (i == 13) {
@@ -115,8 +115,12 @@
 					for (let j = day; j <= total; j++) {
 						let m = localMonth;
 						let d = j;
-						if(localMonth < 10){ m = '0' + m;}
-						if(j < 10){ d = '0' + d;}
+						if (localMonth < 10) {
+							m = '0' + m;
+						}
+						if (j < 10) {
+							d = '0' + d;
+						}
 						let str = year + '-' + m + '-' + d;
 						dates.push(str);
 					}
@@ -124,8 +128,12 @@
 					for (let j = 1; j <= total; j++) {
 						let m = localMonth;
 						let d = j;
-						if(localMonth < 10){ m = '0' + m;}
-						if(j < 10){ d = '0' + d;}
+						if (localMonth < 10) {
+							m = '0' + m;
+						}
+						if (j < 10) {
+							d = '0' + d;
+						}
 						let str = localYear + '-' + m + '-' + d;
 						dates.push(str);
 					}
@@ -136,46 +144,64 @@
 			}
 			for (let i = 1; i <= 12; i++) {
 				let str = i;
-				if(i < 10){ str = '0' + str;}
-				else{str = '' + str;}
+				if (i < 10) {
+					str = '0' + str;
+				} else {
+					str = '' + str;
+				}
 				months.push(str)
 			}
-			
-			if(this.value){
+
+			if (this.value) {
 				let valueArr = this.value.split(' ');
 				let valueDateArr = valueArr[0].split('-');
 				let totalCurrent = new Date(valueDateArr[0], valueDateArr[1], 0).getDate();
 				for (let i = 1; i <= totalCurrent; i++) {
 					let str = i;
-					if(i < 10){ str = '0' + str;}
-					else{str = '' + str;}
+					if (i < 10) {
+						str = '0' + str;
+					} else {
+						str = '' + str;
+					}
 					days.push(str)
 				}
-			}else{
+			} else {
 				let totalCurrent = new Date(year, month, 0).getDate();
 				for (let i = 1; i <= totalCurrent; i++) {
 					let str = i;
-					if(i < 10){ str = '0' + str;}
-					else{str = '' + str;}
+					if (i < 10) {
+						str = '0' + str;
+					} else {
+						str = '' + str;
+					}
 					days.push(str)
 				}
 			}
 			for (let i = 0; i < 24; i++) {
 				let str = i;
-				if(i < 10){ str = '0' + str;}
-				else{str = '' + str;}
+				if (i < 10) {
+					str = '0' + str;
+				} else {
+					str = '' + str;
+				}
 				hours.push(str);
 			}
 			for (let i = 0; i < 60; i++) {
 				let str = i;
-				if(i < 10){ str = '0' + str;}
-				else{str = '' + str;}
+				if (i < 10) {
+					str = '0' + str;
+				} else {
+					str = '' + str;
+				}
 				minutes.push(str);
 			}
 			for (let i = 0; i < 60; i++) {
 				let str = i;
-				if(i < 10){ str = '0' + str;}
-				else{str = '' + str;}
+				if (i < 10) {
+					str = '0' + str;
+				} else {
+					str = '' + str;
+				}
 				seconds.push(str);
 			}
 			let dateObj = {
@@ -205,15 +231,16 @@
 		},
 		mounted() {
 			this.initDate();
-			if(!this.value && this.current) {
+			if (!this.value && this.current) {
 				this.showCurrent();
 			}
 		},
 		methods: {
 			initDate() {
-				let _this =this;
+				let _this = this;
 				//解析默认显示的日期时间
 				if (_this.value) {
+					console.log(11111)
 					let values = [0, 0, 0, 0, 0, 0];
 					let dateValues = [0, 0, 0, 0];
 					let valueStr = _this.value;
@@ -221,41 +248,50 @@
 					let valueDateArr = valueArr[0].split('-');
 					let valueTimeArr = valueArr[1].split(':');
 					if (_this.isAll) {
+						console.log(11113)
 						values[0] = (valueDateArr[0] - _this.startYear) > 0 ? valueDateArr[0] - _this.startYear : 0;
 						values[1] = parseInt(valueDateArr[1]) - 1;
 						values[2] = parseInt(valueDateArr[2]) - 1;
-						values[3] = parseInt(valueTimeArr[0]);
-						values[4] = parseInt(valueTimeArr[1]);
-						values[5] = parseInt(valueTimeArr[2]);
+						values[3] = parseInt('00');
+						values[4] = parseInt('00');
+						values[5] = parseInt('00');
 						_this.$nextTick(() => {
 							_this.values = values;
 						})
 						if ((valueDateArr[0] - _this.startYear) >= 0) {
-							_this.selectArr = [valueDateArr[0], valueDateArr[1], valueDateArr[2], valueTimeArr[0], valueTimeArr[1],valueTimeArr[2]];
+							console.log(1,valueDateArr,_this.value)
+							_this.selectArr = [valueDateArr[0], valueDateArr[1], valueDateArr[2], '00', '00', '00'];
 							_this.selectRes = _this.value;
 						} else {
-							_this.selectArr = [_this.formatNum(_this.startYear), valueDateArr[1], valueDateArr[2], valueTimeArr[0],valueTimeArr[1], valueTimeArr[2]];
-							_this.selectRes = `${this.formatNum(_this.startYear)+'-'+valueDateArr[1]+'-'+valueDateArr[2]+' '+valueTimeArr[0]+':'+valueTimeArr[1]+':'+valueTimeArr[2]}`;
+							console.log(2)
+							_this.selectArr = [_this.formatNum(_this.startYear), valueDateArr[1], valueDateArr[2], '00', '00', '00'];
+							_this.selectRes =
+								`${this.formatNum(_this.startYear)+'-'+valueDateArr[1]+'-'+valueDateArr[2]+' '+'00'+':'+'00'+':'+'00'}`;
 						}
 					} else {
 						let str = valueDateArr.join('');
 						let localStr = _this.formatNum(_this.year) + _this.formatNum(_this.month) + _this.formatNum(_this.day) + '';
 						if (str < localStr) {
 							dateValues[0] = 0;
-							_this.selectArr = [_this.formatNum(_this.year), _this.formatNum(_this.month), _this.formatNum(_this.day), valueTimeArr[0],valueTimeArr[1], valueTimeArr[2]];
-							_this.selectRes =`${_this.formatNum(_this.year)+'-' + _this.formatNum(_this.month) + '-' + _this.formatNum(_this.day) + ' ' + valueTimeArr[0] +':'+valueTimeArr[1] +':'+valueTimeArr[2]}`;
+							_this.selectArr = [_this.formatNum(_this.year), _this.formatNum(_this.month), _this.formatNum(_this.day), '00',
+								'00', '00'
+							];
+							_this.selectRes =
+								`${_this.formatNum(_this.year)+'-' + _this.formatNum(_this.month) + '-' + _this.formatNum(_this.day) + ' ' + '00' +':'+'00' +':'+'00'}`;
 						} else {
-							
+
 							let num = 0; //计算默认日期和当前日期相隔天数，计算下标
 							let start = _this.formatNum(_this.year) + '-' + _this.formatNum(_this.month) + '-' + _this.formatNum(_this.day);
 							let res = _this.getBetweenDateStr(start, valueArr[0]);
 							dateValues[0] = res.length - 1;
-							_this.selectArr = [valueDateArr[0], valueDateArr[1], valueDateArr[2], valueTimeArr[0], valueTimeArr[1],valueTimeArr[2]];
+							_this.selectArr = [valueDateArr[0], valueDateArr[1], valueDateArr[2], '00', '00',
+								'00'
+							];
 							_this.selectRes = _this.value;
 						}
-						dateValues[1] = parseInt(valueTimeArr[0]);
-						dateValues[2] = parseInt(valueTimeArr[1]);
-						dateValues[3] = parseInt(valueTimeArr[2]);
+						dateValues[1] = parseInt('00');
+						dateValues[2] = parseInt('00');
+						dateValues[3] = parseInt('00');
 						_this.$nextTick(() => {
 							_this.dateValues = dateValues;
 						});
@@ -263,6 +299,7 @@
 					return;
 				}
 				if (_this.isAll) {
+					console.log(11112)
 					_this.selectArr = [_this.formatNum(_this.startYear), '01', '01', '00', '00', '00'];
 					_this.selectRes = `${_this.formatNum(_this.startYear)+'-01-01 00:00:00'}`;
 				} else {
@@ -273,8 +310,10 @@
 			showCurrent() { //显示当前的日期时间
 				let arr = [0, 0, 0, 0, 0, 0];
 				let dateArr = [0, 0, 0, 0];
-				this.selectArr = [this.formatNum(this.year), this.formatNum(this.month), this.formatNum(this.day), this.formatNum(this.hour), this.formatNum(this.minute), this.formatNum(this.second)];
-				this.selectRes = `${this.formatNum(this.year)+'-'+this.formatNum(this.month)+'-'+this.formatNum(this.day)+' '+this.formatNum(this.hour)+':'+this.formatNum(this.minute)+':'+this.formatNum(this.second)}`;
+				this.selectArr = [this.formatNum(this.year), this.formatNum(this.month), this.formatNum(this.day), this.formatNum(
+					this.hour), this.formatNum(this.minute), this.formatNum(this.second)];
+				this.selectRes =
+					`${this.formatNum(this.year)+'-'+this.formatNum(this.month)+'-'+this.formatNum(this.day)+' '+this.formatNum(this.hour)+':'+this.formatNum(this.minute)+':'+this.formatNum(this.second)}`;
 				if (this.isAll) {
 					arr[0] = this.year - this.startYear;
 					arr[1] = this.month - 1;
@@ -326,6 +365,7 @@
 				this.showPicker = false;
 			},
 			pickerConfirm(e) { //日期时间确定
+				// console.log(3333, this.selectArr, this.selectRes)
 				this.$emit("confirm", {
 					selectArr: this.selectArr,
 					selectRes: this.selectRes
@@ -345,9 +385,9 @@
 				year = this.dateObj.years[valueArr[0]];
 				month = this.dateObj.months[valueArr[1]];
 				day = this.dateObj.days[valueArr[2]];
-				hour = this.dateObj.hours[valueArr[3]];
-				minute = this.dateObj.minutes[valueArr[4]];
-				second = this.dateObj.seconds[valueArr[5]];
+				hour = '00';
+				minute = '00';
+				second = '00';
 				if (year != selectArr[0]) {
 					dayArr = this.initDayArr(year, month);
 					this.dateObj.days = dayArr;
@@ -366,9 +406,9 @@
 				let valueArr = e.detail.value;
 				let dateStr = "",
 					dateArr = [],
-					hour = "",
-					minute = "",
-					second = "";
+					hour = "00",
+					minute = "00",
+					second = "00";
 				let selectArr = this.selectArr;
 				let dayArr = [];
 				dateStr = this.dateObj.dates[valueArr[0]];

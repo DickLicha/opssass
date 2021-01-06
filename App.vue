@@ -18,8 +18,8 @@
 			console.log('baseurl', realuser)
 			if (baseurl == '') {
 				try {
-					// uni.setStorageSync('baseurl', 'https://api.dd.ildjoy.com');
-					uni.setStorageSync('baseurl', 'https://api.dd.lexiangys.top');
+					uni.setStorageSync('baseurl', 'https://api.dd.ildjoy.com');
+					// uni.setStorageSync('baseurl', 'https://api.dd.lexiangys.top');
 				} catch (e) {
 					// error
 				}
