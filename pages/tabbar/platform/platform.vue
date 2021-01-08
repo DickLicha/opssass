@@ -1087,6 +1087,117 @@
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
 						this.citylist = res.cities
+						
+						var acl = res.acl.children
+						var onlyid = '',
+							tempobjs = {},
+							url = '',
+							name = '',
+							val = ''
+							this.qxmenudata=[]
+						for (let i = 0; i < acl.length; i++) {
+							if (acl[i].visitable == 1) {
+								onlyid = parseInt(acl[i].uri)				
+								switch (onlyid) {						
+									case 0:
+										tempobjs = {
+											name: '附近换电',
+											url: '/pages/map/map?name=换电&text=全部换电&type=0',
+											val: 1
+										}
+										this.qxmenudata.push(tempobjs)
+										break
+									case 3:
+										tempobjs = {
+											name: '单个挪车',
+											url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
+											val: 2
+										}
+										this.qxmenudata.push(tempobjs)
+										break
+									case 10:
+										tempobjs = {
+											name: '违章举报',
+											url: '/pages/repairlist/repairlist?type=10',
+											val: 3
+										}
+										this.qxmenudata.push(tempobjs)
+										break
+									case 15:
+										this.tempobj={
+											chexiao:0,
+											dingdan:0
+										}
+										for (let j = 0; j < acl[i].children.length; j++) {
+											if (acl[i].children[j].uri == 15.1 && acl[i].children[j].visitable) {
+												this.tempobj.chexiao = 1
+											}
+											if (acl[i].children[j].uri == 15.2 && acl[i].children[j].visitable) {
+												this.tempobj.dingdan = 1
+											}
+										}
+										break
+									case 16:
+									    this.limitorder= {
+									    	all: 0,
+									    	mon: 0,
+									    	day: 0,
+									    	yesterday: 0,
+									    	aweekago: 0,
+									    	ddqst: 0, //订单趋势图
+									    	ddjet: 0, //订单金额图
+									    	cxt: 0, //车效图
+									    	qxddf: 0, //骑行调度费
+									    	czje: 0, //充值金额
+									    	hykje: 0, //会员卡金额
+									    }
+										for (let j = 0; j < acl[i].children.length; j++) {
+											if (acl[i].children[j].uri === '16.1' && acl[i].children[j].visitable) {
+												this.limitorder.all = 1
+											}
+											if (acl[i].children[j].uri === "16.2" && acl[i].children[j].visitable) {
+												this.limitorder.mon = 1
+											}
+											if (acl[i].children[j].uri === '16.3' && acl[i].children[j].visitable) {
+												this.limitorder.day = 1
+											}
+											if (acl[i].children[j].uri === '16.4' && acl[i].children[j].visitable) {
+												this.limitorder.ddqst = 1
+											}
+											if (acl[i].children[j].uri === '16.5' && acl[i].children[j].visitable) {
+												this.limitorder.ddjet = 1
+											}
+											if (acl[i].children[j].uri === '16.6' && acl[i].children[j].visitable) {
+												this.limitorder.cxt = 1
+											}
+											if (acl[i].children[j].uri === '16.7' && acl[i].children[j].visitable) {
+												this.limitorder.qxddf = 1
+											}
+											if (acl[i].children[j].uri === '16.8' && acl[i].children[j].visitable) {
+												this.limitorder.czje = 1
+											}
+											if (acl[i].children[j].uri === '16.9' && acl[i].children[j].visitable) {
+												this.limitorder.hykje = 1
+						
+											}
+											if (acl[i].children[j].uri === '16.10' && acl[i].children[j].visitable) {
+												this.limitorder.yesterday = 1
+						
+											}
+											if (acl[i].children[j].uri === '16.11' && acl[i].children[j].visitable) {
+												this.limitorder.aweekago = 1
+						
+											}
+										}
+										break
+								}
+						
+							}
+						}
+						
+						
+						
+						
 
 						var date = new Date()
 						var seperator1 = "-";

@@ -240,7 +240,7 @@
 						url: url,
 						text: text
 					}
-					// this.taskdata.push(tempobj)
+					this.taskdata.push(tempobj)
 				},
 				fail:res=>{
 					console.log('fail',res)
