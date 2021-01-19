@@ -1020,7 +1020,8 @@
 			},
 			gocarcenter() {
 				uni.navigateTo({
-					url: '/pages/carBigCenter/carcenter/carcenter',
+					// url: '/pages/carBigCenter/carcenter/carcenter',
+					url: '/pages/swapbattery/swapbattery',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

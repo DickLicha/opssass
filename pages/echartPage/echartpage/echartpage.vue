@@ -106,12 +106,8 @@
 				fmonuth=12
 				startyear=startyear-1
 			}								
-			this.start_time=startyear + seperator1 + fmonuth + seperator1 + day.getDate() +
-				" " + '00' + seperator2 + '00' +
-				seperator2 + '00'
-			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate +
-				" " + '23' + seperator2 + '59' +
-				seperator2 + '59'
+			this.start_time=startyear + seperator1 + fmonuth + seperator1 + day.getDate()
+			this.end_time=date.getFullYear() + seperator1 + month + seperator1 + strDate
 			this.value=date.getFullYear() + seperator1 + month + seperator1 + '01' +
 				" " + '00' + seperator2 + '00' +
 				seperator2 + '00'

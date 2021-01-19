@@ -218,58 +218,60 @@
 				mapinfo: null,
 				scale: '18', //缩放级别5-18
 				showLocation: true,
+				// selectcoverdata: [
+				// 	[{
+				// 			name: '全部换电',
+				// 			id: '0',
+				// 			val: 100,
+				// 		},
+				// 		{
+				// 			name: '35%以下',
+				// 			id: '1',
+				// 			val: 35,
+				// 		},
+				// 		{
+				// 			name: '30%以下',
+				// 			id: '2',
+				// 			val: 30,
+				// 		},
+				// 		{
+				// 			name: '20%以下',
+				// 			id: '3',
+				// 			val: 20,
+				// 		},
+				// 		{
+				// 			name: '10%以下',
+				// 			id: '4',
+				// 			val: 10,
+				// 		},
+				// 		// {
+				// 		// 	name: '低于可用里程',
+				// 		// 	id: '5',
+				// 		// 	active: false
+				// 		// },
+				// 		{
+				// 			name: '欠压车辆',
+				// 			id: '6',
+				// 			val: 0,
+				// 		},
+				// 		{
+				// 			name: '离线车辆',
+				// 			id: '7',
+				// 			val: 7,
+				// 		},
+				// 		{
+				// 			name: '预警车辆',
+				// 			id: '8',
+				// 			val: 8,
+				// 		},
+				// 		{
+				// 			name: '疑似故障',
+				// 			id: '9',
+				// 			val: 9,
+				// 		},
+				// 	]
+				// ],
 				selectcoverdata: [
-					[{
-							name: '全部换电',
-							id: '0',
-							val: 100,
-						},
-						{
-							name: '35%以下',
-							id: '1',
-							val: 35,
-						},
-						{
-							name: '30%以下',
-							id: '2',
-							val: 30,
-						},
-						{
-							name: '20%以下',
-							id: '3',
-							val: 20,
-						},
-						{
-							name: '10%以下',
-							id: '4',
-							val: 10,
-						},
-						// {
-						// 	name: '低于可用里程',
-						// 	id: '5',
-						// 	active: false
-						// },
-						{
-							name: '欠压车辆',
-							id: '6',
-							val: 0,
-						},
-						{
-							name: '离线车辆',
-							id: '7',
-							val: 7,
-						},
-						{
-							name: '预警车辆',
-							id: '8',
-							val: 8,
-						},
-						{
-							name: '疑似故障',
-							id: '9',
-							val: 9,
-						},
-					]
 				],
 				covers: [],
 				circles: [],
@@ -418,41 +420,41 @@
 							}
 							battery_m.push(temp)
 						}
-						// this.selectcoverdata[0] = 
-						// 	[{
-						// 			name: '全部换电',
-						// 			id: '0',
-						// 			val: 100,
-						// 		},
-						// 		{
-						// 			name: '欠压车辆',
-						// 			id: '6',
-						// 			val: 0,
-						// 		},
-						// 		{
-						// 			name: '离线车辆',
-						// 			id: '7',
-						// 			val: 7,
-						// 		},
-						// 		{
-						// 			name: '预警车辆',
-						// 			id: '8',
-						// 			val: 8,
-						// 		},
-						// 		{
-						// 			name: '疑似故障',
-						// 			id: '9',
-						// 			val: 9,
-						// 		},
-						// 	]						
-						// for(var i=0;i<battery_level_to_change_steps.length;i++){
-						// 	var tempobj={
-						// 		name:battery_level_to_change_steps[i]+'%以下',
-						// 		id:battery_level_to_change_steps[i],
-						// 		val:battery_level_to_change_steps[i]
-						// 	}
-						// 	this.selectcoverdata[0].push(tempobj)
-						// }
+						this.selectcoverdata[0] = 
+							[{
+									name: '全部换电',
+									id: '0',
+									val: 100,
+								},
+								{
+									name: '欠压车辆',
+									id: '6',
+									val: 0,
+								},
+								{
+									name: '离线车辆',
+									id: '7',
+									val: 7,
+								},
+								{
+									name: '预警车辆',
+									id: '8',
+									val: 8,
+								},
+								{
+									name: '疑似故障',
+									id: '9',
+									val: 9,
+								},
+							]						
+						for(var i=0;i<battery_level_to_change_steps.length;i++){
+							var tempobj={
+								name:battery_level_to_change_steps[i]+'%以下（0）',
+								id:battery_level_to_change_steps[i],
+								val:battery_level_to_change_steps[i]
+							}
+							this.selectcoverdata[0].push(tempobj)
+						}
 						this.selectcoverdata[1] = battery_m
 						this.scanbuttonname = '扫码换电'					
 						break;
@@ -2006,8 +2008,39 @@
 					// res为服务端返回数据的根对象
 					console.log('附近缺电车辆', res)
 					this.covers = []
-					var all=res.list.length,under35=0,under30=0,under20=0,under10=0
+					var all=res.list.length,under35=0,under30=0,under20=0,under10=0	
+						var battery_step_arr=[]
+						var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps
+						for(var i=0;i<battery_level_to_change_steps.length;i++){
+							    var tempobj={
+								name:battery_level_to_change_steps[i]+'%以下',
+								id:battery_level_to_change_steps[i],
+								val:battery_level_to_change_steps[i],
+								num:0
+							   }
+							   battery_step_arr.push(tempobj)
+							  }
 					if (res.status == 0 && res.list.length!=0) {
+						
+						for (let i = 0; i < res.list.length; i++) {
+							let tmpObj = {}
+							tmpObj.id = res.list[i].id
+							tmpObj.latitude = res.list[i].coordinate[1]
+							tmpObj.longitude = res.list[i].coordinate[0]
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0, 0)
+							tmpObj.width = 39
+							tmpObj.height = 48
+							this.covers.push(tmpObj)
+							// 根据换电梯度筛选出某个阶段电量的数量								
+							for(var g=0;g<battery_step_arr.length;g++){
+								if(res.list[i].battery_level<battery_step_arr[g].val){
+									battery_step_arr[g].num++
+								}
+							}
+						}
+						for(var q=0;q<battery_step_arr.length;q++){
+							battery_step_arr[q].name=battery_step_arr[q].name+'('+battery_step_arr[q].num+')'
+						}
 						this.selectcoverdata[0] =
 							[{
 									name: '全部换电',
@@ -2035,43 +2068,12 @@
 									val: 9,
 								},
 							]
-							var battery_step_arr=[]
-							var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps
-							for(var i=0;i<battery_level_to_change_steps.length;i++){
-								    var tempobj={
-									name:battery_level_to_change_steps[i]+'%以下',
-									id:battery_level_to_change_steps[i],
-									val:battery_level_to_change_steps[i],
-									num:0
-								   }
-								   battery_step_arr.push(tempobj)
-								  }
-						for (let i = 0; i < res.list.length; i++) {
-							let tmpObj = {}
-							tmpObj.id = res.list[i].id
-							tmpObj.latitude = res.list[i].coordinate[1]
-							tmpObj.longitude = res.list[i].coordinate[0]
-							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0, 0)
-							tmpObj.width = 39
-							tmpObj.height = 48
-							this.covers.push(tmpObj)
-															
-							for(var g=0;g<battery_step_arr.length;g++){
-								if(res.list[i].battery_level<battery_step_arr[g].val){
-									battery_step_arr[g].num++
-								}
-							}
-						}
-						for(var q=0;q<battery_step_arr.length;q++){
-							battery_step_arr[q].name=battery_step_arr[q].name+'('+battery_step_arr[q].num+')'
-						}
 						this.selectcoverdata[0][0]={
 									name: '全部换电'+'('+res.list.length+')',
 									id: '0',
 									val: 100,
 								}
 						this.selectcoverdata[0]=this.selectcoverdata[0].concat(battery_step_arr)
-						// this.selectcoverdata[0] = 						// 	[{						// 			name: '全部换电('+all+')',						// 			id: '0',						// 			val: 100,						// 		},						// 		{						// 			name: '35%以下('+under35+')',						// 			id: '1',						// 			val: 35,						// 		},						// 		{						// 			name: '30%以下('+under30+')',						// 			id: '2',						// 			val: 30,						// 		},						// 		{						// 			name: '20%以下('+under20+')',						// 			id: '3',						// 			val: 20,						// 		},						// 		{						// 			name: '10%以下('+under10+')',						// 			id: '4',						// 			val: 10,						// 		},						// 		{						// 			name: '欠压车辆',						// 			id: '6',						// 			val: 0,						// 		},						// 		{						// 			name: '离线车辆',						// 			id: '7',						// 			val: 7,						// 		},						// 		{						// 			name: '预警车辆',						// 			id: '8',						// 			val: 8,						// 		},						// 		{						// 			name: '疑似故障',						// 			id: '9',						// 			val: 9,						// 		},						// 	]
 					}
 				}).catch((err) => {
 					// 请求失败的回调

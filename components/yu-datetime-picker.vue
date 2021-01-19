@@ -7,7 +7,7 @@
 				<view class="yu-datetime-btn" :style="{color: color}" @tap="pickerConfirm">确定</view>
 			</view>
 			<view class="yu-datetime-view">
-				<picker-view v-if="isAll" :indicator-style="itemHeight" :value="values" @change="bindChange">
+				<picker-view  v-if="isAll" :indicator-style="itemHeight" :value="values" @change="bindChange">
 					<picker-view-column>
 						<view class="yu-datetime-item" v-for="(item,index) in dateObj.years" :key="index">{{item}}年</view>
 					</picker-view-column>
@@ -248,7 +248,6 @@
 					let valueDateArr = valueArr[0].split('-');
 					let valueTimeArr = valueArr[1].split(':');
 					if (_this.isAll) {
-						console.log(11113)
 						values[0] = (valueDateArr[0] - _this.startYear) > 0 ? valueDateArr[0] - _this.startYear : 0;
 						values[1] = parseInt(valueDateArr[1]) - 1;
 						values[2] = parseInt(valueDateArr[2]) - 1;
@@ -350,25 +349,30 @@
 				return num < 10 ? '0' + num : num + '';
 			},
 			maskClick() { //日期时间的遮罩
+			    this.$emit("clickOther");
 				this.showPicker = false;
+				console.log(33333)		
 			},
 			show() { //日期时间的显示
 				this.showPicker = true;
 			},
 			hide() { //日期时间的隐藏
+				console.log(2222)
 				this.showPicker = false;
 			},
 			pickerCancel() { //日期时间取消
-				this.$emit("cancel", {
+			    console.log(11111)
+				this.$emit("canCel", {
 					selectArr: this.selectArr
 				});
 				this.showPicker = false;
 			},
-			pickerConfirm(e) { //日期时间确定
-				// console.log(3333, this.selectArr, this.selectRes)
+			pickerConfirm(e) { //日期时间确定	
+				var temptime=this.selectRes.split(' ')[0]
 				this.$emit("confirm", {
 					selectArr: this.selectArr,
-					selectRes: this.selectRes
+					// selectRes: this.selectRes
+					selectRes: temptime
 				});
 				this.showPicker = false;
 			},

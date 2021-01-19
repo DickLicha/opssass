@@ -19,7 +19,8 @@
 				</view>
 
 				<!-- 新加的 -->
-				<view class="data-box">
+				<view class="data-box timeselect-view">
+					<view class='box-title'>换电挪车</view>
 					<view class='out-box'>
 						<view class='inner-box' v-for="(i,item) in bigcontdetil" :key='item'>
 							<view class='inner-head'>
@@ -34,32 +35,218 @@
 						</view>
 					</view>
 				</view>
+				
+				<view class='timeselect-view'>
+					<view class='box-title'>财务汇总</view>
+					<!-- 新增 -->
+					<view class='timeselect' v-if="limitorder.all && isActive1==0">
+						<!-- <view>开始时间:</view> -->
+						<view class='timedetil' @tap="toggleTab1(1)">
+							<view class='wenzi'>开始</view>
+							<view>{{start_time}}</view>
+						</view>
+						<yu-datetime-picker  @confirm="onConfirm1" @canCel='onCancel' @clickOther='onClickother' startYear="2015" ref="dateTime1" :value=value :isAll="true"
+						 :current="false"></yu-datetime-picker>
+						<view class='timedetil' @tap="toggleTab1(2)">
+							<view class='wenzi'>结束</view>
+							<view>{{end_time}}</view>
+						</view>
+						
+					</view>
+										
+					<view class='timeselect-detil'>
+						<view class='timeselect-inner' @click="active(i,item,1)" :class="{'borderrights':i.val==isActive1}" v-for="(i,item) in timeselect1"
+						 :key='item'>{{i.name}}</view>
+					</view>
+					
+					<view class="data-box" v-show="limitorder.all && isActive1==0">
+						<view class='box-titles'>自定义</view>
+						<view class="data-item" v-if="limitorder.czje">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.user_charge_amount_total/100:monitorv3data.opt_sum_date.user_charge_amount/100}}</view>
+							<view class="data-item-ct2">充值总金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.hykje">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.user_membership_amount_total/100:monitorv3data.opt_sum_date.user_membership_amount/100}}</view>
+							<view class="data-item-ct2">会员总金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_paid_amount_total/100:monitorv3data.opt_sum_date.urorder_paid_amount/100}}</view>
+							<view class="data-item-ct2">订单总金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.qxddf">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_repark_amount_total/100:monitorv3data.opt_sum_date.urorder_repark_amount/100}}</view>
+							<view class="data-item-ct2">订单调度总金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.user_count_total:monitorv3data.opt_sum_date.user_count}}</view>
+							<view class="data-item-ct2">总用户数</view>
+						</view>
+						<!-- <view class="data-item">
+							<view class="data-item-ct1">{{monitorv2.user_auth_count_total}}</view>
+							<view class="data-item-ct2">总认证用户数</view>
+						</view> -->
+						<view class="data-item">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_count_per_bike_avg:monitorv3data.opt_sum_date.urorder_count_per_bike_avg}}</view>
+							<view class="data-item-ct2">平均车效</view>
+						</view>
+					</view>
+					<view class="data-box" v-show="limitorder.mon && isActive1==1">
+						<view class='box-titles'>当月</view>
+						<view class="data-item" v-if="limitorder.czje">
+							<view class="data-item-ct1">{{monitorv2m.user_charge_amount_tomonth/100}}</view>
+							<view class="data-item-ct2">充值总金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.hykje">
+							<view class="data-item-ct1">{{monitorv2m.user_membership_amount_tomonth/100}}</view>
+							<view class="data-item-ct2">会员总金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{monitorv2m.urorder_paid_amount_tomonth/100}}</view>
+							<view class="data-item-ct2">订单总金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.qxddf">
+							<view class="data-item-ct1">{{monitorv2m.urorder_repark_amount_tomonth/100}}</view>
+							<view class="data-item-ct2">订单调度总金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{monitorv2m.user_count_tomonth}}</view>
+							<view class="data-item-ct2">总用户数</view>
+						</view>
+						<!-- <view class="data-item">
+							<view class="data-item-ct1">{{monitorv2m.user_auth_count_tomonth}}</view>
+							<view class="data-item-ct2">总认证用户数</view>
+						</view> -->
+						<view class="data-item">
+							<view class="data-item-ct1">{{monitorv2m.urorder_count_per_bike_avg}}</view>
+							<view class="data-item-ct2">平均车效</view>
+						</view>
+					</view>
+					<view class="data-box" v-show="limitorder.day && isActive1==3">
+						<view class='box-titles'>当日</view>
+						<view class="data-item" v-if="limitorder.czje">
+							<view class="data-item-ct1">{{dailydata.user_charge_amount/100}}</view>
+							<view class="data-item-ct2">充值金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.hykje">
+							<view class="data-item-ct1">{{dailydata.user_membership_amount/100}}</view>
+							<view class="data-item-ct2">会员金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{dailydata.urorder_paid_amount/100}}</view>
+							<view class="data-item-ct2">订单金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.qxddf">
+							<view class="data-item-ct1">{{dailydata.urorder_repark_amount/100}}</view>
+							<view class="data-item-ct2">订单调度金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{dailydata.user_count}}</view>
+							<view class="data-item-ct2">用户数</view>
+						</view>
+						<!-- <view class="data-item">
+							<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
+							<view class="data-item-ct2">认证用户数</view>
+						</view> -->
+						<view class="data-item">
+							<view class="data-item-ct1">{{Number((dailydata.urorder_count/dailydata.bike_count).toFixed(2))}}</view>
+							<view class="data-item-ct2">平均车效</view>
+						</view>
+					</view>
+					<!-- 昨天 -->
+					<view class="data-box" v-show="limitorder.yesterday && isActive1==6">
+						<view class='box-titles'>昨天</view>
+						<view class="data-item" v-if="limitorder.czje">
+							<view class="data-item-ct1">{{monitorv3data.yesterday.user_charge_amount/100}}</view>
+							<view class="data-item-ct2">充值金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.hykje">
+							<view class="data-item-ct1">{{monitorv3data.yesterday.user_membership_amount/100}}</view>
+							<view class="data-item-ct2">会员金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{monitorv3data.yesterday.urorder_paid_amount/100}}</view>
+							<view class="data-item-ct2">订单金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.qxddf">
+							<view class="data-item-ct1">{{monitorv3data.yesterday.urorder_repark_amount/100}}</view>
+							<view class="data-item-ct2">订单调度金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{monitorv3data.yesterday.user_count}}</view>
+							<view class="data-item-ct2">用户数</view>
+						</view>
+						<!-- <view class="data-item">
+							<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
+							<view class="data-item-ct2">认证用户数</view>
+						</view> -->
+						<view class="data-item">
+							<view class="data-item-ct1">{{Number((monitorv3data.yesterday.urorder_count/monitorv3data.yesterday.bike_count).toFixed(2))}}</view>
+							<view class="data-item-ct2">平均车效</view>
+						</view>
+					</view>
+					<!-- 一周前 -->
+					<view class="data-box" v-show="limitorder.aweekago && isActive1==7">
+						<view class='box-titles'>一周前</view>
+						<view class="data-item" v-if="limitorder.czje">
+							<view class="data-item-ct1">{{monitorv3data.aweek.user_charge_amount/100}}</view>
+							<view class="data-item-ct2">充值金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.hykje">
+							<view class="data-item-ct1">{{monitorv3data.aweek.user_membership_amount/100}}</view>
+							<view class="data-item-ct2">会员金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{monitorv3data.aweek.urorder_paid_amount/100}}</view>
+							<view class="data-item-ct2">订单金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.qxddf">
+							<view class="data-item-ct1">{{monitorv3data.aweek.urorder_repark_amount/100}}</view>
+							<view class="data-item-ct2">订单调度金额</view>
+						</view>
+						<view class="data-item">
+							<view class="data-item-ct1">{{monitorv3data.aweek.user_count}}</view>
+							<view class="data-item-ct2">用户数</view>
+						</view>
+						<!-- <view class="data-item">
+							<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
+							<view class="data-item-ct2">认证用户数</view>
+						</view> -->
+						<view class="data-item">
+							<view class="data-item-ct1">{{monitorv3data.aweek.urorder_count_per_bike_avg.toFixed(2)}}</view>
+							<view class="data-item-ct2">平均车效</view>
+						</view>
+					</view>
+				</view>
 
-				<view class='data-box'>
+				<view class='data-box timeselect-view'>
 					<view class='box-title'>运维数据</view>
 					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
 						<view class="data-item-ct1">{{i.val}}</view>
 						<view class="data-item-ct2">{{i.name}}</view>
 					</view>
-				</view>
-
-
-				<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
-					<text class='titleSpan'>订单趋势图</text>
-					<!--#ifndef MP-ALIPAY -->
-					<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
-					<!--#endif-->
-				</view>
-				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt) && showtx">
 					
+					
+					<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
+						<text class='titleSpan'>订单趋势图</text>
+						<!--#ifndef MP-ALIPAY -->
+						<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
+						<!--#endif-->
+					</view>
+					
+				</view>
+
+
+				
+				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt)">
+					<view class='box-title'>订单车效</view>
 					<!-- 新增 -->
-					<view class='timeselect'>
+					<view class='timeselect' v-if="isActive==-1">
 						<!-- <view>开始时间:</view> -->
 						<view class='timedetil' @tap="toggleTab(1)">
 							<view class='wenzi'>开始</view>
 							<view>{{start_time}}</view>
 						</view>
-						<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" :value=value :isAll="true"
+						<yu-datetime-picker  @confirm='onConfirm' @canCel='onCancel' @clickOther='onClickother' startYear="2015" ref="dateTime" :value=value  :isAll="true"
 						 :current="false"></yu-datetime-picker>
 						<view class='timedetil' @tap="toggleTab(2)">
 							<view class='wenzi'>结束</view>
@@ -67,182 +254,26 @@
 						</view>
 						
 					</view>
-					
-					
+										
 					<view class='timeselect-detil'>
-						<view class='timeselect-inner' @click="active(i,item)" :class="{'borderrights':item==isActive}" v-for="(i,item) in timeselect"
+						<view class='timeselect-inner' @click="active(i,item,0)" :class="{'borderrights':i.val==isActive}" v-for="(i,item) in timeselect"
 						 :key='item'>{{i.name}}</view>
 					</view>
 					<view class="qiun-charts" v-show="limitorder.ddjet && showtx">
-						<text class='titleSpan'>订单金额图</text>
+						<!-- <text class='titleSpan'>订单金额图</text> -->
 						<!--#ifndef MP-ALIPAY -->
 						<canvas canvas-id="canvasLineC" id="canvasLineC" class="charts" @touchstart="touchLineC"></canvas>
 						<!--#endif-->
 					</view>
 					<view class="qiun-charts" v-show="limitorder.cxt && showtx">
-						<text class='titleSpan'>车效图</text>
+						<!-- <text class='titleSpan'>车效图</text> -->
 						<!--#ifndef MP-ALIPAY -->
 						<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
 						<!--#endif-->
 					</view>
 				</view>
-				<view class="data-box" v-show="limitorder.all">
-					<view class='box-title'>全部</view>
-					<view class="data-item" v-if="limitorder.czje">
-						<view class="data-item-ct1">{{monitorv2.user_charge_amount_total/100}}</view>
-						<view class="data-item-ct2">充值总金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.hykje">
-						<view class="data-item-ct1">{{monitorv2.user_membership_amount_total/100}}</view>
-						<view class="data-item-ct2">会员总金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2.urorder_paid_amount_total/100}}</view>
-						<view class="data-item-ct2">订单总金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.qxddf">
-						<view class="data-item-ct1">{{monitorv2.urorder_repark_amount_total/100}}</view>
-						<view class="data-item-ct2">订单调度总金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2.user_count_total}}</view>
-						<view class="data-item-ct2">总用户数</view>
-					</view>
-					<!-- <view class="data-item">
-						<view class="data-item-ct1">{{monitorv2.user_auth_count_total}}</view>
-						<view class="data-item-ct2">总认证用户数</view>
-					</view> -->
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2.urorder_count_per_bike_avg}}</view>
-						<view class="data-item-ct2">平均车效</view>
-					</view>
-				</view>
-				<view class="data-box" v-show="limitorder.mon">
-					<view class='box-title'>当月</view>
-					<view class="data-item" v-if="limitorder.czje">
-						<view class="data-item-ct1">{{monitorv2m.user_charge_amount_tomonth/100}}</view>
-						<view class="data-item-ct2">充值总金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.hykje">
-						<view class="data-item-ct1">{{monitorv2m.user_membership_amount_tomonth/100}}</view>
-						<view class="data-item-ct2">会员总金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2m.urorder_paid_amount_tomonth/100}}</view>
-						<view class="data-item-ct2">订单总金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.qxddf">
-						<view class="data-item-ct1">{{monitorv2m.urorder_repark_amount_tomonth/100}}</view>
-						<view class="data-item-ct2">订单调度总金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2m.user_count_tomonth}}</view>
-						<view class="data-item-ct2">总用户数</view>
-					</view>
-					<!-- <view class="data-item">
-						<view class="data-item-ct1">{{monitorv2m.user_auth_count_tomonth}}</view>
-						<view class="data-item-ct2">总认证用户数</view>
-					</view> -->
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv2m.urorder_count_per_bike_avg}}</view>
-						<view class="data-item-ct2">平均车效</view>
-					</view>
-				</view>
-				<view class="data-box" v-show="limitorder.day">
-					<view class='box-title'>当日</view>
-					<view class="data-item" v-if="limitorder.czje">
-						<view class="data-item-ct1">{{dailydata.user_charge_amount/100}}</view>
-						<view class="data-item-ct2">充值金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.hykje">
-						<view class="data-item-ct1">{{dailydata.user_membership_amount/100}}</view>
-						<view class="data-item-ct2">会员金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{dailydata.urorder_paid_amount/100}}</view>
-						<view class="data-item-ct2">订单金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.qxddf">
-						<view class="data-item-ct1">{{dailydata.urorder_repark_amount/100}}</view>
-						<view class="data-item-ct2">订单调度金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{dailydata.user_count}}</view>
-						<view class="data-item-ct2">用户数</view>
-					</view>
-					<!-- <view class="data-item">
-						<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
-						<view class="data-item-ct2">认证用户数</view>
-					</view> -->
-					<view class="data-item">
-						<view class="data-item-ct1">{{Number((dailydata.urorder_count/dailydata.bike_count).toFixed(2))}}</view>
-						<view class="data-item-ct2">平均车效</view>
-					</view>
-				</view>
-				<!-- 昨天 -->
-				<view class="data-box" v-show="limitorder.yesterday">
-					<view class='box-title'>昨天</view>
-					<view class="data-item" v-if="limitorder.czje">
-						<view class="data-item-ct1">{{monitorv3data.yesterday.user_charge_amount/100}}</view>
-						<view class="data-item-ct2">充值金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.hykje">
-						<view class="data-item-ct1">{{monitorv3data.yesterday.user_membership_amount/100}}</view>
-						<view class="data-item-ct2">会员金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv3data.yesterday.urorder_paid_amount/100}}</view>
-						<view class="data-item-ct2">订单金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.qxddf">
-						<view class="data-item-ct1">{{monitorv3data.yesterday.urorder_repark_amount/100}}</view>
-						<view class="data-item-ct2">订单调度金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv3data.yesterday.user_count}}</view>
-						<view class="data-item-ct2">用户数</view>
-					</view>
-					<!-- <view class="data-item">
-		        		<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
-		        		<view class="data-item-ct2">认证用户数</view>
-		        	</view> -->
-					<view class="data-item">
-						<view class="data-item-ct1">{{Number((monitorv3data.yesterday.urorder_count/monitorv3data.yesterday.bike_count).toFixed(2))}}</view>
-						<view class="data-item-ct2">平均车效</view>
-					</view>
-				</view>
-				<!-- 一周前 -->
-				<view class="data-box" v-show="limitorder.aweekago">
-					<view class='box-title'>一周前</view>
-					<view class="data-item" v-if="limitorder.czje">
-						<view class="data-item-ct1">{{monitorv3data.aweek.user_charge_amount/100}}</view>
-						<view class="data-item-ct2">充值金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.hykje">
-						<view class="data-item-ct1">{{monitorv3data.aweek.user_membership_amount/100}}</view>
-						<view class="data-item-ct2">会员金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv3data.aweek.urorder_paid_amount/100}}</view>
-						<view class="data-item-ct2">订单金额</view>
-					</view>
-					<view class="data-item" v-if="limitorder.qxddf">
-						<view class="data-item-ct1">{{monitorv3data.aweek.urorder_repark_amount/100}}</view>
-						<view class="data-item-ct2">订单调度金额</view>
-					</view>
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv3data.aweek.user_count}}</view>
-						<view class="data-item-ct2">用户数</view>
-					</view>
-					<!-- <view class="data-item">
-						<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
-						<view class="data-item-ct2">认证用户数</view>
-					</view> -->
-					<view class="data-item">
-						<view class="data-item-ct1">{{monitorv3data.aweek.urorder_count_per_bike_avg.toFixed(2)}}</view>
-						<view class="data-item-ct2">平均车效</view>
-					</view>
-				</view>
+				
+				
 
 
 			</view>
@@ -258,6 +289,7 @@
 
 <script>
 	import yuDatetimePicker from "@/components/yu-datetime-picker.vue"
+	// import yuDatetimePicker1 from "@/components/yu-datetime-picker1.vue"
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import uCharts from '@/common/u-charts.min.js';
@@ -376,7 +408,12 @@
 					czje: 0, //充值金额
 					hykje: 0, //会员卡金额
 				},
-				timeselect: [{
+				timeselect: [
+					{
+						name: '自定义',
+						val: -1
+					},
+					{
 						name: '当月',
 						val: 0
 					},
@@ -393,7 +430,11 @@
 						val: 6
 					},
 				],
-				isActive: 0
+				timeselect1: [
+				],
+				isActive: 0,
+				isActive1: 0,
+				timestate:0,
 			}
 		},
 		onLoad() {
@@ -433,6 +474,10 @@
 			this.getmonitorv2('all')
 			this.getmonitorv2('mon')
 			this.getHourly017(times)
+			setTimeout(()=>{
+				this.isActive1=this.timeselect1[0].val
+				this.isActive=this.timeselect[0].val
+			},500)
 			try {
 				this.citylist = uni.getStorageSync('userinfo').cities;
 				var acl = []
@@ -490,15 +535,28 @@
 										}
 										break
 									case 16:
+										this.timeselect1=[]
 										for (let j = 0; j < acl[i].children.length; j++) {
 											if (acl[i].children[j].uri === '16.1' && acl[i].children[j].visitable) {
 												this.limitorder.all = 1
+												this.timeselect1.push({
+													name:'自定义',
+													val:0
+												})
 											}
 											if (acl[i].children[j].uri === "16.2" && acl[i].children[j].visitable) {
 												this.limitorder.mon = 1
+												this.timeselect1.push({
+													name:'当月',
+													val:1
+												})
 											}
 											if (acl[i].children[j].uri === '16.3' && acl[i].children[j].visitable) {
 												this.limitorder.day = 1
+												this.timeselect1.push({
+													name:'当日',
+													val:3
+												})
 											}
 											if (acl[i].children[j].uri === '16.4' && acl[i].children[j].visitable) {
 												this.limitorder.ddqst = 1
@@ -521,11 +579,18 @@
 											}
 											if (acl[i].children[j].uri === '16.10' && acl[i].children[j].visitable) {
 												this.limitorder.yesterday = 1
+												this.timeselect1.push({
+													name:'昨天',
+													val:6
+												})
 
 											}
 											if (acl[i].children[j].uri === '16.11' && acl[i].children[j].visitable) {
 												this.limitorder.aweekago = 1
-
+                                                this.timeselect1.push({
+                                                	name:'一周前',
+                                                	val:7
+                                                })
 											}
 										}
 										break
@@ -581,17 +646,53 @@
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
 			toggleTab(item) {
+				setTimeout(()=>{
+					this.showtx=false
+				},0)
 				this.timeflag=item
 			    this.$refs.dateTime.show();  
-			}, 
+			},
+			toggleTab1(item) {
+				setTimeout(()=>{
+					this.showtx=false
+				},0)
+				this.timeflag=item
+			    this.$refs.dateTime1.show();  
+			},
+			onCancel(){
+				console.log(6666)
+				setTimeout(()=>{
+					this.showtx=true
+				},0)
+			},
+			onClickother(){
+				console.log(4444)
+				this.showtx=setTimeout(()=>{
+					  this.showtx=true
+				  },0)
+			},
 			onConfirm(val) {
+				setTimeout(()=>{
+					this.showtx=true
+				},0)
 				  if(this.timeflag==1){
 					  this.start_time=val.selectRes
 				  }else{
 					  this.end_time=val.selectRes
 				  }
 				  this.getmonitorv2('all')
-				  // this.getServerData()
+			}, 
+			onConfirm1(val) {
+				  setTimeout(()=>{
+					  this.showtx=true
+				  },0)
+				  if(this.timeflag==1){
+					  this.start_time=val.selectRes
+				  }else{
+					  this.end_time=val.selectRes
+				  }
+				  this.timestate=0
+				  this.getmonitorv3()
 			}, 
 			gourl(url) {
 				if (!!url) {
@@ -621,21 +722,31 @@
 				// var fmonuth=month-1<10?'0'+(month-1):month-1
 				// 上个月的天数
 				var day = new Date(date.getFullYear(), date.getMonth(), 0)
-				this.start_time = startyear + seperator1 + month0 + seperator1 + "01" +
-					" " + '00' + seperator2 + '00' +
-					seperator2 + '00'
-				this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
-					" " + '23' + seperator2 + '59' +
-					seperator2 + '59'
+				// this.start_time = startyear + seperator1 + month0 + seperator1 + "01" +
+				// 	" " + '00' + seperator2 + '00' +
+				// 	seperator2 + '00'
+				// this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
+				// 	" " + '23' + seperator2 + '59' +
+				// 	seperator2 + '59'
+				this.start_time = startyear + seperator1 + month0 + seperator1 + "01"
+				this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate
 				this.value=date.getFullYear() + seperator1 + month1 + seperator1 + '01' +
 					" " + '00' + seperator2 + '00' +
 					seperator2 + '00'	
 				console.log('time', this.start_time, this.start_time)
 			},
-			active(i, item) {
-				this.isActive = item
-				this.timecalc(i.val)
-				this.getmonitorv2('all')
+			active(i, item,type) {							
+				if(type==0){
+					this.isActive = i.val
+					console.log(3333,this.isActive)
+					this.timecalc(i.val)
+					this.getmonitorv2('all')
+					// this.isActive = item
+				}else{
+					this.isActive1 = i.val
+					console.log(4444,this.isActive1)
+					// this.timestate=1
+				}		
 			},
 			touchLineA(e) {
 				canvaLineA.touchLegend(e);
@@ -815,7 +926,10 @@
 					data: {
 						yesterday: 1,
 						bike: 1,
-						aweek: 1
+						aweek: 1,
+						opt_sum_start_time:this.start_time,
+						opt_sum_end_time:this.end_time,
+						opt_sum_date:1
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -823,6 +937,7 @@
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
 						this.monitorv3data = res
+						this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg=this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg.toFixed(2)
 						console.log(2222, res)
 					} else {
 						uni.showToast({
@@ -1151,15 +1266,29 @@
 									    	czje: 0, //充值金额
 									    	hykje: 0, //会员卡金额
 									    }
+										this.timeselect1=[
+										]									
 										for (let j = 0; j < acl[i].children.length; j++) {
 											if (acl[i].children[j].uri === '16.1' && acl[i].children[j].visitable) {
 												this.limitorder.all = 1
+												this.timeselect1.push(
+												{name: '自定义',
+												val: 0}
+												)
 											}
 											if (acl[i].children[j].uri === "16.2" && acl[i].children[j].visitable) {
 												this.limitorder.mon = 1
+												this.timeselect1.push(
+												{name: '当月',
+												val: 1}
+												)
 											}
 											if (acl[i].children[j].uri === '16.3' && acl[i].children[j].visitable) {
 												this.limitorder.day = 1
+												this.timeselect1.push(
+												{name: '当日',
+												val: 3}
+												)
 											}
 											if (acl[i].children[j].uri === '16.4' && acl[i].children[j].visitable) {
 												this.limitorder.ddqst = 1
@@ -1182,11 +1311,18 @@
 											}
 											if (acl[i].children[j].uri === '16.10' && acl[i].children[j].visitable) {
 												this.limitorder.yesterday = 1
+												this.timeselect1.push(
+												{name: '昨天',
+												val: 6}
+												)
 						
 											}
 											if (acl[i].children[j].uri === '16.11' && acl[i].children[j].visitable) {
 												this.limitorder.aweekago = 1
-						
+						                        this.timeselect1.push(
+						                        {name: '一周前',
+						                        val: 7}
+						                        )
 											}
 										}
 										break
@@ -1507,6 +1643,11 @@
 </script>
 
 <style lang="scss" scoped>
+	.box-title {
+		text-align: center;
+		font-size: 40upx;
+		font-weight: 500;
+	}
 	.qiun-charts {
 		// width: 750upx;
 		// height: 350upx;
@@ -1538,6 +1679,9 @@
 			z-index: 1;
 
 			.timeselect-view {
+				margin:4upx;
+				border: 2upx solid black;
+				border-radius: 8upx;
                  // 新增
 				 .timeselect {
 				 	.wenzi {
@@ -1562,7 +1706,7 @@
 				.timeselect-detil {
 					display: flex;
 					justify-content: space-around;
-
+                    margin-top: 4upx;
 					.timeselect-inner {
 						// border: 2upx solid black;
 						border-radius: 12upx;
@@ -1699,6 +1843,11 @@
 			text-align: center;
 			font-size: 40upx;
 			font-weight: 500;
+		}
+		.box-titles {
+			text-align: center;
+			font-size: 36upx;
+			font-weight: 400;
 		}
 
 		.data-item {
