@@ -7,10 +7,13 @@
 			<view class='matain-view'>
 				<view class='matain-inner'>
 					<view class='matain-title'>保养项目</view>
-					<view v-for="(item,i) in maintain">{{item.name}}</view>
+					<view v-for="(item,i) in maintain" :key="i">{{item.name}}</view>
 				</view>
 			</view>
-			<button type='primary' class='share-button-default bottom-button' @click='maintainsuccess'>保养完成</button>
+			<view class='btn-grop'>
+				<button type='primary' class='share-button-default bottom-button' @click='maintainsuccess'>保养完成</button>
+				<button type='' class='bottom-button rightbtn' @click='repairebike'>报修</button>
+			</view>			
 		</view>
 	</view>
 </template>
@@ -31,7 +34,7 @@
 			this.carcenterdata1[0].val = this.bikeinfo.id
 
 			// 库存状态
-			this.carcenterdata1[1].val = this.$invstate(this.bikeinfo.inv_state)
+			// this.carcenterdata1[1].val = this.$invstate(this.bikeinfo.inv_state)
 
 			// 车辆状态
 			let health_state = ''
@@ -40,7 +43,10 @@
 			} else {
 				health_state = '故障'
 			}
-			this.carcenterdata1[2].val = health_state
+			// this.carcenterdata1[2].val = health_state
+			this.carcenterdata2[0].val=this.$bus_state(this.bikeinfo.bus_state)
+			this.carcenterdata2[1].val=this.bikeinfo.last_maintain_time
+			this.carcenterdata2[2].val=this.bikeinfo.launch_time
 
 		},
 		computed: mapState(['directinfo', 'bikeinfo']),
@@ -91,6 +97,14 @@
 			}
 		},
 		methods: {
+			repairebike(){
+				uni.navigateTo({
+					url: '/pages/carBigCenter/breakdowncar/breakdowncar',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},			
 			gocarcenter(item) {
 				uni.navigateTo({
 					url: item.url,
@@ -171,13 +185,19 @@
 		.view-common {
 			margin: 10upx 22upx;
 			height: 100vh;
-
-			.bottom-button {
-				position: fixed;
-				bottom: 20upx;
-				width: calc(100% - 44upx)
-			}
-
+            .btn-grop{
+				display: flex;
+				margin-top: 20upx;
+				.bottom-button {
+					/* position: fixed;
+					bottom: 20upx; */
+					width: calc(50% - 44upx)
+				}
+				.rightbtn{
+					background-color: #939391;
+					color: black;
+				}
+			}			
 			.matain-view {
 				margin-top: 30upx;
 				background-color: white;

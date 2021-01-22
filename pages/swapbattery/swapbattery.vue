@@ -103,6 +103,11 @@
 						active: false
 					},
 					{
+						text: '结束订单',
+						val: '8',
+						active: false
+					},
+					{
 						text: '',
 						val: '7',
 						active: false
@@ -675,6 +680,14 @@
 					case '6':
 						this.refreshinfo()
 						break
+					case '8':
+						uni.navigateTo({
+							url: '/pages/endOrder/endorder/endorder',
+							success: res => {},
+							fail: () => {},
+							complete: () => {}
+						});
+						break	
 				}
 			},
 			// 刷新车辆信息
