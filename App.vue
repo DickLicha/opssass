@@ -1,7 +1,7 @@
 <script>
-	// import {
-	// 	getcarinfodetil,ex16hex,getheaderinfo
-	// } from './common/conf.js'
+	import {
+		timefn
+	} from './common/conf.js'
 	// import ble from '../../common/xa-bluetooth.js'
 	var dataTransition = require('./common/dataTransition.js')
 	export default {
@@ -11,7 +11,7 @@
 			};
 		},
 		onLaunch: function() {
-			console.log('App Launch');
+			console.log('App Launch',timefn(0));
 			
 			var bluealldevice=[]
 			function onBluetoothDeviceFounds() {

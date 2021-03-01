@@ -116,13 +116,19 @@
 			// 换二维码
 			changesn() {
 				this.setSn("*")
+				var sk=''
+				if(this.ecu_model=='AT-MX3F'){
+					sk=this.swapdata[0].val
+				}else{
+					sk=this.swapdata[1].val
+				}
 				var options = {
 					url: '/bike/change_sn', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
 						// "bike_id": '',
-						"sk": this.swapdata[1].val,
+						"sk": sk,
 						"new_sn": this.swapbatterydata[0].val
 					}
 				}

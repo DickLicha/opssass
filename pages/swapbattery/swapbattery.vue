@@ -290,6 +290,7 @@
 				var _self = this
 				var name = _self.bikeinfo.bluetooth_name
 				var devcode=_self.bikeinfo.ecu_sn
+				console.log(6666,name,_self.bikeinfo.ecu_model)
 				if ((!!name && !!_self.bikeinfo.bluetooth_token)) {
 					var headerinfo={}
 					this.uploadflag=true
@@ -315,7 +316,7 @@
 							}else if(res.name=='电池锁打开成功'){
 								blueWriteState = 1
 								// _self.reportblue(0, loadtime,'')
-								_self.operbattery(0,loadtime,'')
+								_self.operbattery(0,loadtime,'success')
 							}else if(res.name=='心跳包'){
 								console.log('uploadflag--->',this.uploadflag)
 								if(this.uploadflag){
@@ -370,7 +371,7 @@
 							if (blestate == 0) {
 								blueWriteState = 1
 								// _self.reportblue(0, loadtime,'')
-								_self.operbattery(0,loadtime,'')
+								_self.operbattery(0,loadtime,'success')
 							}else{
 								var bleerrstate=''
 								if(blestate==1){
@@ -1337,26 +1338,26 @@
 							setTimeout(() => {
 								console.log(77777,blueWriteState)
 								if (blueWriteState == 0) {
-									console.log(888888)
-									// this.reportblue(1, loadtime,'无特征值返回')
 									this.operbattery(1,loadtime,'无特征值返回')
+								}else{
+									uni.showModal({
+										title: '电池锁已打开，请更换电池',
+										content: '电池锁更换完毕后，会自动记录本次操作',
+										showCancel: false,
+										cancelText: '',
+										confirmText: '我知道了',
+										success: res => {
+											this.buttonname = '结束换电'
+										},
+										fail: () => {},
+										complete: () => {}
+									});
 								}
 								uni.hideLoading()
 							}, 5000)
 						}												
 						// this.orderid = res.info.id
-						uni.showModal({
-							title: '电池锁已打开，请更换电池',
-							content: '电池锁更换完毕后，会自动记录本次操作',
-							showCancel: false,
-							cancelText: '',
-							confirmText: '我知道了',
-							success: res => {
-								this.buttonname = '结束换电'
-							},
-							fail: () => {},
-							complete: () => {}
-						});
+						
 							
 					} else {
 						uni.showToast({

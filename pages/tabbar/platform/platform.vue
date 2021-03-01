@@ -1,24 +1,93 @@
 <template>
 	<view>
 		<view class="index-top">
-			<view class="index-top-bg theme-bg">
+			<view class="index-top-bg theme-bg" :style="'height:'+bgheight">
 
 			</view>
 			<view class="index-top-box">
-				<view style='margin-top: 100upx;'>
+				<view style='margin-top: 50upx;'>
 					<view class="nav nav-head">
 						<navigator class="store" @click="showbotpop" url="../selectStore/selectStore">{{citylist[0].name||'未知城市'}}<text
 							 class="iconfont icon-xiajian"></text></navigator>
-						<text class="address">{{locaplace||'未获取'}}</text>
+						<view>
+							<text class="address">{{locaplace||'未获取'}}</text>
+							<view class='weather-view' v-if="!!weather">
+								<img class='img-view' :src="weather.weather_day_pic"  alt="">
+								<view>
+									<text>{{weather.weather_day}}</text>
+									<text>{{weather.temperature_day}}°c</text>
+								</view>				
+							</view>
+						</view>
+						<!-- <text class="address">{{locaplace||'未获取'}}</text> -->
 					</view>
 				</view>
-				<view class="nav flex-box">
+				<!-- 暂时移除 -->
+				<!-- <view class="nav flex-box">
 					<view class="flex" v-for="(i,item) in qxmenudata" @tap="scaninto(i.val,i.url)" :key='item'>
 						<view class="nav-ct">{{i.name}}</view>
 					</view>
+				</view> -->
+
+				<!-- 财务汇总 -->
+				<view class='timeselect-view' v-if="limitorder.czje||limitorder.hykje||limitorder.all||limitorder.qxddf">
+					<view class='box-title'>财务汇总</view>
+					<!-- 新增 -->
+					<view class='timeselect' v-if="limitorder.all && isActive1==-1">
+						<!-- <view>开始时间:</view> -->
+						<view class='timedetil' @tap="toggleTab1(1)">
+							<view class='wenzi'>开始</view>
+							<view>{{start_time}}</view>
+						</view>
+						<yu-datetime-picker @confirm="onConfirm1" @canCel='onCancel' @clickOther='onClickother' startYear="2015" ref="dateTime1"
+						 :value=value :isAll="true" :current="false"></yu-datetime-picker>
+						<view class='timedetil' @tap="toggleTab1(2)">
+							<view class='wenzi'>结束</view>
+							<view>{{end_time}}</view>
+						</view>
+
+					</view>
+
+					<!-- <view class='timeselect-detil'>
+						<view class='timeselect-inner' @click="active(i,item,1)" :class="{'borderrights':i.val==isActive1}" v-for="(i,item) in timeselect1"
+						 :key='item'>{{i.name}}</view>
+					</view> -->
+					<view class='timeselect-detil'>
+						<view class='timeselect-inner' @click="active(i,item,1)" :class="{'borderrights':i.val==isActive1}" v-for="(i,item) in timeselect1"
+						 :key='item'>{{i.name}}</view>
+					</view>
+					<!-- 自定义 -->
+					<view class="data-box" >
+						<!-- <view class='box-titles'>自定义</view> -->
+						<view class="data-item" v-if="limitorder.czje">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.user_charge_amount_total/100:monitorv3data.opt_sum_date.user_charge_amount/100}}</view>
+							<view class="data-item-ct2">充值总金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.hykje">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.user_membership_amount_total/100:monitorv3data.opt_sum_date.user_membership_amount/100}}</view>
+							<view class="data-item-ct2">会员总金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.all">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_paid_amount_total/100:monitorv3data.opt_sum_date.urorder_paid_amount/100}}</view>
+							<view class="data-item-ct2">订单总金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.qxddf">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_repark_amount_total/100:monitorv3data.opt_sum_date.urorder_repark_amount/100}}</view>
+							<view class="data-item-ct2">订单调度总金额</view>
+						</view>
+						<view class="data-item" v-if="limitorder.all">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.user_count_total:monitorv3data.opt_sum_date.user_count}}</view>
+							<view class="data-item-ct2">总用户数</view>
+						</view>
+						<view class="data-item" v-if="limitorder.all">
+							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_count_per_bike_avg:monitorv3data.opt_sum_date.urorder_count_per_bike_avg}}</view>
+							<view class="data-item-ct2">平均车效</view>
+						</view>
+					</view>
 				</view>
 
-				<!-- 新加的 -->
+
+				<!-- 换电挪车 -->
 				<view class="data-box timeselect-view">
 					<view class='box-title'>换电挪车</view>
 					<view class='out-box'>
@@ -35,208 +104,46 @@
 						</view>
 					</view>
 				</view>
-				
-				<view class='timeselect-view'>
-					<view class='box-title'>财务汇总</view>
-					<!-- 新增 -->
-					<view class='timeselect' v-if="limitorder.all && isActive1==0">
-						<!-- <view>开始时间:</view> -->
-						<view class='timedetil' @tap="toggleTab1(1)">
-							<view class='wenzi'>开始</view>
-							<view>{{start_time}}</view>
-						</view>
-						<yu-datetime-picker  @confirm="onConfirm1" @canCel='onCancel' @clickOther='onClickother' startYear="2015" ref="dateTime1" :value=value :isAll="true"
-						 :current="false"></yu-datetime-picker>
-						<view class='timedetil' @tap="toggleTab1(2)">
-							<view class='wenzi'>结束</view>
-							<view>{{end_time}}</view>
-						</view>
-						
-					</view>
-										
-					<view class='timeselect-detil'>
-						<view class='timeselect-inner' @click="active(i,item,1)" :class="{'borderrights':i.val==isActive1}" v-for="(i,item) in timeselect1"
-						 :key='item'>{{i.name}}</view>
-					</view>
-					
-					<view class="data-box" v-show="limitorder.all && isActive1==0">
-						<view class='box-titles'>自定义</view>
-						<view class="data-item" v-if="limitorder.czje">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.user_charge_amount_total/100:monitorv3data.opt_sum_date.user_charge_amount/100}}</view>
-							<view class="data-item-ct2">充值总金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.hykje">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.user_membership_amount_total/100:monitorv3data.opt_sum_date.user_membership_amount/100}}</view>
-							<view class="data-item-ct2">会员总金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_paid_amount_total/100:monitorv3data.opt_sum_date.urorder_paid_amount/100}}</view>
-							<view class="data-item-ct2">订单总金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.qxddf">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_repark_amount_total/100:monitorv3data.opt_sum_date.urorder_repark_amount/100}}</view>
-							<view class="data-item-ct2">订单调度总金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.user_count_total:monitorv3data.opt_sum_date.user_count}}</view>
-							<view class="data-item-ct2">总用户数</view>
-						</view>
-						<!-- <view class="data-item">
-							<view class="data-item-ct1">{{monitorv2.user_auth_count_total}}</view>
-							<view class="data-item-ct2">总认证用户数</view>
-						</view> -->
-						<view class="data-item">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_count_per_bike_avg:monitorv3data.opt_sum_date.urorder_count_per_bike_avg}}</view>
-							<view class="data-item-ct2">平均车效</view>
-						</view>
-					</view>
-					<view class="data-box" v-show="limitorder.mon && isActive1==1">
-						<view class='box-titles'>当月</view>
-						<view class="data-item" v-if="limitorder.czje">
-							<view class="data-item-ct1">{{monitorv2m.user_charge_amount_tomonth/100}}</view>
-							<view class="data-item-ct2">充值总金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.hykje">
-							<view class="data-item-ct1">{{monitorv2m.user_membership_amount_tomonth/100}}</view>
-							<view class="data-item-ct2">会员总金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{monitorv2m.urorder_paid_amount_tomonth/100}}</view>
-							<view class="data-item-ct2">订单总金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.qxddf">
-							<view class="data-item-ct1">{{monitorv2m.urorder_repark_amount_tomonth/100}}</view>
-							<view class="data-item-ct2">订单调度总金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{monitorv2m.user_count_tomonth}}</view>
-							<view class="data-item-ct2">总用户数</view>
-						</view>
-						<!-- <view class="data-item">
-							<view class="data-item-ct1">{{monitorv2m.user_auth_count_tomonth}}</view>
-							<view class="data-item-ct2">总认证用户数</view>
-						</view> -->
-						<view class="data-item">
-							<view class="data-item-ct1">{{monitorv2m.urorder_count_per_bike_avg}}</view>
-							<view class="data-item-ct2">平均车效</view>
-						</view>
-					</view>
-					<view class="data-box" v-show="limitorder.day && isActive1==3">
-						<view class='box-titles'>当日</view>
-						<view class="data-item" v-if="limitorder.czje">
-							<view class="data-item-ct1">{{dailydata.user_charge_amount/100}}</view>
-							<view class="data-item-ct2">充值金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.hykje">
-							<view class="data-item-ct1">{{dailydata.user_membership_amount/100}}</view>
-							<view class="data-item-ct2">会员金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{dailydata.urorder_paid_amount/100}}</view>
-							<view class="data-item-ct2">订单金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.qxddf">
-							<view class="data-item-ct1">{{dailydata.urorder_repark_amount/100}}</view>
-							<view class="data-item-ct2">订单调度金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{dailydata.user_count}}</view>
-							<view class="data-item-ct2">用户数</view>
-						</view>
-						<!-- <view class="data-item">
-							<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
-							<view class="data-item-ct2">认证用户数</view>
-						</view> -->
-						<view class="data-item">
-							<view class="data-item-ct1">{{Number((dailydata.urorder_count/dailydata.bike_count).toFixed(2))}}</view>
-							<view class="data-item-ct2">平均车效</view>
-						</view>
-					</view>
-					<!-- 昨天 -->
-					<view class="data-box" v-show="limitorder.yesterday && isActive1==6">
-						<view class='box-titles'>昨天</view>
-						<view class="data-item" v-if="limitorder.czje">
-							<view class="data-item-ct1">{{monitorv3data.yesterday.user_charge_amount/100}}</view>
-							<view class="data-item-ct2">充值金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.hykje">
-							<view class="data-item-ct1">{{monitorv3data.yesterday.user_membership_amount/100}}</view>
-							<view class="data-item-ct2">会员金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{monitorv3data.yesterday.urorder_paid_amount/100}}</view>
-							<view class="data-item-ct2">订单金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.qxddf">
-							<view class="data-item-ct1">{{monitorv3data.yesterday.urorder_repark_amount/100}}</view>
-							<view class="data-item-ct2">订单调度金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{monitorv3data.yesterday.user_count}}</view>
-							<view class="data-item-ct2">用户数</view>
-						</view>
-						<!-- <view class="data-item">
-							<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
-							<view class="data-item-ct2">认证用户数</view>
-						</view> -->
-						<view class="data-item">
-							<view class="data-item-ct1">{{Number((monitorv3data.yesterday.urorder_count/monitorv3data.yesterday.bike_count).toFixed(2))}}</view>
-							<view class="data-item-ct2">平均车效</view>
-						</view>
-					</view>
-					<!-- 一周前 -->
-					<view class="data-box" v-show="limitorder.aweekago && isActive1==7">
-						<view class='box-titles'>一周前</view>
-						<view class="data-item" v-if="limitorder.czje">
-							<view class="data-item-ct1">{{monitorv3data.aweek.user_charge_amount/100}}</view>
-							<view class="data-item-ct2">充值金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.hykje">
-							<view class="data-item-ct1">{{monitorv3data.aweek.user_membership_amount/100}}</view>
-							<view class="data-item-ct2">会员金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{monitorv3data.aweek.urorder_paid_amount/100}}</view>
-							<view class="data-item-ct2">订单金额</view>
-						</view>
-						<view class="data-item" v-if="limitorder.qxddf">
-							<view class="data-item-ct1">{{monitorv3data.aweek.urorder_repark_amount/100}}</view>
-							<view class="data-item-ct2">订单调度金额</view>
-						</view>
-						<view class="data-item">
-							<view class="data-item-ct1">{{monitorv3data.aweek.user_count}}</view>
-							<view class="data-item-ct2">用户数</view>
-						</view>
-						<!-- <view class="data-item">
-							<view class="data-item-ct1">{{dailydata.user_auth_count}}</view>
-							<view class="data-item-ct2">认证用户数</view>
-						</view> -->
-						<view class="data-item">
-							<view class="data-item-ct1">{{monitorv3data.aweek.urorder_count_per_bike_avg.toFixed(2)}}</view>
-							<view class="data-item-ct2">平均车效</view>
-						</view>
-					</view>
-				</view>
 
+				<!-- 运维数据 -->
 				<view class='data-box timeselect-view'>
 					<view class='box-title'>运维数据</view>
 					<view class='data-item' v-for="(i,item) in boxdata" :key='item' @click='gourl(i.url)'>
 						<view class="data-item-ct1">{{i.val}}</view>
 						<view class="data-item-ct2">{{i.name}}</view>
 					</view>
-					
-					
+
 					<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
 						<text class='titleSpan'>订单趋势图</text>
 						<!--#ifndef MP-ALIPAY -->
 						<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
 						<!--#endif-->
 					</view>
-					
+
+					<!-- 站点排行 -->
+					<view class='stop-list'>
+						<view class='titleSpan'>站点排行</view>
+						<view class='list-title'>
+							<view class="data-item-ct1">#</view>
+							<view class="data-item-ct2">站点名称</view>
+							<view class="data-item-ct3">订单数量(单)</view>
+							<!-- <view>排名变化</view> -->
+						</view>
+						<view class='falther-view' v-for="(i,item) in ranklist" :key='item'>
+							<view class='list-inner'>
+								<view class="data-item-ct1">{{item+1}}</view>
+								<view class="data-item-ct2">{{i.park_name}}</view>
+								<view class="data-item-ct3">{{i.order_count}}</view>
+							</view>
+							<view class='ranklist-line'></view>
+							<!-- <view class="data-item-ct2">{{i.name}}</view> -->
+						</view>
+
+					</view>
+
 				</view>
 
-
-				
+				<!-- 订单车效 -->
 				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt)">
 					<view class='box-title'>订单车效</view>
 					<!-- 新增 -->
@@ -246,15 +153,15 @@
 							<view class='wenzi'>开始</view>
 							<view>{{start_time}}</view>
 						</view>
-						<yu-datetime-picker  @confirm='onConfirm' @canCel='onCancel' @clickOther='onClickother' startYear="2015" ref="dateTime" :value=value  :isAll="true"
-						 :current="false"></yu-datetime-picker>
+						<yu-datetime-picker @confirm='onConfirm' @canCel='onCancel' @clickOther='onClickother' startYear="2015" ref="dateTime"
+						 :value=value :isAll="true" :current="false"></yu-datetime-picker>
 						<view class='timedetil' @tap="toggleTab(2)">
 							<view class='wenzi'>结束</view>
 							<view>{{end_time}}</view>
 						</view>
-						
+
 					</view>
-										
+
 					<view class='timeselect-detil'>
 						<view class='timeselect-inner' @click="active(i,item,0)" :class="{'borderrights':i.val==isActive}" v-for="(i,item) in timeselect"
 						 :key='item'>{{i.name}}</view>
@@ -272,9 +179,6 @@
 						<!--#endif-->
 					</view>
 				</view>
-				
-				
-
 
 			</view>
 		</view>
@@ -294,6 +198,9 @@
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import uCharts from '@/common/u-charts.min.js';
 	import {
+		timefn
+	} from '@/common/conf.js'
+	import {
 		mapState,
 		mapMutations
 	} from 'vuex'
@@ -310,9 +217,12 @@
 		},
 		data() {
 			return {
+				bgheight:'170upx',
+				weather: "",
+				ranklist: [],
 				// tab: 1,
-				timeflag:0,
-				value:'',
+				timeflag: 0,
+				value: '',
 				monitorv3data: {},
 				testdata: [111, 222, 333, 444, 555],
 				bigcontdetil: [{
@@ -408,8 +318,7 @@
 					czje: 0, //充值金额
 					hykje: 0, //会员卡金额
 				},
-				timeselect: [
-					{
+				timeselect: [{
 						name: '自定义',
 						val: -1
 					},
@@ -430,11 +339,10 @@
 						val: 6
 					},
 				],
-				timeselect1: [
-				],
+				timeselect1: [],
 				isActive: 0,
 				isActive1: 0,
-				timestate:0,
+				timestate: 0,
 			}
 		},
 		onLoad() {
@@ -455,7 +363,9 @@
 			//#endif
 		},
 		onShow() {
+			this.getweather()
 			this.timecalc(0)
+			this.stopranklist()
 			var date = new Date()
 			var seperator1 = "-";
 			var seperator2 = ":";
@@ -469,15 +379,20 @@
 			var day = new Date(date.getFullYear(), date.getMonth(), 0)
 			var times = date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
 			this.getmonitorv3()
-			this.getmonitorv2(1)
+			// this.getmonitorv2(1)
 			this.getmonitorv2('today')
 			this.getmonitorv2('all')
-			this.getmonitorv2('mon')
+			// this.getmonitorv2('mon')
 			this.getHourly017(times)
-			setTimeout(()=>{
-				this.isActive1=this.timeselect1[0].val
-				this.isActive=this.timeselect[0].val
-			},500)
+			setTimeout(() => {
+				console.log(6666, this.timeselect1[0], this.timeselect[0])
+				if (this.timeselect1.length > 1) {
+					this.isActive1 = this.timeselect1[0].val
+				}
+				if (this.timeselect[0] > 1) {
+					this.isActive = this.timeselect[0].val
+				}
+			}, 1000)
 			try {
 				this.citylist = uni.getStorageSync('userinfo').cities;
 				var acl = []
@@ -535,27 +450,27 @@
 										}
 										break
 									case 16:
-										this.timeselect1=[]
+										this.timeselect1 = []
 										for (let j = 0; j < acl[i].children.length; j++) {
 											if (acl[i].children[j].uri === '16.1' && acl[i].children[j].visitable) {
 												this.limitorder.all = 1
 												this.timeselect1.push({
-													name:'自定义',
-													val:0
+													name: '自定义',
+													val: -1
 												})
 											}
 											if (acl[i].children[j].uri === "16.2" && acl[i].children[j].visitable) {
 												this.limitorder.mon = 1
 												this.timeselect1.push({
-													name:'当月',
-													val:1
+													name: '当月',
+													val: 0
 												})
 											}
 											if (acl[i].children[j].uri === '16.3' && acl[i].children[j].visitable) {
 												this.limitorder.day = 1
 												this.timeselect1.push({
-													name:'当日',
-													val:3
+													name: '当日',
+													val: 10
 												})
 											}
 											if (acl[i].children[j].uri === '16.4' && acl[i].children[j].visitable) {
@@ -580,17 +495,24 @@
 											if (acl[i].children[j].uri === '16.10' && acl[i].children[j].visitable) {
 												this.limitorder.yesterday = 1
 												this.timeselect1.push({
-													name:'昨天',
-													val:6
+													name: '昨天',
+													val: 11
 												})
 
 											}
 											if (acl[i].children[j].uri === '16.11' && acl[i].children[j].visitable) {
 												this.limitorder.aweekago = 1
-                                                this.timeselect1.push({
-                                                	name:'一周前',
-                                                	val:7
-                                                })
+												this.timeselect1.push({
+													name: '一周前',
+													val: 12
+												})
+											}
+											if (acl[i].children[j].uri === '16.12' && acl[i].children[j].visitable) {
+												this.limitorder.aweekago = 1
+												this.timeselect1.push({
+													name: '上个月',
+													val: 1
+												})
 											}
 										}
 										break
@@ -646,54 +568,54 @@
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
 			toggleTab(item) {
-				setTimeout(()=>{
-					this.showtx=false
-				},0)
-				this.timeflag=item
-			    this.$refs.dateTime.show();  
+				setTimeout(() => {
+					this.showtx = false
+				}, 0)
+				this.timeflag = item
+				this.$refs.dateTime.show();
 			},
 			toggleTab1(item) {
-				setTimeout(()=>{
-					this.showtx=false
-				},0)
-				this.timeflag=item
-			    this.$refs.dateTime1.show();  
+				setTimeout(() => {
+					this.showtx = false
+				}, 0)
+				this.timeflag = item
+				this.$refs.dateTime1.show();
 			},
-			onCancel(){
+			onCancel() {
 				console.log(6666)
-				setTimeout(()=>{
-					this.showtx=true
-				},0)
+				setTimeout(() => {
+					this.showtx = true
+				}, 0)
 			},
-			onClickother(){
+			onClickother() {
 				console.log(4444)
-				this.showtx=setTimeout(()=>{
-					  this.showtx=true
-				  },0)
+				this.showtx = setTimeout(() => {
+					this.showtx = true
+				}, 0)
 			},
 			onConfirm(val) {
-				setTimeout(()=>{
-					this.showtx=true
-				},0)
-				  if(this.timeflag==1){
-					  this.start_time=val.selectRes
-				  }else{
-					  this.end_time=val.selectRes
-				  }
-				  this.getmonitorv2('all')
-			}, 
+				setTimeout(() => {
+					this.showtx = true
+				}, 0)
+				if (this.timeflag == 1) {
+					this.start_time = val.selectRes
+				} else {
+					this.end_time = val.selectRes
+				}
+				this.getmonitorv2('all')
+			},
 			onConfirm1(val) {
-				  setTimeout(()=>{
-					  this.showtx=true
-				  },0)
-				  if(this.timeflag==1){
-					  this.start_time=val.selectRes
-				  }else{
-					  this.end_time=val.selectRes
-				  }
-				  this.timestate=0
-				  this.getmonitorv3()
-			}, 
+				setTimeout(() => {
+					this.showtx = true
+				}, 0)
+				if (this.timeflag == 1) {
+					this.start_time = val.selectRes
+				} else {
+					this.end_time = val.selectRes
+				}
+				this.timestate = 0
+				this.getmonitorv3()
+			},
 			gourl(url) {
 				if (!!url) {
 					uni.navigateTo({
@@ -705,48 +627,104 @@
 				}
 			},
 			timecalc(type) {
+				if (type == -1) {
+					return
+				}
 				var date = new Date()
 				var seperator1 = "-";
 				var seperator2 = ":";
+				var daygetday = date.getDate()
+				// var daygetday=5
 				var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 - type;
-				var startyear=date.getFullYear()
-				if(month0=='00'||month0=='0-1'||month0=='0-2'||month0=='0-3'||month0=='0-4'||month0=='0-5'){
+				var startyear = date.getFullYear()
+				if (month0 == '00' || month0 == '0-1' || month0 == '0-2' || month0 == '0-3' || month0 == '0-4' || month0 == '0-5') {
 					month0 = date.getMonth() + 13 - type < 10 ? "0" + (date.getMonth() + 13 - type) : date.getMonth() + 13 - type;
-					startyear=startyear-1
+					startyear = startyear - 1
 				}
 				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-				var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-				// var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
-				// 	" " + date.getHours() + seperator2 + date.getMinutes() +
-				// 	seperator2 + date.getSeconds()
-				// var fmonuth=month-1<10?'0'+(month-1):month-1
+				var strDate = daygetday < 10 ? "0" + daygetday : daygetday;
 				// 上个月的天数
 				var day = new Date(date.getFullYear(), date.getMonth(), 0)
-				// this.start_time = startyear + seperator1 + month0 + seperator1 + "01" +
-				// 	" " + '00' + seperator2 + '00' +
-				// 	seperator2 + '00'
-				// this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
-				// 	" " + '23' + seperator2 + '59' +
-				// 	seperator2 + '59'
-				this.start_time = startyear + seperator1 + month0 + seperator1 + "01"
-				this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate
-				this.value=date.getFullYear() + seperator1 + month1 + seperator1 + '01' +
+				console.log(999, type)
+				if (type == 10 || type == 11 || type == 12 || type == 1) {
+					var month01 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+					// 当日
+					if (type == 10) {
+						var strDate0 = daygetday < 10 ? "0" + daygetday : daygetday;
+						this.start_time = startyear + seperator1 + month01 + seperator1 + strDate0
+						this.end_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate0
+					}
+					// 昨天
+					if (type == 11) {
+						var strDate0 = daygetday < 10 ? "0" + daygetday - 1 : daygetday - 1;
+						var strDate1 = daygetday < 10 ? "0" + daygetday - 1 : daygetday - 1;
+						var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+						// 如果是这个月1号
+						if (strDate1 == '00') {
+							strDate0 = day.getDate()
+							strDate1 = day.getDate()
+							// 月份减1
+							month02 = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth();
+							console.log(7777, month02)
+							// 月份减一,如果是一月份年份在减一
+							if (month02 == '00') {
+								startyear = startyear - 1
+								month02 = 12
+							}
+						}
+						this.end_time = startyear + seperator1 + month02 + seperator1 + strDate1
+						this.start_time = startyear + seperator1 + month02 + seperator1 + strDate0
+					}
+					// 一周前
+					if (type == 12) {
+						var strDate0 = daygetday < 10 ? "0" + daygetday - 7 : daygetday - 7;
+						var strDate1 = daygetday < 10 ? "0" + daygetday : daygetday;
+						this.end_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate1
+						var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+						if (daygetday < 7) {
+							strDate0 = day.getDate() + daygetday - 6
+							month02 = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth();
+							console.log(6666, day.getDate() + daygetday, strDate0)
+							if (month01 == '01') {
+								startyear = startyear - 1
+								month01 = 12
+							}
+						}
+						this.start_time = startyear + seperator1 + month02 + seperator1 + strDate0
+
+					}
+					if (type == 1) {
+						var month03 = date.getMonth() < 10 ? "0" + (date.getMonth()) : date.getMonth();
+						this.start_time = startyear + seperator1 + month03 + seperator1 + '01'
+						this.end_time = date.getFullYear() + seperator1 + month03 + seperator1 + day.getDate()
+					}
+
+				} else {
+					this.start_time = startyear + seperator1 + month0 + seperator1 + "01"
+					if (type == 0) {
+						this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate
+					} else {
+						this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + "01"
+					}
+				}
+
+				this.value = date.getFullYear() + seperator1 + month1 + seperator1 + '01' +
 					" " + '00' + seperator2 + '00' +
-					seperator2 + '00'	
-				console.log('time', this.start_time, this.start_time)
+					seperator2 + '00'
+				console.log('time', this.start_time)
 			},
-			active(i, item,type) {							
-				if(type==0){
+			active(i, item, type) {
+				if (type == 0) {
 					this.isActive = i.val
-					console.log(3333,this.isActive)
+					console.log(3333, this.isActive)
 					this.timecalc(i.val)
 					this.getmonitorv2('all')
 					// this.isActive = item
-				}else{
+				} else {
 					this.isActive1 = i.val
-					console.log(4444,this.isActive1)
-					// this.timestate=1
-				}		
+					this.timecalc(i.val)
+					this.getmonitorv3()
+				}
 			},
 			touchLineA(e) {
 				canvaLineA.touchLegend(e);
@@ -820,6 +798,68 @@
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 站点排行
+			stopranklist() {
+				var options = {
+					url: '/park/ranklist', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"start_date": timefn(1),
+						"end_date": timefn(0)
+					},
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('站点排行信息', res)
+					if (res.status == 0) {
+						this.ranklist = res.list
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取站点排行失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 获取天气
+			getweather() {
+				var options = {
+					url: '/city/weather', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {},
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('天气信息', res)
+					if (res.status == 0) {
+						this.weather = res.info
+						if(!!res.info){
+							this.bgheight='100px'
+						}else{
+							this.bgheight='85px'
+						}
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取天气失败',
 							mask: false,
 							icon: 'none',
 							duration: 1500
@@ -918,7 +958,7 @@
 
 			},
 			// v3接口
-			getmonitorv3() {
+			getmonitorv3(type) {
 				var options = {
 					url: '/city/monitorv3', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
@@ -927,9 +967,9 @@
 						yesterday: 1,
 						bike: 1,
 						aweek: 1,
-						opt_sum_start_time:this.start_time,
-						opt_sum_end_time:this.end_time,
-						opt_sum_date:1
+						opt_sum_start_time: this.start_time,
+						opt_sum_end_time: this.end_time,
+						opt_sum_date: 1
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -937,7 +977,8 @@
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
 						this.monitorv3data = res
-						this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg=this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg.toFixed(2)
+						this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg = this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg
+							.toFixed(2)
 						console.log(2222, res)
 					} else {
 						uni.showToast({
@@ -1005,50 +1046,39 @@
 							this.monitorv2.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
 						} else if (type == 'today') {
 							var battery = res.bike_stat.battery_dist
-							console.log(444, Object.keys(battery)[0], Object.keys(battery)[0], Object.keys(battery)[1], Object.keys(
-								battery)[2])
-							var allmovecar = res.bike_stat.repark_index_0 + res.bike_stat.repark_index_1 + res.bike_stat.repark_index_2 +
+							var electarr=[]
+							for(let l in battery){
+								var temp={name:`${l}%: `,
+								val:battery[l]}
+								electarr.push(temp)
+							}
+							console.log(444, electarr)
+							var allmovecar = res.bike_stat.repark_index_4 + res.bike_stat.repark_index_1 + res.bike_stat.repark_index_2 +
 								res.bike_stat.repark_index_3
 							this.dailydata = res
 							this.bigcontdetil = [{
 										lefttitle: '换电',
 										righttitle: '待换电数量：' + res.bike_stat.battery_to_change_count,
-										dataarr: [{
-												name: `${Object.keys(battery)[0]}%: `,
-												val: battery[Object.keys(battery)[0]]
-											},
-											{
-												name: `${Object.keys(battery)[1]}%: `,
-												val: battery[Object.keys(battery)[1]]
-											},
-											{
-												name: `${Object.keys(battery)[2]}%: `,
-												val: battery[Object.keys(battery)[2]]
-											},
-											{
-												name: `${Object.keys(battery)[3]}%: `,
-												val: battery[Object.keys(battery)[3]]
-											},
-										],
+										dataarr:electarr
 									},
 									{
 										lefttitle: '挪车',
 										righttitle: '待挪车数量：' + allmovecar,
 										dataarr: [{
 												name: '差1+: ',
-												val: res.bike_stat.repark_index_0
-											},
-											{
-												name: '差2+: ',
 												val: res.bike_stat.repark_index_1
 											},
 											{
-												name: '差3+: ',
+												name: '差2+: ',
 												val: res.bike_stat.repark_index_2
 											},
 											{
-												name: '差4+: ',
+												name: '差3+: ',
 												val: res.bike_stat.repark_index_3
+											},
+											{
+												name: '差4+: ',
+												val: res.bike_stat.repark_index_4
 											},
 										],
 									},
@@ -1202,18 +1232,18 @@
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
 						this.citylist = res.cities
-						
+
 						var acl = res.acl.children
 						var onlyid = '',
 							tempobjs = {},
 							url = '',
 							name = '',
 							val = ''
-							this.qxmenudata=[]
+						this.qxmenudata = []
 						for (let i = 0; i < acl.length; i++) {
 							if (acl[i].visitable == 1) {
-								onlyid = parseInt(acl[i].uri)				
-								switch (onlyid) {						
+								onlyid = parseInt(acl[i].uri)
+								switch (onlyid) {
 									case 0:
 										tempobjs = {
 											name: '附近换电',
@@ -1239,9 +1269,9 @@
 										this.qxmenudata.push(tempobjs)
 										break
 									case 15:
-										this.tempobj={
-											chexiao:0,
-											dingdan:0
+										this.tempobj = {
+											chexiao: 0,
+											dingdan: 0
 										}
 										for (let j = 0; j < acl[i].children.length; j++) {
 											if (acl[i].children[j].uri == 15.1 && acl[i].children[j].visitable) {
@@ -1253,42 +1283,42 @@
 										}
 										break
 									case 16:
-									    this.limitorder= {
-									    	all: 0,
-									    	mon: 0,
-									    	day: 0,
-									    	yesterday: 0,
-									    	aweekago: 0,
-									    	ddqst: 0, //订单趋势图
-									    	ddjet: 0, //订单金额图
-									    	cxt: 0, //车效图
-									    	qxddf: 0, //骑行调度费
-									    	czje: 0, //充值金额
-									    	hykje: 0, //会员卡金额
-									    }
-										this.timeselect1=[
-										]									
+									    console.log(16)
+										this.limitorder = {
+											all: 0,
+											mon: 0,
+											day: 0,
+											yesterday: 0,
+											aweekago: 0,
+											ddqst: 0, //订单趋势图
+											ddjet: 0, //订单金额图
+											cxt: 0, //车效图
+											qxddf: 0, //骑行调度费
+											czje: 0, //充值金额
+											hykje: 0, //会员卡金额
+										}
+										this.timeselect1 = []
 										for (let j = 0; j < acl[i].children.length; j++) {
 											if (acl[i].children[j].uri === '16.1' && acl[i].children[j].visitable) {
 												this.limitorder.all = 1
-												this.timeselect1.push(
-												{name: '自定义',
-												val: 0}
-												)
+												this.timeselect1.push({
+													name: '自定义',
+													val: -1
+												})
 											}
 											if (acl[i].children[j].uri === "16.2" && acl[i].children[j].visitable) {
 												this.limitorder.mon = 1
-												this.timeselect1.push(
-												{name: '当月',
-												val: 1}
-												)
+												this.timeselect1.push({
+													name: '当月',
+													val: 0
+												})
 											}
 											if (acl[i].children[j].uri === '16.3' && acl[i].children[j].visitable) {
 												this.limitorder.day = 1
-												this.timeselect1.push(
-												{name: '当日',
-												val: 3}
-												)
+												this.timeselect1.push({
+													name: '当日',
+													val: 10
+												})
 											}
 											if (acl[i].children[j].uri === '16.4' && acl[i].children[j].visitable) {
 												this.limitorder.ddqst = 1
@@ -1307,33 +1337,41 @@
 											}
 											if (acl[i].children[j].uri === '16.9' && acl[i].children[j].visitable) {
 												this.limitorder.hykje = 1
-						
+
 											}
 											if (acl[i].children[j].uri === '16.10' && acl[i].children[j].visitable) {
 												this.limitorder.yesterday = 1
-												this.timeselect1.push(
-												{name: '昨天',
-												val: 6}
-												)
-						
+												this.timeselect1.push({
+													name: '昨天',
+													val: 11
+												})
+
 											}
 											if (acl[i].children[j].uri === '16.11' && acl[i].children[j].visitable) {
 												this.limitorder.aweekago = 1
-						                        this.timeselect1.push(
-						                        {name: '一周前',
-						                        val: 7}
-						                        )
+												this.timeselect1.push({
+													name: '一周前',
+													val: 12
+												})
+											}
+											if (acl[i].children[j].uri === '16.12' && acl[i].children[j].visitable) {
+												this.limitorder.aweekago = 1
+												this.timeselect1.push({
+													name: '上个月',
+													val: 1
+												})
 											}
 										}
+										console.log(333,this.limitorder)
 										break
 								}
-						
+
 							}
 						}
-						
-						
-						
-						
+
+
+
+
 
 						var date = new Date()
 						var seperator1 = "-";
@@ -1347,12 +1385,12 @@
 						// 上个月的天数
 						var day = new Date(date.getFullYear(), date.getMonth(), 0)
 						var times = date.getFullYear() + seperator1 + fmonuth + seperator1 + day.getDate()
-						this.getmonitorv2(1)
+						// this.getmonitorv2(1)
 						this.getmonitorv2('today')
 						this.getmonitorv2('all')
-						this.getmonitorv2('mon')
+						// this.getmonitorv2('mon')
 						this.getHourly017(times)
-
+                      
 						try {
 							uni.removeStorageSync('userinfo');
 							uni.setStorage({
@@ -1360,6 +1398,8 @@
 								data: res,
 								success: res => {
 									console.log('success')
+									this.stopranklist()
+									this.getweather()
 								},
 								fail: res => {
 
@@ -1648,6 +1688,7 @@
 		font-size: 40upx;
 		font-weight: 500;
 	}
+
 	.qiun-charts {
 		// width: 750upx;
 		// height: 350upx;
@@ -1670,8 +1711,9 @@
 			top: 0;
 			left: 0;
 			right: 0;
-			height: 400rpx;
-			background-color: rgb(0, 120, 245);
+			// height: 400rpx;
+			height: 170rpx;
+			background-color: #0050b3;
 		}
 
 		.index-top-box {
@@ -1679,34 +1721,37 @@
 			z-index: 1;
 
 			.timeselect-view {
-				margin:4upx;
+				margin: 4upx;
 				border: 2upx solid black;
 				border-radius: 8upx;
-                 // 新增
-				 .timeselect {
-				 	.wenzi {
-				 		font-size: 22upx;
-				 		color: rgb(80, 80, 80);
-				 		margin-right: 40upx;
-				 		line-height: 40upx;
-				 	}
-				 
-				 	display: flex;
-				 	justify-content: space-around;
-				 	height: 50upx;
-				 
-				 	.timedetil {
-				 		display: flex;
-				 		justify-content: space-around;
-				 	}
-				 }
+
+				// 新增
+				.timeselect {
+					.wenzi {
+						font-size: 22upx;
+						color: rgb(80, 80, 80);
+						margin-right: 40upx;
+						line-height: 40upx;
+					}
+
+					display: flex;
+					justify-content: space-around;
+					height: 50upx;
+
+					.timedetil {
+						display: flex;
+						justify-content: space-around;
+					}
+				}
+
 				// margin: 0 6upx;
 				// border: 2upx solid red;
 				// border-radius: 10upx;
 				.timeselect-detil {
 					display: flex;
 					justify-content: space-around;
-                    margin-top: 4upx;
+					margin-top: 4upx;
+
 					.timeselect-inner {
 						// border: 2upx solid black;
 						border-radius: 12upx;
@@ -1714,17 +1759,24 @@
 						height: 54upx;
 						line-height: 54upx;
 						text-align: center;
-						background-color: #1aad19;
-						color: white // height: 80upx;
+						// background-color: #1aad19;
+						// color: white // height: 80upx;
+						background-color: #D9D9D9;
+						color: rgb(80, 80, 80);
 					}
 
 					.borderrights {
-						color: #F5A623 !important;
-						background-color: white;
-						border: 2upx solid #F5A623;
+						// color: #F5A623 !important;
+						color: white !important;
+						// background-color: white;
+						background-color: #096dd9;
+						// border: 2upx solid #F5A623;
 					}
 				}
 			}
+
+
+
 		}
 
 		.theme-bg {
@@ -1765,6 +1817,23 @@
 		display: flex;
 		justify-content: space-between;
 
+		.weather-view {
+			height: 60upx;
+			display: flex;
+			.img-view {
+				height: 46upx;
+				width: 46upx;
+			}
+			view{
+				margin-top: -6upx;
+				margin-left: 16upx;
+			}
+
+			text {
+				margin-left: 12upx;
+			}
+		}
+
 		.address {
 			width: 460rpx;
 			margin-right: 20rpx;
@@ -1788,6 +1857,77 @@
 		background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
+
+		.stop-list {
+			margin: 8upx;
+
+			// 新增
+			.timeselect {
+				.wenzi {
+					font-size: 22upx;
+					color: rgb(80, 80, 80);
+					margin-right: 40upx;
+					line-height: 40upx;
+				}
+
+				display: flex;
+				justify-content: space-around;
+				height: 50upx;
+
+				.timedetil {
+					display: flex;
+					justify-content: space-around;
+				}
+			}
+
+			.titleSpan {
+				text-align: center;
+				font-size: 30upx;
+				font-weight: 700;
+			}
+
+			.list-title {
+				font-size: 28upx;
+				font-weight: 650;
+				display: flex;
+
+				// justify-content: space-around;
+				.data-item-ct1{
+					width:20%
+				}
+				.data-item-ct2{
+					width:50%
+				}
+				.data-item-ct3{
+					width:30%
+				}
+			}
+
+			.falther-view {
+				height: 72upx;
+				line-height: 72upx;
+			}
+
+			.list-inner {
+				display: flex;
+
+				// justify-content: space-around;
+				.data-item-ct1{
+					width:20%
+				}
+				.data-item-ct2{
+					width:50%
+				}
+				.data-item-ct3{
+					width:30%
+				}
+			}
+
+			.ranklist-line {
+				height: 2upx;
+				background-color: rgb(200, 200, 200);
+			}
+		}
 
 		.out-box {
 			margin-top: 20upx;
@@ -1831,7 +1971,7 @@
 						height: 70upx;
 						border-radius: 8upx;
 						border: solid white 2upx;
-						background-color: rgb(3, 169, 245);
+						background-color: #1890ff;
 						color: white;
 						margin: 2upx;
 					}
@@ -1844,6 +1984,7 @@
 			font-size: 40upx;
 			font-weight: 500;
 		}
+
 		.box-titles {
 			text-align: center;
 			font-size: 36upx;
