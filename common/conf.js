@@ -221,6 +221,44 @@ const invstate = {
 	BIKE_INV_STATE_SCRAPED:3, //报废
 	BIKE_INV_STATE_DEPOT_REPAIRED:4 //返厂维修
 }
+// 计算时间
+// type=0今天,type=1昨天,type=2一周前,type=3一个月前
+const timefn = (type) => {
+	var date = new Date()
+	var seperator1 = "-";
+	var seperator2 = ":";
+	var daygetday = date.getDate()
+	// var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 - type;
+	var startyear = date.getFullYear()
+	var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+	var strDate = daygetday < 10 ? "0" + daygetday : daygetday;
+	// 上个月的天数
+	var day = new Date(date.getFullYear(), date.getMonth(), 0)
+	
+	var time = startyear + seperator1 + month1 + seperator1 + strDate
+	// 昨天
+	if (type == 1) {
+		var strDate0 = daygetday < 10 ? "0" + daygetday - 1 : daygetday - 1;
+		var strDate1 = daygetday < 10 ? "0" + daygetday - 1 : daygetday - 1;
+		var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+		// 如果是这个月1号
+		if (strDate1 == '00') {
+			strDate0 = day.getDate()
+			strDate1 = day.getDate()
+			// 月份减1
+			month02 = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth();
+			console.log(7777, month02)
+			// 月份减一,如果是一月份年份在减一
+			if (month02 == '00') {
+				startyear = startyear - 1
+				month02 = 12
+			}
+		}
+		time = startyear + seperator1 + month02 + seperator1 + strDate0
+	}
+	
+	return time
+}
 export {
-	formatetimes,eums,parkstate,invstate,parseSelectionName,parseBitsValue,parseSwBitsObj,isInPolygon,getLonAndLat,getborderpoint
+	formatetimes,eums,parkstate,invstate,parseSelectionName,parseBitsValue,parseSwBitsObj,isInPolygon,getLonAndLat,getborderpoint,timefn
 }
