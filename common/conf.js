@@ -238,9 +238,10 @@ const timefn = (type) => {
 	var time = startyear + seperator1 + month1 + seperator1 + strDate
 	// 昨天
 	if (type == 1) {
-		var strDate0 = daygetday < 10 ? "0" + daygetday - 1 : daygetday - 1;
-		var strDate1 = daygetday < 10 ? "0" + daygetday - 1 : daygetday - 1;
+		var strDate0 = daygetday-1 < 10 ? "0" + (daygetday - 1) : daygetday - 1;
+		var strDate1 = daygetday-1 < 10 ? "0" + (daygetday - 1) : daygetday - 1;
 		var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+		console.log(333,daygetday,strDate1)
 		// 如果是这个月1号
 		if (strDate1 == '00') {
 			strDate0 = day.getDate()
@@ -256,6 +257,7 @@ const timefn = (type) => {
 		}
 		time = startyear + seperator1 + month02 + seperator1 + strDate0
 	}
+	console.log(555,strDate,strDate0)
 	
 	return time
 }
