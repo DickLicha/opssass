@@ -309,6 +309,7 @@
 				bikestate: {
 					bus_state: '*',
 					battery_level_max: '*',
+					battery_level_min: '*',
 					is_under_volt: "*",
 					battery_model: '*',
 					alert_state: '*',
@@ -317,7 +318,7 @@
 					health_state: '*',
 					to_be_maintained: '*',
 					show_park: '*',
-					park_state: '*'
+					park_state: '*',
 				},
 			};
 		},
@@ -410,7 +411,7 @@
 						var models = this.userinfo.city.battery_models
 						var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps
 						var battery_m = [{
-							name: '全部',
+							name: '全部电池',
 							val: '*'
 						}]
 						for (var i = 0; i < models.length; i++) {
@@ -647,6 +648,25 @@
 						if (!!this.onloaddata.is_online) {
 							this.bikestate.is_online = parseInt(this.onloaddata.is_online)
 						}
+						if (!!this.onloaddata.battery_level_max) {
+							this.bikestate.battery_level_max = parseInt(this.onloaddata.battery_level_max)
+						}
+						if (!!this.onloaddata.battery_level_min) {
+							this.bikestate.battery_level_min = parseInt(this.onloaddata.battery_level_min)
+						}
+						if (!!this.onloaddata.repark_index) {
+							this.bikestate.repark_index = parseInt(this.onloaddata.repark_index)
+						}
+						if (!!this.onloaddata.bus_state) {
+							this.bikestate.bus_state = parseInt(this.onloaddata.bus_state)
+						}
+						if (!!this.onloaddata.inv_state) {
+							this.bikestate.inv_state = parseInt(this.onloaddata.inv_state)
+						}
+						if (!!this.onloaddata.health_state) {
+							this.bikestate.health_state = parseInt(this.onloaddata.health_state)
+						}
+						
 
 						var models = this.userinfo.city.battery_models
 						var battery_m = [{
@@ -705,7 +725,7 @@
 
 							],
 							[{
-									name: '全部车辆',
+									name: '全部挪车',
 									val: '0',
 								},
 								{
@@ -731,7 +751,7 @@
 								},
 							],
 							[{
-									name: '全部',
+									name: '全部电池',
 									val: '44',
 								},
 								{
@@ -744,7 +764,7 @@
 								},
 							],
 							[{
-									name: '全部',
+									name: '全部状态',
 									val: '50',
 								},
 								{
@@ -800,6 +820,7 @@
 						"distance": 3000,
 						"bus_state": this.bikestate.bus_state, //业务状态
 						"battery_level_max": this.bikestate.battery_level_max, //最高电压
+						"battery_level_min": this.bikestate.battery_level_min, //最低电压
 						"is_under_volt": this.bikestate.is_under_volt, //是否低电
 						"battery_model": this.bikestate.battery_model,
 						// "battery_model" : ["xxxx","yyyy"],
@@ -1090,7 +1111,6 @@
 				this.creatStopurl(0, 1, "*", this.polylinePoints)
 			},
 			markclick(e) {
-				console.log(444, this.type)
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
@@ -1799,13 +1819,11 @@
 								tmpObjs.radius = res.parks[j].radius
 								tmpObjs.remark = res.parks[j].remark
 								tmpObjs.grade = res.parks[j].grade
-								// tmpObjs.allkcount = res.parks[j].capacity
 								tmpObjs.width = 39
 								tmpObjs.height = 48
 								tmpObjs.parkid = res.parks[j].id
 								temparr.push(tmpObjs)
 								circles.push(circlesObj)
-								// this.covers.push(tmpObjs)
 							}
 						}
 						this.covers = temparr
@@ -2027,7 +2045,8 @@
 							tmpObj.id = res.list[i].id
 							tmpObj.latitude = res.list[i].coordinate[1]
 							tmpObj.longitude = res.list[i].coordinate[0]
-							tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0, 0)
+							// tmpObj.iconPath = this.$imagepath(res.list[i], 'car', 0, 0)
+							tmpObj.iconPath = this.$imagepath(res.list[i], 'elect', 0, 0)
 							tmpObj.width = 39
 							tmpObj.height = 48
 							this.covers.push(tmpObj)
@@ -2250,6 +2269,9 @@
 						break;
 					case '10':
 						this.urls = '/pages/swapbattery/swapbattery?type=0'
+						if(this.onloaddata.flag==1){
+							this.urls = '/pages/movecarPage/checkupcar/checkupcar'
+						}
 						break;
 				}
 			},

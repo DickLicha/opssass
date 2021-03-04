@@ -12,11 +12,11 @@
 						<view>
 							<text class="address">{{locaplace||'未获取'}}</text>
 							<view class='weather-view' v-if="!!weather">
-								<img class='img-view' :src="weather.weather_day_pic"  alt="">
+								<img class='img-view' :src="weather.weather_day_pic" alt="">
 								<view>
 									<text>{{weather.weather_day}}</text>
 									<text>{{weather.temperature_day}}°c</text>
-								</view>				
+								</view>
 							</view>
 						</view>
 						<!-- <text class="address">{{locaplace||'未获取'}}</text> -->
@@ -57,7 +57,7 @@
 						 :key='item'>{{i.name}}</view>
 					</view>
 					<!-- 自定义 -->
-					<view class="data-box" >
+					<view class="data-box">
 						<!-- <view class='box-titles'>自定义</view> -->
 						<view class="data-item" v-if="limitorder.czje">
 							<view class="data-item-ct1">{{timestate==1?monitorv2.user_charge_amount_total/100:monitorv3data.opt_sum_date.user_charge_amount/100}}</view>
@@ -98,7 +98,7 @@
 							</view>
 							<view class='inner-line'></view>
 							<view class='inner-son'>
-								<view class='inner-son-detil' v-for="(j,items) in i.dataarr" :key='items'><text>{{j.name}}</text><text></text><text
+								<view class='inner-son-detil' v-for="(j,items) in i.dataarr" :key='items' @click='gonewpage(item,j,items)'><text>{{j.name}}</text><text></text><text
 									 style='font-size: 20px;'>{{j.val}}</text></view>
 							</view>
 						</view>
@@ -217,7 +217,7 @@
 		},
 		data() {
 			return {
-				bgheight:'170upx',
+				bgheight: '170upx',
 				weather: "",
 				ranklist: [],
 				// tab: 1,
@@ -567,6 +567,42 @@
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
+			gonewpage(index, item, indexs) {
+				console.log(888, index, item)
+				var battery_level_max = '',
+					battery_level_min = '',
+					spliturl = ''
+				switch (index) {
+					case 0:
+						let temparr = item.name.split('-')
+						battery_level_min = temparr[0]
+						battery_level_max = temparr[1].split('%')[0]
+						spliturl = `&battery_level_max=${battery_level_max}&battery_level_min=${battery_level_min}`
+						break;
+					case 1:
+						spliturl = `&repark_index=${indexs+1}&flag=1`
+						break
+					case 2:
+						spliturl = `&alert_state=${item.alert_state}`
+						break
+					case 3:
+						spliturl = `&inv_state=${item.inv_state}&health_state=1`
+						break
+					case 4:
+						spliturl = `&bus_state=${item.bus_state}`
+						if(indexs==2){
+							spliturl = `&is_online=0`
+						}
+						break
+				}
+				uni.navigateTo({
+					// url: '/pages/map/map?text=234&type=10&name=车辆监控' + spliturl,
+					url: `/pages/map/map?text=${item.name}&type=10&name=车辆监控${spliturl}`,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
 			toggleTab(item) {
 				setTimeout(() => {
 					this.showtx = false
@@ -656,8 +692,8 @@
 					}
 					// 昨天
 					if (type == 11) {
-						var strDate0 = daygetday < 10 ? "0" + daygetday - 1 : daygetday - 1;
-						var strDate1 = daygetday < 10 ? "0" + daygetday - 1 : daygetday - 1;
+						var strDate0 = daygetday - 1 < 10 ? "0" + (daygetday - 1) : daygetday - 1;
+						var strDate1 = daygetday - 1 < 10 ? "0" + (daygetday - 1) : daygetday - 1;
 						var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
 						// 如果是这个月1号
 						if (strDate1 == '00') {
@@ -677,7 +713,7 @@
 					}
 					// 一周前
 					if (type == 12) {
-						var strDate0 = daygetday < 10 ? "0" + daygetday - 7 : daygetday - 7;
+						var strDate0 = daygetday - 7 < 10 ? "0" + (daygetday - 7) : daygetday - 7;
 						var strDate1 = daygetday < 10 ? "0" + daygetday : daygetday;
 						this.end_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate1
 						var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
@@ -852,10 +888,10 @@
 					console.log('天气信息', res)
 					if (res.status == 0) {
 						this.weather = res.info
-						if(!!res.info){
-							this.bgheight='100px'
-						}else{
-							this.bgheight='85px'
+						if (!!res.info) {
+							this.bgheight = '100px'
+						} else {
+							this.bgheight = '85px'
 						}
 					} else {
 						uni.showToast({
@@ -1046,10 +1082,12 @@
 							this.monitorv2.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
 						} else if (type == 'today') {
 							var battery = res.bike_stat.battery_dist
-							var electarr=[]
-							for(let l in battery){
-								var temp={name:`${l}%: `,
-								val:battery[l]}
+							var electarr = []
+							for (let l in battery) {
+								var temp = {
+									name: `${l}%: `,
+									val: battery[l]
+								}
 								electarr.push(temp)
 							}
 							console.log(444, electarr)
@@ -1057,82 +1095,154 @@
 								res.bike_stat.repark_index_3
 							this.dailydata = res
 							this.bigcontdetil = [{
-										lefttitle: '换电',
-										righttitle: '待换电数量：' + res.bike_stat.battery_to_change_count,
-										dataarr:electarr
+									lefttitle: '换电',
+									righttitle: '待换电数量：' + res.bike_stat.battery_to_change_count,
+									dataarr: electarr
+								},
+								{
+									lefttitle: '挪车',
+									righttitle: '待挪车数量：' + allmovecar,
+									dataarr: [{
+											name: '差1+: ',
+											val: res.bike_stat.repark_index_1
+										},
+										{
+											name: '差2+: ',
+											val: res.bike_stat.repark_index_2
+										},
+										{
+											name: '差3+: ',
+											val: res.bike_stat.repark_index_3
+										},
+										{
+											name: '差4+: ',
+											val: res.bike_stat.repark_index_4
+										},
+									],
+								},
+								{
+									lefttitle: '预警',
+									righttitle: '预警总条数：' + res.bike_stat.alert_dist.total,
+									dataarr: [{
+											name: '电池空置',
+											val: res.bike_stat.alert_dist.no_battery,
+											alert_state: 512
+										},
+										{
+											name: '欠压',
+											val: res.bike_stat.alert_dist.under_volt,
+											alert_state: 2
+										},
+										{
+											name: '无人扫码',
+											val: res.bike_stat.alert_dist.no_scaned,
+											alert_state: 0b1000000000000000000000
+										},
+										{
+											name: '无定位',
+											val: res.bike_stat.alert_dist.no_gps,
+											alert_state: 0b100000000000000000000
+										},
+										{
+											name: '无业务',
+											val: res.bike_stat.alert_dist.no_bus,
+											alert_state: 0b10000000000000000000000
+										},
+										{
+											name: '疑似被盗',
+											val: res.bike_stat.alert_dist.stolen,
+											alert_state: 32
+										},
+									]
+								},
+								{
+									lefttitle: '故障',
+									righttitle: '故障总数量：' + res.bike_stat.fault_dist.total,
+									dataarr: [
+										{
+										name: '已入库',
+										val: res.bike_stat.fault_dist.recalled,
+										inv_state:2
 									},
 									{
-										lefttitle: '挪车',
-										righttitle: '待挪车数量：' + allmovecar,
-										dataarr: [{
-												name: '差1+: ',
-												val: res.bike_stat.repark_index_1
-											},
-											{
-												name: '差2+: ',
-												val: res.bike_stat.repark_index_2
-											},
-											{
-												name: '差3+: ',
-												val: res.bike_stat.repark_index_3
-											},
-											{
-												name: '差4+: ',
-												val: res.bike_stat.repark_index_4
-											},
-										],
+										name: '未入库',
+										val: res.bike_stat.fault_dist.total-res.bike_stat.fault_dist.recalled,
+										inv_state:0
 									},
-								],
-								this.boxdata = [
-									// {name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=车辆监控&text=预警车辆&type=10&alert_state=-1'},
-									// {name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/repairlist/repairlist?type=11'},
-									// {name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
-									// {name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=车辆监控&text=离线车辆&type=10&is_online=0'},
-									// {name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=车辆监控&text=疑似故障&type=10&&alert_state=16'},
-									// {name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
-									// {name:'挪车数',val:res.rporder_ok_count,url:''},
-									// {name:'换电数',val:res.bcorder_ok_count,url:''},
-									{
-										name: '预警车辆',
-										val: res.bike_stat.alert_count,
-										url: ''
-									},
-									{
-										name: '待排查车辆',
-										val: res.bike_stat.to_check_count,
-										url: ''
-									},
-									{
-										name: '缺电车辆',
-										val: res.bike_stat.under_volt_count,
-										url: '/pages/map/map?name=换电&text=全部换电&type=0'
-									},
-									{
-										name: '离线车辆',
-										val: res.bike_stat['24h_offline_count'],
-										url: ''
-									},
-									{
-										name: '疑似故障车辆',
-										val: res.bike_stat.alert_fault_count,
-										url: ''
-									},
-									{
-										name: '报修车辆',
-										val: res.bike_stat.fault_count,
-										url: '/pages/map/map?name=维修&text=全部故障车辆&type=1.1'
-									},
-									{
-										name: '挪车数',
-										val: res.rporder_ok_count,
-										url: ''
-									},
-									{
-										name: '换电数',
-										val: res.bcorder_ok_count,
-										url: ''
-									},
-								]
+									]
+								},
+								{
+									lefttitle: '其他',
+									righttitle: '车辆总数量：' + res.bike_stat.total,
+									dataarr: [{
+											name: '骑行',
+											val: res.bike_stat.ridden_count,
+											bus_state: 11
+										},
+										{
+											name: '空闲',
+											val: res.bike_stat.idle_count,
+											bus_state: 0
+										},
+										{
+											name: '离线',
+											val: res.bike_stat.offline_count,
+											is_online: 0
+										},
+									]
+								},
+							]
+
+							this.boxdata = [
+								// {name:'预警车辆',val:res.bike_stat.alert_count,url:'/pages/map/map?name=车辆监控&text=预警车辆&type=10&alert_state=-1'},
+								// {name:'待排查车辆',val:res.bike_stat.to_check_count,url:'/pages/repairlist/repairlist?type=11'},
+								// {name:'缺电车辆',val:res.bike_stat.under_volt_count,url:'/pages/map/map?name=换电&text=全部换电&type=0'},
+								// {name:'离线车辆',val:res.bike_stat['24h_offline_count'],url:'/pages/map/map?name=车辆监控&text=离线车辆&type=10&is_online=0'},
+								// {name:'疑似故障车辆',val:res.bike_stat.alert_fault_count,url:'/pages/map/map?name=车辆监控&text=疑似故障&type=10&&alert_state=16'},
+								// {name:'报修车辆',val:res.bike_stat.fault_count,url:'/pages/map/map?name=维修&text=全部故障车辆&type=1.1'},
+								// {name:'挪车数',val:res.rporder_ok_count,url:''},
+								// {name:'换电数',val:res.bcorder_ok_count,url:''},
+								{
+									name: '预警车辆',
+									val: res.bike_stat.alert_count,
+									url: ''
+								},
+								{
+									name: '待排查车辆',
+									val: res.bike_stat.to_check_count,
+									url: ''
+								},
+								{
+									name: '缺电车辆',
+									val: res.bike_stat.under_volt_count,
+									url: '/pages/map/map?name=换电&text=全部换电&type=0'
+								},
+								{
+									name: '离线车辆',
+									val: res.bike_stat['24h_offline_count'],
+									url: ''
+								},
+								{
+									name: '疑似故障车辆',
+									val: res.bike_stat.alert_fault_count,
+									url: ''
+								},
+								{
+									name: '报修车辆',
+									val: res.bike_stat.fault_count,
+									url: '/pages/map/map?name=维修&text=全部故障车辆&type=1.1'
+								},
+								{
+									name: '挪车数',
+									val: res.rporder_ok_count,
+									url: ''
+								},
+								{
+									name: '换电数',
+									val: res.bcorder_ok_count,
+									url: ''
+								},
+							]
 						} else if (type == 'mon') {
 							this.monitorv2m = res
 							this.monitorv2m.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
@@ -1283,7 +1393,7 @@
 										}
 										break
 									case 16:
-									    console.log(16)
+										console.log(16)
 										this.limitorder = {
 											all: 0,
 											mon: 0,
@@ -1362,7 +1472,7 @@
 												})
 											}
 										}
-										console.log(333,this.limitorder)
+										console.log(333, this.limitorder)
 										break
 								}
 
@@ -1390,7 +1500,7 @@
 						this.getmonitorv2('all')
 						// this.getmonitorv2('mon')
 						this.getHourly017(times)
-                      
+						this.getmonitorv3()
 						try {
 							uni.removeStorageSync('userinfo');
 							uni.setStorage({
@@ -1820,11 +1930,13 @@
 		.weather-view {
 			height: 60upx;
 			display: flex;
+
 			.img-view {
 				height: 46upx;
 				width: 46upx;
 			}
-			view{
+
+			view {
 				margin-top: -6upx;
 				margin-left: 16upx;
 			}
@@ -1892,14 +2004,16 @@
 				display: flex;
 
 				// justify-content: space-around;
-				.data-item-ct1{
-					width:20%
+				.data-item-ct1 {
+					width: 20%
 				}
-				.data-item-ct2{
-					width:50%
+
+				.data-item-ct2 {
+					width: 50%
 				}
-				.data-item-ct3{
-					width:30%
+
+				.data-item-ct3 {
+					width: 30%
 				}
 			}
 
@@ -1912,14 +2026,16 @@
 				display: flex;
 
 				// justify-content: space-around;
-				.data-item-ct1{
-					width:20%
+				.data-item-ct1 {
+					width: 20%
 				}
-				.data-item-ct2{
-					width:50%
+
+				.data-item-ct2 {
+					width: 50%
 				}
-				.data-item-ct3{
-					width:30%
+
+				.data-item-ct3 {
+					width: 30%
 				}
 			}
 

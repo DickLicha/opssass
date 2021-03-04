@@ -66,6 +66,7 @@ Vue.prototype.$invstate = function(type) {
 
 Vue.prototype.$imagepath = function(element, type, bikenum, grade) {
 		var iconPath = '/static/mapicon/car_normal.png'
+		
 		// 车辆
 		if (type == 'car') {
 			// 差+车
@@ -89,6 +90,14 @@ Vue.prototype.$imagepath = function(element, type, bikenum, grade) {
 			else if (1 === element.is_lower_battery) {
 				iconPath = '/static/mapicon/low_elec.png'
 			}
+		}
+		// 显示带电量的图标
+		else if(type == 'elect'){
+			var tempimg=parseInt((element.battery_level/5).toFixed(0))
+			if(tempimg==0){
+				tempimg=1
+			}
+			iconPath='/static/electimg/802_'+tempimg+'.png'
 		}
 		// 车站
 		else if (type == 'stop') {

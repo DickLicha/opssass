@@ -56,9 +56,9 @@
 			<view v-show="showendmove" class='end-move-button1'>
 				<button class='share-button-default margin-topbtn' type='primary' @click='startmovecar(1)'>单个挪车</button>
 			</view>
-			<view v-show="showendmove" class='end-move-button2'>
+			<!-- <view v-show="showendmove" class='end-move-button2'>
 				<button class='share-button-default margin-topbtn' type='primary' @click='startmovecar(0)'>批量挪车</button>
-			</view>
+			</view> -->
 
 		</view>
 	</view>
@@ -822,6 +822,7 @@
 											this.endmoveopr(parkid, 1, loadtime, '无特征值返回')
 										}else{
 											var _self=this
+											this.endmoveopr(parkid, 0, loadtime, 'success')
 											if (!!this.blueres.deviceId) {
 												uni.closeBLEConnection({
 													deviceId: this.blueres.deviceId,
@@ -1094,8 +1095,8 @@
 					console.log('预处理订单-------》', res)
 					this.showmap = true
 					if (res.status == 0) {
+						// 批量挪车
 						if(this.type==101){
-							// var str1 = ble.doCmd('20', '00', this.switchdatatotal[this.remarkcarindex].bluetooth_token)
 							var str1 = ble.doCmd('20', '00', this.plncble(0).bluetooth_token)
 							ble.openLock(str1, 'open', function(res) {
 								console.log('蓝牙操作', res)
@@ -1103,8 +1104,6 @@
 							setTimeout(()=>{
 								if (blueWriteState == 0) {
 									console.log('blueWriteState2', blueWriteState)
-									// this.reportblue(this.openOrClose, 1, loadtime,'无特征值返回')
-									// if(!this.switchdatatotal[this.remarkcarindex].is_moved){
 									if(!this.plncble(0).is_moved){
 										console.log('woshi6')
 										this.opercar(allmovetype, 1, 0, '', this.plncble(0).id)						
@@ -1115,41 +1114,41 @@
 										uni.closeBLEConnection({
 											deviceId: this.blueres.deviceId,
 											success(res) {
-												console.log('断开蓝牙连接成功', res)
-												// if(_self.remarkcarindex<_self.switchdatatotal.length-1){
-												// 	console.log('im1')
-												// 	_self.remarkcarindex+=1
-												// 	_self.startmoveall()
-												// }						
+												console.log('断开蓝牙连接成功', res)						
 											}
 										})
 									}
 								}
 							},3000)	
-						}else{
-							if (!!this.bikeinfo.bluetooth_token && this.blueconectstate == 1 && type == 1) {
-								var str1 = ble.doCmd('20', '00', this.bikeinfo.bluetooth_token)
-								ble.openLock(str1, 'open', function(res) {
-									console.log('蓝牙操作', res)
-								})
-								blueWriteState = 0
-								setTimeout(() => {
-									if (blueWriteState == 0) {
-										console.log('blueWriteState2', blueWriteState)
-										// this.reportblue(this.openOrClose, 1, loadtime,'无特征值返回')
-										console.log('woshi7')
-										this.opercar(allmovetype, 1, loadtime, '无特征值返回')
-									}
-								}, 3000)									
+						}
+						// 单个挪车
+						else{
+							try{
+								if (!!this.bikeinfo.bluetooth_token && type == 1) {
+									var str1 = ble.doCmd('20', '00', this.bikeinfo.bluetooth_token)
+									ble.openLock(str1, 'open', function(res) {
+										console.log('蓝牙操作', res)
+									})
+									blueWriteState = 0
+									setTimeout(() => {
+										if (blueWriteState == 0) {
+											console.log('blueWriteState2', blueWriteState)
+											// this.reportblue(this.openOrClose, 1, loadtime,'无特征值返回')
+											console.log('woshi7')
+											this.opercar(allmovetype, 1, loadtime, '无特征值返回')
+										}else{
+											this.opercar(allmovetype, 0, loadtime, 'success')
+										}
+									}, 3000)									
+								}else{
+									this.opercar(allmovetype, 1, loadtime, '无特征值返回')
+								}					
+								this.getmovingbike()
+							}catch(e){
+								//TODO handle the exception
+								this.opercar(allmovetype, 1, loadtime, '无特征值返回')
 							}
-							// this.ids = res.info.id
-							// this.setOrderid(res.info.id)						
-							this.getmovingbike()
-							// if (this.timmer == null) {
-							// 	this.timmer = setInterval(() => {
-							// 		this.getmovingbike()
-							// 	}, 3000)
-							// }
+							
 						}
 					}
 					 else {
@@ -1214,11 +1213,7 @@
 								"error_msg": errmess
 							}
 						}
-						console.log(333222,bleinfo)
 						var id = _self.bikeid
-						// if (snid) {
-						// 	id = snid
-						// }
 						if(_self.type==101){
 							id=this.plncble(0).id
 							types=0
@@ -1270,15 +1265,6 @@
 								_self.ids = res.info.id
 								_self.setOrderid(res.info.id)
 								_self.getmovingbike()
-								// if (_self.timmer == null && _self.type!=101) {
-								// 	_self.timmer = setInterval(() => {
-								// 		_self.getmovingbike()
-								// 	}, 3000)
-								// }
-
-								// uni.navigateBack({
-								// 	delta: 1
-								// });
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '该车不可挪',

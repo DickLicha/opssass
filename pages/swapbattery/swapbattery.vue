@@ -639,7 +639,7 @@
 				// 车辆业务状态
 				this.swapbatterydata1[7].val = this.directinfo.bike_bus_state_enum[bikeinfo.bus_state]
 				if(this.bikeinfo.bus_state){
-					this.swapbatterydata1[7].val = this.directinfo.bike_bus_state_enum[0]
+					this.swapbatterydata1[7].val = this.directinfo.bike_bus_state_enum[this.bikeinfo.bus_state]
 				}
 				this.swapbatterydata1[7].time=bikeinfo.bus_update_time
 				// 车辆定位类型
