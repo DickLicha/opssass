@@ -15,27 +15,41 @@
 					<cover-view v-if="showmapselect" class='map-select-view'>
 
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)" :class="{'borderrights':i===isActive0}">{{item.name}}</cover-view>
+							<!-- <cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)" :class="{'borderrights':i===isActive0}" :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view> -->
+							<cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)" :class="{'borderrights':item.issleect && i===isActive0}"
+							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[1]" :key='i' @click="active(i,item,1)" :class="{'borderrights':i===isActive1}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[1]" :key='i' @click="active(i,item,1)" :class="{'borderrights':item.issleect && i===isActive1}"
+							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[2]" :key='i' @click="active(i,item,2)" :class="{'borderrights':i===isActive2}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[2]" :key='i' @click="active(i,item,2)" :class="{'borderrights':item.issleect && i===isActive2}"
+							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[3]" :key='i' @click="active(i,item,3)" :class="{'borderrights':i===isActive3}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[3]" :key='i' @click="active(i,item,3)" :class="{'borderrights':item.issleect && i===isActive3}"
+							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[4]" :key='i' @click="active(i,item,4)" :class="{'borderrights':i===isActive4}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[4]" :key='i' @click="active(i,item,4)" :class="{'borderrights':item.issleect && i===isActive4}"
+							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+						</cover-view>
+						<cover-view class='select-list'>
+							<cover-view v-for="(item,i) in selectcoverdata[5]" :key='i' @click="active(i,item,5)" :class="{'borderrights':item.issleect && i===isActive5}"
+							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+						</cover-view>
+						<cover-view class='select-list'>
+							<cover-view v-for="(item,i) in selectcoverdata[6]" :key='i' @click="active(i,item,6)" :class="{'borderrights':item.issleect && i===isActive6}"
+							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-sure' @click.native="selectsure">确定</cover-view>
 					</cover-view>
 					<cover-view v-show="(type==3.1 || type==3 || type==0) && inglength>0" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
 					<cover-view class='map-cover-view' v-if="!showcorverview.bottom&&!actives&&!hidebutton">
-						<cover-view  class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
+						<cover-view class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
 					</cover-view>
-					
+
 				</map>
 				<view v-if="actives && type==9">
 					<view class='scroll-viewy'>
@@ -196,6 +210,8 @@
 				isActive2: -1,
 				isActive3: -1,
 				isActive4: -1,
+				isActive5: -1,
+				isActive6: -1,
 				selectvals: 100,
 				stopName: '',
 				defaultLev: '1级',
@@ -271,8 +287,7 @@
 				// 		},
 				// 	]
 				// ],
-				selectcoverdata: [
-				],
+				selectcoverdata: [],
 				covers: [],
 				circles: [],
 				polyline: [{ //指定一系列坐标点，从数组第一项连线至最后一项
@@ -406,58 +421,66 @@
 				console.log('-------333', this.type)
 				switch (this.type) {
 					case '0':
-					    this.changeingbattery()
-					    this.nearbyshortpower(this.selectvals, this.longitude, this.latitude, '*')
+						this.changeingbattery()
+						this.nearbyshortpower(this.selectvals, this.longitude, this.latitude, '*')
 						var models = this.userinfo.city.battery_models
 						var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps
 						var battery_m = [{
 							name: '全部电池',
-							val: '*'
+							// val: '*',
+							val: 111,
+							issleect: false,
 						}]
 						for (var i = 0; i < models.length; i++) {
 							var temp = {
 								name: models[i][0],
-								val: models[i][1]
+								val: models[i][1],
+								issleect: false,
 							}
 							battery_m.push(temp)
 						}
-						this.selectcoverdata[0] = 
-							[{
-									name: '全部换电',
-									id: '0',
-									val: 100,
-								},
-								{
-									name: '欠压车辆',
-									id: '6',
-									val: 0,
-								},
-								{
-									name: '离线车辆',
-									id: '7',
-									val: 7,
-								},
-								{
-									name: '预警车辆',
-									id: '8',
-									val: 8,
-								},
-								{
-									name: '疑似故障',
-									id: '9',
-									val: 9,
-								},
-							]						
-						for(var i=0;i<battery_level_to_change_steps.length;i++){
-							var tempobj={
-								name:battery_level_to_change_steps[i]+'%以下（0）',
-								id:battery_level_to_change_steps[i],
-								val:battery_level_to_change_steps[i]
+						this.selectcoverdata[0] = [{
+								name: '全部换电',
+								id: '0',
+								val: 100,
+								issleect: false,
+							},
+							// {
+							// 	name: '欠压车辆',
+							// 	id: '6',
+							// 	val: 0,
+							// 	issleect:false,
+							// },
+							// {
+							// 	name: '离线车辆',
+							// 	id: '7',
+							// 	val: 7,
+							// 	issleect:false,
+							// },
+							// {
+							// 	name: '预警车辆',
+							// 	id: '8',
+							// 	val: 8,
+							// 	issleect:false,
+							// },
+							// {
+							// 	name: '疑似故障',
+							// 	id: '9',
+							// 	val: 9,
+							// 	issleect:false,
+							// },
+						]
+						for (var i = 0; i < battery_level_to_change_steps.length; i++) {
+							var tempobj = {
+								name: battery_level_to_change_steps[i] + '%以下（0）',
+								id: battery_level_to_change_steps[i],
+								val: battery_level_to_change_steps[i],
+								issleect: false,
 							}
 							this.selectcoverdata[0].push(tempobj)
 						}
 						this.selectcoverdata[1] = battery_m
-						this.scanbuttonname = '扫码换电'					
+						this.scanbuttonname = '扫码换电'
 						break;
 					case '0.1':
 						this.hidebutton = true
@@ -536,19 +559,22 @@
 						// this.nearbyfaultcar(this.longitude, this.latitude, this.selectvals)
 						this.selectcoverdata = [
 							[{
-									name: '全部故障车辆',
+									name: '全部故障',
 									id: '0',
-									val: '*'
+									val: '*',
+									issleect: false,
 								},
 								{
-									name: '未入库故障车辆',
+									name: '未入库故障',
 									id: '1',
-									val: '0'
+									val: '0',
+									issleect: false,
 								},
 								{
-									name: '已入库故障车辆',
+									name: '已入库故障',
 									id: '2',
-									val: '2'
+									val: '2',
+									issleect: false,
 								},
 							]
 						]
@@ -583,30 +609,37 @@
 							[{
 									name: '全部车辆',
 									val: '0',
+									issleect: false,
 								},
 								{
 									name: '1+不动车辆',
 									val: '1',
+									issleect: false,
 								},
 								{
 									name: '2+不动车辆',
 									val: '2',
+									issleect: false,
 								},
 								{
 									name: '3+不动车辆',
 									val: '3',
+									issleect: false,
 								},
 								{
 									name: '4+不动车辆',
 									val: '4',
+									issleect: false,
 								},
 								{
 									name: '禁停区内车辆',
 									val: '11',
+									issleect: false,
 								},
 								{
 									name: '服务区外车辆',
 									val: '21',
+									issleect: false,
 								},
 							]
 						]
@@ -621,14 +654,17 @@
 							[{
 									name: '全部车站',
 									id: '0',
+									issleect: false,
 								},
 								{
 									name: '已开启车站',
 									id: '0',
+									issleect: false,
 								},
 								{
 									name: '已关闭车站',
 									id: '0',
+									issleect: false,
 								},
 							]
 						]
@@ -666,124 +702,202 @@
 						if (!!this.onloaddata.health_state) {
 							this.bikestate.health_state = parseInt(this.onloaddata.health_state)
 						}
-						
+
 
 						var models = this.userinfo.city.battery_models
 						var battery_m = [{
-							name: '全部',
-							val: '*'
+							name: '电池型号:',
+							val: '*',
+							issleect: false,
 						}]
 						for (var i = 0; i < models.length; i++) {
 							var temp = {
 								name: models[i][0],
-								val: models[i][1]
+								val: models[i][1],
+								issleect: false,
 							}
 							battery_m.push(temp)
 						}
 						this.selectcoverdata = [
 							[{
-									name: '全部换电',
+									name: '换电:',
+									id: '0',
+									val: -1,
+									issleect: false
+								},
+								{
+									name: '<=100',
 									id: '0',
 									val: 100,
+									issleect: false
 								},
 								{
-									name: '所有35%以下',
+									name: '<=35',
 									id: '1',
 									val: 35,
+									issleect: false
 								},
 								{
-									name: '所有20%以下',
+									name: '<=20',
 									id: '3',
 									val: 20,
+									issleect: false
 								},
 								{
-									name: '所有10%以下',
+									name: '<=10',
 									id: '4',
 									val: 10,
+									issleect: false
 								},
-								{
-									name: '欠压车辆',
-									id: '6',
-									val: 0,
-								}
 							],
 							[{
-									name: '全部车辆',
+									name: '是否欠压:',
 									id: '7',
 									val: 1,
+									issleect: false
 								},
 								{
-									name: '离线车辆',
+									name: '是',
 									id: '7',
 									val: 2,
+									issleect: false
 								},
 								{
-									name: '预警车辆',
+									name: '否',
 									id: '8',
 									val: 3,
+									issleect: false
 								},
 
 							],
 							[{
-									name: '全部挪车',
+									name: '是否离线:',
 									val: '0',
+									issleect: false
 								},
 								{
-									name: '1+不动车辆',
+									name: '是',
 									val: '1',
+									issleect: false
 								},
 								{
-									name: '2+不动车辆',
+									name: '否',
 									val: '2',
-								},
-								{
-									name: '禁停区内车辆',
-									val: '11',
-								},
-								{
-									name: '服务区外车辆',
-									val: '21',
-								},
-								{
-									name: '疑似故障',
-									id: '9',
-									val: 9,
+									issleect: false
 								},
 							],
 							[{
-									name: '全部电池',
+									name: '电池型号:',
 									val: '44',
+									issleect: false
 								},
 								{
 									name: '天能',
 									val: '44',
+									issleect: false
 								},
 								{
 									name: '卓能',
 									val: '45',
+									issleect: false
 								},
 							],
 							[{
-									name: '全部状态',
+									name: '业务状态:',
 									val: '50',
+									issleect: false
 								},
 								{
 									name: '换电中',
 									val: '50',
+									text: 30,
+									issleect: false
 								},
 								{
 									name: '挪车中',
 									val: '51',
+									text: 20,
+									issleect: false
 								},
 								{
 									name: '骑行中',
 									val: '51',
+									text: 11,
+									issleect: false
 								},
 								{
 									name: '空闲',
 									val: '51',
+									text: 0,
+									issleect: false
 								},
-							]
+							],
+							[{
+									name: '差车:',
+									val: '50',
+									issleect: false
+								},
+								{
+									name: '全部',
+									val: '50',
+									issleect: false
+								},
+								{
+									name: '1+',
+									val: '51',
+									issleect: false
+								},
+								{
+									name: '2+',
+									val: '51',
+									issleect: false
+								},
+								{
+									name: '3+',
+									val: '51',
+									issleect: false
+								},
+								{
+									name: '4+',
+									val: '51',
+									issleect: false
+								},
+							],
+							[{
+									name: '预警:',
+									val: '50',
+								},
+								{
+									name: '全部',
+									val: '50',
+									text: -1,
+									issleect: false
+								},
+								{
+									name: '离线',
+									val: '51',
+									text: 4,
+									issleect: false
+								},
+								{
+									name: '无gps',
+									val: '51',
+									text: 8,
+									issleect: false
+								},
+								{
+									name: '无业务',
+									val: '51',
+									text: 0b10000000000000000000000,
+									issleect: false
+								},
+								{
+									name: '无扫码',
+									val: '51',
+									text: 0b100000000000000000000,
+									issleect: false
+								},
+							],
 						]
 						this.selectcoverdata[3] = battery_m
 						this.nearbybike(this.longitude, this.latitude)
@@ -805,6 +919,18 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
+			menutitle(i, type) {
+				if (i == 0 && this.type == 10) {
+					if (type == 'color') {
+						return '#1D2023'
+					} else if (type == 'size') {
+						return '600'
+					} else if (type == 'align') {
+						return ''
+					}
+				}
+				return ''
+			},
 			toggleTab(item) {
 				this.timeflag = item
 				this.$refs.dateTime.show();
@@ -1514,89 +1640,110 @@
 
 			},
 			active(index, item, num) {
-				// this.isActive = index
+				if (index == 0 && this.type == 10) {
+					return
+				}
+				item.issleect = !item.issleect
 				// 换电
 				if (num == 0) {
 					this.isActive0 = index
+					this.bikestate.battery_level_max = "*"
 					this.bikestate.is_under_volt = '*'
+					this.bikestate.inv_state = '*'
 					this.selectvals = item.val
-					if (item.val == 0) {
-						this.bikestate.is_under_volt = 1
-					} else {
-						this.bikestate.battery_level_max = item.val
+					// 选中赋值
+					if (item.issleect) {
+						if (item.val == 0) {
+							this.bikestate.is_under_volt = 1
+						} else {
+							this.bikestate.battery_level_max = item.val
+						}
+					}
+					// 故障维修
+					if (this.type == '1.1') {
+						this.bikestate.inv_state = '*'
+						if (item.issleect) {
+							if (index == 1) {
+								this.bikestate.inv_state = 0
+							} else if (index == 2) {
+								this.bikestate.inv_state = 2
+							}
+						}
 					}
 				}
 				//离线预警  特殊情况所有状态都能搜索
 				if (this.type == 10) {
+					// 欠压
 					if (num == 1) {
 						this.isActive1 = index
-						this.bikestate.is_online = '*'
-						this.bikestate.alert_state = '*'
-						if (index == 0) {} else if (index == 1) {
-							this.bikestate.is_online = 0
-						} else if (index == 2) {
-							this.bikestate.alert_state = -1
+						this.bikestate.is_under_volt = '*'
+						if (index == 1 && item.issleect) {
+							this.bikestate.is_under_volt = 1
 						}
 					}
-					// 挪车
+					// 离线
 					else if (num == 2) {
 						this.isActive2 = index
-						this.bikestate.repark_index = '*'
-						this.bikestate.park_state = '*'
-						this.bikestate.alert_state = '*'
-						if (index == 0) {
-							// this.bikestate.repark_index='*'
-						} else if (index == 1) {
-							this.bikestate.repark_index = 1
-						} else if (index == 2) {
-							this.bikestate.repark_index = 2
-						} else if (index == 3) {
-							this.bikestate.park_state = 11
-						} else if (index == 4) {
-							this.bikestate.park_state = 21
-						} else if (index == 5) {
-							this.bikestate.alert_state = 16
+						this.bikestate.is_online = '*'
+						if (index == 1 && item.issleect) {
+							this.bikestate.is_online = 1
 						}
-
 					}
 					// 电池型号
 					else if (num == 3) {
 						this.isActive3 = index
-						// this.bikestate.battery_model="*"
-						this.bikestate.battery_model = item.val
-						// if(index==0){
-
-						// }else{
-						// 	this.bikestate.battery_model=item.val
-						// }
+						this.bikestate.battery_model = "*"
+						if (item.issleect) {
+							this.bikestate.battery_model = item.val
+						}
 					}
 					// 业务状态
 					else if (num == 4) {
 						this.isActive4 = index
 						this.bikestate.bus_state = '*'
-						if (index == 0) {
-
-						} else if (index == 1) {
-							this.bikestate.bus_state = 30
-						} else if (index == 2) {
-							this.bikestate.bus_state = 20
-						} else if (index == 3) {
-							this.bikestate.bus_state = 11
-						} else if (index == 4) {
-							this.bikestate.bus_state = 0
+						if (item.issleect) {
+							this.bikestate.bus_state = item.text
 						}
 					}
-				} else {
-					// 电池型号
-					if (num == 1) {
-						this.isActive1 = index
-						// this.bikestate.battery_model="*"
-						this.bikestate.battery_model = item.val
+					// 差车
+					else if (num == 5) {
+						this.isActive5 = index
+						this.bikestate.repark_index = "*"
+						if (item.issleect) {
+							if (index == 1) {
+								this.bikestate.repark_index = 1
+							} else {
+								this.bikestate.repark_index = index - 1
+							}
+
+						}
+					}
+					// 预警
+					else if (num == 6) {
+						this.isActive6 = index
+						this.bikestate.alert_state = "*"
+						if (item.issleect) {
+							this.bikestate.alert_state = item.text
+						}
+
 					}
 				}
 
+				// 电池型号
+				if (this.type != 10 && num == 1) {
+					
+					this.isActive1 = index
+					console.log(999,item,this.isActive1)
+					this.bikestate.battery_model = "*"
+					if (item.issleect) {
+						this.bikestate.battery_model = item.val
+					}
+
+				}
+
+
 				this.headviewtext = item.name
-				console.log(44444, item)
+				// console.log(44444, item)
 			},
 			functionNames() {},
 			// 移动地图获取中心点坐标
@@ -1756,7 +1903,13 @@
 						this.covers = []
 						var temparr = []
 						var circles = []
-						var all=res.list.length,up1=0,up2=0,up3=0,up4=5,up5=0,up6=0
+						var all = res.list.length,
+							up1 = 0,
+							up2 = 0,
+							up3 = 0,
+							up4 = 5,
+							up5 = 0,
+							up6 = 0
 						if (this.type != '9' && !!res.list) {
 							for (let i = 0; i < res.list.length; i++) {
 								let tmpObj = {}
@@ -1773,26 +1926,63 @@
 								tmpObj.height = 48
 								temparr.push(tmpObj)
 								// this.covers.push(tmpObj)
-								if(res.list[i].repark_index==1){
+								if (res.list[i].repark_index == 1) {
 									up1++
 								}
-								if(res.list[i].repark_index==2){
+								if (res.list[i].repark_index == 2) {
 									up2++
 								}
-								if(res.list[i].repark_index==3){
+								if (res.list[i].repark_index == 3) {
 									up3++
 								}
-								if(res.list[i].repark_index==4){
+								if (res.list[i].repark_index == 4) {
 									up4++
 								}
-								if(res.list[i].park_state==11){
+								if (res.list[i].park_state == 11) {
 									up5++
 								}
-								if(res.list[i].park_state==21){
+								if (res.list[i].park_state == 21) {
 									up6++
 								}
 							}
-							this.selectcoverdata = [							[{									name: '全部车辆'+'('+all+')',									val: '0',								},								{									name: '1+不动车辆'+'('+up1+')',									val: '1',								},								{									name: '2+不动车辆'+'('+up2+')',									val: '2',								},								{									name: '3+不动车辆'+'('+up3+')',									val: '3',								},								{									name: '4+不动车辆'+'('+up4+')',									val: '4',								},								{									name: '禁停区内车辆'+'('+up5+')',									val: '11',								},								{									name: '服务区外车辆'+'('+up6+')',									val: '21',								},							]						]
+							this.selectcoverdata = [
+								[{
+										name: '全部' + '(' + all + ')',
+										val: '0',
+										issleect: false,
+									},
+									{
+										name: '1+' + '(' + up1 + ')',
+										val: '1',
+										issleect: false,
+									},
+									{
+										name: '2+' + '(' + up2 + ')',
+										val: '2',
+										issleect: false,
+									},
+									{
+										name: '3+' + '(' + up3 + ')',
+										val: '3',
+										issleect: false,
+									},
+									{
+										name: '4+' + '(' + up4 + ')',
+										val: '4',
+										issleect: false,
+									},
+									{
+										name: '禁停区' + '(' + up5 + ')',
+										val: '11',
+										issleect: false,
+									},
+									{
+										name: '服务区外' + '(' + up6 + ')',
+										val: '21',
+										issleect: false,
+									},
+								]
+							]
 						}
 						if (!!res.parks) {
 							for (let j = 0; j < res.parks.length; j++) {
@@ -2010,11 +2200,11 @@
 							longitude,
 							latitude
 						],
-						"battery_level_max": max,
+						"battery_level_max": this.bikestate.battery_level_max,
 						"distance": distance,
-						"is_under_volt": undervolt,
-						"is_online": is_online,
-						"alert_state": alert_state,
+						// "is_under_volt": undervolt,
+						// "is_online": is_online,
+						// "alert_state": alert_state,
 						"battery_model": this.bikestate.battery_model,
 					}
 				}
@@ -2026,20 +2216,24 @@
 					// res为服务端返回数据的根对象
 					console.log('附近缺电车辆', res)
 					this.covers = []
-					var all=res.list.length,under35=0,under30=0,under20=0,under10=0	
-						var battery_step_arr=[]
-						var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps
-						for(var i=0;i<battery_level_to_change_steps.length;i++){
-							    var tempobj={
-								name:battery_level_to_change_steps[i]+'%以下',
-								id:battery_level_to_change_steps[i],
-								val:battery_level_to_change_steps[i],
-								num:0
-							   }
-							   battery_step_arr.push(tempobj)
-							  }
-					if (res.status == 0 && res.list.length!=0) {
-						
+					var all = res.list.length,
+						under35 = 0,
+						under30 = 0,
+						under20 = 0,
+						under10 = 0
+					var battery_step_arr = []
+					var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps
+					for (var i = 0; i < battery_level_to_change_steps.length; i++) {
+						var tempobj = {
+							name: battery_level_to_change_steps[i] + '%以下',
+							id: battery_level_to_change_steps[i],
+							val: battery_level_to_change_steps[i],
+							num: 0
+						}
+						battery_step_arr.push(tempobj)
+					}
+					if (res.status == 0 && res.list.length != 0) {
+
 						for (let i = 0; i < res.list.length; i++) {
 							let tmpObj = {}
 							tmpObj.id = res.list[i].id
@@ -2051,48 +2245,53 @@
 							tmpObj.height = 48
 							this.covers.push(tmpObj)
 							// 根据换电梯度筛选出某个阶段电量的数量								
-							for(var g=0;g<battery_step_arr.length;g++){
-								if(res.list[i].battery_level<battery_step_arr[g].val){
+							for (var g = 0; g < battery_step_arr.length; g++) {
+								if (res.list[i].battery_level < battery_step_arr[g].val) {
 									battery_step_arr[g].num++
 								}
 							}
 						}
-						for(var q=0;q<battery_step_arr.length;q++){
-							battery_step_arr[q].name=battery_step_arr[q].name+'('+battery_step_arr[q].num+')'
+						for (var q = 0; q < battery_step_arr.length; q++) {
+							battery_step_arr[q].name = battery_step_arr[q].name + '(' + battery_step_arr[q].num + ')'
 						}
-						this.selectcoverdata[0] =
-							[{
-									name: '全部换电',
-									id: '0',
-									val: 100,
-								},
-								{
-									name: '欠压车辆',
-									id: '6',
-									val: 0,
-								},
-								{
-									name: '离线车辆',
-									id: '7',
-									val: 7,
-								},
-								{
-									name: '预警车辆',
-									id: '8',
-									val: 8,
-								},
-								{
-									name: '疑似故障',
-									id: '9',
-									val: 9,
-								},
-							]
-						this.selectcoverdata[0][0]={
-									name: '全部换电'+'('+res.list.length+')',
-									id: '0',
-									val: 100,
-								}
-						this.selectcoverdata[0]=this.selectcoverdata[0].concat(battery_step_arr)
+						this.selectcoverdata[0] = [{
+								name: '全部换电',
+								id: '0',
+								val: 100,
+								issleect: false,
+							},
+							// {
+							// 	name: '欠压车辆',
+							// 	id: '6',
+							// 	val: 0,
+							// 	issleect:false,
+							// },
+							// {
+							// 	name: '离线车辆',
+							// 	id: '7',
+							// 	val: 7,
+							// 	issleect:false,
+							// },
+							// {
+							// 	name: '预警车辆',
+							// 	id: '8',
+							// 	val: 8,
+							// 	issleect:false,
+							// },
+							// {
+							// 	name: '疑似故障',
+							// 	id: '9',
+							// 	val: 9,
+							// 	issleect:false,
+							// },
+						]
+						this.selectcoverdata[0][0] = {
+							name: '全部换电' + '(' + res.list.length + ')',
+							id: '0',
+							val: 100,
+							issleect: false,
+						}
+						this.selectcoverdata[0] = this.selectcoverdata[0].concat(battery_step_arr)
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -2197,7 +2396,7 @@
 							longitude,
 							latitude
 						],
-						"inv_state": types
+						"inv_state": this.bikestate.inv_state
 						// "is_under_volt": 1
 					}
 				}
@@ -2269,7 +2468,7 @@
 						break;
 					case '10':
 						this.urls = '/pages/swapbattery/swapbattery?type=0'
-						if(this.onloaddata.flag==1){
+						if (this.onloaddata.flag == 1) {
 							this.urls = '/pages/movecarPage/checkupcar/checkupcar'
 						}
 						break;
@@ -2452,7 +2651,7 @@
 								uni.navigateBack({
 									delta: 1
 								});
-							},5000)
+							}, 5000)
 						}
 					}
 				}).catch((err) => {
@@ -2724,7 +2923,7 @@
 			background-color: white;
 			text-align: center;
 			font-size: 40upx;
-			background-color: #efeff2;
+			background-color: #f9fafc;
 			font-size: 14px;
 			overflow-y: scroll;
 			scroll-top: 40;
@@ -2745,19 +2944,23 @@
 				flex-wrap: wrap;
 				background-color: white;
 				margin-bottom: 14upx;
+				color: #606972;
 
+				// text-align: left;
+				// padding-left: 20upx;
 				cover-view {
 					// width: calc(50% - 10upx);
-					width: 32.5%;
-					border: 1upx solid rgba(245, 245, 245, 1);
-					height: 80upx;
-					line-height: 80upx;
+					width: 24.3%;
+					// border: 1upx solid rgba(245, 245, 245, 1);
+					height: 65upx;
+					line-height: 65upx;
 				}
 
 				.borderrights {
 					// border-right: 1upx solid gray;
-					color: #F6C700;
+					color: black;
 					border: 1upx solid #F6C700;
+					background-color: rgb(255, 248, 220);
 				}
 			}
 		}

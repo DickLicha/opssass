@@ -63,20 +63,21 @@
 		height: 6vh;
 		line-height: 6vh;
 		// background-color: #f5f5f5;
-		background-color: #555555;
+		background-color: #F5F6F7;
 		text-align: center;
 		.base-img{
 			width:18upx;
 			height:18upx;
+			margin-left: 10upx;
 		}
 		.sousuo-view{
 			position: absolute;
 			right:18upx;
 			font-size: 40upx;
-			color:white;
+			color:#606972;
 		}
         .text-view{
-			color:white
+			color:#606972
 		}
 		span:nth-child(1) {
 			text-align: center;
