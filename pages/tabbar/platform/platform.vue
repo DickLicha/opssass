@@ -9,7 +9,16 @@
 					<view class="nav nav-head">
 						<navigator class="store" @click="showbotpop" url="../selectStore/selectStore">{{citylist[0].name||'未知城市'}}<text
 							 class="iconfont icon-xiajian"></text></navigator>
-						<text class="address">{{locaplace||'未获取'}}</text>
+						<view>
+							<text class="address">{{locaplace||'未获取'}}</text>
+							<view class='weather-view' v-if="!!weather">
+								<img class='img-view' :src="weather.weather_day_pic" alt="">
+								<view>
+									<text>{{weather.weather_day}}</text>
+									<text>{{weather.temperature_day}}°c</text>
+								</view>
+							</view>
+						</view>
 					</view>
 				</view>
 				<view class="nav flex-box">
@@ -41,6 +50,27 @@
 						<view class="data-item-ct1">{{i.val}}</view>
 						<view class="data-item-ct2">{{i.name}}</view>
 					</view>
+
+					<!-- 站点排行 -->
+					<view class='stop-list'>
+						<view class='titleSpan'>站点排行</view>
+						<view class='list-title'>
+							<view class="data-item-ct1">#</view>
+							<view class="data-item-ct2">站点名称</view>
+							<view class="data-item-ct3">订单数量(单)</view>
+							<!-- <view>排名变化</view> -->
+						</view>
+						<view class='falther-view' v-for="(i,item) in ranklist" :key='item'>
+							<view class='list-inner'>
+								<view class="data-item-ct1">{{item+1}}</view>
+								<view class="data-item-ct2">{{i.park_name}}</view>
+								<view class="data-item-ct3">{{i.order_count}}</view>
+							</view>
+							<view class='ranklist-line'></view>
+							<!-- <view class="data-item-ct2">{{i.name}}</view> -->
+						</view>
+
+					</view>
 				</view>
 
 
@@ -51,7 +81,7 @@
 					<!--#endif-->
 				</view>
 				<view class='timeselect-view' v-if="(limitorder.ddjet || limitorder.cxt) && showtx">
-					
+
 					<!-- 新增 -->
 					<view class='timeselect'>
 						<!-- <view>开始时间:</view> -->
@@ -59,16 +89,15 @@
 							<view class='wenzi'>开始</view>
 							<view>{{start_time}}</view>
 						</view>
-						<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" :value=value :isAll="true"
-						 :current="false"></yu-datetime-picker>
+						<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" :value=value :isAll="true" :current="false"></yu-datetime-picker>
 						<view class='timedetil' @tap="toggleTab(2)">
 							<view class='wenzi'>结束</view>
 							<view>{{end_time}}</view>
 						</view>
-						
+
 					</view>
-					
-					
+
+
 					<view class='timeselect-detil'>
 						<view class='timeselect-inner' @click="active(i,item)" :class="{'borderrights':item==isActive}" v-for="(i,item) in timeselect"
 						 :key='item'>{{i.name}}</view>
@@ -262,6 +291,9 @@
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import uCharts from '@/common/u-charts.min.js';
 	import {
+		timefn
+	} from '@/common/conf.js'
+	import {
 		mapState,
 		mapMutations
 	} from 'vuex'
@@ -278,9 +310,11 @@
 		},
 		data() {
 			return {
+				weather: "",
+				ranklist: [],
 				// tab: 1,
-				timeflag:0,
-				value:'',
+				timeflag: 0,
+				value: '',
 				monitorv3data: {},
 				testdata: [111, 222, 333, 444, 555],
 				bigcontdetil: [{
@@ -414,7 +448,9 @@
 			//#endif
 		},
 		onShow() {
+			this.getweather()
 			this.timecalc(0)
+			this.stopranklist()
 			var date = new Date()
 			var seperator1 = "-";
 			var seperator2 = ":";
@@ -581,18 +617,18 @@
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
 			toggleTab(item) {
-				this.timeflag=item
-			    this.$refs.dateTime.show();  
-			}, 
+				this.timeflag = item
+				this.$refs.dateTime.show();
+			},
 			onConfirm(val) {
-				  if(this.timeflag==1){
-					  this.start_time=val.selectRes
-				  }else{
-					  this.end_time=val.selectRes
-				  }
-				  this.getmonitorv2('all')
-				  // this.getServerData()
-			}, 
+				if (this.timeflag == 1) {
+					this.start_time = val.selectRes
+				} else {
+					this.end_time = val.selectRes
+				}
+				this.getmonitorv2('all')
+				// this.getServerData()
+			},
 			gourl(url) {
 				if (!!url) {
 					uni.navigateTo({
@@ -608,10 +644,10 @@
 				var seperator1 = "-";
 				var seperator2 = ":";
 				var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 - type;
-				var startyear=date.getFullYear()
-				if(month0=='00'||month0=='0-1'||month0=='0-2'||month0=='0-3'||month0=='0-4'||month0=='0-5'){
+				var startyear = date.getFullYear()
+				if (month0 == '00' || month0 == '0-1' || month0 == '0-2' || month0 == '0-3' || month0 == '0-4' || month0 == '0-5') {
 					month0 = date.getMonth() + 13 - type < 10 ? "0" + (date.getMonth() + 13 - type) : date.getMonth() + 13 - type;
-					startyear=startyear-1
+					startyear = startyear - 1
 				}
 				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
 				var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
@@ -627,9 +663,9 @@
 				this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate +
 					" " + '23' + seperator2 + '59' +
 					seperator2 + '59'
-				this.value=date.getFullYear() + seperator1 + month1 + seperator1 + '01' +
+				this.value = date.getFullYear() + seperator1 + month1 + seperator1 + '01' +
 					" " + '00' + seperator2 + '00' +
-					seperator2 + '00'	
+					seperator2 + '00'
 				console.log('time', this.start_time, this.start_time)
 			},
 			active(i, item) {
@@ -709,6 +745,68 @@
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取车辆信息失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 站点排行
+			stopranklist() {
+				var options = {
+					url: '/park/ranklist', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"start_date": timefn(1),
+						"end_date": timefn(0)
+					},
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('站点排行信息', res)
+					if (res.status == 0) {
+						this.ranklist = res.list
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取站点排行失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 获取天气
+			getweather() {
+				var options = {
+					url: '/city/weather', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {},
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('天气信息', res)
+					if (res.status == 0) {
+						this.weather = res.info
+						if (!!res.info) {
+							this.bgheight = '100px'
+						} else {
+							this.bgheight = '85px'
+						}
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '获取天气失败',
 							mask: false,
 							icon: 'none',
 							duration: 1500
@@ -892,7 +990,7 @@
 							var battery = res.bike_stat.battery_dist
 							console.log(444, Object.keys(battery)[0], Object.keys(battery)[0], Object.keys(battery)[1], Object.keys(
 								battery)[2])
-							var allmovecar = res.bike_stat.repark_index_0 + res.bike_stat.repark_index_1 + res.bike_stat.repark_index_2 +
+							var allmovecar = res.bike_stat.repark_index_4 + res.bike_stat.repark_index_1 + res.bike_stat.repark_index_2 +
 								res.bike_stat.repark_index_3
 							this.dailydata = res
 							this.bigcontdetil = [{
@@ -921,19 +1019,19 @@
 										righttitle: '待挪车数量：' + allmovecar,
 										dataarr: [{
 												name: '差1+: ',
-												val: res.bike_stat.repark_index_0
-											},
-											{
-												name: '差2+: ',
 												val: res.bike_stat.repark_index_1
 											},
 											{
-												name: '差3+: ',
+												name: '差2+: ',
 												val: res.bike_stat.repark_index_2
 											},
 											{
-												name: '差4+: ',
+												name: '差3+: ',
 												val: res.bike_stat.repark_index_3
+											},
+											{
+												name: '差4+: ',
+												val: res.bike_stat.repark_index_4
 											},
 										],
 									},
@@ -1113,6 +1211,8 @@
 								data: res,
 								success: res => {
 									console.log('success')
+									this.stopranklist()
+									this.getweather()
 								},
 								fail: res => {
 
@@ -1419,7 +1519,7 @@
 			left: 0;
 			right: 0;
 			height: 400rpx;
-			background-color: rgb(0, 120, 245);
+			background-color: #0050b3;
 		}
 
 		.index-top-box {
@@ -1427,24 +1527,26 @@
 			z-index: 1;
 
 			.timeselect-view {
-                 // 新增
-				 .timeselect {
-				 	.wenzi {
-				 		font-size: 22upx;
-				 		color: rgb(80, 80, 80);
-				 		margin-right: 40upx;
-				 		line-height: 40upx;
-				 	}
-				 
-				 	display: flex;
-				 	justify-content: space-around;
-				 	height: 50upx;
-				 
-				 	.timedetil {
-				 		display: flex;
-				 		justify-content: space-around;
-				 	}
-				 }
+
+				// 新增
+				.timeselect {
+					.wenzi {
+						font-size: 22upx;
+						color: rgb(80, 80, 80);
+						margin-right: 40upx;
+						line-height: 40upx;
+					}
+
+					display: flex;
+					justify-content: space-around;
+					height: 50upx;
+
+					.timedetil {
+						display: flex;
+						justify-content: space-around;
+					}
+				}
+
 				// margin: 0 6upx;
 				// border: 2upx solid red;
 				// border-radius: 10upx;
@@ -1459,13 +1561,17 @@
 						height: 54upx;
 						line-height: 54upx;
 						text-align: center;
-						background-color: #1aad19;
-						color: white // height: 80upx;
+						// background-color: #1aad19;
+						// color: white // height: 80upx;
+						background-color: #D9D9D9;
+						color: rgb(80, 80, 80);
 					}
 
 					.borderrights {
-						color: #F5A623 !important;
-						background-color: white;
+						// color: #F5A623 !important;
+						color: white !important;
+						// background-color: white;
+						background-color: #096dd9;
 						border: 2upx solid #F5A623;
 					}
 				}
@@ -1510,6 +1616,25 @@
 		display: flex;
 		justify-content: space-between;
 
+		.weather-view {
+			height: 60upx;
+			display: flex;
+
+			.img-view {
+				height: 46upx;
+				width: 46upx;
+			}
+
+			view {
+				margin-top: -6upx;
+				margin-left: 16upx;
+			}
+
+			text {
+				margin-left: 12upx;
+			}
+		}
+
 		.address {
 			width: 460rpx;
 			margin-right: 20rpx;
@@ -1533,6 +1658,81 @@
 		background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
+
+		.stop-list {
+			margin: 8upx;
+
+			// 新增
+			.timeselect {
+				.wenzi {
+					font-size: 22upx;
+					color: rgb(80, 80, 80);
+					margin-right: 40upx;
+					line-height: 40upx;
+				}
+
+				display: flex;
+				justify-content: space-around;
+				height: 50upx;
+
+				.timedetil {
+					display: flex;
+					justify-content: space-around;
+				}
+			}
+
+			.titleSpan {
+				text-align: center;
+				font-size: 30upx;
+				font-weight: 700;
+			}
+
+			.list-title {
+				font-size: 28upx;
+				font-weight: 650;
+				display: flex;
+
+				// justify-content: space-around;
+				.data-item-ct1 {
+					width: 12%
+				}
+
+				.data-item-ct2 {
+					width: 63%
+				}
+
+				.data-item-ct3 {
+					width: 25%
+				}
+			}
+
+			.falther-view {
+				height: 72upx;
+				line-height: 72upx;
+			}
+
+			.list-inner {
+				display: flex;
+
+				// justify-content: space-around;
+				.data-item-ct1 {
+					width: 12%
+				}
+
+				.data-item-ct2 {
+					width: 63%
+				}
+
+				.data-item-ct3 {
+					width: 25%
+				}
+			}
+
+			.ranklist-line {
+				height: 2upx;
+				background-color: rgb(200, 200, 200);
+			}
+		}
 
 		.out-box {
 			margin-top: 20upx;
@@ -1576,7 +1776,8 @@
 						height: 70upx;
 						border-radius: 8upx;
 						border: solid white 2upx;
-						background-color: rgb(3, 169, 245);
+						// background-color: rgb(3, 169, 245);
+						background-color: #1890ff;
 						color: white;
 						margin: 2upx;
 					}
