@@ -1,8 +1,8 @@
 <template>
 	<view>
-		<view class="base-header" >
+		<view class="base-header" @click='showmapcoverview'>
 			<i v-if="hasBack" class="iconfont iconsousuo sousuo-view" @click='gosuchview'></i>
-			<text class='text-view' @click='showmapcoverview'>{{title}}</text>
+			<text class='text-view' >{{title}}</text>
 			<img v-if='xialajiantou' src="../../static/image/xiala.png" class='base-img'  alt="">
 			<!-- <img src="/static/image/shangla.png" style='width:20upx;height:auto' alt=""> -->
 			<text v-if="hasright" @click="messagecenter">{{rightTitle}}</text>
@@ -77,7 +77,8 @@
 			color:#606972;
 		}
         .text-view{
-			color:#606972
+			color:#606972;
+			font-size:22upx;
 		}
 		span:nth-child(1) {
 			text-align: center;

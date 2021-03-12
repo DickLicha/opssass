@@ -581,6 +581,12 @@
 						break;
 					case 1:
 						spliturl = `&repark_index=${indexs+1}&flag=1`
+						if(indexs==4){
+							spliturl = `&park_state=21&flag=1`
+						}
+						if(indexs==5){
+							spliturl = `&park_state=11&flag=1`
+						}
 						break
 					case 2:
 						spliturl = `&alert_state=${item.alert_state}`
@@ -1117,6 +1123,14 @@
 										{
 											name: '差4+: ',
 											val: res.bike_stat.repark_index_4
+										},
+										{
+											name: '服务区外: ',
+											val: res.bike_stat.out_svca_count
+										},
+										{
+											name: '禁停区内: ',
+											val: res.bike_stat.in_npa_count
 										},
 									],
 								},

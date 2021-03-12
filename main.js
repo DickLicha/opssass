@@ -94,9 +94,9 @@ Vue.prototype.$imagepath = function(element, type, bikenum, grade) {
 		// 显示带电量的图标
 		else if(type == 'elect'){
 			var tempimg=parseInt((element.battery_level/5).toFixed(0))
-			if(tempimg==0){
-				tempimg=1
-			}
+			// if(tempimg==0){
+			// 	tempimg=1
+			// }
 			iconPath='/static/electimg/802_'+tempimg+'.png'
 		}
 		// 车站

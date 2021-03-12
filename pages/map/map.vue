@@ -148,7 +148,8 @@
 	var blueWriteState = 0,
 		loadtime = 1000,
 		distancem = 10,
-		distance = 200
+		distance = 200,
+		str0='',str1='',str2='',str3='',str4='',str5='',str6=''
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
 	import baseInput from '@/components/baseinput/baseinput.vue'
@@ -702,6 +703,9 @@
 						if (!!this.onloaddata.health_state) {
 							this.bikestate.health_state = parseInt(this.onloaddata.health_state)
 						}
+						if (!!this.onloaddata.park_state) {
+							this.bikestate.park_state = parseInt(this.onloaddata.park_state)
+						}
 
 
 						var models = this.userinfo.city.battery_models
@@ -762,12 +766,12 @@
 									val: 2,
 									issleect: false
 								},
-								{
-									name: '否',
-									id: '8',
-									val: 3,
-									issleect: false
-								},
+								// {
+								// 	name: '否',
+								// 	id: '8',
+								// 	val: 3,
+								// 	issleect: false
+								// },
 
 							],
 							[{
@@ -780,11 +784,11 @@
 									val: '1',
 									issleect: false
 								},
-								{
-									name: '否',
-									val: '2',
-									issleect: false
-								},
+								// {
+								// 	name: '否',
+								// 	val: '2',
+								// 	issleect: false
+								// },
 							],
 							[{
 									name: '电池型号:',
@@ -1639,13 +1643,14 @@
 				}
 
 			},
-			active(index, item, num) {
+			active(index, item, num) {				
 				if (index == 0 && this.type == 10) {
 					return
 				}
 				item.issleect = !item.issleect
 				// 换电
 				if (num == 0) {
+					str0=''
 					this.isActive0 = index
 					this.bikestate.battery_level_max = "*"
 					this.bikestate.is_under_volt = '*'
@@ -1653,6 +1658,7 @@
 					this.selectvals = item.val
 					// 选中赋值
 					if (item.issleect) {
+						str0=item.val+'%|'
 						if (item.val == 0) {
 							this.bikestate.is_under_volt = 1
 						} else {
@@ -1675,55 +1681,76 @@
 				if (this.type == 10) {
 					// 欠压
 					if (num == 1) {
+						str1=''
 						this.isActive1 = index
 						this.bikestate.is_under_volt = '*'
 						if (index == 1 && item.issleect) {
 							this.bikestate.is_under_volt = 1
+							str1='欠压|'
 						}
 					}
 					// 离线
 					else if (num == 2) {
+						str2=''
 						this.isActive2 = index
 						this.bikestate.is_online = '*'
 						if (index == 1 && item.issleect) {
-							this.bikestate.is_online = 1
+							this.bikestate.is_online = 0
+							str2='离线|'
 						}
 					}
 					// 电池型号
 					else if (num == 3) {
 						this.isActive3 = index
+						str3=''
 						this.bikestate.battery_model = "*"
 						if (item.issleect) {
 							this.bikestate.battery_model = item.val
+							str3=item.name+'|'
 						}
 					}
 					// 业务状态
 					else if (num == 4) {
 						this.isActive4 = index
 						this.bikestate.bus_state = '*'
+						str4=''
 						if (item.issleect) {
 							this.bikestate.bus_state = item.text
+							str4=item.name+'|'
 						}
 					}
 					// 差车
 					else if (num == 5) {
 						this.isActive5 = index
+						str5=''
 						this.bikestate.repark_index = "*"
 						if (item.issleect) {
 							if (index == 1) {
+								str5='差车'+'|'
 								this.bikestate.repark_index = 1
 							} else {
 								this.bikestate.repark_index = index - 1
+								str5=item.name+'|'
 							}
-
+							
 						}
 					}
 					// 预警
 					else if (num == 6) {
 						this.isActive6 = index
 						this.bikestate.alert_state = "*"
-						if (item.issleect) {
+						str6=''
+						if (item.issleect) {							
 							this.bikestate.alert_state = item.text
+							
+							if(index==1){
+								str6='预警|'
+							}
+							else if(index==2){
+								str6='离线预警|'
+							}else{
+								str6=item.name
+							}
 						}
 
 					}
@@ -1740,10 +1767,12 @@
 					}
 
 				}
-
-
-				this.headviewtext = item.name
-				// console.log(44444, item)
+                if(this.type==10){					
+					this.headviewtext=str0+str1+str2+str3+str4+str5+str6
+				}else{
+					this.headviewtext = item.name
+				}
+				
 			},
 			functionNames() {},
 			// 移动地图获取中心点坐标
