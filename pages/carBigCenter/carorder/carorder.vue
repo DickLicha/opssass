@@ -23,6 +23,8 @@
 					{name:'订单开始:',val:''},
 					{name:'订单结束:',val:''},
 					{name:'订单状态:',val:'已结束'},
+					{name:'最近一次挪车人:',val:''},
+					{name:'最近一次换电人:',val:''},
 					// {name:'订单轨迹:',val:'查看',click:true},
 				]		
 			}
@@ -46,11 +48,9 @@
 			
 			// 订单状态
 			this.carcenterdata1[5].val = this.$bus_state(this.bikeinfo.bus_state)
-			// if(this.bikeinfo.last_order_id!=''){
-			// 	this.carcenterdata1[5].val = '已结束'
-			// }else{
-			// 	this.carcenterdata1[5].val = '空闲'
-			// }
+			var busstate=this.bikeinfo.bus_state
+			this.carcenterdata1[6].val=this.bikeinfo.last_repark_order_oper_name
+			this.carcenterdata1[7].val=this.bikeinfo.last_battery_change_order_oper_name
 		},
 		methods: {
 			gocarcenter(e){

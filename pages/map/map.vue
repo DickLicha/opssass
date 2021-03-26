@@ -1936,9 +1936,47 @@
 							up1 = 0,
 							up2 = 0,
 							up3 = 0,
-							up4 = 5,
+							up4 = 0,
 							up5 = 0,
 							up6 = 0
+						this.selectcoverdata = [
+							[{
+									name: '全部' + '(' + all + ')',
+									val: '0',
+									issleect: false,
+								},
+								{
+									name: '>=1+' + '(' + up1 + ')',
+									val: '1',
+									issleect: false,
+								},
+								{
+									name: '>=2+' + '(' + up2 + ')',
+									val: '2',
+									issleect: false,
+								},
+								{
+									name: '>=3+' + '(' + up3 + ')',
+									val: '3',
+									issleect: false,
+								},
+								{
+									name: '4+' + '(' + up4 + ')',
+									val: '4',
+									issleect: false,
+								},
+								{
+									name: '禁停区' + '(' + up5 + ')',
+									val: '11',
+									issleect: false,
+								},
+								{
+									name: '服务区外' + '(' + up6 + ')',
+									val: '21',
+									issleect: false,
+								},
+							]
+						]
 						if (this.type != '9' && !!res.list) {
 							for (let i = 0; i < res.list.length; i++) {
 								let tmpObj = {}
@@ -1981,17 +2019,17 @@
 										issleect: false,
 									},
 									{
-										name: '1+' + '(' + up1 + ')',
+										name: '>=1+' + '(' + up1 + ')',
 										val: '1',
 										issleect: false,
 									},
 									{
-										name: '2+' + '(' + up2 + ')',
+										name: '>=2+' + '(' + up2 + ')',
 										val: '2',
 										issleect: false,
 									},
 									{
-										name: '3+' + '(' + up3 + ')',
+										name: '>=3+' + '(' + up3 + ')',
 										val: '3',
 										issleect: false,
 									},
@@ -2254,7 +2292,7 @@
 					var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps
 					for (var i = 0; i < battery_level_to_change_steps.length; i++) {
 						var tempobj = {
-							name: battery_level_to_change_steps[i] + '%以下',
+							name: '<'+battery_level_to_change_steps[i] + '%',
 							id: battery_level_to_change_steps[i],
 							val: battery_level_to_change_steps[i],
 							num: 0

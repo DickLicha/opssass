@@ -59,7 +59,8 @@
 		stateSb = '',
 		openOrCloseLock = 0,
 		blueWriteState = 0,
-		loadtime = 1000
+		loadtime = 1000,
+		changetype=0//0有订单开电池锁，1无订单开电池锁
 	export default {
 		data() {
 			return {
@@ -315,8 +316,9 @@
 								_self.endmoveopr('',0,'','')	
 							}else if(res.name=='电池锁打开成功'){
 								blueWriteState = 1
-								// _self.reportblue(0, loadtime,'')
-								_self.operbattery(0,loadtime,'success')
+								if(changetype==0){
+									_self.operbattery(0,loadtime,'success')
+								}			
 							}else if(res.name=='心跳包'){
 								console.log('uploadflag--->',this.uploadflag)
 								if(this.uploadflag){
@@ -980,6 +982,7 @@
 			},
 			// 单独开锁不产生绩效
 			unlockbattery() {
+				changetype=1
 				uni.getLocation({
 					type: 'wgs84',
 					success: res => {
@@ -1017,11 +1020,11 @@
 									fail: () => {},
 									complete: () => {}
 								});
-								setTimeout(()=>{
-									uni.navigateBack({
-										delta: 1
-									});
-								},2000)
+								// setTimeout(()=>{
+								// 	uni.navigateBack({
+								// 		delta: 1
+								// 	});
+								// },2000)
 							} else {
 								uni.showToast({
 									title: res.message ? res.message : '开锁失败!',

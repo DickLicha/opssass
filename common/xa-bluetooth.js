@@ -652,12 +652,7 @@ const _analysisBLEContent = (content) => {
 				console.log('连接成功---》')
 				// res({name:'连接成功',val:content});
 				if(content.indexOf('840a') > -1){
-					// var reg=/\840a(.*)/
-					// var gpsData=content.match(reg)[0];
-					// gpsData.substr(0,12)
-					// var longitude=gpsData.substr(4,4)
-					// var latitude=gpsData.substr(8,4)
-					// console.log('-------------->',longitude,latitude)
+
 				}
 				
 			}
