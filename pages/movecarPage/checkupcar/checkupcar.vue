@@ -6,7 +6,7 @@
 				<item-cell :itemdata="swapbatterydata" type='2' :border='borders'></item-cell>
 				<view class='check-bottom-view'>
 					<view class='checkup-text'><text>安全检查项目:</text></view>
-					<view class='checkup-text' v-for="(item,i) in checkupdata"><text>{{item}}</text></view>
+					<view class='checkup-text' v-for="(item,i) in checkupdata" :key='i'><text>{{item}}</text></view>
 				</view>
 				<view class='change-battery-button'>
 					<button class='share-button-default checkup-button' type="primary" @click='changbattery(0)'>车辆故障</button>
@@ -69,10 +69,18 @@
 				orderid: '',
 				maploc:[{
 					id:90,
-					position:{left:10,top:50,width:50,height:50},
-					iconPath:'../../../static/image/location.png',
+					position:{left:10,top:50,width:30,height:30},
+					// iconPath:'../../../static/image/location.png',
+					iconPath:'../../../static/image/mapcenter.png',
 					clickable:true,
-				}],
+				},
+				{
+					id:91,
+					position:{left:10,top:100,width:30,height:30},
+					iconPath:'../../../static/image/close.png',
+					clickable:true,
+				},
+				],
 				swapdata: [{
 					name: '车辆编号',
 					val: ''
@@ -275,8 +283,71 @@
 		},
 		methods: {
 			...mapMutations(['setEndmove', 'setOrderid', 'setSn', 'setBlueres','setBikeinfo']),
-			mapcentionloc(){
-				this.refreshinfo()
+			mapcentionloc(e){
+				if(e.controlId==90){
+					this.refreshinfo()
+				}
+				else if(e.controlId==91){
+					if(!!this.ids){
+						uni.showModal({
+							title: '确定结束',
+							content: this.bikeinfo.sn+'挪车订单?',
+							showCancel: true,
+							cancelText: '取消',
+							confirmText: '确定',
+							success: res => {
+								if (res.confirm) {
+									this.endorder()
+								} else if (res.cancel) {
+									console.log('用户点击取消');
+								}
+								
+							},
+							fail: () => {},
+							complete: () => {}
+						});
+					}
+					else{
+						uni.showToast({
+							title: '无挪车订单!'
+						});
+					}
+				}
+				
+			},
+			endorder() {
+				var options = {
+					url: '/rporder/finish', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						bike_id: this.bikeinfo.id,
+						order_id: this.ids,
+						user_coordinate: []
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('结束订单', res)
+					if (res.status == 0) {
+						uni.showToast({
+							title: '结束订单成功',
+							icon: 'none',
+							duration: 2000,
+						});						
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '结束订单失败',
+							mask: false,
+							icon: 'none',
+							duration: 1500
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			},
 			// 刷新车辆信息
 			refreshinfo(){

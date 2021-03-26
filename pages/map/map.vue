@@ -174,10 +174,10 @@
 						position: {
 							left: 10,
 							top: 50,
-							width: 50,
-							height: 50
+							width: 30,
+							height: 30
 						},
-						iconPath: '../../static/image/location.png',
+						iconPath: '../../static/image/mapcenter.png',
 						clickable: true,
 					},
 					// {
