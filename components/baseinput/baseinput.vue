@@ -38,7 +38,8 @@
 		data(){
 			return{
 				titles:'',
-				title:''
+				title:'',
+				doublego:true
 			}
 		},
 		methods: {
@@ -61,7 +62,8 @@
 				});
 			},
 			hideKeyboard(event) {
-					if (this.title.length === 8) {
+					if (this.title.length === 8 && this.doublego) {
+						this.doublego=false
 						if (this.title == '86350003') {
 							// this.setBaseurl('https://api.dd.ildjoy.com')
 							try {
@@ -175,6 +177,8 @@
 						this.setSn(this.title)
 						this.$emit('hidekeygo')												
 						// this.carinfo()
+					}else{
+						this.doublego=true
 					}
 				},
 			gosuchview() {
