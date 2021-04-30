@@ -1,7 +1,7 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<view v-if="type!=14&&type!=99" class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
+			<view v-if="type!=14&&type!=99" class='common-item' v-for="(item,i) in repairlist" @click="go(item)" :key='i'>
 				<text>{{item.name}}</text>
 			</view>
 			
@@ -35,10 +35,11 @@
 		},
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
-			goNewPage(item){
-				this.setSn(item)
-				this.getcarinfo()
-			},
+			// goNewPage(item){
+			// 	this.setSn(item)
+			// 	this.getcarinfo()
+			// },
+			// input事件
 			manualsgo() {
 				this.getcarinfo()
 			},
@@ -77,6 +78,7 @@
 					console.error(err, '捕捉')
 				})
 			},
+			// 扫码
 			scanCodes(){
 				this.setBikeid('*')
 				console.log('type',this.type)

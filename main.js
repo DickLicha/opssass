@@ -20,6 +20,11 @@ App.mpType = 'app'
 
 Vue.prototype.$httpReq = request
 Vue.prototype.$store = store
+
+if (uni.getSystemInfoSync().platform !== "devtools") {
+	console.log = () => {}
+}
+
 Vue.prototype.$formatetimes = function(timestamp) {
 	var date = new Date(timestamp);
 	Y = date.getFullYear() + '-';

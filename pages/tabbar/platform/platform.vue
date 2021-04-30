@@ -1365,7 +1365,7 @@
 							val = ''
 						this.qxmenudata = []
 						for (let i = 0; i < acl.length; i++) {
-							if (acl[i].visitable == 1) {
+							if (acl[i].visitable == 1 || acl[i].uri == 16) {
 								onlyid = parseInt(acl[i].uri)
 								switch (onlyid) {
 									case 0:

@@ -2,7 +2,7 @@
 	<view>
 		<view class="base-input">
 			<view class="flewd">
-				<input class="uni-input letter-spacings input-width base-inputh"  maxlength="8" v-model="title" @input="hideKeyboard" type="number"
+				<input class="uni-input letter-spacings input-width base-inputh"  maxlength="8" v-model="title" @input="hideKeyboards" type="number"
 				 placeholder="请输入编号" />
 				 <img  src="../../static/image/scan2x.png" class='base-img' @click='scancode'  alt="">
 			</view>
@@ -38,7 +38,8 @@
 		data(){
 			return{
 				titles:'',
-				title:''
+				title:'',
+				doublego:true
 			}
 		},
 		methods: {
@@ -60,8 +61,9 @@
 					delta: 1
 				});
 			},
-			hideKeyboard(event) {
-					if (this.title.length === 8) {
+			hideKeyboards(event) {
+					if (this.title.length === 8 && this.doublego) {
+						this.doublego=false
 						if (this.title == '86350002') {
 							// this.setBaseurl('https://api.dd.ildjoy.com')
 							try {
@@ -149,6 +151,8 @@
 						this.setSn(this.title)
 						this.$emit('hidekeygo')												
 						// this.carinfo()
+					}else{
+						this.doublego=true
 					}
 				},
 			gosuchview() {
