@@ -11,8 +11,9 @@
 			};
 		},
 		onLaunch: function() {
-			console.log('App Launch',timefn(0));
-			
+			const accountInfo = uni.getAccountInfoSync();
+			console.log(accountInfo.miniProgram.appId, '小程序 appId') // 小程序 appId
+			this.$store.commit('setAppid',accountInfo.miniProgram.appId)
 			var bluealldevice=[]
 			function onBluetoothDeviceFounds() {
 				return new Promise((resolve, reject) => {
@@ -119,7 +120,8 @@
 			if (baseurl == '') {
 				try {
 					uni.setStorageSync('baseurl', 'https://api.lexiangys.top');
-					// uni.setStorageSync('baseurl', 'https://api.gray.lexiangys.top');		
+					// // 9号出行
+					// uni.setStorageSync('baseurl', 'https://api.test.lexiangys.top');		
 				} catch (e) {
 					// error
 				}

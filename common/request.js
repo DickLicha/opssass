@@ -55,6 +55,7 @@ export default function(obj) {
 		// bike_id:id,	
 		token: token,
 		city_id: cityid,
+		appid:store.state.appid
 	})
 	for (const key in obj.data) {
 		const element = obj.data[key]

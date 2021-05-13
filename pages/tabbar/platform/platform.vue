@@ -693,7 +693,7 @@
 					// 当日
 					if (type == 10) {
 						var strDate0 = daygetday < 10 ? "0" + daygetday : daygetday;
-						this.start_time = startyear + seperator1 + month01 + seperator1 + strDate0
+						this.start_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate0
 						this.end_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate0
 					}
 					// 昨天
@@ -733,7 +733,6 @@
 							}
 						}
 						this.start_time = startyear + seperator1 + month02 + seperator1 + strDate0
-
 					}
 					if (type == 1) {
 						var month03 = date.getMonth() < 10 ? "0" + (date.getMonth()) : date.getMonth();
