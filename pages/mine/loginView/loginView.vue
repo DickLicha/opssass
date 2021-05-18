@@ -1,6 +1,7 @@
 <template>
 	<view>
-		<image class="img-view" src='/static/login.png'></image>
+		<!-- <image class="img-view" src='/static/login.png'></image> -->
+		<image class="img-view" :src='img'></image>
 		<!-- <button class="login-view" open-type="getUserInfo" type="primary" @getuserinfo="getuserinfo">授权</button> -->
 		<button class="login-view" type="primary" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信用户快速登录</button>
 		<view class='login-pwd' @click="loginbypwd">账号密码登录</view>
@@ -27,6 +28,7 @@
 				user_phone_data: "",
 				user_phone_iv: "",
 				phoneNumber: "",
+				img:''
 			}
 		},
 		onLoad() {			
@@ -60,6 +62,7 @@
 					// res为服务端返回数据的根对象
 					console.log('字典信息', res)
 					if (res.status == 0) {
+						this.img=res.tenant_cfg['wxmpops.banner']
 						this.setDirectinfo(res.direct)
 					}
 				}).catch((err) => {

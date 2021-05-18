@@ -1048,11 +1048,12 @@
 					}
 				} else if (type == 'today') {
 					var options = {
-						url: '/city/monitorv2', //请求接口
+						url: '/city/monitorv3', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
 						context: '',
 						data: {
 							today: 1,
+							bike:1
 						},
 					}
 				} else if (type == 'mon') {
@@ -1066,13 +1067,13 @@
 					}
 				} else {
 					var options = {
-						url: '/city/monitorv2', //请求接口
+						url: '/city/monitorv3', //请求接口
 						method: 'POST', //请求方法全部大写，默认GET
 						context: '',
 						data: {
 							daily: 1,
-							start_time: this.start_time,
-							end_time: this.end_time,
+							daily_start_time: this.start_time,
+							daily_end_time: this.end_time,
 						},
 					}
 				}
@@ -1086,7 +1087,7 @@
 							this.monitorv2 = res
 							this.monitorv2.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
 						} else if (type == 'today') {
-							var battery = res.bike_stat.battery_dist
+							var battery = res.bike.battery_dist
 							var electarr = []
 							for (let l in battery) {
 								var temp = {
@@ -1095,13 +1096,12 @@
 								}
 								electarr.push(temp)
 							}
-							console.log(444, electarr)
-							var allmovecar = res.bike_stat.repark_index_4 + res.bike_stat.repark_index_1 + res.bike_stat.repark_index_2 +
-								res.bike_stat.repark_index_3
+							var allmovecar = res.bike.repark_index_4 + res.bike.repark_index_1 + res.bike.repark_index_2 +
+								res.bike.repark_index_3
 							this.dailydata = res
 							this.bigcontdetil = [{
 									lefttitle: '换电',
-									righttitle: '待换电数量：' + res.bike_stat.battery_to_change_count,
+									righttitle: '待换电数量：' + res.bike.battery_to_change_count,
 									dataarr: electarr
 								},
 								{
@@ -1109,97 +1109,97 @@
 									righttitle: '待挪车数量：' + allmovecar,
 									dataarr: [{
 											name: '差1+: ',
-											val: res.bike_stat.repark_index_1
+											val: res.bike.repark_index_1
 										},
 										{
 											name: '差2+: ',
-											val: res.bike_stat.repark_index_2
+											val: res.bike.repark_index_2
 										},
 										{
 											name: '差3+: ',
-											val: res.bike_stat.repark_index_3
+											val: res.bike.repark_index_3
 										},
 										{
 											name: '差4+: ',
-											val: res.bike_stat.repark_index_4
+											val: res.bike.repark_index_4
 										},
 										{
 											name: '服务区外: ',
-											val: res.bike_stat.out_svca_count
+											val: res.bike.out_svca_count
 										},
 										{
 											name: '禁停区内: ',
-											val: res.bike_stat.in_npa_count
+											val: res.bike.in_npa_count
 										},
 									],
 								},
 								{
 									lefttitle: '预警',
-									righttitle: '预警总条数：' + res.bike_stat.alert_dist.total,
+									righttitle: '预警总条数：' + res.bike.alert_dist.total,
 									dataarr: [{
 											name: '电池空置',
-											val: res.bike_stat.alert_dist.no_battery,
+											val: res.bike.alert_dist.no_battery,
 											alert_state: 512
 										},
 										{
 											name: '欠压',
-											val: res.bike_stat.alert_dist.under_volt,
+											val: res.bike.alert_dist.under_volt,
 											alert_state: 2
 										},
 										{
 											name: '无人扫码',
-											val: res.bike_stat.alert_dist.no_scaned,
+											val: res.bike.alert_dist.no_scaned,
 											alert_state: 0b1000000000000000000000
 										},
 										{
 											name: '无定位',
-											val: res.bike_stat.alert_dist.no_gps,
+											val: res.bike.alert_dist.no_gps,
 											alert_state: 0b100000000000000000000
 										},
 										{
 											name: '无业务',
-											val: res.bike_stat.alert_dist.no_bus,
+											val: res.bike.alert_dist.no_bus,
 											alert_state: 0b10000000000000000000000
 										},
 										{
 											name: '疑似被盗',
-											val: res.bike_stat.alert_dist.stolen,
+											val: res.bike.alert_dist.stolen,
 											alert_state: 32
 										},
 									]
 								},
 								{
 									lefttitle: '故障',
-									righttitle: '故障总数量：' + res.bike_stat.fault_dist.total,
+									righttitle: '故障总数量：' + res.bike.fault_dist.total,
 									dataarr: [
 										{
 										name: '已入库',
-										val: res.bike_stat.fault_dist.recalled,
+										val: res.bike.fault_dist.recalled,
 										inv_state:2
 									},
 									{
 										name: '未入库',
-										val: res.bike_stat.fault_dist.total-res.bike_stat.fault_dist.recalled,
+										val: res.bike.fault_dist.total-res.bike.fault_dist.recalled,
 										inv_state:0
 									},
 									]
 								},
 								{
 									lefttitle: '其他',
-									righttitle: '车辆总数量：' + res.bike_stat.total,
+									righttitle: '车辆总数量：' + res.bike.total,
 									dataarr: [{
 											name: '骑行',
-											val: res.bike_stat.ridden_count,
+											val: res.bike.ridden_count,
 											bus_state: 11
 										},
 										{
 											name: '空闲',
-											val: res.bike_stat.idle_count,
+											val: res.bike.idle_count,
 											bus_state: 0
 										},
 										{
 											name: '离线',
-											val: res.bike_stat.offline_count,
+											val: res.bike.offline_count,
 											is_online: 0
 										},
 									]
@@ -1217,32 +1217,32 @@
 								// {name:'换电数',val:res.bcorder_ok_count,url:''},
 								{
 									name: '预警车辆',
-									val: res.bike_stat.alert_count,
+									val: res.bike.alert_count,
 									url: ''
 								},
 								{
 									name: '待排查车辆',
-									val: res.bike_stat.to_check_count,
+									val: res.bike.to_check_count,
 									url: ''
 								},
 								{
 									name: '缺电车辆',
-									val: res.bike_stat.under_volt_count,
+									val: res.bike.under_volt_count,
 									url: '/pages/map/map?name=换电&text=全部换电&type=0'
 								},
 								{
 									name: '离线车辆',
-									val: res.bike_stat['24h_offline_count'],
+									val: res.bike['24h_offline_count'],
 									url: ''
 								},
 								{
 									name: '疑似故障车辆',
-									val: res.bike_stat.alert_fault_count,
+									val: res.bike.alert_fault_count,
 									url: ''
 								},
 								{
 									name: '报修车辆',
-									val: res.bike_stat.fault_count,
+									val: res.bike.fault_count,
 									url: '/pages/map/map?name=维修&text=全部故障车辆&type=1.1'
 								},
 								{
@@ -1259,7 +1259,10 @@
 						} else if (type == 'mon') {
 							this.monitorv2m = res
 							this.monitorv2m.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
-						} else {
+						} 
+						//all
+						else {
+							var respondata=res.daily
 							var datatimes = []
 							var user_growth = []
 							var user_order_growth = []
@@ -1275,7 +1278,7 @@
 							}
 							this.orderlist = []
 							var temptime = []
-							for (var i in res.bcorder_ok_count_daily) {
+							for (var i in respondata.bcorder_ok_count_daily) {
 								temptime.push(i)
 							}
 							temptime = temptime.sort()
@@ -1284,13 +1287,13 @@
 								var newtimes = formatetime[1] + '-' + formatetime[2]
 								datatimes.push(newtimes)
 								var bikepers = ''
-								if (res.urorder_count_daily[temptime[l]] == 0 || res.bike_count_daily[temptime[l]] == 0) {
+								if (respondata.urorder_count_daily[temptime[l]] == 0 || respondata.bike_count_daily[temptime[l]] == 0) {
 									bikepers = 0
 								} else {
-									bikepers = parseFloat(res.urorder_count_daily[temptime[l]] / res.bike_count_daily[temptime[l]]).toFixed(1)
+									bikepers = parseFloat(respondata.urorder_count_daily[temptime[l]] / respondata.bike_count_daily[temptime[l]]).toFixed(1)
 								}
 								bike_count_daily.push(bikepers)
-								urorder_paid_amount_daily.push(res.urorder_paid_amount_daily[temptime[l]] / 100)
+								urorder_paid_amount_daily.push(respondata.urorder_paid_amount_daily[temptime[l]] / 100)
 							}
 							bikeeffic.data = bike_count_daily
 							ddje.data = urorder_paid_amount_daily
@@ -1305,10 +1308,12 @@
 							//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
 							LineB.categories = datatimes
 							LineB.series.push(bikeeffic)
+							console.log('bbbb',LineB)
 							_self.showLineA("canvasLineB", LineB);
 
 							LineC.categories = datatimes
 							LineC.series.push(ddje)
+							console.log('cccc',LineC)
 							_self.showLineA("canvasLineC", LineC);
 
 						}
@@ -1491,10 +1496,6 @@
 
 							}
 						}
-
-
-
-
 
 						var date = new Date()
 						var seperator1 = "-";

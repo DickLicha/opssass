@@ -119,9 +119,9 @@
 			console.log('baseurl', realuser)
 			if (baseurl == '') {
 				try {
-					uni.setStorageSync('baseurl', 'https://api.lexiangys.top');
-					// // 9号出行
-					// uni.setStorageSync('baseurl', 'https://api.test.lexiangys.top');		
+					// uni.setStorageSync('baseurl', 'https://api.lexiangys.top');
+					// 9号出行
+					uni.setStorageSync('baseurl', 'https://api.test.lexiangys.top');
 				} catch (e) {
 					// error
 				}
