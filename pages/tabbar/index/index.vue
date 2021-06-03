@@ -48,7 +48,7 @@
 								case 0:
 									src = require('../../../static/image/huan_dian.png')
 									name = '换电'
-									url = '/pages/map/map'
+									url = '/pageA/map/map'
 									text = '全部待换电'
 									tempobj = {
 										index: onlyid,
@@ -61,7 +61,7 @@
 									break
 								case 1:
 									name = '维修'
-									url = '/pages/repairlist/repairlist'
+									url = '/pageB/repairlist/repairlist'
 									text = '全部故障车辆'
 									src = require('../../../static/image/wei_xiu.png')
 									tempobj = {
@@ -75,7 +75,7 @@
 									break
 								case 2:
 									name = '保养'
-									url = '/pages/map/map'
+									url = '/pageA/map/map'
 									text = '待保养车辆'
 									src = require('../../../static/image/bao_yang.png')
 									tempobj = {
@@ -90,7 +90,7 @@
 								case 3:
 									name = '单个挪车'
 									// url = '/pages/repairlist/repairlist'
-									url = '/pages/map/map?text=全部车辆&type=3.1&name=挪车'
+									url = '/pageA/map/map?text=全部车辆&type=3.1&name=挪车'
 									text = '全部车辆'
 									src = require('../../../static/image/nuo_che.png')
 									tempobj = {
@@ -104,7 +104,7 @@
 									break
 								case 8:
 									name = '库存管理'
-									url = '/pages/repairlist/repairlist'
+									url = '/pageB/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/ku_cun.png')
 									tempobj = {
@@ -119,7 +119,7 @@
 								case 9:
 									name = '车站'
 									// url = '/pages/map/map'
-									url = '/pages/repairlist/repairlist'
+									url = '/pageB/repairlist/repairlist'
 									text = '全部车站'
 									src = require('../../../static/image/che_zhan.png')
 									tempobj = {
@@ -133,7 +133,7 @@
 									break
 								case 10:
 									name = '违章'
-									url = '/pages/repairlist/repairlist'
+									url = '/pageB/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/wei_zhang.png')
 									tempobj = {
@@ -147,7 +147,7 @@
 									break
 								case 11:
 									name = '车辆排查'
-									url = '/pages/repairlist/repairlist'
+									url = '/pageB/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/pai_cha.png')
 									tempobj = {
@@ -161,7 +161,7 @@
 									break
 								case 12:
 									name = 'ecu检测'
-									url = '/pages/ecutest/ecutest'
+									url = '/pageA/ecutest/ecutest'
 									text = ''
 									src = require('../../../static/image/pai_cha.png')
 									tempobj = {
@@ -175,7 +175,7 @@
 									break
 								case 13:
 									name = 'ecu换绑'
-									url = '/pages/repairlist/repairlist'
+									url = '/pageB/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/ecu_huanban.png')
 									tempobj = {
@@ -189,7 +189,7 @@
 									break
 								case 14:
 									name = '结束订单'
-									url = '/pages/repairlist/repairlist'
+									url = '/pageB/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/che_zhan.png')
 									tempobj = {
@@ -203,7 +203,7 @@
 									break
 								case 15:
 									name = '仪表盘'
-									url = '/pages/echartPage/echartpage/echartpage'
+									url = '/pageA/echartPage/echartpage/echartpage'
 									text = ''
 									src = require('../../../static/image/che_zhan.png')
 									tempobj = {
@@ -220,7 +220,7 @@
 										index: 100,
 										src: require('../../../static/image/nuo_che.png'),
 										name: '车辆监控',
-										url: '/pages/map/map?text=车俩监控&type=10&name=车辆监控',
+										url: '/pageA/map/map?text=车俩监控&type=10&name=车辆监控',
 										text: '车辆监控'
 									}
 									this.taskdata.push(tempobj)						
@@ -230,7 +230,7 @@
 					}
 					name = '批量挪车'
 					// url = '/pages/lotsizemove/lotsizemove'
-					url = '/pages/movecarPage/checkupcar/checkupcar?type=101'
+					url = '/pageB/movecarPage/checkupcar/checkupcar?type=101'
 					text = '批量挪车'
 					src = require('../../../static/image/wei_xiu.png')
 					tempobj = {
@@ -293,7 +293,7 @@
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						uni.navigateTo({
-							url: '/pages/swapbattery/swapbattery?type=0',
+							url: '/pageB/swapbattery/swapbattery?type=0',
 							success: res => {},
 							fail: () => {},
 							complete: () => {}

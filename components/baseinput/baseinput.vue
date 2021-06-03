@@ -157,7 +157,7 @@
 				},
 			gosuchview() {
 				uni.navigateTo({
-					url: '../searchview/searchview',
+					url: '/pageB/searchview/searchview',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

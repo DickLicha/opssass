@@ -14,6 +14,18 @@
 			"style": {
 				"navigationBarTitleText": "共享电单车运维版"
 			}
+		}
+		,{
+		    "path" : "pages/tabbar/platform/platform",
+		    "style" : {
+				"navigationBarTitleText": "工作台",
+				// "navigationBarTextStyle": "white",
+				// "navigationBarBackgroundColor": "#2383fb",
+				// "backgroundColor":"#2383fb",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom",
+				"titleNView": false
+			}
 		},
 		{
 			"path": "pages/mine/loginView/loginView",
@@ -23,306 +35,343 @@
 				"titleNView": false
 			}
 		},
-		{
-			"path": "pages/map/map",
-			"style": {
-				"navigationBarTitleText": "地图",
-				"scrollIndicator": "none"
-			}
-		},
-		// {
-		// 	"path": "pages/test/test",
-		// 	"style": {
-		// 		"navigationBarTitleText": "测试"
-		// 	}
-		// },
-		{
-			"path": "pages/mine/mineye/mineye",
-			"style": {
-				"navigationBarTitleText": "切换城市"
-			}
-		}, {
-			"path": "pages/mine/mineyhq/mineyhq",
-			"style": {
-				"navigationBarTitleText": "身份证辅助认证"
-			}
-		}, {
-			"path": "pages/mine/minecard/minecard",
-			"style": {
-				"navigationBarTitleText": "我的"
-			}
-		}, {
-			"path": "pages/mine/minehdrecord/minehdrecord",
-			"style": {
-				"navigationBarTitleText": "换电记录"
-			}
-		}, {
-			"path": "pages/mine/minezhmx/minezhmx",
-			"style": {
-				"navigationBarTitleText": "账户明细"
-			}
-		}, {
-			"path": "pages/swapbattery/swapbattery",
-			"style": {
-				"navigationBarTitleText": "换电"
-			}
-		}, {
-			"path": "pages/carBigCenter/carcenter/carcenter",
-			"style": {
-				"navigationBarTitleText": "车辆详细"
-			}
-		}, {
-			"path": "pages/carBigCenter/carorder/carorder",
-			"style": {
-				"navigationBarTitleText": "订单中心"
-			}
-		}, {
-			"path": "pages/switchloockinfo/switchloockinfo",
-			"style": {
-				"navigationBarTitleText": "车辆操作记录",
-				"scrollIndicator": "none"
-			}
-		}, {
-			"path": "pages/carBigCenter/batteriesrecord/batteriesrecord",
-			"style": {
-				"navigationBarTitleText": "换电记录"
-			}
-		}, {
-			"path": "pages/carBigCenter/carorbit/carorbit",
-			"style": {
-				"navigationBarTitleText": "维修记录"
-			}
-		}, {
-			"path": "pages/carBigCenter/ecuview/ecuview",
-			"style": {
-				"navigationBarTitleText": "ECU"
-			}
-		}, {
-			"path": "pages/carBigCenter/batteryview/batteryview",
-			"style": {
-				"navigationBarTitleText": "电池"
-			}
-		}, {
-			"path": "pages/searchview/searchview",
-			"style": {
-				"navigationBarTitleText": "搜索"
-			}
-		}, {
-			"path": "pages/repairlist/repairlist",
-			"style": {
-				"navigationBarTitleText": "维修"
-			}
-		}, {
-			"path": "pages/movecarPage/removecarrecord/removecarrecord",
-			"style": {
-				"navigationBarTitleText": "挪车记录"
-			}
-		}, {
-			"path": "pages/movecarPage/checkupcar/checkupcar",
-			"style": {
-				"navigationBarTitleText": "挪车"
-			}
-		}, {
-			"path": "pages/repairPage/repaircar/repaircar",
-			"style": {
-				"navigationBarTitleText": "修车"
-			}
-		}, {
-			"path": "pages/repairPage/faulttypeview/faulttypeview",
-			"style": {
-				"navigationBarTitleText": "故障类型"
-			}
-		}, {
-			"path": "pages/carBigCenter/breakdowncar/breakdowncar",
-			"style": {
-				"navigationBarTitleText": "报修"
-			}
-		}, {
-			"path": "pages/repairPage/putstorage/putstorage",
-			"style": {
-				"navigationBarTitleText": "维修入库"
-			}
-		}, {
-			"path": "pages/manualscan/manualscan",
-			"style": {
-				"navigationBarTitleText": "输入编号"
-			}
-		}, {
-			"path": "pages/repairPage/warehoselist/warehoselist",
-			"style": {
-				"navigationBarTitleText": "选择仓库"
-			}
-		}, {
-			"path": "pages/repairPage/repairenter/repairenter",
-			"style": {
-				"navigationBarTitleText": "修车"
-			}
-		},
-		{
-			"path": "pages/movecarPage/stopdetilview/stopdetilview",
-			"style": {
-				"navigationBarTitleText": "挪车站内车辆"
-			}
-		}, {
-			"path": "pages/movecarPage/stopdetilview1/stopdetilview1",
-			"style": {
-				"navigationBarTitleText": "车站信息"
-			}
-		}, {
-			"path": "pages/movecarPage/cantmovecar/cantmovecar",
-			"style": {
-				"navigationBarTitleText": "无法挪车"
-			}
-
-		}, {
-			"path": "pages/repairPage/onlinerepair/onlinerepair",
-			"style": {}
-		}, {
-			"path": "pages/stockPage/stockmanage/stockmanage",
-			"style": {
-				"navigationBarTitleText": "库存管理"
-			}
-		}, {
-			"path": "pages/movecarPage/movecarinfo/movecarinfo",
-			"style": {
-				"navigationBarTitleText": "挪车"
-			}
-		}, {
-			"path": "pages/movecarPage/movecardetil/movecardetil",
-			"style": {
-				"navigationBarTitleText": "挪车"
-			}
-		}, {
-			"path": "pages/maintainPage/normalmaintain/normalmaintain",
-			"style": {
-				"navigationBarTitleText": "保养"
-			}
-		}, {
-			"path": "pages/maintainPage/abnormalmaintain/abnormalmaintain",
-			"style": {}
-		}, {
-			"path": "pages/mine/changepwd/changepwd",
-			"style": {
-				"navigationBarTitleText": "修改密码"
-			}
-		},
-		{
-			"path": "pages/investCarPage/investview/investview",
-			"style": {
-				"navigationBarTitleText": "失联车辆列表"
-			}
-		}, {
-			"path": "pages/violations/reportViolations/reportViolations",
-			"style": {
-				"navigationBarTitleText": "违章举报"
-			}
-		}, {
-			"path": "pages/violations/reportViolationsList/reportViolationsList",
-			"style": {
-				"navigationBarTitleText": "违章举报列表"
-			}
-		}, {
-			"path": "pages/violations/chooseViolationsType/chooseViolationsType",
-			"style": {
-				"navigationBarTitleText": "违章举报原因"
-			}
-		}, {
-			"path": "pages/violations/chooseViolationsAffect/chooseViolationsAffect",
-			"style": {
-				"navigationBarTitleText": "违章举报影响"
-			}
-		}, {
-			"path": "pages/violations/userUseCarMessage/userUseCarMessage",
-			"style": {
-				"navigationBarTitleText": "用户用车信息"
-			}
-		}, {
-			"path": "pages/violations/reportViolationsDetail/reportViolationsDetail",
-			"style": {
-				"navigationBarTitleText": "违章举报详情"
-			}
-		}, {
-			"path": "pages/mine/chosecity/chosecity",
-			"style": {
-				"navigationBarTitleText": "选择城市"
-			}
-		}, {
-			"path": "pages/ingview/ingview",
-			"style": {
-				"navigationBarTitleText": "挪车"
-			}
-		}, {
-			"path": "pages/endingview/endingview",
-			"style": {
-				"navigationBarTitleText": "结束订单"
-			}
-		}, {
-			"path": "pages/stockPage/putstorage/putstorage",
-			"style": {
-				"navigationBarTitleText": "入库"
-			}
-		}, {
-			"path": "pages/ecutest/ecutest",
-			"style": {
-				"navigationBarTitleText": "ecu测试"
-			}
-		}, {
-			"path": "pages/stockPage/bikelist/bikelist",
-			"style": {
-				"navigationBarTitleText": "车辆列表"
-			}
-		}, {
-			"path": "pages/endOrder/endorder/endorder",
-			"style": {
-				"navigationBarTitleText": "结束订单"
-			}
-		}, {
-			"path": "pages/stockPage/ecutodulist/ecutodulist",
-			"style": {
-				"navigationBarTitleText": "ecu解绑"
-			}
-		},
-		{
-			"path": "pages/echartPage/echartpage/echartpage",
-			"style": {
-				"navigationBarTitleText": "仪表盘"
-			}
-		}
-	    ,{
+	    {
             "path" : "components/baseinput/baseinput",
             "style" : {}
-        }
-        ,{
-            "path" : "pages/mine/phonelogin/phonelogin",
-            "style" : {
-				"navigationBarTitleText": "账号登录"
-			}
-        }
-        ,{
-            "path" : "pages/carBigCenter/uploadlog/uploadlog",
-            "style" : {
-				"navigationBarTitleText": "最近上报日志"
-			}
-        }
-        ,{
-            "path" : "pages/tabbar/platform/platform",
-            "style" : {
-				"navigationBarTitleText": "工作台",
-				// "navigationBarTextStyle": "white",
-				// "navigationBarBackgroundColor": "#2383fb",
-				// "backgroundColor":"#2383fb",
-				"enablePullDownRefresh": true,
-				"navigationStyle": "custom",
-				"titleNView": false
-			}
-        }
-   //      ,{
-   //          "path" : "pages/lotsizemove/lotsizemove",
-   //          "style" : {
-			// 	"navigationBarTitleText": "批量挪车"
-			// }
-   //      }
+        }     
+        
     ],
+	"subPackages": [{
+			"root": "pageA",
+			"pages": [
+				{
+					"path": "carBigCenter/batteriesrecord/batteriesrecord",
+					"style": {
+						"navigationBarTitleText": "换电记录"
+					}
+				}, 
+			{
+				"path": "carBigCenter/batteryview/batteryview",
+				"style": {
+					"navigationBarTitleText": "电池"
+				}
+			},
+			{
+				"path": "carBigCenter/breakdowncar/breakdowncar",
+				"style": {
+					"navigationBarTitleText": "报修"
+				}
+			},
+			{
+				"path": "carBigCenter/carcenter/carcenter",
+				"style": {
+					"navigationBarTitleText": "车辆详细"
+				}
+			},
+			{
+				"path": "carBigCenter/carorbit/carorbit",
+				"style": {
+					"navigationBarTitleText": "维修记录"
+				}
+			},
+			{
+				"path": "carBigCenter/carorder/carorder",
+				"style": {
+					"navigationBarTitleText": "订单中心"
+				}
+			},
+			{
+				"path": "carBigCenter/ecuview/ecuview",
+				"style": {
+					"navigationBarTitleText": "ECU"
+				}
+			},
+			{
+				"path": "carBigCenter/uploadlog/uploadlog",
+				"style": {
+					"navigationBarTitleText": "最近上报日志"
+				}
+			},
+			{
+				"path": "echartPage/echartpage/echartpage",
+				"style": {
+					"navigationBarTitleText": "仪表盘"
+				}
+			},
+			{
+				"path": "ecutest/ecutest",
+				"style": {
+					"navigationBarTitleText": "ecu测试"
+				}
+			},
+			{
+				"path": "endingview/endingview",
+				"style": {
+					"navigationBarTitleText": "结束订单"
+				}
+			},
+			{
+				"path": "endOrder/endorder/endorder",
+				"style": {
+					"navigationBarTitleText": "结束订单"
+				}
+			},
+			{
+				"path": "ingview/ingview",
+				"style": {
+					"navigationBarTitleText": "挪车"
+				}
+			},
+			{
+				"path": "investCarPage/investview/investview",
+				"style": {
+					"navigationBarTitleText": "失联车辆列表"
+				}
+			},
+			{
+				"path": "maintainPage/abnormalmaintain/abnormalmaintain",
+				"style": {
+					"navigationBarTitleText": ""
+				}
+			},
+			{
+				"path": "maintainPage/normalmaintain/normalmaintain",
+				"style": {
+					"navigationBarTitleText": "保养"
+				}
+			},
+			{
+				"path": "manualscan/manualscan",
+				"style": {
+					"navigationBarTitleText": "输入编号"
+				}
+			},
+			{
+				"path": "map/map",
+				"style": {
+					"navigationBarTitleText": "地图",
+					"scrollIndicator": "none"
+				}
+			},
+			{
+				"path": "mine/changepwd/changepwd",
+				"style": {
+					"navigationBarTitleText": "修改密码"
+				}
+			},
+			{
+				"path": "mine/chosecity/chosecity",
+				"style": {
+					"navigationBarTitleText": "选择城市"
+				}
+			},
+			{
+				"path": "mine/minecard/minecard",
+				"style": {
+					"navigationBarTitleText": "我的"
+				}
+			},
+			{
+				"path": "mine/minehdrecord/minehdrecord",
+				"style": {
+					"navigationBarTitleText": "换电记录"
+				}
+			},
+			{
+				"path": "mine/mineye/mineye",
+				"style": {
+					"navigationBarTitleText": "切换城市"
+				}
+			},
+			{
+				"path": "mine/mineyhq/mineyhq",
+				"style": {
+					"navigationBarTitleText": "身份证辅助认证"
+				}
+			},
+		    {
+		    	"path": "mine/minezhmx/minezhmx",
+		    	"style": {
+		    		"navigationBarTitleText": "账户明细"
+		    	}
+		    },
+			{
+				"path": "mine/phonelogin/phonelogin",
+				"style": {
+					"navigationBarTitleText": "账号登录"
+				}
+			}
+			
+			]
+		}, {
+			"root": "pageB",
+			"pages": [
+				{
+				"path": "movecarPage/cantmovecar/cantmovecar",
+				"style": {
+					"navigationBarTitleText": "无法挪车"
+				}
+			},
+			{
+				"path": "movecarPage/checkupcar/checkupcar",
+				"style": {
+					"navigationBarTitleText": "挪车"
+				}
+			},
+			{
+				"path": "movecarPage/movecardetil/movecardetil",
+				"style": {
+					"navigationBarTitleText": "挪车"
+				}
+			},
+			//shanchu
+			{
+				"path": "movecarPage/movecarinfo/movecarinfo",
+				"style": {
+					"navigationBarTitleText": "挪车"
+				}
+			},
+			{
+				"path": "movecarPage/removecarrecord/removecarrecord",
+				"style": {
+					"navigationBarTitleText": "挪车"
+				}
+			},
+			{
+				"path": "movecarPage/stopdetilview/stopdetilview",
+				"style": {
+					"navigationBarTitleText": "挪车站内车辆"
+				}
+			},
+			{
+				"path": "movecarPage/stopdetilview1/stopdetilview1",
+				"style": {
+					"navigationBarTitleText": "车站信息"
+				}
+			},
+			{
+				"path": "repairlist/repairlist",
+				"style": {
+					"navigationBarTitleText": "维修"
+				}
+			},
+			{
+				"path": "repairPage/faulttypeview/faulttypeview",
+				"style": {
+					"navigationBarTitleText": "故障类型"
+				}
+			},
+			{
+				"path": "repairPage/onlinerepair/onlinerepair",
+				"style": {
+					"navigationBarTitleText": ""
+				}
+			},
+			{
+				"path": "repairPage/putstorage/putstorage",
+				"style": {
+					"navigationBarTitleText": "入库"
+				}
+			},
+			{
+				"path": "repairPage/repaircar/repaircar",
+				"style": {
+					"navigationBarTitleText": "修车"
+				}
+			},
+			{
+				"path": "repairPage/repairenter/repairenter",
+				"style": {
+					"navigationBarTitleText": "修车"
+				}
+			},
+			{
+				"path": "repairPage/warehoselist/warehoselist",
+				"style": {
+					"navigationBarTitleText": "选择仓库"
+				}
+			},
+			{
+				"path": "searchview/searchview",
+				"style": {
+					"navigationBarTitleText": "搜索"
+				}
+			},
+			{
+				"path": "stockPage/bikelist/bikelist",
+				"style": {
+					"navigationBarTitleText": "车辆列表"
+				}
+			},
+			{
+				"path": "stockPage/ecutodulist/ecutodulist",
+				"style": {
+					"navigationBarTitleText": "ecu解绑"
+				}
+			},
+			{
+				"path": "stockPage/putstorage/putstorage",
+				"style": {
+					"navigationBarTitleText": "入库"
+				}
+			},
+			{
+				"path": "stockPage/stockmanage/stockmanage",
+				"style": {
+					"navigationBarTitleText": "库存管理"
+				}
+			},
+			{
+				"path": "swapbattery/swapbattery",
+				"style": {
+					"navigationBarTitleText": "换电"
+				}
+			},
+			{
+				"path": "switchloockinfo/switchloockinfo",
+				"style": {
+					"navigationBarTitleText": "车辆操作记录",
+					"scrollIndicator": "none"
+				}
+			},
+			{
+				"path": "violations/chooseViolationsAffect/chooseViolationsAffect",
+				"style": {
+					"navigationBarTitleText": "违章举报影响"
+				}
+			},
+			{
+				"path": "violations/chooseViolationsType/chooseViolationsType",
+				"style": {
+					"navigationBarTitleText": "违章举报原因"
+				}
+			},
+			{
+				"path": "violations/reportViolations/reportViolations",
+				"style": {
+					"navigationBarTitleText": "违章举报"
+				}
+			},
+			{
+				"path": "violations/reportViolationsDetail/reportViolationsDetail",
+				"style": {
+					"navigationBarTitleText": "违章举报详情"
+				}
+			},
+			{
+				"path": "violations/reportViolationsList/reportViolationsList",
+				"style": {
+					"navigationBarTitleText": "违章举报列表"
+				}
+			},
+			{
+				"path": "violations/userUseCarMessage/userUseCarMessage",
+				"style": {
+					"navigationBarTitleText": "用户用车信息"
+				}
+			}
+			]
+		}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

@@ -41,7 +41,7 @@
 			...mapMutations(['setUserinfo', 'setDirectinfo','setGobelrelogin','setBaseurl']),
 			loginbypwd(){
 				uni.navigateTo({
-					url: '/pages/mine/phonelogin/phonelogin',
+					url: '/pageA/mine/phonelogin/phonelogin',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

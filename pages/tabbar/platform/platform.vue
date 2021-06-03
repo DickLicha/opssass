@@ -1,8 +1,10 @@
 <template>
 	<view>
-		<view class="index-top">
+		<view class='water_top' :style="'height:'+canvsheigh">
+			<canvas canvas-id='myCanvas' id='myCanvas' style='width:100%;height:100%'></canvas>
+		</view>
+		<view class="index-top" :style="'background:'+'url('+base64img+')'">
 			<view class="index-top-bg theme-bg" :style="'height:'+bgheight">
-
 			</view>
 			<view class="index-top-box">
 				<view style='margin-top: 50upx;'>
@@ -217,6 +219,8 @@
 		},
 		data() {
 			return {
+				base64img:'',
+				canvsheigh:'100vh',
 				bgheight: '170upx',
 				weather: "",
 				ranklist: [],
@@ -348,6 +352,7 @@
 		onLoad() {
 			var _this = this
 			_self = this;
+			this.drowsyUserinfo()
 			this.cWidth = uni.upx2px(750);
 			this.cHeight = uni.upx2px(350);
 			//#ifdef MP-ALIPAY
@@ -567,6 +572,70 @@
 		},
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
+			drowsyUserinfo() {
+				var phonenum=''
+				try {
+					const value = uni.getStorageSync('userinfo');
+					if (value) {
+						phonenum = value.userinfo.phone
+					}
+				} catch (e) {
+					// error
+				}
+				var name_xx = phonenum;
+				var ctx = wx.createCanvasContext("myCanvas");
+			
+				ctx.rotate(45 * Math.PI / 180); //设置文字的旋转角度，角度为45°；
+			
+				//对斜对角线以左部分进行文字的填充
+				for (let j = 1; j < 10; j++) { //用for循环达到重复输出文字的效果，这个for循环代表纵向循环
+					ctx.beginPath();
+					ctx.setFontSize(10);
+					ctx.setFillStyle("rgba(169,169,169,.2)");
+			
+					ctx.fillText(name_xx, 0, 30 * j);
+					for (let i = 1; i < 10; i++) { //这个for循环代表横向循环，
+						ctx.beginPath();
+						ctx.setFontSize(10);
+						ctx.setFillStyle("rgba(169,169,169,.2)");
+						ctx.fillText(name_xx, 80 * i, 30 * j);
+					}
+				} //两个for循环的配合，使得文字充满斜对角线的左下部分
+			
+				//对斜对角线以右部分进行文字的填充逻辑同上
+				for (let j = 0; j < 10; j++) {
+					ctx.beginPath();
+					ctx.setFontSize(10);
+					ctx.setFillStyle("rgba(169,169,169,.2)");
+			
+					ctx.fillText(name_xx, 0, -30 * j);
+					for (let i = 1; i < 10; i++) {
+						ctx.beginPath();
+						ctx.setFontSize(10);
+						ctx.setFillStyle("rgba(169,169,169,.2)");
+						ctx.fillText(name_xx, 80 * i, -30 * j);
+					}
+				}
+				var _this=this
+				ctx.draw(false,()=>{
+					  wx.canvasToTempFilePath({
+					  	canvasId: 'myCanvas',
+					  	success(res) {
+					  		wx.getFileSystemManager().readFile({
+					  			filePath: res.tempFilePath, //图片路径
+					  			encoding: 'base64', //编码格式
+					  			success: res => { //成功的回调
+					  	            _this.canvsheigh=0
+									_this.base64img='data:image/png;base64,' + res.data
+								}
+					  		})
+					  	},
+					  	err(err){
+					  		console.log(44444,err)
+					  	}
+					  })
+				});
+			},
 			gonewpage(index, item, indexs) {
 				console.log(888, index, item)
 				var battery_level_max = '',
@@ -603,7 +672,7 @@
 				}
 				uni.navigateTo({
 					// url: '/pages/map/map?text=234&type=10&name=车辆监控' + spliturl,
-					url: `/pages/map/map?text=${item.name}&type=10&name=车辆监控${spliturl}`,
+					url: `/pageA/map/map?text=${item.name}&type=10&name=车辆监控${spliturl}`,
 					success: res => {},
 					fail: () => {},
 					complete: () => {}
@@ -831,7 +900,7 @@
 						this.setBikeid(res.info.id)
 						this.setBikeinfo(res.info)
 						uni.navigateTo({
-							url: '/pages/swapbattery/swapbattery?type=0',
+							url: '/pageB/swapbattery/swapbattery?type=0',
 							success: res => {},
 							fail: () => {},
 							complete: () => {}
@@ -1228,7 +1297,7 @@
 								{
 									name: '缺电车辆',
 									val: res.bike.under_volt_count,
-									url: '/pages/map/map?name=换电&text=全部换电&type=0'
+									url: '/pageA/map/map?name=换电&text=全部换电&type=0'
 								},
 								{
 									name: '离线车辆',
@@ -1243,7 +1312,7 @@
 								{
 									name: '报修车辆',
 									val: res.bike.fault_count,
-									url: '/pages/map/map?name=维修&text=全部故障车辆&type=1.1'
+									url: '/pageA/map/map?name=维修&text=全部故障车辆&type=1.1'
 								},
 								{
 									name: '挪车数',
@@ -1807,6 +1876,16 @@
 </script>
 
 <style lang="scss" scoped>
+	.water_top {
+		position: fixed;
+		z-index: 1;
+		opacity: 0.9;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		/* height: 20px; */
+	}
 	.box-title {
 		text-align: center;
 		font-size: 40upx;
@@ -1829,7 +1908,7 @@
 	.index-top {
 		position: relative;
 		padding-top: 10rpx;
-
+	    heigh:100vh;		   
 		.index-top-bg {
 			position: absolute;
 			top: 0;
@@ -1980,7 +2059,7 @@
 	.data-box {
 		font-size: 0;
 		margin: 14rpx 26rpx;
-		background-color: #fff;
+		// background-color: #fff;
 		box-shadow: 0 10rpx 10rpx #ddd;
 		border-radius: $uni-border-radius-sm;
 
@@ -2066,7 +2145,7 @@
 				// margin: 10upx;
 				border: soild white 2upx;
 				border-radius: 6upx;
-				background-color: #fffafa;
+				// background-color: #fffafa;
 				margin-top: 20upx;
 
 				.inner-head {

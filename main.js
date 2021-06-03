@@ -50,7 +50,16 @@ Vue.prototype.$parkstate = function(type) {
 }
 Vue.prototype.$resourcesurl = function() {
 	// return 'http://www.fishors.com:9030'
-	return 'https://upload.lexiangys.top'
+	try {
+		const value = uni.getStorageSync('userinfo');
+		if (value) {
+			return value.tenantcfg.upload_server_url
+		}
+	} catch (e) {
+		// error
+		return 'https://upload.lexiangys'
+	}
+	// return 'https://upload.lexiangys.top'
 }
 Vue.prototype.$invstate = function(type) {
 	let inv_name = ''

@@ -11,6 +11,7 @@
 			};
 		},
 		onLaunch: function() {
+			
 			const accountInfo = uni.getAccountInfoSync();
 			console.log(accountInfo.miniProgram.appId, '小程序 appId') // 小程序 appId
 			this.$store.commit('setAppid',accountInfo.miniProgram.appId)
