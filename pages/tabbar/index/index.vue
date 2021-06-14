@@ -240,7 +240,16 @@
 						url: url,
 						text: text
 					}
+					// var tempobj1 = {
+					// 	index: onlyid,
+					// 	src: require('../../../static/image/wei_xiu.png'),
+					// 	name: '派单挪车',
+					// 	url: '/pageB/dispatchmovecar/dispatchmovecar?type=101',
+					// 	// url:'/pageB/movecarPage/checkupcar/checkupcar?type=101',
+					// 	text: '派单挪车'
+					// }
 					this.taskdata.push(tempobj)
+					// this.taskdata.push(tempobj1)
 				},
 				fail:res=>{
 					console.log('fail',res)
@@ -403,7 +412,7 @@
 <style lang="scss" scoped>
 	.wrap {
 		// position: relative;
-		height: calc(180vh);
+		height: calc(208vh);
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;
 		overflow-y: hidden;

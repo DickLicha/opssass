@@ -369,8 +369,17 @@
 				"style": {
 					"navigationBarTitleText": "用户用车信息"
 				}
-			}
-			]
+			}             
+                ,{
+                    "path" : "dispatchmovecar/dispatchmovecar",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "派单挪车",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 		}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
