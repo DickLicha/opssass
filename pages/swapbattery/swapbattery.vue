@@ -450,7 +450,7 @@
 			...mapMutations(['setSn', 'setBlueres','setBikeinfo']),
 			setbikedata(bikeinfo){
 				// 车辆id
-				this.swapbatterydata1[0].val=bikeinfo.id
+				this.swapbatterydata1[0].val=bikeinfo.sn
 				// 车辆sn
 				// this.swapbatterydata1[1].val=bikeinfo.ecu_sn+'、'+bikeinfo.imei
 				this.swapbatterydata1[1].val=bikeinfo.ecu_sn

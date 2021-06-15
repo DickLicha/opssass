@@ -6,7 +6,9 @@
 			};
 		},
 		onLaunch: function() {
-			console.log('App Launch');		
+			console.log('App Launch');
+			// const accountInfo = uni.getAccountInfoSync();
+			// console.log(accountInfo.miniProgram.appId, '小程序 appId') // 小程序 appId
 			var baseurl = '',
 				realuser = ''		    
 			try {

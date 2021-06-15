@@ -215,9 +215,23 @@
 									}
 									this.taskdata.push(tempobj)
 									break	
-							}							
+							}
+														
 						}
 					}
+					name = '批量挪车'
+					// url = '/pages/lotsizemove/lotsizemove'
+					url = '/pages/movecarPage/checkupcar/checkupcar?type=101'
+					text = '批量挪车'
+					src = require('../../../static/image/wei_xiu.png')
+					tempobj = {
+						index: onlyid,
+						src: src,
+						name: name,
+						url: url,
+						text: text
+					}
+					this.taskdata.push(tempobj)
 				},
 				fail:res=>{
 					console.log('fail',res)
@@ -380,7 +394,7 @@
 <style lang="scss" scoped>
 	.wrap {
 		// position: relative;
-		height: calc(160vh);
+		height: calc(185vh);
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;
 		overflow-y: hidden;
