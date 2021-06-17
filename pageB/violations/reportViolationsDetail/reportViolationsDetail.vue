@@ -102,7 +102,7 @@
 				fineSelect: 20,
 				fineArr: [
 					"3",
-					"5",
+					"4",
 				],
 				ordertype:0,
 				faqianjine:0,
@@ -130,6 +130,16 @@
 			this.findList[1] = "发现地点：" + data.address;
 			
 			this.geturorder(data.bound_order_id)
+			uni.getStorage({
+				key:'userinfo',
+				success:res=>{
+					if(!!res.data.citycfg.urvorder_fin_num){
+						this.fineArr=res.data.citycfg.urvorder_fin_num
+					}
+				}
+			})
+			
+			// this.fineArr=
 		},
 		methods: {
 			// 用户订单信息

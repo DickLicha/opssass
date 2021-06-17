@@ -737,6 +737,7 @@
 					});
 				}
 			},
+            // 自定义-1，当月0，当日10，昨天11，一周前12，上个月1
 			timecalc(type) {
 				if (type == -1) {
 					return
@@ -783,8 +784,8 @@
 								month02 = 12
 							}
 						}
-						this.end_time = startyear + seperator1 + month02 + seperator1 + strDate1
-						this.start_time = startyear + seperator1 + month02 + seperator1 + strDate0
+						this.end_time = date.getFullYear() + seperator1 + month02 + seperator1 + strDate1
+						this.start_time = date.getFullYear() + seperator1 + month02 + seperator1 + strDate0
 					}
 					// 一周前
 					if (type == 12) {
