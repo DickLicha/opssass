@@ -122,6 +122,15 @@
 			this.findList[1] = "发现地点：" + data.address;
 			
 			this.geturorder(data.bound_order_id)
+			
+			uni.getStorage({
+				key:'userinfo',
+				success:res=>{
+					if(!!res.data.citycfg.urvorder_fin_num){
+						this.fineArr=res.data.citycfg.urvorder_fin_num
+					}
+				}
+			})
 		},
 		methods: {
 			// 用户订单信息
