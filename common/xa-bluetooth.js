@@ -1,6 +1,7 @@
 import store from '@/store'
-import Utils from '@/common/uti.js';
 var dataTransition = require('./dataTransition.js')
+// var bluealldevice = uni.getStorageSync('bluealldevice');
+// var bluealldevice = uni.getStorage('bluealldevice');
 var systemtype = '',
 	code = '',
 	starttime = '',
@@ -40,31 +41,91 @@ function ab2hex(buffer) {
 
 function onBluetoothDeviceFound() {
 	return new Promise((resolve, reject) => {
-		wx.onBluetoothDeviceFound((res) => {
-			try {
-				console.log("成功1:", res.devices[0].localName);
-				if (bluebikeinfo.ecu_model == "WA-209D") {
-					//解密编号
-					let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
-					// console.log('machineNO',machineNO,bluebikeinfo.ecu_sn.toUpperCase().slice(0,9))
-					if (machineNO == bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)) {
-						coreapi(resolve, reject, res)
+		
+		try{
+			var bluealldevice = uni.getStorageSync('bluealldevice');
+			console.log('bluealldevice',bluealldevice)
+			if(bluealldevice){
+				for(var i=0;i<bluealldevice.length;i++){
+					try {
+						// console.log("成功1:", bluealldevice[i].devices[0]);
+						// console.log("成功1:", bluealldevice[i].devices[0]);
+						if (bluebikeinfo.ecu_model == "WA-209D") {
+							//解密编号
+							// let machineNO = dataTransition.encrypt(dataTransition.ab2hex(bluealldevice[i].devices[0].advertisData).slice(4, 13));
+							// console.log('machineNO',machineNO)
+							if (bluealldevice[i].machineNO == bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)) {
+								coreapi(resolve, reject, bluealldevice[i])
+								// console.log("成功2:", bluealldevice[i].devices[0]);
+							}
+						} else {
+							
+							// if (bluealldevice[i].devices[0].localName == bluebikeinfo.bluetooth_name) {
+							if (bluealldevice[i].devices[0].localName == bluebikeinfo.bluetooth_name) {
+								coreapi(resolve, reject, bluealldevice[i])
+							}
+						}
+					} catch (e) {
+						//TODO handle the exception
+						console.log('error', e)
+						reject({
+							fail: '异常失败' + e
+						})
 					}
-				} else {
-					if (res.devices[0].localName == bluebikeinfo.bluetooth_name) {
-						coreapi(resolve, reject, res)
-					}
+					
+					
+					
+					// try{
+					// 	if(bluealldevice[i].advertisData==bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)){
+					// 		coreapi(resolve, reject, bluealldevice[i])
+					// 		return
+					// 	}
+					// }catch(e){
+					// 	console.log('error', e)
+					// 	reject({
+					// 		fail: '异常失败' + e
+					// 	})
+					// }
+					
 				}
-			} catch (e) {
-				//TODO handle the exception
-				console.log('error', e)
-				reject({
-					fail: '异常失败' + e
-				})
 			}
-		})
+		}
+		catch(e){
+			
+		}
+		
+		
 	})
 }
+
+// function onBluetoothDeviceFound() {
+// 	return new Promise((resolve, reject) => {
+// 		wx.onBluetoothDeviceFound((res) => {
+// 			try {
+// 				console.log("成功1:", res.devices[0]);
+// 				if (bluebikeinfo.ecu_model == "WA-209D") {
+// 					//解密编号
+// 					let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
+// 					console.log('machineNO',machineNO)
+// 					if (machineNO == bluebikeinfo.ecu_sn.toUpperCase().slice(0, 9)) {
+// 						coreapi(resolve, reject, res)
+// 						console.log("成功2:", res.devices[0]);
+// 					}
+// 				} else {
+// 					if (res.devices[0].localName == bluebikeinfo.bluetooth_name) {
+// 						coreapi(resolve, reject, res)
+// 					}
+// 				}
+// 			} catch (e) {
+// 				//TODO handle the exception
+// 				console.log('error', e)
+// 				reject({
+// 					fail: '异常失败' + e
+// 				})
+// 			}
+// 		})
+// 	})
+// }
 // 蓝牙操作核心函数
 function coreapi(resolve, reject, res) {
 	deviceId = res.devices[0].deviceId;
@@ -207,8 +268,7 @@ const onBLEConnectionStateChange = (callback) => {
 //  特征值发生变化
 const onBLECharacteristicValueChange = (callback) => {
 	wx.onBLECharacteristicValueChange(function(res) {
-		// console.log('********notify收到的数据：', dataTransition.ab2hex(res.value),new Date().getTime());		
-		// console.log('长度1', _dataLen);
+		// console.log('********notify收到的数据：', dataTransition.ab2hex(res.value));		
 		if (bluebikeinfo.ecu_model == "WA-209D") {
 			let resData = dataTransition.ab2hex(res.value);
 			// console.log('resData', resData);
@@ -541,7 +601,7 @@ const _connectData = (data, type, callback) => {
 	// console.log('接收到的数据长度', _dataLen);
 	// console.log('内容长度', _dataContent.length);
 	if (_dataContent.length == _dataLen * 2) { //接收完该长度的字节和校验CRC成功之后再发送ACK
-		console.log('_dataContent-------',_dataContent)
+		// console.log('_dataContent-------',_dataContent)
 		let dc = _dataContent;
 		let dcArr = [];
 		// console.log('接收的数据长度字节：', dc.length / 2);
@@ -553,19 +613,20 @@ const _connectData = (data, type, callback) => {
 			//分析数据返回的内容 
 			_analysisBLEContent(dc).then((response) => {
 				callback(response)
-				if (response === '连接成功') {
+				if (response.name === '连接成功') {
+					store.commit('setBlueconectstate', 1)
 					_dataLen = 0;
 					_CRC16 = '';
 					_dataContent = '';
 					console.log('登录成功', dataTransition.ab2hex(value));
 				}
-				if (response === '开锁成功') {
+				if (response.name === '开锁成功') {
 
 				}
-				if (response === '上锁成功') {
+				if (response.name === '上锁成功') {
 					console.log('发送上锁ACK', dataTransition.ab2hex(value));
 				}
-				if (response == '心跳包') {
+				if (response.name == '心跳包') {
 
 				}
 			})
@@ -583,18 +644,15 @@ const _connectData = (data, type, callback) => {
 //解析蓝牙发送内容
 const _analysisBLEContent = (content) => {
 	return new Promise(function(res, rej) {
-		// console.log('解析数据数据***************', content); 
+		console.log('解析数据数据***************', content); 
 		if (content.indexOf('020101') > -1) {
+			res({name:'连接成功',val:content});
 			if (!_connected) {
 				_connected = true;
-				res('连接成功');
+				console.log('连接成功---》')
+				// res({name:'连接成功',val:content});
 				if(content.indexOf('840a') > -1){
-					var reg=/\840a(.*)/
-					var gpsData=content.match(reg);
-					gpsData.substring(0,8)
-					var longitude=gpsData.substring(0,4)
-					var latitude=gpsData.substring(5,8)
-					console.log(longitude,latitude)
+
 				}
 				
 			}
@@ -602,24 +660,28 @@ const _analysisBLEContent = (content) => {
 			// _glbelStateObj.name=='open' &&_glbelStateObj.state==false
 			if (!_hasReceive) {
 				_hasReceive = true;
-				res('开锁成功');
+				res({name:'开锁成功',val:content});
 			}
 		} else if (content.indexOf('0300810100') > -1) {
 			if (!_hasReceive) {
 				_hasReceive = true;
-				res('上锁成功');
+				res({name:'上锁成功',val:content});
 			}
 		} else if (content.indexOf('0300850100') > -1) {
 			if (!_hasReceive) {
 				_hasReceive = true;
-				res('电池锁打开成功');
+				res({name:'电池锁打开成功',val:content});
 			}
 		} else if (content.indexOf('04008524') > -1) {
-			res('心跳包');
+			res({name:'心跳包',val:content});
 		} else if (content.indexOf('020100') > -1) {
 			wx.hideLoading();
 			console.log('鉴权失败：', _sendData);
-		} else {
+		} else if (content.indexOf('04008524') > -1) {
+			res({name:'同步信息成功',val:content});
+		} 
+		
+		else {
 			wx.hideLoading();
 			wx.showToast({
 				title: content === '0300810102' ? '运动中不能上锁!' : '蓝牙操作失败，请重试!',
@@ -670,6 +732,8 @@ const _ctrl = (flag) => {
 		sendData = '03 00 01 01 00';
 	else if (flag === 'dmclose') //电门锁关闭
 		sendData = '03 00 02 01 01';
+	else if (flag === 'gps') //gps
+		sendData = '04 00 05 01 00';	
 	let header = dataTransition.header(sendData, 0, '00', sequenceId_16);
 	let data = header + sendData.replace(/\s+/g, "");
 	console.log(`发送${flag}指令`, data);

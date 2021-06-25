@@ -1,8 +1,8 @@
 <template>
 	<view>
-		<view class="base-header" >
+		<view class="base-header" @click='showmapcoverview'>
 			<i v-if="hasBack" class="iconfont iconsousuo sousuo-view" @click='gosuchview'></i>
-			<text class='text-view' @click='showmapcoverview'>{{title}}</text>
+			<text class='text-view' >{{title}}</text>
 			<img v-if='xialajiantou' src="../../static/image/xiala.png" class='base-img'  alt="">
 			<!-- <img src="/static/image/shangla.png" style='width:20upx;height:auto' alt=""> -->
 			<text v-if="hasright" @click="messagecenter">{{rightTitle}}</text>
@@ -63,20 +63,22 @@
 		height: 6vh;
 		line-height: 6vh;
 		// background-color: #f5f5f5;
-		background-color: #555555;
+		background-color: #F5F6F7;
 		text-align: center;
 		.base-img{
 			width:18upx;
 			height:18upx;
+			margin-left: 10upx;
 		}
 		.sousuo-view{
 			position: absolute;
 			right:18upx;
 			font-size: 40upx;
-			color:white;
+			color:#606972;
 		}
         .text-view{
-			color:white
+			color:#606972;
+			font-size:22upx;
 		}
 		span:nth-child(1) {
 			text-align: center;

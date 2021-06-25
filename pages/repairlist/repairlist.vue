@@ -1,7 +1,7 @@
 <template>
 	<view class='wrap'>
 		<view class='view-common'>
-			<view v-if="type!=14&&type!=99" class='common-item' v-for="(item,i) in repairlist" @click="go(item)">
+			<view v-if="type!=14&&type!=99" class='common-item' v-for="(item,i) in repairlist" @click="go(item)" :key='i'>
 				<text>{{item.name}}</text>
 			</view>
 			
@@ -35,10 +35,11 @@
 		},
 		methods: {
 			...mapMutations(['setOrderfirstid', 'setOrderinfo', 'setSn', 'setBikeid', 'setBikeinfo']),
-			goNewPage(item){
-				this.setSn(item)
-				this.getcarinfo()
-			},
+			// goNewPage(item){
+			// 	this.setSn(item)
+			// 	this.getcarinfo()
+			// },
+			// input事件
 			manualsgo() {
 				this.getcarinfo()
 			},
@@ -77,6 +78,7 @@
 					console.error(err, '捕捉')
 				})
 			},
+			// 扫码
 			scanCodes(){
 				this.setBikeid('*')
 				console.log('type',this.type)
@@ -128,7 +130,7 @@
 												tempobj = {
 													name: '维修入库',
 													val: '',
-													url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
+													url: '/map/map?text=全部故障车辆&type=1.1&name=维修',
 												}
 												templist.push(tempobj)
 												break
@@ -155,7 +157,7 @@
 												tempobj = {
 													name: '车站挪车',
 													val: '',
-													url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
+													url: '/map/map?text=全部车辆&type=3.1&name=挪车',
 												}
 												templist.push(tempobj)
 												break
@@ -189,7 +191,7 @@
 												tempobj = {
 													name: '投放',
 													val: '',
-													url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
+													url: '/map/map?text=全部故障车辆&type=1.1&name=维修',
 												}
 												templist.push(tempobj)
 												break
@@ -215,6 +217,24 @@
 								}
 								templist.push(tempobj)
 								break
+							case '9':
+								templist = [{
+										name: '创建停车区',
+										val: '',
+										url: `/map/map?name=创建停车区&type=9.1`
+									},
+									{
+										name: '创建车站',
+										val: '',
+										url: `/map/map?name=创建车站&type=9`
+									},
+									{
+											name: '创建停车区1',
+											val: '',
+											url: `/map/map?name=创建停车区1&type=9.2`
+										},
+								]
+								break	
 							case '10':
 								for (let j = 0; j < chids.length; j++) {
 									if (chids[j].visitable == 1) {
@@ -673,7 +693,7 @@
 					this.repairlist = [{
 							name: '维修入库',
 							val: '',
-							url: '/pages/map/map?text=全部故障车辆&type=1.1&name=维修',
+							url: '/map/map?text=全部故障车辆&type=1.1&name=维修',
 						},
 						{
 							name: '修车',
@@ -687,7 +707,7 @@
 					this.repairlist = [{
 							name: '车站挪车',
 							val: '',
-							url: '/pages/map/map?text=全部车站&type=3.1&name=挪车',
+							url: '/map/map?text=全部车辆&type=3.1&name=挪车',
 						},
 						{
 							name: '挪车记录',

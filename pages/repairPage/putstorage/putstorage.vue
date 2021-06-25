@@ -73,7 +73,7 @@
 			...mapMutations(['setWarehoselist']),
 			gocarcenter() {
 				uni.navigateTo({
-					url: '/pages/carBigCenter/carcenter/carcenter',
+					url: '/carBigCenter/carcenter/carcenter',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

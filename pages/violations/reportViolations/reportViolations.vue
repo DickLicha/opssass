@@ -54,6 +54,7 @@
 					{"content":""},
 					{"content":""},
 					{"content":"举报状态：未举报"},
+					{"content":"挪车人："},
 				],
 				imageArr: [
 				],
@@ -115,8 +116,9 @@
 						// 剩余电量
 						_this.dataList[0].content = "车辆编号：" + res.info.sn;           
 						_this.dataList[1].content = "电话号码：" + res.info.last_order_oper_phone;
-						_this.dataList[2].content = "用户：" + res.info.last_order_oper_name;
+						_this.dataList[2].content = "用户：" + res.info.last_order_oper_name+'('+res.info.last_order_end_time+')';
 						_this.dataList[5].content = res.info.address;
+						_this.dataList[7].content = "挪车人："+res.info.last_repark_order_oper_name+'('+res.info.last_repark_order_end_time+')';
 						this.geturorder(res.info.last_order_id)
 					}
 				}).catch((err) => {

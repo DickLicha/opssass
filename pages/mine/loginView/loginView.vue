@@ -172,6 +172,7 @@
 					provider: 'weixin',
 					success: function(loginRse) {
 						_this.wxLoginCode = loginRse.code;
+						console.log(33333,loginRse)
 						uni.getUserInfo({
 							success: (res) => {
 								_this.user_info_data = res.encryptedData;

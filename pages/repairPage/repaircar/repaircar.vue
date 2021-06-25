@@ -102,7 +102,7 @@
 		computed: mapState(['faultinfo', 'orderfirstid', 'selectfaultobj', 'bikeinfo']),
 		onLoad(e) {
 			this.setFaultinfo('')
-			this.swapdata[0].val = this.bikeinfo.id
+			this.swapdata[0].val = this.bikeinfo.sn
 			this.swapdata[1].val = this.$invstate(this.bikeinfo.inv_state)
 			let sim_state = ''
 			if (this.bikeinfo.is_on_battery == 0) {
@@ -173,7 +173,7 @@
 			},
 			gocarcenter() {
 				uni.navigateTo({
-					url: '/pages/carBigCenter/carcenter/carcenter',
+					url: '/carBigCenter/carcenter/carcenter',
 					success: res => {},
 					fail: () => {},
 					complete: () => {}

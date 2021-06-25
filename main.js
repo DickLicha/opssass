@@ -20,16 +20,20 @@ App.mpType = 'app'
 
 Vue.prototype.$httpReq = request
 Vue.prototype.$store = store
-Vue.prototype.$formatetimes = function() {
-	var date = new Date()
-	var seperator1 = "-";
-	var seperator2 = ":";
-	var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-	var strDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-	var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate +
-		" " + date.getHours() + seperator2 + date.getMinutes() +
-		seperator2 + date.getSeconds()
-	return currentdate
+
+if (uni.getSystemInfoSync().platform !== "devtools") {
+	console.log = () => {}
+}
+
+Vue.prototype.$formatetimes = function(timestamp) {
+	var date = new Date(timestamp);
+	Y = date.getFullYear() + '-';
+	M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+	D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+	h = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+	m = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+	s = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds());
+	return Y + M + D + h + m + s;
 }
 Vue.prototype.$parkstate = function(type) {
 	let place_name = ''
@@ -65,18 +69,24 @@ Vue.prototype.$invstate = function(type) {
 }
 
 
-	Vue.prototype.$imagepath = function(element, type, bikenum,grade) {
+Vue.prototype.$imagepath = function(element, type, bikenum, grade) {
 		var iconPath = '/static/mapicon/car_normal.png'
+		
 		// 车辆
 		if (type == 'car') {
 			// 差+车
-			if(element.health_state==0 && element.repark_index!='0'){
+			if (element.health_state == 0 && element.repark_index != '0') {
 				iconPath = '/static/mapicon/car_bad+.png'
 			}
 			// 失联
-			else if (0 === element.is_online) {
+			if (0 === element.is_online) {
 				iconPath = '/static/mapicon/car_fault_black.png'
 			}
+			// 差+车
+			else if(element.health_state==0 && element.repark_index!='0'){
+				iconPath = '/static/mapicon/bad'+element.repark_index+'+.png'
+				// iconPath = '/static/mapicon/car_bad+.png'
+			}			
 			// 故障
 			else if (1 === element.health_state) {
 				iconPath = '/static/mapicon/fault.png'
@@ -86,16 +96,22 @@ Vue.prototype.$invstate = function(type) {
 				iconPath = '/static/mapicon/low_elec.png'
 			}
 		}
+		// 显示带电量的图标
+		else if(type == 'elect'){
+			var tempimg=parseInt((element.battery_level/5).toFixed(0))
+			// if(tempimg==0){
+			// 	tempimg=1
+			// }
+			iconPath='/static/electimg/802_'+tempimg+'.png'
+		}
 		// 车站
 		else if (type == 'stop') {
 			if (10 < bikenum) {
-				iconPath = '/static/stop/stop_'+ grade+'_10@3x.png'
-			}
-			else if(bikenum<0){
-				iconPath = '/static/stop/stop_'+ grade+'_0@3x.png'
-			}
-			else {
-				iconPath = '/static/stop/stop_' + grade + '_'+ bikenum +'@3x.png'
+				iconPath = '/static/stop/stop_' + grade + '_10@3x.png'
+			} else if (bikenum < 0) {
+				iconPath = '/static/stop/stop_' + grade + '_0@3x.png'
+			} else {
+				iconPath = '/static/stop/stop_' + grade + '_' + bikenum + '@3x.png'
 			}
 		}
 		return iconPath
@@ -133,26 +149,26 @@ Vue.prototype.$invstate = function(type) {
 		}
 		return health_state
 	}
-	
-	Vue.prototype.$bus_state = function(type) {
-		let health_state = ''
-		if (type == 0) {
-			health_state = '空闲'
-		} else if (type == 10) {
-			health_state = '车辆预约'
-		} else if (type == 11) {
-			health_state = '用户骑行'
-		} else if (type == 12) {
-			health_state = '临时停车'
-		} else if (type == 20) {
-			health_state = '挪车'
-		} else if (type == 30) {
-			health_state = '换电'
-		} else{
-			health_state = '异常'
-		}
-		return health_state
+
+Vue.prototype.$bus_state = function(type) {
+	let health_state = ''
+	if (type == 0) {
+		health_state = '空闲'
+	} else if (type == 10) {
+		health_state = '车辆预约'
+	} else if (type == 11) {
+		health_state = '用户骑行'
+	} else if (type == 12) {
+		health_state = '临时停车'
+	} else if (type == 20) {
+		health_state = '挪车'
+	} else if (type == 30) {
+		health_state = '换电'
+	} else {
+		health_state = '异常'
 	}
+	return health_state
+}
 
 const app = new Vue({
 	...App

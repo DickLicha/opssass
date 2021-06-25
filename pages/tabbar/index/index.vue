@@ -2,10 +2,10 @@
 	<view class='wrap'>
 		<view class='head-view'>
 			<image class='scan-img' @click="scaninto" src='/static/image/scan2x.png'></image>
-			<text class='head-view-text'>首页</text>
+			<text class='head-view-text'>{{headtitle}}</text>
 		</view>
 		<view class='common-base-view'>
-			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item,i)'>
+			<view class='task-view' v-for="(item,i) in taskdata" @click='go(item,i)' :key=i>
 				<!-- <view class='task-view-img'><i class="iconfont icondanche" style='font-size: 70upx;'></i></view> -->
 				<view class='task-view-img'>
 					<image class="" style='width:120upx;height: 120upx;' :src='item.src'></image>
@@ -29,18 +29,18 @@
 		computed: mapState(['userinfo', 'blueres']),
 		onShow() {			
 			this.taskdata = []
-			// var acl = this.userinfo.acl.children
 			var acl = []
 			uni.getStorage({
 				key: 'userinfo',
 				success: res => {
+					this.headtitle=res.data.cities[0].name || '未知城市'
 					acl = res.data.acl.children
 					var onlyid = '',
 						tempobj = {},
 						src = '',
 						name = '',
 						url = '',
-						text = ''
+						text = ''						
 					for (let i = 0; i < acl.length; i++) {
 						if (acl[i].visitable == 1) {
 							onlyid = parseInt(acl[i].uri)
@@ -48,87 +48,199 @@
 								case 0:
 									src = require('../../../static/image/huan_dian.png')
 									name = '换电'
-									url = '/pages/map/map'
+									url = '/map/map'
 									text = '全部待换电'
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 1:
 									name = '维修'
 									url = '/pages/repairlist/repairlist'
 									text = '全部故障车辆'
 									src = require('../../../static/image/wei_xiu.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 2:
 									name = '保养'
-									url = '/pages/map/map'
+									url = '/map/map'
 									text = '待保养车辆'
 									src = require('../../../static/image/bao_yang.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 3:
 									name = '单个挪车'
 									// url = '/pages/repairlist/repairlist'
-									url = '/pages/map/map?text=全部车站&type=3.1&name=挪车'
-									text = '全部车站'
+									url = '/map/map?text=全部车辆&type=3.1&name=挪车'
+									text = '全部车辆'
 									src = require('../../../static/image/nuo_che.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 8:
 									name = '库存管理'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/ku_cun.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 9:
 									name = '车站'
-									url = '/pages/map/map'
+									// url = '/pages/map/map'
+									url = '/pages/repairlist/repairlist'
 									text = '全部车站'
 									src = require('../../../static/image/che_zhan.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 10:
 									name = '违章'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/wei_zhang.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 11:
 									name = '车辆排查'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/pai_cha.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 12:
 									name = 'ecu检测'
 									url = '/pages/ecutest/ecutest'
 									text = ''
 									src = require('../../../static/image/pai_cha.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 13:
 									name = 'ecu换绑'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/ecu_huanban.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 14:
 									name = '结束订单'
 									url = '/pages/repairlist/repairlist'
 									text = ''
 									src = require('../../../static/image/che_zhan.png')
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)
 									break
 								case 15:
 									name = '仪表盘'
 									url = '/pages/echartPage/echartpage/echartpage'
 									text = ''
 									src = require('../../../static/image/che_zhan.png')
-									break	
-							}
-							tempobj = {
-								index: onlyid,
-								src: src,
-								name: name,
-								url: url,
-								text: text
-							}
-							this.taskdata.push(tempobj)
+									tempobj = {
+										index: onlyid,
+										src: src,
+										name: name,
+										url: url,
+										text: text
+									}
+									this.taskdata.push(tempobj)						
+									break
+								case 17:
+									tempobj = {
+										index: 100,
+										src: require('../../../static/image/nuo_che.png'),
+										name: '车辆监控',
+										url: '/map/map?text=车俩监控&type=10&name=车辆监控',
+										text: '车辆监控'
+									}
+									this.taskdata.push(tempobj)						
+									break			
+							}							
 						}
 					}
+					name = '批量挪车'
+					// url = '/pages/lotsizemove/lotsizemove'
+					url = '/pages/movecarPage/checkupcar/checkupcar?type=101'
+					text = '批量挪车'
+					src = require('../../../static/image/wei_xiu.png')
+					tempobj = {
+						index: onlyid,
+						src: src,
+						name: name,
+						url: url,
+						text: text
+					}
+					this.taskdata.push(tempobj)
 				},
 				fail:res=>{
 					console.log('fail',res)
@@ -140,11 +252,12 @@
 					});
 				}
 			})
-			this.getdirectinfo()
+			this.getdirectinfo()	
 		},
 		data() {
 			return {
-				taskdata: []
+				taskdata: [],
+				headtitle:'首页'
 			};
 		},
 		methods: {
@@ -290,7 +403,7 @@
 <style lang="scss" scoped>
 	.wrap {
 		// position: relative;
-		height: calc(160vh);
+		height: calc(180vh);
 		background-color: rgb(245, 245, 245);
 		padding-top: 1upx;
 		overflow-y: hidden;

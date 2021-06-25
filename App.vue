@@ -1,5 +1,9 @@
 <script>
-	import Utils from '@/common/uti.js';
+	import {
+		timefn
+	} from './common/conf.js'
+	// import ble from '../../common/xa-bluetooth.js'
+	var dataTransition = require('./common/dataTransition.js')
 	export default {
 		data() {
 			return {
@@ -7,9 +11,105 @@
 			};
 		},
 		onLaunch: function() {
-			console.log('App Launch');
+			const accountInfo = uni.getAccountInfoSync();
+			console.log(accountInfo.miniProgram.appId, '小程序 appId') // 小程序 appId
+			this.$store.commit('setAppid',accountInfo.miniProgram.appId)
+			var bluealldevice=[]
+			function onBluetoothDeviceFounds() {
+				return new Promise((resolve, reject) => {
+					wx.onBluetoothDeviceFound((res) => {
+						try {		
+							let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
+							// console.log("success1:", res.devices[0],machineNO);
+							// console.log("success1:", res);
+							res.machineNO=machineNO
+							// res.localName=res
+							bluealldevice.push(res)						
+						} catch (e) {
+							//TODO handle the exception
+							console.log('error', e)
+							reject({
+								fail: '异常失败' + e
+							})
+						}
+					})
+				})
+			}
+			
+			wx.closeBluetoothAdapter({
+				success(res) {
+					console.log('关闭蓝牙成功', res)
+					uni.getSystemInfo({
+						success: function(res) {
+							// systemtype = res.platform
+							// bluebikeinfo = bikeinfo
+							// var _this=e
+							wx.openBluetoothAdapter({
+								success: (res) => {
+									console.log(" ======== 初始化蓝牙 (成功) =======", res);
+									// store.commit("setBluestate", true);
+									//  开始搜索设备
+									wx.startBluetoothDevicesDiscovery({
+										success: (res) => {
+											console.log(" 开始搜索设备", res);
+											// return onBluetoothDeviceFound;
+											// console.log('onBluetoothDeviceFound',onBluetoothDeviceFound())
+											onBluetoothDeviceFounds().then((val) => {
+												console.log("查询返回结果", val);
+												isok(val)
+											}).catch((err) => {
+												console.log('蓝牙reject', err)
+											})
+											setTimeout(()=>{
+												wx.stopBluetoothDevicesDiscovery({
+													success: (res) => {
+														console.log("关闭成功");
+													}
+												})
+												uni.setStorage({
+													key: 'bluealldevice',
+													data: bluealldevice,
+													success: res => {
+														console.log('successputdata',res)
+													},
+													fail: res => {
+												        console.log('errputdata',res)
+													}
+												})	
+											},8000)
+											
+										},
+										fail: (res) => {
+											console.log("搜索设备失败", res);
+											// uni.hideLoading()
+											uni.showToast({
+												title: '搜索蓝牙失败',
+												icon: 'none',
+												duration: 3000
+											});
+										}
+									})
+									// return startBluetoothDevicesDiscovery;
+								},
+								fail: (res) => {
+									// uni.hideLoading()
+									console.log(" ======== 初始化蓝牙（失败） =======", res);
+									uni.showToast({
+										title: '初始化蓝牙失败请手动打开蓝牙',
+										icon: 'none',
+										duration: 3000
+									});
+								}
+							})
+						},
+					})
+				},
+				fail: (res) => {
+					console.log('关闭蓝牙失败', res)
+				}
+			})
 			var baseurl = '',
-				realuser = ''
+				realuser = ''		    
 			try {
 				baseurl = uni.getStorageSync('baseurl');
 				realuser = uni.getStorageSync('realuser');
@@ -20,6 +120,8 @@
 			if (baseurl == '') {
 				try {
 					uni.setStorageSync('baseurl', 'https://api.lexiangys.top');
+					// // 9号出行
+					// uni.setStorageSync('baseurl', 'https://api.test.lexiangys.top');		
 				} catch (e) {
 					// error
 				}
@@ -61,15 +163,6 @@
 					}
 				})
 			}
-
-			uni.getSystemInfo({
-				success: res => {
-					// this.gobeldata=res.statusBarHeight
-				},
-				fail: res => {
-
-				}
-			})
 
 			// #ifdef APP-PLUS
 			// 锁定屏幕方向
@@ -123,5 +216,5 @@
 
 <style>
 	@import './common/uni.css';
-	/*每个页面公共css */
+	/*每个页面公共css */	
 </style>

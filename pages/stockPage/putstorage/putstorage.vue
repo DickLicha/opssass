@@ -16,11 +16,12 @@
 			<view v-if="type==0">
 				<text>车辆型号</text>
 				<view class='result-fault'>
-					<view class='result-fault-view' v-for="(item,i) in faultdata" :key="i" @click='chosefault(item,i)' :class="{'borderrights':isActive==i}">
+					<view class='result-fault-view' v-for="(item,i) in faultdata" :key="i" @click='chosefault(item,i,0)' :class="{'borderrights':isActive==i}">
 						<text>{{item.name}}</text>
 					</view>
 				</view>
 			</view>
+			<!-- c -->
 		</view>
 	</view>
 </template>
@@ -47,6 +48,7 @@
 				],
 				models: 'Q5',
 				isActive: 0,
+				isActives:0,
 				title: 'uni-fab',
 				poptype: '',
 				borders: true,
@@ -62,6 +64,7 @@
 						val: '',
 					},
 				],
+				batterydata:[{name:'12Ah',val:'ZN48V12AH'},{name:'14Ah',val:'XH48V14AH'},{name:'15Ah',val:'VP48V15AH'}],
 				orderid: '',
 				type: '',
 				swapbatterydata: [{
@@ -69,6 +72,8 @@
 					val: ''
 				}],
 				btnname: '',
+				batterymodel:'ZN48V12AH',
+				ecu_model:'WA-209D'
 			}
 		},
 		components: {
@@ -101,20 +106,29 @@
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
 			chosefault(item,i) {
-				this.models = item.name
-				this.isActive=i
-				console.log('models', this.models)
+					this.models = item.name
+					this.isActive=i	
+			},
+			chosebattery(item,i) {				
+					this.batterymodel=item.val
+					this.isActives=i
 			},
 			// 换二维码
 			changesn() {
 				this.setSn("*")
+				var sk=''
+				if(this.ecu_model=='AT-MX3F'){
+					sk=this.swapdata[0].val
+				}else{
+					sk=this.swapdata[1].val
+				}
 				var options = {
 					url: '/bike/change_sn', //请求接口
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
 						// "bike_id": '',
-						"sk": this.swapdata[1].val,
+						"sk": sk,
 						"new_sn": this.swapbatterydata[0].val
 					}
 				}
@@ -231,12 +245,18 @@
 								});
 								return
 							}
+							// 太比特ecu
 							else if(res.result.indexOf(' ')==-1){								
 								this.swapdata[1].val = res.result
-							}else{
+								this.ecu_model='WA-209D'
+							}
+							// 小安ecu
+							else
+							{
 								var result = res.result.split(' ')
 								this.swapdata[0].val = result[0].split(':')[1]
 								this.swapdata[1].val = result[1].split(':')[1]
+								this.ecu_model='AT-MX3F'
 							}							
 						} else {
 							if(res.result.match(/\?bikesn=(.*)/)){
@@ -259,7 +279,7 @@
 				});
 			},
 			// 入库
-			rukustate(models) {
+			rukustate(models,ecu_model) {
 				uni.showLoading({
 					title: '入库中'
 				});
@@ -270,7 +290,9 @@
 					data: {
 						"imei": this.swapdata[0].val,
 						"ecu_sn": this.swapdata[1].val,
-						"model": models
+						"model": models,
+						"ecu_model":ecu_model,
+						// "battery_model":this.batterymodel
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -309,7 +331,7 @@
 					return
 				}
 				if (this.type == 0) {
-					this.rukustate(this.models)
+					this.rukustate(this.models,this.ecu_model)
 				} else if (this.type == 1) {
 					this.changesn()
 				} else if (this.type == 2) {

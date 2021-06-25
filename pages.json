@@ -23,13 +23,6 @@
 				"titleNView": false
 			}
 		},
-		{
-			"path": "pages/map/map",
-			"style": {
-				"navigationBarTitleText": "地图",
-				"scrollIndicator": "none"
-			}
-		},
 		// {
 		// 	"path": "pages/test/test",
 		// 	"style": {
@@ -67,42 +60,13 @@
 				"navigationBarTitleText": "换电"
 			}
 		}, {
-			"path": "pages/carBigCenter/carcenter/carcenter",
-			"style": {
-				"navigationBarTitleText": "车辆详细"
-			}
-		}, {
-			"path": "pages/carBigCenter/carorder/carorder",
-			"style": {
-				"navigationBarTitleText": "订单中心"
-			}
-		}, {
 			"path": "pages/switchloockinfo/switchloockinfo",
 			"style": {
 				"navigationBarTitleText": "车辆操作记录",
 				"scrollIndicator": "none"
 			}
-		}, {
-			"path": "pages/carBigCenter/batteriesrecord/batteriesrecord",
-			"style": {
-				"navigationBarTitleText": "换电记录"
-			}
-		}, {
-			"path": "pages/carBigCenter/carorbit/carorbit",
-			"style": {
-				"navigationBarTitleText": "维修记录"
-			}
-		}, {
-			"path": "pages/carBigCenter/ecuview/ecuview",
-			"style": {
-				"navigationBarTitleText": "ECU"
-			}
-		}, {
-			"path": "pages/carBigCenter/batteryview/batteryview",
-			"style": {
-				"navigationBarTitleText": "电池"
-			}
-		}, {
+		}, 
+		{
 			"path": "pages/searchview/searchview",
 			"style": {
 				"navigationBarTitleText": "搜索"
@@ -131,11 +95,6 @@
 			"path": "pages/repairPage/faulttypeview/faulttypeview",
 			"style": {
 				"navigationBarTitleText": "故障类型"
-			}
-		}, {
-			"path": "pages/carBigCenter/breakdowncar/breakdowncar",
-			"style": {
-				"navigationBarTitleText": "报修"
 			}
 		}, {
 			"path": "pages/repairPage/putstorage/putstorage",
@@ -298,26 +257,93 @@
 				"navigationBarTitleText": "账号登录"
 			}
         }
+        ,{
+            "path" : "pages/tabbar/platform/platform",
+            "style" : {
+				"navigationBarTitleText": "工作台",
+				// "navigationBarTextStyle": "white",
+				// "navigationBarBackgroundColor": "#2383fb",
+				// "backgroundColor":"#2383fb",
+				"enablePullDownRefresh": true,
+				"navigationStyle": "custom",
+				"titleNView": false
+			}
+        }
+   //      ,{
+   //          "path" : "pages/lotsizemove/lotsizemove",
+   //          "style" : {
+			// 	"navigationBarTitleText": "批量挪车"
+			// }
+   //      }
     ],
- //   "subPackages":
-	// [ 
-	// {
- //        "root": "pagesB",
- //        "pages": [
-	// 	{
-	// 		"path": "echartPage/echartpage/echartpage",
-	// 		"style": {
-	// 			"navigationBarTitleText": "仪表盘"
-	// 		}
-	// 	}
-	// 	]
- //    }],
-	// "preloadRule": {
-	// 	"pagesB/echartPage/echartpage/echartpage": {
-	// 		"network": "all",
-	// 		"packages": ["__APP__"]
-	// 	}
-	// },
+	"subPackages": [
+		{
+			"root": "carBigCenter",  //文件夹名称，  pages文件夹同级新建一个就行
+			"pages": [
+				{
+				    "path" : "batteriesrecord/batteriesrecord",
+				    "style" : {
+						"navigationBarTitleText": "换电记录"
+					}
+				},
+				{
+				    "path" : "batteryview/batteryview",
+				    "style" : {
+						"navigationBarTitleText": "电池"
+					}
+				},
+				{
+				    "path" : "breakdowncar/breakdowncar",
+				    "style" : {
+						"navigationBarTitleText": "报修"
+					}
+				},
+				{
+				    "path" : "carcenter/carcenter",
+				    "style" : {
+						"navigationBarTitleText": "车辆详细"
+					}
+				},
+				{
+				    "path" : "carorbit/carorbit",
+				    "style" : {
+						"navigationBarTitleText": "维修记录"
+					}
+				},
+				{
+				    "path" : "carorder/carorder",
+				    "style" : {
+						"navigationBarTitleText": "订单中心"
+					}
+				},
+				{
+				    "path" : "ecuview/ecuview",
+				    "style" : {
+						"navigationBarTitleText": "ECU"
+					}
+				},
+				{
+				    "path" : "uploadlog/uploadlog",
+				    "style" : {
+						"navigationBarTitleText": "最近上报日志"
+					}
+				}
+			 ]
+		},
+		{
+			"root": "map",  //文件夹名称，  pages文件夹同级新建一个就行
+			"pages": [
+				{
+				    "path" : "map",
+				    "style" : {
+						"navigationBarTitleText": "地图",
+						"scrollIndicator": "none"
+					}
+				}
+			 ]
+		}
+		],
+	
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -334,6 +360,12 @@
 				"iconPath": "static/image/renwu@2x(1).png",
 				"selectedIconPath": "static/image/renwu@2x.png",
 				"text": "任务"
+			},
+			{
+				"pagePath": "pages/tabbar/platform/platform",
+				"iconPath": "static/image/renwu@2x(1).png",
+				"selectedIconPath": "static/image/renwu@2x.png",
+				"text": "工作台"
 			},
 			{
 				"pagePath": "pages/tabbar/mine/mine",

@@ -38,6 +38,8 @@ const store = new Vuex.Store({
 		blueres:{},
 		bluestate:false,
 		blueconectstate:0,
+		movebikearr:[],
+		appid:'',
 	},
 	mutations: {
 		login(state, provider) {
@@ -128,6 +130,12 @@ const store = new Vuex.Store({
 		},
 		setBlueconectstate(state,blueconectstate){
 			state.blueconectstate=blueconectstate
+		},
+		setMovebikearr(state,movebikearr){
+			state.movebikearr=movebikearr
+		},
+		setAppid(state,appid){
+			state.appid=appid
 		}
 		
 	},
