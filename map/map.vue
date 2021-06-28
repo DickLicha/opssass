@@ -154,6 +154,22 @@
 						<view class='border-view'>
 							<input class='normal-input' v-model="stopVolume" type="number" placeholder="停车区容量">
 						</view>
+						<view class='more-view' @tap='showmore'>
+							<text>更多</text>
+							<img src="../static/image/more1.png" alt="">
+						</view>
+						<view class='more-view-detil' v-show="morestop" >
+							<base-img v-if="!editstop"></base-img>
+							<view class='border-view'>
+								<input class='normal-input' v-model="stopDesc" type="text" placeholder="描述(限50字)">
+							</view>
+							<view class='open-close' v-if="editstop">
+								<!-- <view class="uni-list-cell uni-list-cell-pd"> -->
+								<view class="opclose-text">{{openclosestop}}</view>
+								<switch checked @change="switch1Change" />
+								<!-- </view> -->
+							</view>
+						</view>
 
 						<view class='edit-area'>
 							<view class='edit-wh'>
@@ -252,6 +268,7 @@
 		]),
 		data() {
 			return {
+				morestop:false,
 				anglecenter1:[],//用户站的中心点坐标
 				anglecenter2:[],//运维站的中心点坐标
 				edit1or2:1,//当前编辑的车站1代表用户站2代表运维站
@@ -1030,6 +1047,10 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
+			showmore(){
+				this.morestop=!this.morestop
+				console.log(6666,this.morestop)
+			},
 			menutitle(i, type) {
 				if (i == 0 && this.type == 10) {
 					if (type == 'color') {
@@ -1104,6 +1125,7 @@
 				//type=100初始化，type=0,1,2,3,101编辑分别对应宽+，宽-，高加，高减，旋转角度
 				// 初始车站矩形,南北0.000008983152841195214，东西0.000009405717451407729
 				//num=1用户站，num=2运维站
+				console.log('soshinibaba')
 				var latitudetomile = 30 * 0.000009405717451407729
 				var longitudetomile = 10 * 0.000008983152841195214
 				var ry=0.000009405717451407729*this.stopheigh
@@ -1120,13 +1142,10 @@
 						if(this.stop1name=='创建用户站'){
 							this.anglecenter1=[x1,y1]
 						}
-						// if(this.stop1name=='编辑用户站' || this.stop1name=='编辑中..'){
-						// 	return
-						// }
 						if(this.stop1name=='编辑中..'){
 							return
 						}
-						fillColor='#137FDA4D'
+						fillColor='#2784F04D'
 						// this.stop1name='编辑用户站'
 						this.stop1name='编辑中..'
 						if(this.stop2name!='创建运维站'){
@@ -1151,16 +1170,13 @@
 							this.anglecenter2=[x1,y1]
 						}
 						this.anglecenter2=[x1,y1]
-						// if(this.stop2name=='编辑运维站' || this.stop2name=='编辑中..'){
-						// 	return
-						// }
 						if(this.stop2name=='编辑中..'){
 							return
 						}
 						yunweixs=1.5
 						// this.stop2name='编辑运维站'
 						this.stop2name='编辑中..'
-						fillColor='#A9A9A94D'
+						fillColor='#FFFF004D'
 						if(this.stop1name!='创建用户站'){
 							this.stop1name='编辑用户站'
 							// return
@@ -1169,7 +1185,6 @@
 						this.polygon.forEach((item)=>{
 							if(item.type==num){
 								if(item.points.length>0){
-									console.log(22223444)
 									pdympoints=true
 								}
 							}
@@ -1181,6 +1196,11 @@
 					}
 					this.xuanzhuanangle=0
 					setTimeout(() => {
+						// for(var i=0;i<this.polygon.length;i++){
+						// 	if(this.polygon[i]==this.edit1or2){
+						// 		this.polygon.splice(i,1)
+						// 	}
+						// }
 						this.polygon.push({
 							points: [{
 									latitude: (x1 - latitudetomile*yunweixs),
@@ -1221,9 +1241,10 @@
 				var hudu=(2*Math.PI/360*this.xuanzhuanangle)
 				var fillColor=''
 				if(type==1){
-					fillColor='#137FDA4D'
+					fillColor='#2784F04D'
 				}else{
-					fillColor='#A9A9A94D'
+					// fillColor='#FFFF004D'
+					fillColor='#FFFF004D'
 				}
 				for(var a=0;a<this.polygon.length;a++){
 					if(this.polygon[a].type==type){
@@ -1346,20 +1367,20 @@
 											this.polygon.splice(a,1)
 											this.polygon.push({
 												points: [{
-														latitude: this.rotateangle(item[0].latitude,item[0].longitude,0)[0],
-														longitude: this.rotateangle(item[0].latitude,item[0].longitude,0)[1]
+														latitude: this.rotateangle(item[0].latitude,item[0].longitude,0,1)[0],
+														longitude: this.rotateangle(item[0].latitude,item[0].longitude,0,1)[1]
 													},
 													{
-														latitude: this.rotateangle(item[1].latitude,item[1].longitude,0)[0],
-														longitude: this.rotateangle(item[1].latitude,item[1].longitude,0)[1]
+														latitude: this.rotateangle(item[1].latitude,item[1].longitude,0,2)[0],
+														longitude: this.rotateangle(item[1].latitude,item[1].longitude,0,2)[1]
 													},
 													{
-														latitude: this.rotateangle(item[2].latitude,item[2].longitude,0)[0],
-														longitude: this.rotateangle(item[2].latitude,item[2].longitude,0)[1]
+														latitude: this.rotateangle(item[2].latitude,item[2].longitude,0,3)[0],
+														longitude: this.rotateangle(item[2].latitude,item[2].longitude,0,3)[1]
 													},
 													{
-														latitude: this.rotateangle(item[3].latitude,item[3].longitude,0)[0],
-														longitude: this.rotateangle(item[3].latitude,item[3].longitude,0)[1]
+														latitude: this.rotateangle(item[3].latitude,item[3].longitude,0,4)[0],
+														longitude: this.rotateangle(item[3].latitude,item[3].longitude,0,4)[1]
 													},
 										
 												],
@@ -1376,11 +1397,13 @@
 			calcsize(num) { //0宽加，1宽减，2高加，3高减
 				this.initstop(num)
 			},
-			rotateangle(x,y,type){
+			rotateangle(x,y,type,num){
 				//type=0旋转,type=1放大变小
 				// var rx0=this.tempweidu
 				// var ry0=this.tempjindu
-				var rx0='',ry0=''
+				var ry=0.000009405717451407729
+				var rx=0.000008983152841195214
+				var rx0='',ry0=''//中心点xy坐标
 				if(this.edit1or2==1){
 					rx0=this.anglecenter1[0]
 					ry0=this.anglecenter1[1]
@@ -1389,15 +1412,100 @@
 					ry0=this.anglecenter2[1]
 				}				
 				var a=30
-				var x0=(x-rx0)*Math.cos(2*Math.PI/360*a)-(y-ry0)*Math.sin(2*Math.PI/360*a)+rx0
-				var y0= (x - rx0)*Math.sin(2*Math.PI/360*a) + (y - ry0)*Math.cos(2*Math.PI/360*a) + ry0
+				var hudu=2*Math.PI/360
+				var x0=((x-rx0)*Math.cos(2*Math.PI/360*a)-(y-ry0)*Math.sin(2*Math.PI/360*a))+rx0
+				var y0= ((x - rx0)*Math.sin(2*Math.PI/360*a) + (y - ry0)*Math.cos(2*Math.PI/360*a)) + ry0
+				
+				// var x0=(x-rx0)*Math.cos(hudu*a)-(y-ry0)*Math.sin(hudu*a)+rx0
+				// var y0= (y - ry0)*Math.cos(hudu*a) + (x - rx0)*Math.sin(hudu*a) + ry0
+				// var r=Math.sqrt(Math.pow((x-rx0),2)+ Math.pow((y-ry0),2))
+				// var x0=''
+				// var y0=''
+				// switch(num){
+				// 	case 1:
+				// 	var x0=x-r+r*Math.cos(hudu*a)
+				// 	var y0=y+r*Math.sin(hudu*a)
+				// 	break;
+				// 	case 2:
+				// 	var x0=x+r-r*Math.cos(hudu*a)
+				// 	var y0=y-r*Math.sin(hudu*a)
+				// 	break;
+				// 	case 3:
+				// 	var x0=x+r-r*Math.cos(hudu*a)
+				// 	var y0=y-r*Math.sin(hudu*a)
+				// 	break;
+				// 	case 4:
+				// 	var x0=x-r+r*Math.cos(hudu*a)
+				// 	var y0=y+r*Math.sin(hudu*a)
+				// 	break;
+				// }
+				
 				if(type==0){
 				return [x0,y0]	
+				// return [y0,x0]	
 				}else{			
 					return ''
 				}
 				
 			},
+			// rotateangle(x,y,type,num){
+			// 	//type=0旋转,type=1放大变小
+			// 	// var rx0=this.tempweidu
+			// 	// var ry0=this.tempjindu
+			// 	var rx0='',ry0=''//中心点xy坐标
+			// 	var ry=0.000009405717451407729
+			// 	var rx=0.000008983152841195214
+			// 	var a=-this.xuanzhuanangle
+			// 	var h=10*ry,w=30*rx,alpha=2*Math.PI/360*a
+			// 	var c=Math.sqrt(Math.pow(h,2)+Math.pow(w,2))
+			// 	var t=Math.asin(h/c)
+			// 	var t1=Math.PI/2-t-alpha
+				
+			// 	var p1 = [c * Math.sin(t1), c * Math.cos(t1)];
+			//  	var p3 = [0 - c * Math.sin(t1), 0 - c * Math.cos(t1)];
+				
+			// 	var t2 = alpha - t1;//p2-中点连线，与Y轴夹角
+			// 	var p2 = [c * Math.cos(t2), c * Math.sin(t2)];
+			// 	var p4 = [0 - c * Math.cos(t2), 0 - c * Math.sin(t2)];
+				
+			// 	if(this.edit1or2==1){
+			// 		rx0=this.anglecenter1[0]
+			// 		ry0=this.anglecenter1[1]
+			// 	}else{
+			// 		rx0=this.anglecenter2[0]
+			// 		ry0=this.anglecenter2[1]
+			// 	}
+			// 	var ym=0.000008983152841195214
+			// 	var xm= ym / Math.cos(2*Math.PI/360*ry0)
+			// 	var x0='',y0=''			
+			// 	switch(num){
+			// 		case 1:
+			// 		x0=p1[0]+rx0
+			// 		y0=p1[1]+ry0
+			// 		break;
+			// 		case 2:
+			// 		x0=p2[0]+rx0
+			// 		y0=p2[1]+ry0
+			// 		break;
+			// 		case 3:
+			// 		x0=p3[0]+rx0
+			// 		y0=p3[1]+ry0
+			// 		break;
+			// 		case 4:
+			// 		x0=p4[0]+rx0
+			// 		y0=p4[1]+ry0
+			// 		break;
+			// 	}			
+			// 	console.log(88888,p1,p2,p3,p4)
+				
+			// 	if(type==0){
+			// 	return [x0,y0]	
+			// 	// return [y0,x0]	
+			// 	}else{			
+			// 		return ''
+			// 	}
+				
+			// },
 			// 附近的车
 			nearbybike(longitude, latitude) {
 				var options = {
@@ -2299,7 +2407,9 @@
 							success: (res) => {
 								this.tempjindu = res.longitude
 								this.tempweidu = res.latitude
-
+        //                         if(this.type=='9.2'){
+								// 	this.initstop(100,this.edit1or2)
+								// }
 								switch (self.type) {
 									case '0':
 										var undervolt = '*'
@@ -3376,7 +3486,14 @@
 		// height: 27vh;
 		overflow-y: hidden;
 		margin: 0 22upx;
-
+        .more-view{
+			color: #8a8a8a;
+			display: flex;
+			img{
+				width: 50upx;
+				height: 46upx;
+			}
+		}
 		.edit-area {
 			.edit-wh{
 				display: flex;
@@ -3542,14 +3659,16 @@
 		margin-top: 28upx;
 		.leftBtn {
 			color: black;
-			background-color: yellow;
+			background-color: #2784F0;
+			// color: #FFFFFF;
 			// height: 80upx;
 		}
 
 		.rightBtn {
 			// height: 80upx;
-			background-color: rgb(26,173,25);
+			background-color: #FFFF00;
 		}
+		   // color:#FFFFFF;
 
 		.btn {
 			width: 45% !important;

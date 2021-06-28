@@ -218,20 +218,21 @@
 								templist.push(tempobj)
 								break
 							case '9':
-								templist = [{
-										name: '创建停车区',
-										val: '',
-										url: `/map/map?name=创建停车区&type=9.1`
-									},
+								templist = [
+									// {
+									// 	name: '创建停车区',
+									// 	val: '',
+									// 	url: `/map/map?name=创建停车区&type=9.1`
+									// },
 									{
 										name: '创建车站',
 										val: '',
 										url: `/map/map?name=创建车站&type=9`
 									},
 									{
-											name: '创建停车区1',
+											name: '创建停车区',
 											val: '',
-											url: `/map/map?name=创建停车区1&type=9.2`
+											url: `/map/map?name=创建停车区&type=9.2`
 										},
 								]
 								break	
