@@ -2571,20 +2571,34 @@
 							]
 						}
 						if (!!res.parks) {
+							var polygon=[]
 							for (let j = 0; j < res.parks.length; j++) {
 								let tmpObjs = {}
 								let circlesObj = {}
 								tmpObjs.id = res.parks[j].id
-								if (!!res.parks[j].coordinate) {
-									tmpObjs.latitude = res.parks[j].coordinate[1]
-									tmpObjs.longitude = res.parks[j].coordinate[0]
+								
+								//新增多边形车站显示
+								if(res.parks[j].polygon_type==1 && res.parks[j].coordinates.length>0){
+									var polygonpoint={points:[],
+									fillColor: '#2784F04D',
+									color: "#FF9F0040",
+									strokeWidth: 1}
+									res.parks[j].coordinates.forEach((item)=>{
+										polygonpoint.points.push({latitude:item[1],longitude:item[0]})
+									})
+									this.polygon.push(polygonpoint)
+								}
+								else if(!!res.parks[j].coordinate) {
 									circlesObj.latitude = res.parks[j].coordinate[1]
 									circlesObj.longitude = res.parks[j].coordinate[0]
-									circlesObj.radius = res.parks[j].radius
+									circlesObj.radius = parseInt(res.parks[j].radius)
 									circlesObj.fillColor = "#FF9F0040"
 									circlesObj.color = "#FF9F0040"
-									circlesObj.strokeWidth = 2
+									circlesObj.strokeWidth = 1								
+									circles.push(circlesObj)		
 								}
+								tmpObjs.latitude = res.parks[j].coordinate[1]
+								tmpObjs.longitude = res.parks[j].coordinate[0]
 								tmpObjs.name = res.parks[j].name
 								// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
 								var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
@@ -2593,18 +2607,17 @@
 								tmpObjs.type = 'stop'
 								tmpObjs.bickcount = res.parks[j].bike_count
 								tmpObjs.allkcount = res.parks[j].capacity
-								tmpObjs.radius = res.parks[j].radius
 								tmpObjs.remark = res.parks[j].remark
 								tmpObjs.grade = res.parks[j].grade
 								tmpObjs.width = 39
 								tmpObjs.height = 48
 								tmpObjs.parkid = res.parks[j].id
-								temparr.push(tmpObjs)
-								circles.push(circlesObj)
+								temparr.push(tmpObjs)	
 							}
 						}
 						this.covers = temparr
 						this.circles = circles
+						// this.polygon=this.polygon.concat(polygon)
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -2702,7 +2715,7 @@
 										polygon.latitude = secondtemp[1]
 										polygon.longitude = secondtemp[0]
 										circlesObjs.points.push(polygon)
-										circlesObjs.fillColor = "#A9A9A980"
+										circlesObjs.fillColor = "#2784F04D"
 										circlesObjs.color = "#FF9F0040"
 										circlesObjs.strokeWidth = 1
 									}
