@@ -158,7 +158,7 @@
 							<text>更多</text>
 							<img src="../static/image/more1.png" alt="">
 						</view>
-						<view class='more-view-detil' v-show="morestop" >
+						<view class='more-view-detil' v-show="morestop">
 							<base-img v-if="!editstop"></base-img>
 							<view class='border-view'>
 								<input class='normal-input' v-model="stopDesc" type="text" placeholder="描述(限50字)">
@@ -176,24 +176,29 @@
 								<view class='edit-area-inner'>
 									<text>宽:</text>
 									<img src="../static/image/jia.png" alt="" @tap='calcsize(0)'>
-									<input type="digit" v-model="stopwidth">
+									<!-- <input type="digit" v-model="stopwidth"> -->
+									<text class='innernum'>{{stopwidth}}</text>
 									<img src="../static/image/jian.png" alt="" @tap='calcsize(1)'>
+									<!-- <view class='width:200rpx'>
+										<slider value="60" @change="sliderChange" step="5"></slider>
+									</view> -->
 								</view>
 								<view class='edit-area-inner'>
 									<text>高:</text>
 									<img src="../static/image/jia.png" alt="" @tap='calcsize(2)'>
-									<input type="digit" v-model="stopheigh">
+									<!-- <input type="digit" v-model="stopheigh"> -->
+									<text class='innernum'>{{stopheigh}}</text>
 									<img src="../static/image/jian.png" alt="" @tap='calcsize(3)'>
 								</view>
 							</view>
-							
+
 							<view class='creatStopServ'>
-								<view  class='leftBtn btn' @tap='initstop(100,1)'>{{stop1name}}</view>
+								<view class='leftBtn btn' @tap='editbtnname(100,1)'>{{stop1name}}</view>
 								<!-- <button type='primary' class='leftBtn btn' @click="cleanPoint">清空锚点</button> -->
-								<view  class='rightBtn btn' @tap='initstop(100,2)'>{{stop2name}}</view>
+								<view class='rightBtn btn' @tap='editbtnname(100,2)'>{{stop2name}}</view>
 							</view>
 							<view class='create-btn'>
-								<view  class='create-btn-text' @tap='finishstop'>完成创建</view>
+								<view class='create-btn-text' @tap='finishstop'>完成创建</view>
 							</view>
 						</view>
 
@@ -243,6 +248,7 @@
 	import baseImg from '@/components/image/image.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import yuDatetimePicker from "@/components/yu-datetime-picker.vue"
+	// import lyDragSlider from "@/components/ly-drag-slider/my-slider"
 	import {
 		getborderpoint,
 		isInPolygon
@@ -268,23 +274,27 @@
 		]),
 		data() {
 			return {
-				morestop:false,
-				anglecenter1:[],//用户站的中心点坐标
-				anglecenter2:[],//运维站的中心点坐标
-				edit1or2:1,//当前编辑的车站1代表用户站2代表运维站
-				stop1name:'创建用户站',
-				stop2name:'创建运维站',
-				xuanzhuanangle:0,
-				stopwidth: 1,
-				stopheigh: 1,
+				morestop: false,
+				anglecenter1: [], //用户站的中心点坐标
+				anglecenter2: [], //运维站的中心点坐标
+				edit1or2: 1, //当前编辑的车站1代表用户站2代表运维站
+				stop1name: '创建用户站',
+				stop2name: '创建运维站',
+				xuanzhuanangle1: 0,
+				xuanzhuanangle2: 0,
+				stopwidth: 30, //宽基数
+				stopheigh: 10, //高基数
+				stoprealwidth1: 1, //当前用户站宽度
+				stoprealheigh1: 1, //当前用户站高度
+				stoprealwidth2: 1, //当前运维站宽度
+				stoprealheigh2: 1, //当前运维站高度
 				includepoints: [],
 				timeflag: 0,
 				start_time: '2020-03-20 00:00:00',
 				end_time: "2020-03-20 23:00:00",
 				mapheihts: '50vh',
 				clicksuccess: false,
-				maploc: [
-					{
+				maploc: [{
 					id: 88,
 					position: {
 						left: 10,
@@ -294,8 +304,7 @@
 					},
 					iconPath: '../static/image/location.png',
 					clickable: true,
-				}
-				],
+				}],
 				inputval: '',
 				isActive0: -1,
 				isActive1: -1,
@@ -430,6 +439,10 @@
 			};
 		},
 		onLoad(e) {
+			this.stoprealwidth1 = 30 * 0.000009405717451407729
+			this.stoprealheigh1 = 10 * 0.000008983152841195214
+			this.stoprealwidth2 = 30 * 0.000009405717451407729
+			this.stoprealheigh2 = 10 * 0.000008983152841195214
 			this.onloaddata = e
 			this.type = e.type
 			this.mapheihts = '85vh'
@@ -774,29 +787,39 @@
 						this.mapheihts = '58vh'
 						this.showcorverview.head = false
 						this.showcorverview.bottom = false
-						this.maploc=[
-							{
-							id: 88,
-							position: {
-								left: 10,
-								top: 50,
-								width: 50,
-								height: 50
+						this.maploc = [{
+								id: 88,
+								position: {
+									left: 10,
+									top: 50,
+									width: 50,
+									height: 50
+								},
+								iconPath: '../static/image/location.png',
+								clickable: true,
 							},
-							iconPath: '../static/image/location.png',
-							clickable: true,
-						},
-						 {
-						 	id: 878,
-						 	position: {
-						 		left: 310,
-						 		top: 50,
-						 		width: 40,
-						 		height: 40
-						 	},
-						 	iconPath: '../static/image/xuanzhuan.png',
-						 	clickable: true,
-						 },
+							{
+								id: 878,
+								position: {
+									left: 310,
+									top: 50,
+									width: 40,
+									height: 40
+								},
+								iconPath: '../static/image/xuanzhuan.png',
+								clickable: true,
+							},
+							{
+								id: 879,
+								position: {
+									left: 310,
+									top: 100,
+									width: 40,
+									height: 40
+								},
+								iconPath: '../static/image/xuanzhuan1.png',
+								clickable: true,
+							},
 						]
 						// this.initstop(this.latitude, this.longitude, 100)
 						// this.stoplist(this.longitude, this.latitude, '*')
@@ -1047,9 +1070,11 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
-			showmore(){
-				this.morestop=!this.morestop
-				console.log(6666,this.morestop)
+			sliderChange(e){
+				console.log('value 发生变化：' + e.detail.value)
+			},
+			showmore() {
+				this.morestop = !this.morestop
 			},
 			menutitle(i, type) {
 				if (i == 0 && this.type == 10) {
@@ -1064,35 +1089,35 @@
 				return ''
 			},
 			// 影子车站
-			finishstop(){
-				var mask=new Array()
-				var marks=new Array()
-				this.polygon.forEach((item)=>{
-					if(item.type==1){
-						var temp=[]
-						item.points.forEach((k)=>{
-							temp=[k.longitude,k.latitude]
+			finishstop() {
+				var mask = new Array()
+				var marks = new Array()
+				this.polygon.forEach((item) => {
+					if (item.type == 1) {
+						var temp = []
+						item.points.forEach((k) => {
+							temp = [k.longitude, k.latitude]
 							marks.push(temp)
 						})
-						marks.push([item.points[0].longitude,item.points[0].latitude])
+						marks.push([item.points[0].longitude, item.points[0].latitude])
 					}
-					if(item.type==2){
-						var temp=[]
-						item.points.forEach((k)=>{
-							temp=[k.longitude,k.latitude]
+					if (item.type == 2) {
+						var temp = []
+						item.points.forEach((k) => {
+							temp = [k.longitude, k.latitude]
 							mask.push(temp)
 						})
-						mask.push([item.points[0].longitude,item.points[0].latitude])
-						
+						mask.push([item.points[0].longitude, item.points[0].latitude])
+
 					}
 				})
-				if(marks.length<1){
+				if (marks.length < 1) {
 					uni.showToast({
 						title: '请创建用户站！'
 					});
 					return
 				}
-				if(mask.length<1){
+				if (mask.length < 1) {
 					uni.showToast({
 						title: '请创建运维站！'
 					});
@@ -1114,398 +1139,272 @@
 					});
 					return
 				}
-				this.creatStopurl(0, 1, "*", marks,mask)
+				this.creatStopurl(0, 1, "*", marks, mask)
 			},
 			toggleTab(item) {
 				this.timeflag = item
 				this.$refs.dateTime.show();
 			},
-			initstop(type,num) {
+			// 编辑按钮名字状态
+			editbtnname(type, num) {
+				var fillColor = '' //填充颜色
+				var y1 = parseFloat(this.tempjindu)
+				var x1 = parseFloat(this.tempweidu)
+				var yunweixs = 1 //运维系数，运维站比用户站大一些
+				console.log('jinweidu1',this.latitude,this.longitude,num)
+				if (num == 1) {
+					this.edit1or2 = 1
+					this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
+					this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
+				
+					// 创建获取中心点坐标
+					if (this.stop1name == '创建用户站') {
+						this.anglecenter1 = [x1, y1]
+					}
+					if (this.stop1name == '编辑中..') {	
+						return
+					}
+					fillColor = '#2784F04D'
+					// this.stop1name='编辑用户站'
+					this.stop1name = '编辑中..'
+					this.setLatitude(this.anglecenter1[0])
+					this.setLongitude(this.anglecenter1[1])
+					console.log('jinweidu2',this.latitude,this.longitude,num)
+					if (this.stop2name != '创建运维站') {
+						this.stop2name = '编辑运维站'
+						// return
+					}
+					var pdympoints = false
+					this.polygon.forEach((item) => {
+						if (item.type == num) {
+							if (item.points.length > 0) {
+								pdympoints = true
+							}
+						}
+					})
+					if (pdympoints) {
+						return
+					}
+				} else {
+					this.edit1or2 = 2
+					this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
+					this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+					// 创建获取中心点坐标
+					if (this.stop2name == '创建运维站') {
+						this.anglecenter2 = [x1, y1]
+					}
+					// this.anglecenter2 = [x1, y1]
+					if (this.stop2name == '编辑中..') {
+						return
+					}
+					yunweixs = 1
+					this.setLatitude(this.anglecenter2[0])
+					this.setLongitude(this.anglecenter2[1])
+					console.log('jinweidu2',this.latitude,this.longitude,num)
+					this.stop2name = '编辑中..'
+					fillColor = '#FFFF004D'
+					if (this.stop1name != '创建用户站') {
+						this.stop1name = '编辑用户站'
+						// return
+					}
+					var pdympoints = false
+					this.polygon.forEach((item) => {
+						if (item.type == num) {
+							if (item.points.length > 0) {
+								pdympoints = true
+							}
+						}
+					})
+					if (pdympoints) {
+						return
+					}
+
+				}
+				this.initstop(type, num, fillColor, yunweixs)
+			},
+			initstop(type, num, fillColor, yunweixs) {
 				//latitude对应的是y，longitude对应x
 				//type=100初始化，type=0,1,2,3,101编辑分别对应宽+，宽-，高加，高减，旋转角度
 				// 初始车站矩形,南北0.000008983152841195214，东西0.000009405717451407729
 				//num=1用户站，num=2运维站
 				console.log('soshinibaba')
-				var latitudetomile = 30 * 0.000009405717451407729
-				var longitudetomile = 10 * 0.000008983152841195214
-				var ry=0.000009405717451407729*this.stopheigh
-				var rx=0.000008983152841195214*this.stopwidth
-				var y1=parseFloat(this.tempjindu)
-				var x1=parseFloat(this.tempweidu)
-				var hudu=(2*Math.PI/360*this.xuanzhuanangle)
-				var fillColor=''//填充颜色
-				if(type==100){
-					var yunweixs=1//运维系数，运维站比用户站大一些
-					if(num==1){
-						this.edit1or2=1
-						// 创建获取中心点坐标
-						if(this.stop1name=='创建用户站'){
-							this.anglecenter1=[x1,y1]
-						}
-						if(this.stop1name=='编辑中..'){
-							return
-						}
-						fillColor='#2784F04D'
-						// this.stop1name='编辑用户站'
-						this.stop1name='编辑中..'
-						if(this.stop2name!='创建运维站'){
-							this.stop2name='编辑运维站'
-							// return
-						}
-						var pdympoints=false
-						this.polygon.forEach((item)=>{
-							if(item.type==num){
-								if(item.points.length>0){
-									pdympoints=true
-								}
-							}
-						})
-						if(pdympoints){
-							return
-						}
-					}else{
-						this.edit1or2=2
-						// 创建获取中心点坐标
-						if(this.stop2name=='创建运维站'){
-							this.anglecenter2=[x1,y1]
-						}
-						this.anglecenter2=[x1,y1]
-						if(this.stop2name=='编辑中..'){
-							return
-						}
-						yunweixs=1.5
-						// this.stop2name='编辑运维站'
-						this.stop2name='编辑中..'
-						fillColor='#FFFF004D'
-						if(this.stop1name!='创建用户站'){
-							this.stop1name='编辑用户站'
-							// return
-						}
-						var pdympoints=false
-						this.polygon.forEach((item)=>{
-							if(item.type==num){
-								if(item.points.length>0){
-									pdympoints=true
-								}
-							}
-						})
-						if(pdympoints){
-							return
-						}
-						
+				var h = 10 * 0.000009405717451407729
+				var w = 30 * 0.000008983152841195214
+				var center = [parseFloat(this.tempweidu), parseFloat(this.tempjindu)]
+				var hudu = (2 * Math.PI / 360 * this.xuanzhuanangle)
+				if (type == 100) {
+					this.stopwidth=30
+					this.stopheigh=10
+					var points = []
+					if (this.edit1or2 == 1) {
+						points = this.rotateangle(0, 0, center, h, w)
+					} else {
+						points = this.rotateangle(0, 0, center, h , w)
 					}
-					this.xuanzhuanangle=0
 					setTimeout(() => {
-						// for(var i=0;i<this.polygon.length;i++){
-						// 	if(this.polygon[i]==this.edit1or2){
-						// 		this.polygon.splice(i,1)
-						// 	}
-						// }
 						this.polygon.push({
 							points: [{
-									latitude: (x1 - latitudetomile*yunweixs),
-									longitude: (y1 + longitudetomile*yunweixs)
+									latitude: points[0][0],
+									longitude: points[0][1]
 								},
 								{
-									latitude: (x1 + latitudetomile*yunweixs),
-									longitude: (y1 + longitudetomile*yunweixs)
+									latitude: points[1][0],
+									longitude: points[1][1]
 								},
 								{
-									latitude: (x1 + latitudetomile*yunweixs),
-									longitude: (y1 - longitudetomile*yunweixs)
+									latitude: points[2][0],
+									longitude: points[2][1]
 								},
 								{
-									latitude: (x1 - latitudetomile*yunweixs),
-									longitude: (y1 - longitudetomile*yunweixs)
+									latitude: points[3][0],
+									longitude: points[3][1]
 								},
-					
+
 							],
 							fillColor: fillColor,
 							color: "#FF9F0040",
 							strokeWidth: 1,
-							type:num
+							type: num
 						})
 					}, 200)
-				}else{
-					this.selecteditpoints(this.edit1or2,type)
+				} else {
+					this.selecteditpoints(this.edit1or2, type)
 				}
 			},
-			selecteditpoints(type,num){
+			selecteditpoints(type, num) {
 				//type=1用户站，type=2运维站 num编辑 1234
-				var latitudetomile = 30 * 0.000009405717451407729
-				var longitudetomile = 10 * 0.000008983152841195214
-				var ry=0.000009405717451407729*this.stopheigh
-				var rx=0.000008983152841195214*this.stopwidth
-				var y1=parseFloat(this.tempjindu)
-				var x1=parseFloat(this.tempweidu)
-				var hudu=(2*Math.PI/360*this.xuanzhuanangle)
-				var fillColor=''
-				if(type==1){
-					fillColor='#2784F04D'
-				}else{
+				// var ry = 0.000008983152841195214 * this.stopheigh
+				var ry = 0.000008983152841195214
+				// var rx = 0.000009405717451407729 * this.stopwidth
+				var rx = 0.000009405717451407729
+				var fillColor = ''
+				if (type == 1) {
+					fillColor = '#2784F04D'
+				} else {
 					// fillColor='#FFFF004D'
-					fillColor='#FFFF004D'
+					fillColor = '#FFFF004D'
 				}
-				for(var a=0;a<this.polygon.length;a++){
-					if(this.polygon[a].type==type){
-						switch(num){
-							case 0:
-							    var item=this.polygon[a].points
-								this.polygon.splice(a,1)
-							    this.polygon.push({
-							    	points: [
-							   {
-							   	latitude: item[0].latitude-Math.sin(hudu)*ry,
-							   	longitude: item[0].longitude + Math.cos(hudu)*rx
-							   },
-							   {
-							   	latitude: (item[1].latitude)-Math.sin(hudu)*ry,
-							   	longitude: item[1].longitude+ Math.cos(hudu)*rx
-							   },
-							   {
-							   	latitude: (item[2].latitude)+Math.sin(hudu)*ry,
-							   	longitude: item[2].longitude-Math.cos(hudu)*rx
-							   },
-							   {
-							   	latitude: (item[3].latitude)+Math.sin(hudu)*ry,
-							   	longitude: item[3].longitude-Math.cos(hudu)*rx
-							   },
-							    
-							    	],
-							    	fillColor: fillColor,
-							    	color: "#FF9F0040",
-							    	strokeWidth: 1,
-									type:type
-							    })
-							    break;
-								case 1:
-									var item=this.polygon[a].points
-									this.polygon.splice(a,1)
-									this.polygon.push({
-										points: [{
-												latitude: item[0].latitude+Math.sin(hudu)*ry,
-												longitude: item[0].longitude -Math.cos(hudu)*rx
-											},
-											{
-												latitude: (item[1].latitude)+Math.sin(hudu)*ry,
-												longitude: item[1].longitude -Math.cos(hudu)*rx
-											},
-											{
-												latitude: (item[2].latitude)-Math.sin(hudu)*ry,
-												longitude: item[2].longitude + Math.cos(hudu)*rx
-											},
-											{
-												latitude: (item[3].latitude)-Math.sin(hudu)*ry,
-												longitude: item[3].longitude + Math.cos(hudu)*rx
-											},
-								
-										],
-										fillColor: fillColor,
-										color: "#FF9F0040",
-										strokeWidth: 1,
-										type:type
-									})
-									break;	
-								case 2:
-									var item=this.polygon[a].points
-									this.polygon.splice(a,1)
-									this.polygon.push({
-										points: [{
-												latitude: item[0].latitude - ry*Math.cos(hudu),
-												longitude: item[0].longitude -rx*Math.sin(hudu)
-											},
-											{
-												latitude: (item[1].latitude + ry*Math.cos(hudu)),
-												longitude: item[1].longitude +rx*Math.sin(hudu)
-											},
-											{
-												latitude: (item[2].latitude + ry*Math.cos(hudu)),
-												longitude: item[2].longitude +rx*Math.sin(hudu)
-											},
-											{
-												latitude: (item[3].latitude - ry*Math.cos(hudu)),
-												longitude: item[3].longitude -rx*Math.sin(hudu)
-											},
-								
-										],
-										fillColor: fillColor,
-										color: "#FF9F0040",
-										strokeWidth: 1,
-										type:type
-									})
-									break;
-									case 3:
-										var item=this.polygon[a].points
-										this.polygon.splice(a,1)
-										this.polygon.push({
-											points: [{
-													latitude: item[0].latitude + ry*Math.cos(hudu),
-													longitude: item[0].longitude +rx*Math.sin(hudu)
-												},
-												{
-													latitude: (item[1].latitude - ry*Math.cos(hudu)),
-													longitude: item[1].longitude -rx*Math.sin(hudu)
-												},
-												{
-													latitude: (item[2].latitude - ry*Math.cos(hudu)),
-													longitude: item[2].longitude - rx*Math.sin(hudu)
-												},
-												{
-													latitude: (item[3].latitude + ry*Math.cos(hudu)),
-													longitude: item[3].longitude + rx*Math.sin(hudu)
-												},
-									
-											],
-											fillColor:fillColor,
-											color: "#FF9F0040",
-											strokeWidth: 1,
-											type:type
-										})
-										break;
-										case 101:
-											var item=this.polygon[a].points
-											this.polygon.splice(a,1)
-											this.polygon.push({
-												points: [{
-														latitude: this.rotateangle(item[0].latitude,item[0].longitude,0,1)[0],
-														longitude: this.rotateangle(item[0].latitude,item[0].longitude,0,1)[1]
-													},
-													{
-														latitude: this.rotateangle(item[1].latitude,item[1].longitude,0,2)[0],
-														longitude: this.rotateangle(item[1].latitude,item[1].longitude,0,2)[1]
-													},
-													{
-														latitude: this.rotateangle(item[2].latitude,item[2].longitude,0,3)[0],
-														longitude: this.rotateangle(item[2].latitude,item[2].longitude,0,3)[1]
-													},
-													{
-														latitude: this.rotateangle(item[3].latitude,item[3].longitude,0,4)[0],
-														longitude: this.rotateangle(item[3].latitude,item[3].longitude,0,4)[1]
-													},
-										
-												],
-												fillColor: fillColor,
-												color: "#FF9F0040",
-												strokeWidth: 1,
-												type:type
-											}) 
-											break;
+				var center = []
+				if (this.edit1or2 == 1) {
+					center = [this.anglecenter1[0], this.anglecenter1[1]]
+				} else {
+					center = [this.anglecenter2[0], this.anglecenter2[1]]
+				}
+				switch (num) {
+					case 0:
+						if (this.edit1or2 == 1) {
+							this.stoprealwidth1 += rx
+							this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
+						} else {
+							this.stoprealwidth2 += rx
+							this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
 						}
+						break;
+					case 1:
+						if (this.edit1or2 == 1) {
+							this.stoprealwidth1 -= rx
+							this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
+						} else {
+							this.stoprealwidth2 -= rx
+							this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
+						}
+						break;
+					case 2:
+						if (this.edit1or2 == 1) {
+							this.stoprealheigh1 += ry
+							this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
+						} else {
+							this.stoprealheigh2 += ry
+							this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+						}
+						break;
+					case 3:
+						if (this.edit1or2 == 1) {
+							this.stoprealheigh1 -= ry
+							this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
+						} else {
+							this.stoprealheigh2 -= ry
+							this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+						}
+						break;
+				}
+				var points = []
+				if (this.edit1or2 == 1) {
+					points = this.rotateangle(this.xuanzhuanangle1, 0, center, this.stoprealheigh1, this.stoprealwidth1)
+				} else {
+					points = this.rotateangle(this.xuanzhuanangle2, 0, center, this.stoprealheigh2, this.stoprealwidth2)
+				}
+				for (var a = 0; a < this.polygon.length; a++) {
+					if (this.polygon[a].type == type) {
+						var item = this.polygon[a].points
+						this.polygon.splice(a, 1)
+						this.polygon.push({
+							points: [{
+									latitude: points[0][0],
+									longitude: points[0][1]
+								},
+								{
+									latitude: points[1][0],
+									longitude: points[1][1]
+								},
+								{
+									latitude: points[2][0],
+									longitude: points[2][1]
+								},
+								{
+									latitude: points[3][0],
+									longitude: points[3][1]
+								},
+
+							],
+							fillColor: fillColor,
+							color: "#FF9F0040",
+							strokeWidth: 1,
+							type: type
+						})
 					}
 				}
 			},
 			calcsize(num) { //0宽加，1宽减，2高加，3高减
 				this.initstop(num)
 			},
-			rotateangle(x,y,type,num){
+			rotateangle(sheta, type, center, h1, w1) {
 				//type=0旋转,type=1放大变小
 				// var rx0=this.tempweidu
 				// var ry0=this.tempjindu
-				var ry=0.000009405717451407729
-				var rx=0.000008983152841195214
-				var rx0='',ry0=''//中心点xy坐标
-				if(this.edit1or2==1){
-					rx0=this.anglecenter1[0]
-					ry0=this.anglecenter1[1]
-				}else{
-					rx0=this.anglecenter2[0]
-					ry0=this.anglecenter2[1]
-				}				
-				var a=30
-				var hudu=2*Math.PI/360
-				var x0=((x-rx0)*Math.cos(2*Math.PI/360*a)-(y-ry0)*Math.sin(2*Math.PI/360*a))+rx0
-				var y0= ((x - rx0)*Math.sin(2*Math.PI/360*a) + (y - ry0)*Math.cos(2*Math.PI/360*a)) + ry0
-				
-				// var x0=(x-rx0)*Math.cos(hudu*a)-(y-ry0)*Math.sin(hudu*a)+rx0
-				// var y0= (y - ry0)*Math.cos(hudu*a) + (x - rx0)*Math.sin(hudu*a) + ry0
-				// var r=Math.sqrt(Math.pow((x-rx0),2)+ Math.pow((y-ry0),2))
-				// var x0=''
-				// var y0=''
-				// switch(num){
-				// 	case 1:
-				// 	var x0=x-r+r*Math.cos(hudu*a)
-				// 	var y0=y+r*Math.sin(hudu*a)
-				// 	break;
-				// 	case 2:
-				// 	var x0=x+r-r*Math.cos(hudu*a)
-				// 	var y0=y-r*Math.sin(hudu*a)
-				// 	break;
-				// 	case 3:
-				// 	var x0=x+r-r*Math.cos(hudu*a)
-				// 	var y0=y-r*Math.sin(hudu*a)
-				// 	break;
-				// 	case 4:
-				// 	var x0=x-r+r*Math.cos(hudu*a)
-				// 	var y0=y+r*Math.sin(hudu*a)
-				// 	break;
-				// }
-				
-				if(type==0){
-				return [x0,y0]	
-				// return [y0,x0]	
-				}else{			
+				// var rx0='',ry0=''//中心点xy坐标
+				// var ry=0.000009405717451407729
+				// var rx=0.000008983152841195214
+				var a = sheta
+				var h = w1,
+					w = h1,
+					alpha = 2 * Math.PI / 360 * a
+				var c = Math.sqrt(Math.pow(h, 2) + Math.pow(w, 2))
+				var t = Math.asin(h / c)
+				var t1 = Math.PI / 2 - t - alpha
+
+				var p1 = [c * Math.sin(t1), c * Math.cos(t1)];
+				var p3 = [0 - c * Math.sin(t1), 0 - c * Math.cos(t1)];
+
+				var t2 = alpha - t; //p2-中点连线，与Y轴夹角
+				var p2 = [c * Math.cos(t2), c * Math.sin(t2)];
+				var p4 = [0 - c * Math.cos(t2), 0 - c * Math.sin(t2)];
+
+				// var ym=0.000008983152841195214
+				// var xm= ym / Math.cos(2*Math.PI/360*ry0)
+				var arr = [p1, p2, p3, p4]
+				var newarr = arr.map((num) => {
+					return [num[0] + center[0], num[1] + center[1]]
+				})
+				console.log(111, arr)
+				if (type == 0) {
+					return newarr
+					// return [y0,x0]	
+				} else {
 					return ''
 				}
-				
+
 			},
-			// rotateangle(x,y,type,num){
-			// 	//type=0旋转,type=1放大变小
-			// 	// var rx0=this.tempweidu
-			// 	// var ry0=this.tempjindu
-			// 	var rx0='',ry0=''//中心点xy坐标
-			// 	var ry=0.000009405717451407729
-			// 	var rx=0.000008983152841195214
-			// 	var a=-this.xuanzhuanangle
-			// 	var h=10*ry,w=30*rx,alpha=2*Math.PI/360*a
-			// 	var c=Math.sqrt(Math.pow(h,2)+Math.pow(w,2))
-			// 	var t=Math.asin(h/c)
-			// 	var t1=Math.PI/2-t-alpha
-				
-			// 	var p1 = [c * Math.sin(t1), c * Math.cos(t1)];
-			//  	var p3 = [0 - c * Math.sin(t1), 0 - c * Math.cos(t1)];
-				
-			// 	var t2 = alpha - t1;//p2-中点连线，与Y轴夹角
-			// 	var p2 = [c * Math.cos(t2), c * Math.sin(t2)];
-			// 	var p4 = [0 - c * Math.cos(t2), 0 - c * Math.sin(t2)];
-				
-			// 	if(this.edit1or2==1){
-			// 		rx0=this.anglecenter1[0]
-			// 		ry0=this.anglecenter1[1]
-			// 	}else{
-			// 		rx0=this.anglecenter2[0]
-			// 		ry0=this.anglecenter2[1]
-			// 	}
-			// 	var ym=0.000008983152841195214
-			// 	var xm= ym / Math.cos(2*Math.PI/360*ry0)
-			// 	var x0='',y0=''			
-			// 	switch(num){
-			// 		case 1:
-			// 		x0=p1[0]+rx0
-			// 		y0=p1[1]+ry0
-			// 		break;
-			// 		case 2:
-			// 		x0=p2[0]+rx0
-			// 		y0=p2[1]+ry0
-			// 		break;
-			// 		case 3:
-			// 		x0=p3[0]+rx0
-			// 		y0=p3[1]+ry0
-			// 		break;
-			// 		case 4:
-			// 		x0=p4[0]+rx0
-			// 		y0=p4[1]+ry0
-			// 		break;
-			// 	}			
-			// 	console.log(88888,p1,p2,p3,p4)
-				
-			// 	if(type==0){
-			// 	return [x0,y0]	
-			// 	// return [y0,x0]	
-			// 	}else{			
-			// 		return ''
-			// 	}
-				
-			// },
 			// 附近的车
 			nearbybike(longitude, latitude) {
 				var options = {
@@ -1913,11 +1812,20 @@
 			mapcentionloc(e) {
 				if (e.controlId == 88) {
 					this.mapinfo.moveToLocation()
-				}else if(e.controlId == 878){
-					this.xuanzhuanangle+=30
+				} else if (e.controlId == 878) {
+					if (this.edit1or2 == 1) {
+						this.xuanzhuanangle1 += 6
+					} else {
+						this.xuanzhuanangle2 += 6
+					}
 					this.initstop(101)
-				} else {
-					
+				} else if(e.controlId == 879){
+                    if (this.edit1or2 == 1) {
+                    	this.xuanzhuanangle1 -= 6
+                    } else {
+                    	this.xuanzhuanangle2 -= 6
+                    }
+                    this.initstop(101)
 				}
 
 			},
@@ -2407,9 +2315,55 @@
 							success: (res) => {
 								this.tempjindu = res.longitude
 								this.tempweidu = res.latitude
-        //                         if(this.type=='9.2'){
-								// 	this.initstop(100,this.edit1or2)
-								// }
+								if (this.type == '9.2') {
+									this.setLatitude(res.latitude)
+									this.setLongitude(res.longitude)
+									console.log('jinweidu3',this.latitude,this.longitude,res.latitude,res.longitude)
+									var center = [res.latitude, res.longitude]
+									var points = []
+									var fillColor = ''
+									if (this.edit1or2 == 1) {
+										fillColor = '#2784F04D'
+										this.anglecenter1 = center
+										points = this.rotateangle(this.xuanzhuanangle1, 0, center, this
+											.stoprealheigh1, this.stoprealwidth1)
+									} else {
+										fillColor = '#FFFF004D'
+										this.anglecenter2 = center
+										points = this.rotateangle(this.xuanzhuanangle2, 0, center, this
+											.stoprealheigh2, this.stoprealwidth2)
+									}
+									for (var a = 0; a < this.polygon.length; a++) {
+										if (this.polygon[a].type == this.edit1or2) {
+											var item = this.polygon[a].points
+											this.polygon.splice(a, 1)
+											this.polygon.push({
+												points: [{
+														latitude: points[0][0],
+														longitude: points[0][1]
+													},
+													{
+														latitude: points[1][0],
+														longitude: points[1][1]
+													},
+													{
+														latitude: points[2][0],
+														longitude: points[2][1]
+													},
+													{
+														latitude: points[3][0],
+														longitude: points[3][1]
+													},
+
+												],
+												fillColor: fillColor,
+												color: "#FF9F0040",
+												strokeWidth: 1,
+												type: this.edit1or2
+											})
+										}
+									}
+								}
 								switch (self.type) {
 									case '0':
 										var undervolt = '*'
@@ -3223,14 +3177,14 @@
 				})
 			},
 			// 创建车站
-			creatStopurl(level, type, coordinate, marks,mask) {
+			creatStopurl(level, type, coordinate, marks, mask) {
 				this.mapheihts = '100vh'
 				if (type == 0) {
 					marks = '*'
 				}
-				var coordinates_mask='*'
-				if(!!mask){
-					coordinates_mask=mask
+				var coordinates_mask = '*'
+				if (!!mask) {
+					coordinates_mask = mask
 				}
 				var options = {
 					url: '/park/add', //请求接口
@@ -3254,7 +3208,7 @@
 						"grade": 1,
 						"visitable": 3,
 						"imgs": this.imgarr,
-						"coordinates_mask":coordinates_mask
+						"coordinates_mask": coordinates_mask
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -3268,11 +3222,11 @@
 								mask: false,
 								duration: 2500
 							});
-							if(type!='9.2'){
+							if (type != '9.2') {
 								setTimeout(() => {
 									this.actives = false
-								}, 5000)
-							}	
+								}, 3000)
+							}
 						} else {
 							setTimeout(() => {
 								uni.navigateBack({
@@ -3486,34 +3440,42 @@
 		// height: 27vh;
 		overflow-y: hidden;
 		margin: 0 22upx;
-        .more-view{
+
+		.more-view {
 			color: #8a8a8a;
 			display: flex;
-			img{
+
+			img {
 				width: 50upx;
 				height: 46upx;
 			}
 		}
+
 		.edit-area {
-			.edit-wh{
+			.edit-wh {
 				display: flex;
 				justify-content: space-between;
+
 				.edit-area-inner {
 					height: 60upx;
-				    margin-left: 20upx;
+					margin-left: 20upx;
+
 					text {
 						width: 60upx;
 					}
-				
+                    .innernum{
+						width:100upx;
+						margin-left: 36upx;
+					}
 					input {
 						width: 80upx;
 						margin-left: 20upx;
 						margin-right: 20upx;
 					}
-				
+
 					display: flex;
 					margin-top: 24upx;
-				
+
 					img {
 						width: 50upx;
 						height: 50upx;
@@ -3546,10 +3508,10 @@
 
 		.cover-imgs {
 			position: absolute;
-			left: 46%;
-			top: 42%;
-			width: 50upx;
-			height: auto;
+			left: calc(50% - 24upx);
+			top: calc(50% - 96upx);
+			width: 48upx;
+			height: 96upx;
 		}
 
 		.location-imgs {
@@ -3655,8 +3617,9 @@
 	.creatStopServ {
 		display: flex;
 		justify-content: space-between;
-        height: 80upx;
+		height: 80upx;
 		margin-top: 28upx;
+
 		.leftBtn {
 			color: black;
 			background-color: #2784F0;
@@ -3668,7 +3631,8 @@
 			// height: 80upx;
 			background-color: #FFFF00;
 		}
-		   // color:#FFFFFF;
+
+		// color:#FFFFFF;
 
 		.btn {
 			width: 45% !important;
@@ -3676,14 +3640,16 @@
 			text-align: center;
 			border-radius: 12upx;
 		}
-	
+
 	}
-	.create-btn{
+
+	.create-btn {
 		margin-top: 8upx;
 		text-align: center;
 		height: 80upx;
 		margin-top: 20upx;
-		.create-btn-text{
+
+		.create-btn-text {
 			line-height: 80upx;
 			text-align: center;
 			border-radius: 12upx;
