@@ -1695,6 +1695,7 @@
 				this.creatStopurl(0, 1, "*", this.polylinePoints)
 			},
 			markclick(e) {
+				console.log(444,this.type,e)
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
