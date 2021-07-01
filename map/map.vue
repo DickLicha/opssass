@@ -821,8 +821,6 @@
 								clickable: true,
 							},
 						]
-						// this.initstop(this.latitude, this.longitude, 100)
-						// this.stoplist(this.longitude, this.latitude, '*')
 						break;
 					case '10':
 						console.log(222, this.onloaddata)
@@ -1070,11 +1068,9 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
-			sliderChange(e){
-				console.log('value 发生变化：' + e.detail.value)
-			},
-			showmore() {
-				this.morestop = !this.morestop
+			toggleTab(item) {
+				this.timeflag = item
+				this.$refs.dateTime.show();
 			},
 			menutitle(i, type) {
 				if (i == 0 && this.type == 10) {
@@ -1087,6 +1083,9 @@
 					}
 				}
 				return ''
+			},
+			showmore() {
+				this.morestop = !this.morestop
 			},
 			// 影子车站
 			finishstop() {
@@ -1140,10 +1139,6 @@
 					return
 				}
 				this.creatStopurl(0, 1, "*", marks, mask)
-			},
-			toggleTab(item) {
-				this.timeflag = item
-				this.$refs.dateTime.show();
 			},
 			// 编辑按钮名字状态
 			editbtnname(type, num) {
