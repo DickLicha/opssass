@@ -1228,7 +1228,7 @@
 				this.creatStopurl(0,1,"*",this.polylinePoints)				
 			},
 			markclick(e) {
-				console.log(444,this.type)
+				console.log(444,this.type,e)
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
@@ -1907,50 +1907,52 @@
 								// this.covers.push(tmpObj)
 							}
 						}
-						// circles: [{ //在地图上显示圆
-						// 		latitude: 26.0627,
-						// 		longitude: 119.31414,
-						// 		fillColor: "#FFC41F", //填充颜色
-						// 		color: "#12A1DD", //描边的颜色
-						// 		radius: 200, //半径
-						// 		strokeWidth: 2 //描边的宽度
-						// 	}],
 						if (!!res.parks) {
 							for (let j = 0; j < res.parks.length; j++) {
 								let tmpObjs = {}
 								let circlesObj = {}
 								tmpObjs.id = res.parks[j].id
-								if (!!res.parks[j].coordinate) {
+								//新增多边形车站显示
+									if(res.parks[j].polygon_type==1 && res.parks[j].coordinates.length>0){
+										var polygonpoint={points:[],
+										fillColor: '#2784F04D',
+										color: "#FF9F0040",
+										strokeWidth: 1}
+										res.parks[j].coordinates.forEach((item)=>{
+											polygonpoint.points.push({latitude:item[1],longitude:item[0]})
+										})
+										this.polygon.push(polygonpoint)
+									}
+									else if(!!res.parks[j].coordinate) {
+										circlesObj.latitude = res.parks[j].coordinate[1]
+										circlesObj.longitude = res.parks[j].coordinate[0]
+										circlesObj.radius = parseInt(res.parks[j].radius)
+										circlesObj.fillColor = "#FF9F0040"
+										circlesObj.color = "#FF9F0040"
+										circlesObj.strokeWidth = 1								
+										circles.push(circlesObj)		
+									}
 									tmpObjs.latitude = res.parks[j].coordinate[1]
 									tmpObjs.longitude = res.parks[j].coordinate[0]
-									circlesObj.latitude = res.parks[j].coordinate[1]
-									circlesObj.longitude = res.parks[j].coordinate[0]
-									circlesObj.radius = res.parks[j].radius
-									circlesObj.fillColor = "#FF9F0040"
-									circlesObj.color = "#FF9F0040"
-									circlesObj.strokeWidth = 2
+									tmpObjs.name = res.parks[j].name
+									// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
+									var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
+									tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum, res.parks[j]
+										.grade)
+									tmpObjs.type = 'stop'
+									tmpObjs.bickcount = res.parks[j].bike_count
+									tmpObjs.allkcount = res.parks[j].capacity
+									tmpObjs.remark = res.parks[j].remark
+									tmpObjs.grade = res.parks[j].grade
+									tmpObjs.width = 39
+									tmpObjs.height = 48
+									tmpObjs.parkid = res.parks[j].id
+									temparr.push(tmpObjs)	
 								}
-								tmpObjs.name = res.parks[j].name
-								// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
-								var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-								tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum, res.parks[j].grade)
-								tmpObjs.type = 'stop'
-								tmpObjs.bickcount = res.parks[j].bike_count
-								tmpObjs.allkcount = res.parks[j].capacity
-								tmpObjs.radius = res.parks[j].radius
-								tmpObjs.remark = res.parks[j].remark
-								tmpObjs.grade = res.parks[j].grade
-								// tmpObjs.allkcount = res.parks[j].capacity
-								tmpObjs.width = 39
-								tmpObjs.height = 48
-								tmpObjs.parkid = res.parks[j].id
-								temparr.push(tmpObjs)
-								circles.push(circlesObj)
-								// this.covers.push(tmpObjs)
-							}
 						}
 						this.covers = temparr
 						this.circles = circles
+						console.log(12121,this.covers,this.circles)
 					}
 				}).catch((err) => {
 					// 请求失败的回调
