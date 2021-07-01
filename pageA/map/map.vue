@@ -2572,6 +2572,7 @@ case '10':
 							]
 						}
 						if (!!res.parks) {
+							this.polygon=[]
 							for (let j = 0; j < res.parks.length; j++) {
 								let tmpObjs = {}
 								let circlesObj = {}
@@ -2616,7 +2617,6 @@ case '10':
 						}
 						this.covers = temparr
 						this.circles = circles
-						console.log(12121,this.covers,this.circles)
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -2649,9 +2649,10 @@ case '10':
 						this.covers = []
 						var temparr = []
 						var circles = []
-						if (this.type != '9.2') {
-							this.polygon = []
-						}
+						this.polygon = []
+						// if (this.type != '9.2') {
+						// 	this.polygon = []
+						// }
 						for (let j = 0; j < res.parks.length; j++) {
 							if (res.parks[j].polygon_type == 0) {
 								let tmpObjs = {}

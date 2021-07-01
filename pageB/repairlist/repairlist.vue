@@ -233,7 +233,7 @@
 									{
 											name: '创建停车区',
 											val: '',
-											url: `/pages/map/map?name=创建停车区&type=9.2`
+											url: `/pageA/map/map?name=创建停车区&type=9.2`
 										},
 								]
 								break	

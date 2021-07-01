@@ -122,7 +122,11 @@
 				try {
 					// uni.setStorageSync('baseurl', 'https://api.lexiangys.top');
 					// 9号出行
-					uni.setStorageSync('baseurl', 'https://api.nbebike.com');		
+					// uni.setStorageSync('baseurl', 'https://api.nbebike.com');
+					// 柚达域名
+					uni.setStorageSync('baseurl', 'https://api.gray.lxys3344.xyz');
+					// uni.setStorageSync('baseurl', 'https://api.lxys3344.xyz');
+							
 				} catch (e) {
 					// error
 				}
