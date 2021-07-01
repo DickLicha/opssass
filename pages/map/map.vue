@@ -96,6 +96,67 @@
 
 					</view>
 				</view>
+				<!-- 创建矩形车站 -->
+				<view v-if="type==9.2">
+					<view class='scroll-viewys'>
+						<!-- <base-img v-if="!editstop"></base-img> -->
+						<view class='border-view'>
+							<input class='normal-input' v-model="stopName" type="text" placeholder="停车区名称">
+						</view>
+						<view class='border-view'>
+							<input class='normal-input' v-model="stopVolume" type="number" placeholder="停车区容量">
+						</view>
+						<view class='more-view' @tap='showmore'>
+							<text>更多</text>
+							<img src="../../static/image/more1.png" alt="">
+						</view>
+						<view class='more-view-detil' v-show="morestop">
+							<base-img v-if="!editstop"></base-img>
+							<view class='border-view'>
+								<input class='normal-input' v-model="stopDesc" type="text" placeholder="描述(限50字)">
+							</view>
+							<view class='open-close' v-if="editstop">
+								<!-- <view class="uni-list-cell uni-list-cell-pd"> -->
+								<view class="opclose-text">{{openclosestop}}</view>
+								<switch checked @change="switch1Change" />
+								<!-- </view> -->
+							</view>
+						</view>
+				
+						<view class='edit-area'>
+							<view class='edit-wh'>
+								<view class='edit-area-inner'>
+									<text>宽:</text>
+									<img src="../../static/image/jia.png" alt="" @tap='calcsize(0)'>
+									<!-- <input type="digit" v-model="stopwidth"> -->
+									<text class='innernum'>{{stopwidth}}</text>
+									<img src="../../static/image/jian.png" alt="" @tap='calcsize(1)'>
+									<!-- <view class='width:200rpx'>
+										<slider value="60" @change="sliderChange" step="5"></slider>
+									</view> -->
+								</view>
+								<view class='edit-area-inner'>
+									<text>高:</text>
+									<img src="../../static/image/jia.png" alt="" @tap='calcsize(2)'>
+									<!-- <input type="digit" v-model="stopheigh"> -->
+									<text class='innernum'>{{stopheigh}}</text>
+									<img src="../../static/image/jian.png" alt="" @tap='calcsize(3)'>
+								</view>
+							</view>
+				
+							<view class='creatStopServ'>
+								<view class='leftBtn btn' @tap='editbtnname(100,1)'>{{stop1name}}</view>
+								<!-- <button type='primary' class='leftBtn btn' @click="cleanPoint">清空锚点</button> -->
+								<view class='rightBtn btn' @tap='editbtnname(100,2)'>{{stop2name}}</view>
+							</view>
+							<view class='create-btn'>
+								<view class='create-btn-text' @tap='finishstop'>完成创建</view>
+							</view>
+						</view>
+				
+				
+					</view>
+				</view>
 				<!-- 地图时间选择 -->
 				<view v-if='type==0.4' class='timeselect'>
 					<view class='timedetil' @tap="toggleTab(1)">
@@ -150,6 +211,20 @@
 		]),
 		data() {
 			return {
+				morestop: false,
+				anglecenter1: [], //用户站的中心点坐标
+				anglecenter2: [], //运维站的中心点坐标
+				edit1or2: 1, //当前编辑的车站1代表用户站2代表运维站
+				stop1name: '创建用户站',
+				stop2name: '创建运维站',
+				xuanzhuanangle1: 0,
+				xuanzhuanangle2: 0,
+				stopwidth: 30, //宽基数
+				stopheigh: 10, //高基数
+				stoprealwidth1: 1, //当前用户站宽度
+				stoprealheigh1: 1, //当前用户站高度
+				stoprealwidth2: 1, //当前运维站宽度
+				stoprealheigh2: 1, //当前运维站高度
 				includepoints:[],
 				timeflag:0,
 				start_time: '2020-03-20 00:00:00',
@@ -269,6 +344,10 @@
 			};
 		},
 		onLoad(e) {
+			this.stoprealwidth1 = 30 * 0.000009405717451407729
+			this.stoprealheigh1 = 10 * 0.000008983152841195214
+			this.stoprealwidth2 = 30 * 0.000009405717451407729
+			this.stoprealheigh2 = 10 * 0.000008983152841195214
 			this.type = e.type
 			this.mapheihts='85vh'
 			this.polylinePoint=[]
@@ -529,20 +608,47 @@
 						this.showcorverview.head = false
 						this.showcorverview.bottom = false
 						this.stoplist(this.longitude, this.latitude, '*')
-						// this.selectcoverdata = [{
-						// 		name: '全部车站',
-						// 		id: '0',
-						// 	},
-						// 	{
-						// 		name: '已开启车站',
-						// 		id: '0',
-						// 	},
-						// 	{
-						// 		name: '已关闭车站',
-						// 		id: '0',
-						// 	},
-						// ]
 						break;
+					case '9.2':
+						this.actives = true
+						this.mapheihts = '58vh'
+						this.showcorverview.head = false
+						this.showcorverview.bottom = false
+						this.maploc = [{
+								id: 88,
+								position: {
+									left: 10,
+									top: 50,
+									width: 50,
+									height: 50
+								},
+								iconPath: '../../static/image/location.png',
+								clickable: true,
+							},
+							{
+								id: 878,
+								position: {
+									left: 310,
+									top: 50,
+									width: 40,
+									height: 40
+								},
+								iconPath: '../../static/image/xuanzhuan.png',
+								clickable: true,
+							},
+							{
+								id: 879,
+								position: {
+									left: 310,
+									top: 100,
+									width: 40,
+									height: 40
+								},
+								iconPath: '../../static/image/xuanzhuan1.png',
+								clickable: true,
+							},
+						]
+						break;	
 				}
 			}, 200)
 		},
@@ -560,6 +666,325 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
+			
+			showmore() {
+				this.morestop = !this.morestop
+			},
+			// 影子车站
+			finishstop() {
+				var mask = new Array()
+				var marks = new Array()
+				this.polygon.forEach((item) => {
+					if (item.type == 1) {
+						var temp = []
+						item.points.forEach((k) => {
+							temp = [k.longitude, k.latitude]
+							marks.push(temp)
+						})
+						marks.push([item.points[0].longitude, item.points[0].latitude])
+					}
+					if (item.type == 2) {
+						var temp = []
+						item.points.forEach((k) => {
+							temp = [k.longitude, k.latitude]
+							mask.push(temp)
+						})
+						mask.push([item.points[0].longitude, item.points[0].latitude])
+			
+					}
+				})
+				if (marks.length < 1) {
+					uni.showToast({
+						title: '请创建用户站！'
+					});
+					return
+				}
+				if (mask.length < 1) {
+					uni.showToast({
+						title: '请创建运维站！'
+					});
+					return
+				}
+				if (this.stopName == '') {
+					uni.showToast({
+						title: '车站名称不能为空',
+						icon: 'none',
+						duration: 2000,
+					});
+					return
+				}
+				if (this.stopVolume == '') {
+					uni.showToast({
+						title: '车站容量不能为空',
+						icon: 'none',
+						duration: 2000,
+					});
+					return
+				}
+				this.creatStopurl(0, 1, "*", marks, mask)
+			},
+			// 编辑按钮名字状态
+			editbtnname(type, num) {
+				var fillColor = '' //填充颜色
+				var y1 = parseFloat(this.tempjindu)
+				var x1 = parseFloat(this.tempweidu)
+				var yunweixs = 1 //运维系数，运维站比用户站大一些
+				console.log('jinweidu1',this.latitude,this.longitude,num)
+				if (num == 1) {
+					this.edit1or2 = 1
+					this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
+					this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
+				
+					// 创建获取中心点坐标
+					if (this.stop1name == '创建用户站') {
+						this.anglecenter1 = [x1, y1]
+					}
+					if (this.stop1name == '编辑中..') {	
+						return
+					}
+					fillColor = '#2784F04D'
+					// this.stop1name='编辑用户站'
+					this.stop1name = '编辑中..'
+					this.setLatitude(this.anglecenter1[0])
+					this.setLongitude(this.anglecenter1[1])
+					console.log('jinweidu2',this.latitude,this.longitude,num)
+					if (this.stop2name != '创建运维站') {
+						this.stop2name = '编辑运维站'
+						// return
+					}
+					var pdympoints = false
+					this.polygon.forEach((item) => {
+						if (item.type == num) {
+							if (item.points.length > 0) {
+								pdympoints = true
+							}
+						}
+					})
+					if (pdympoints) {
+						return
+					}
+				} else {
+					this.edit1or2 = 2
+					this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
+					this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+					// 创建获取中心点坐标
+					if (this.stop2name == '创建运维站') {
+						this.anglecenter2 = [x1, y1]
+					}
+					// this.anglecenter2 = [x1, y1]
+					if (this.stop2name == '编辑中..') {
+						return
+					}
+					yunweixs = 1
+					this.setLatitude(this.anglecenter2[0])
+					this.setLongitude(this.anglecenter2[1])
+					console.log('jinweidu2',this.latitude,this.longitude,num)
+					this.stop2name = '编辑中..'
+					fillColor = '#FFFF004D'
+					if (this.stop1name != '创建用户站') {
+						this.stop1name = '编辑用户站'
+						// return
+					}
+					var pdympoints = false
+					this.polygon.forEach((item) => {
+						if (item.type == num) {
+							if (item.points.length > 0) {
+								pdympoints = true
+							}
+						}
+					})
+					if (pdympoints) {
+						return
+					}
+			
+				}
+				this.initstop(type, num, fillColor, yunweixs)
+			},
+			initstop(type, num, fillColor, yunweixs) {
+				//latitude对应的是y，longitude对应x
+				//type=100初始化，type=0,1,2,3,101编辑分别对应宽+，宽-，高加，高减，旋转角度
+				// 初始车站矩形,南北0.000008983152841195214，东西0.000009405717451407729
+				//num=1用户站，num=2运维站
+				console.log('soshinibaba')
+				var h = 10 * 0.000009405717451407729
+				var w = 30 * 0.000008983152841195214
+				var center = [parseFloat(this.tempweidu), parseFloat(this.tempjindu)]
+				var hudu = (2 * Math.PI / 360 * this.xuanzhuanangle)
+				if (type == 100) {
+					this.stopwidth=30
+					this.stopheigh=10
+					var points = []
+					if (this.edit1or2 == 1) {
+						points = this.rotateangle(0, 0, center, h, w)
+					} else {
+						points = this.rotateangle(0, 0, center, h , w)
+					}
+					setTimeout(() => {
+						this.polygon.push({
+							points: [{
+									latitude: points[0][0],
+									longitude: points[0][1]
+								},
+								{
+									latitude: points[1][0],
+									longitude: points[1][1]
+								},
+								{
+									latitude: points[2][0],
+									longitude: points[2][1]
+								},
+								{
+									latitude: points[3][0],
+									longitude: points[3][1]
+								},
+			
+							],
+							fillColor: fillColor,
+							color: "#FF9F0040",
+							strokeWidth: 1,
+							type: num
+						})
+					}, 200)
+				} else {
+					this.selecteditpoints(this.edit1or2, type)
+				}
+			},
+			selecteditpoints(type, num) {
+				//type=1用户站，type=2运维站 num编辑 1234
+				// var ry = 0.000008983152841195214 * this.stopheigh
+				var ry = 0.000008983152841195214
+				// var rx = 0.000009405717451407729 * this.stopwidth
+				var rx = 0.000009405717451407729
+				var fillColor = ''
+				if (type == 1) {
+					fillColor = '#2784F04D'
+				} else {
+					// fillColor='#FFFF004D'
+					fillColor = '#FFFF004D'
+				}
+				var center = []
+				if (this.edit1or2 == 1) {
+					center = [this.anglecenter1[0], this.anglecenter1[1]]
+				} else {
+					center = [this.anglecenter2[0], this.anglecenter2[1]]
+				}
+				switch (num) {
+					case 0:
+						if (this.edit1or2 == 1) {
+							this.stoprealwidth1 += rx
+							this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
+						} else {
+							this.stoprealwidth2 += rx
+							this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
+						}
+						break;
+					case 1:
+						if (this.edit1or2 == 1) {
+							this.stoprealwidth1 -= rx
+							this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
+						} else {
+							this.stoprealwidth2 -= rx
+							this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
+						}
+						break;
+					case 2:
+						if (this.edit1or2 == 1) {
+							this.stoprealheigh1 += ry
+							this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
+						} else {
+							this.stoprealheigh2 += ry
+							this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+						}
+						break;
+					case 3:
+						if (this.edit1or2 == 1) {
+							this.stoprealheigh1 -= ry
+							this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
+						} else {
+							this.stoprealheigh2 -= ry
+							this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+						}
+						break;
+				}
+				var points = []
+				if (this.edit1or2 == 1) {
+					points = this.rotateangle(this.xuanzhuanangle1, 0, center, this.stoprealheigh1, this.stoprealwidth1)
+				} else {
+					points = this.rotateangle(this.xuanzhuanangle2, 0, center, this.stoprealheigh2, this.stoprealwidth2)
+				}
+				for (var a = 0; a < this.polygon.length; a++) {
+					if (this.polygon[a].type == type) {
+						var item = this.polygon[a].points
+						this.polygon.splice(a, 1)
+						this.polygon.push({
+							points: [{
+									latitude: points[0][0],
+									longitude: points[0][1]
+								},
+								{
+									latitude: points[1][0],
+									longitude: points[1][1]
+								},
+								{
+									latitude: points[2][0],
+									longitude: points[2][1]
+								},
+								{
+									latitude: points[3][0],
+									longitude: points[3][1]
+								},
+			
+							],
+							fillColor: fillColor,
+							color: "#FF9F0040",
+							strokeWidth: 1,
+							type: type
+						})
+					}
+				}
+			},
+			calcsize(num) { //0宽加，1宽减，2高加，3高减
+				this.initstop(num)
+			},
+			rotateangle(sheta, type, center, h1, w1) {
+				//type=0旋转,type=1放大变小
+				// var rx0=this.tempweidu
+				// var ry0=this.tempjindu
+				// var rx0='',ry0=''//中心点xy坐标
+				// var ry=0.000009405717451407729
+				// var rx=0.000008983152841195214
+				var a = sheta
+				var h = w1,
+					w = h1,
+					alpha = 2 * Math.PI / 360 * a
+				var c = Math.sqrt(Math.pow(h, 2) + Math.pow(w, 2))
+				var t = Math.asin(h / c)
+				var t1 = Math.PI / 2 - t - alpha
+			
+				var p1 = [c * Math.sin(t1), c * Math.cos(t1)];
+				var p3 = [0 - c * Math.sin(t1), 0 - c * Math.cos(t1)];
+			
+				var t2 = alpha - t; //p2-中点连线，与Y轴夹角
+				var p2 = [c * Math.cos(t2), c * Math.sin(t2)];
+				var p4 = [0 - c * Math.cos(t2), 0 - c * Math.sin(t2)];
+			
+				// var ym=0.000008983152841195214
+				// var xm= ym / Math.cos(2*Math.PI/360*ry0)
+				var arr = [p1, p2, p3, p4]
+				var newarr = arr.map((num) => {
+					return [num[0] + center[0], num[1] + center[1]]
+				})
+				console.log(111, arr)
+				if (type == 0) {
+					return newarr
+					// return [y0,x0]	
+				} else {
+					return ''
+				}
+			
+			},
+			
+			
 			toggleTab(item) {
 				this.timeflag=item
 			    this.$refs.dateTime.show();  
@@ -635,7 +1060,6 @@
 						this.polyline[0].width = 3 //线的宽度
 						// dottedLine: true, //是否虚线
 						this.polyline[0].arrowLine = true
-						console.log('this.covers', this.covers);
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取轨迹失败',
@@ -923,8 +1347,20 @@
 			mapcentionloc(e) {
 				if (e.controlId == 88) {
 					this.mapinfo.moveToLocation()
-				} else {
-					// this.refreshinfo()
+				}else if (e.controlId == 878) {
+					if (this.edit1or2 == 1) {
+						this.xuanzhuanangle1 += 6
+					} else {
+						this.xuanzhuanangle2 += 6
+					}
+					this.initstop(101)
+				} else if(e.controlId == 879){
+                    if (this.edit1or2 == 1) {
+                    	this.xuanzhuanangle1 -= 6
+                    } else {
+                    	this.xuanzhuanangle2 -= 6
+                    }
+                    this.initstop(101)
 				}
 
 			},
@@ -1293,7 +1729,89 @@
 							success: (res) => {
 								this.tempjindu = res.longitude
 								this.tempweidu = res.latitude
-																
+								if (this.type == '9.2') {
+									this.setLatitude(res.latitude)
+									this.setLongitude(res.longitude)
+									var center = [res.latitude, res.longitude]
+									var points = []
+									var fillColor = ''
+									if (this.edit1or2 == 1) {
+										fillColor = '#2784F04D'
+										this.anglecenter1 = center
+										if(this.stop1name!='创建用户站'){
+											points = this.rotateangle(this.xuanzhuanangle1, 0, center, this
+												.stoprealheigh1, this.stoprealwidth1)
+												for (var a = 0; a < this.polygon.length; a++) {
+													if (this.polygon[a].type == this.edit1or2) {
+														var item = this.polygon[a].points
+														this.polygon.splice(a, 1)
+														this.polygon.push({
+															points: [{
+																	latitude: points[0][0],
+																	longitude: points[0][1]
+																},
+																{
+																	latitude: points[1][0],
+																	longitude: points[1][1]
+																},
+																{
+																	latitude: points[2][0],
+																	longitude: points[2][1]
+																},
+																{
+																	latitude: points[3][0],
+																	longitude: points[3][1]
+																},
+																				
+															],
+															fillColor: fillColor,
+															color: "#FF9F0040",
+															strokeWidth: 1,
+															type: this.edit1or2
+														})
+													}
+												}	
+										}
+										
+									} else {
+										fillColor = '#FFFF004D'
+										this.anglecenter2 = center
+										if(this.stop2name!='创建运维站'){
+											points = this.rotateangle(this.xuanzhuanangle2, 0, center, this
+												.stoprealheigh2, this.stoprealwidth2)
+												for (var a = 0; a < this.polygon.length; a++) {
+													if (this.polygon[a].type == this.edit1or2) {
+														var item = this.polygon[a].points
+														this.polygon.splice(a, 1)
+														this.polygon.push({
+															points: [{
+																	latitude: points[0][0],
+																	longitude: points[0][1]
+																},
+																{
+																	latitude: points[1][0],
+																	longitude: points[1][1]
+																},
+																{
+																	latitude: points[2][0],
+																	longitude: points[2][1]
+																},
+																{
+																	latitude: points[3][0],
+																	longitude: points[3][1]
+																},
+																				
+															],
+															fillColor: fillColor,
+															color: "#FF9F0040",
+															strokeWidth: 1,
+															type: this.edit1or2
+														})
+													}
+												}
+										}
+									}									
+								}								
 								switch (self.type) {
 									case '0':
 										var undervolt = '*'
@@ -1440,7 +1958,7 @@
 				})
 			},
 			// 附近的车站
-			stoplist(longitude, latitude, reparklev,type) {
+			stoplist(longitude, latitude, reparklev, type) {
 				this.setSn('*')
 				this.setBikeid('*')
 				var options = {
@@ -1452,6 +1970,7 @@
 							longitude,
 							latitude
 						],
+						"distance": distance,
 						"flag": 2
 						// "is_under_volt": 1
 					}
@@ -1464,8 +1983,11 @@
 						this.covers = []
 						var temparr = []
 						var circles = []
+						if (this.type != '9.2') {
+							this.polygon = []
+						}
 						for (let j = 0; j < res.parks.length; j++) {
-							if(res.parks[j].polygon_type==0){
+							if (res.parks[j].polygon_type == 0) {
 								let tmpObjs = {}
 								let circlesObj = {}
 								tmpObjs.id = res.parks[j].id
@@ -1482,7 +2004,8 @@
 								tmpObjs.name = res.parks[j].name
 								// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
 								var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-								tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum, res.parks[j].grade)
+								tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum, res.parks[j]
+									.grade)
 								tmpObjs.type = 'stop'
 								tmpObjs.bickcount = res.parks[j].bike_count
 								tmpObjs.allkcount = res.parks[j].capacity
@@ -1496,10 +2019,10 @@
 								temparr.push(tmpObjs)
 								circles.push(circlesObj)
 								// this.covers.push(tmpObjs)
-							}else if(res.parks[j].polygon_type==1){								
+							} else if (res.parks[j].polygon_type == 1) {
 								let circlesObjs = {}
 								let tmpObjs = {}
-								circlesObjs.points=[]
+								circlesObjs.points = []
 								tmpObjs.id = res.parks[j].id
 								if (!!res.parks[j].coordinate) {
 									tmpObjs.latitude = res.parks[j].coordinate[1]
@@ -1519,24 +2042,24 @@
 								tmpObjs.parkid = res.parks[j].id
 								temparr.push(tmpObjs)
 								if (!!res.parks[j].coordinates) {
-									for(let k=0;k<res.parks[j].coordinates.length;k++){	
-										var secondtemp=res.parks[j].coordinates[k]
+									for (let k = 0; k < res.parks[j].coordinates.length; k++) {
+										var secondtemp = res.parks[j].coordinates[k]
 										let polygon = {}
-										polygon.latitude=secondtemp[1]
-										polygon.longitude=secondtemp[0]
+										polygon.latitude = secondtemp[1]
+										polygon.longitude = secondtemp[0]
 										circlesObjs.points.push(polygon)
-										circlesObjs.fillColor = "#A9A9A980"
+										circlesObjs.fillColor = "#2784F04D"
 										circlesObjs.color = "#FF9F0040"
 										circlesObjs.strokeWidth = 1
 									}
 									this.polygon.push(circlesObjs)
-								}								
-							}							
+								}
+							}
 						}
 						this.covers = temparr
-						if(this.type!=9.1){
+						if (this.type != 9.1) {
 							this.circles = circles
-						}			
+						}
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -1708,7 +2231,6 @@
 						this.polyline[0].width = 3 //线的宽度
 						// dottedLine: true, //是否虚线
 						this.polyline[0].arrowLine = true
-						console.log('this.covers', this.covers);
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '获取轨迹失败',
@@ -1918,10 +2440,14 @@
 				})
 			},
 			// 创建车站
-			creatStopurl(level,type,coordinate,marks) {
-				this.mapheihts='100vh'
-				if(type==0){
-					marks='*'					
+			creatStopurl(level, type, coordinate, marks, mask) {
+				this.mapheihts = '100vh'
+				if (type == 0) {
+					marks = '*'
+				}
+				var coordinates_mask = '*'
+				if (!!mask) {
+					coordinates_mask = mask
 				}
 				var options = {
 					url: '/park/add', //请求接口
@@ -1934,45 +2460,48 @@
 						// 	this.coorDinates.long,
 						// 	this.coorDinates.lat
 						// ],
-						"coordinate":coordinate,
-						"coordinates":marks,
-						"radius": parseInt(this.stopRadius)?parseInt(this.stopRadius):0,
+						"coordinate": coordinate,
+						"coordinates": marks,
+						"radius": parseInt(this.stopRadius) ? parseInt(this.stopRadius) : 0,
 						"capacity": parseInt(this.stopVolume),
 						"state": 0,
 						"type": "SCHOOL",
-						"polygon_type":type,
+						"polygon_type": type,
 						// "grade": level,
 						"grade": 1,
-						"visitable":3,
-						"imgs": this.imgarr
+						"visitable": 3,
+						"imgs": this.imgarr,
+						"coordinates_mask": coordinates_mask
 					}
 				}
 				this.$httpReq(options).then((res) => {
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-						
-						if(type==0){
+			
+						if (type == 0) {
 							uni.showToast({
 								title: '创建车站成功',
 								mask: false,
 								duration: 2500
 							});
+							if (type != '9.2') {
+								setTimeout(() => {
+									this.actives = false
+								}, 3000)
+							}
+						} else {
 							setTimeout(() => {
-								this.actives = false
-							}, 2000)
-						}else{
-							setTimeout(()=>{
 								uni.navigateBack({
 									delta: 1
-								},5000);
-							})						
+								});
+							}, 5000)
 							uni.showToast({
 								title: '创建停车区成功',
 								mask: false,
 								duration: 3000
 							});
-						}					
+						}
 					} else {
 						uni.showToast({
 							title: res.message ? res.message : '创建车站失败',
@@ -1980,12 +2509,12 @@
 							icon: 'none',
 							duration: 2500
 						});
-						if(type==1){
-							setTimeout(()=>{
+						if (type == 1) {
+							setTimeout(() => {
 								uni.navigateBack({
 									delta: 1
-								},5000);
-							})	
+								});
+							}, 5000)
 						}
 					}
 				}).catch((err) => {
@@ -2188,6 +2717,16 @@
 				// background: yellow;
 			}
 		}
+		.more-view {
+			color: #8a8a8a;
+			display: flex;
+		
+			img {
+				width: 50upx;
+				height: 46upx;
+			}
+		}
+		.edit-area {			.edit-wh {				display: flex;				justify-content: space-between;				.edit-area-inner {					height: 60upx;					margin-left: 20upx;					text {						width: 60upx;					}                    .innernum{						width:100upx;						margin-left: 36upx;					}					input {						width: 80upx;						margin-left: 20upx;						margin-right: 20upx;					}					display: flex;					margin-top: 24upx;					img {						width: 50upx;						height: 50upx;					}				}			}		}
 	}
 
 	.map-base-view {
@@ -2197,10 +2736,10 @@
 
 		.cover-imgs {
 			position: absolute;
-			left: 46%;
-			top: 42%;
-			width: 50upx;
-			height: auto;
+			left: calc(50% - 24upx);
+			top: calc(50% - 96upx);
+			width: 48upx;
+			height: 192upx;
 		}
 
 		.location-imgs {
@@ -2298,19 +2837,43 @@
 	.creatStopServ {
 		display: flex;
 		justify-content: space-between;
-        // height: 70upx;
+		height: 80upx;
+		margin-top: 28upx;
+	
 		.leftBtn {
 			color: black;
-			background-color: yellow;
+			background-color: #2784F0;
+			// color: #FFFFFF;
 			// height: 80upx;
 		}
-
-		.ringhtBtn {
+	
+		.rightBtn {
 			// height: 80upx;
+			background-color: #FFFF00;
 		}
-
+	
+		// color:#FFFFFF;
+	
 		.btn {
-			width: 30% !important;
+			width: 45% !important;
+			line-height: 80upx;
+			text-align: center;
+			border-radius: 12upx;
+		}
+	
+	}
+	.create-btn {
+		margin-top: 8upx;
+		text-align: center;
+		height: 80upx;
+		margin-top: 20upx;
+	
+		.create-btn-text {
+			line-height: 80upx;
+			text-align: center;
+			border-radius: 12upx;
+			background: linear-gradient(127deg, #4C5A77 0%, #2B313F 100%);
+			color: #FFFFFF;
 		}
 	}
 	.timeselect {
