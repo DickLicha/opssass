@@ -3207,7 +3207,7 @@
 						// 	this.coorDinates.lat
 						// ],
 						"coordinate": coordinate,
-						"coordinates": marks,
+						"coordinates":coordinates_mask,
 						"radius": parseInt(this.stopRadius) ? parseInt(this.stopRadius) : 0,
 						"capacity": parseInt(this.stopVolume),
 						"state": 0,
@@ -3217,7 +3217,7 @@
 						"grade": 1,
 						"visitable": 3,
 						"imgs": this.imgarr,
-						"coordinates_mask": coordinates_mask
+						"coordinates_mask": marks
 					}
 				}
 				this.$httpReq(options).then((res) => {
