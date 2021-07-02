@@ -1787,16 +1787,16 @@ case '10':
 					this.mapinfo.moveToLocation()
 				}else if (e.controlId == 878) {
 					if (this.edit1or2 == 1) {
-						this.xuanzhuanangle1 += 6
+						this.xuanzhuanangle1 += 3
 					} else {
-						this.xuanzhuanangle2 += 6
+						this.xuanzhuanangle2 += 3
 					}
 					this.initstop(101)
 				} else if(e.controlId == 879){
                     if (this.edit1or2 == 1) {
-                    	this.xuanzhuanangle1 -= 6
+                    	this.xuanzhuanangle1 -= 3
                     } else {
-                    	this.xuanzhuanangle2 -= 6
+                    	this.xuanzhuanangle2 -= 3
                     }
                     this.initstop(101)
 				}
