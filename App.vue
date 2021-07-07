@@ -121,11 +121,14 @@
 			if (baseurl == '') {
 				try {
 					// uni.setStorageSync('baseurl', 'https://api.lexiangys.top');
-					// 9号出行
+					// 9号出行 appid:
 					// uni.setStorageSync('baseurl', 'https://api.nbebike.com');
-					// 柚达域名
-					uni.setStorageSync('baseurl', 'https://api.gray.lxys3344.xyz');
-					// uni.setStorageSync('baseurl', 'https://api.lxys3344.xyz');
+					// 车主日记 appid:
+					// uni.setStorageSync('baseurl', 'https://api.nbebike.com');
+					// 柚达域名 appid:wxdc267d7512b8f0b0
+					// uni.setStorageSync('baseurl', 'https://api.gray.lxys3344.xyz');
+					uni.setStorageSync('baseurl', 'https://api.lxys3344.xyz');
+					
 							
 				} catch (e) {
 					// error

@@ -62,7 +62,11 @@
 					// res为服务端返回数据的根对象
 					console.log('字典信息', res)
 					if (res.status == 0) {
-						this.img=res.tenant_cfg['wxmpops.banner']
+						if(!!res.tenant_cfg){
+							this.img=res.tenant_cfg['wxmpops.banner']
+						}else{
+							this.img='../../../static/youdachuxing.png'
+						}
 						this.setDirectinfo(res.direct)
 					}
 				}).catch((err) => {
