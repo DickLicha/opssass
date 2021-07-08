@@ -1042,7 +1042,18 @@ case '10':
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
-			
+			menutitle(i, type) {
+				if (i == 0 && this.type == 10) {
+					if (type == 'color') {
+						return '#1D2023'
+					} else if (type == 'size') {
+						return '600'
+					} else if (type == 'align') {
+						return ''
+					}
+				}
+				return ''
+			},
 			showmore() {
 				this.morestop = !this.morestop
 			},
