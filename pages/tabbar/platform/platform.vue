@@ -9,8 +9,8 @@
 			<view class="index-top-box">
 				<view style='margin-top: 50upx;'>
 					<view class="nav nav-head">
-						<navigator class="store" @click="showbotpop" url="../selectStore/selectStore">{{citylist[0].name||'未知城市'}}<text
-							 class="iconfont icon-xiajian"></text></navigator>
+						<navigator class="store" @click="showbotpop" url="../selectStore/selectStore">
+							{{citylist[0].name||'未知城市'}}<text class="iconfont icon-xiajian"></text></navigator>
 						<view>
 							<text class="address">{{locaplace||'未获取'}}</text>
 							<view class='weather-view' v-if="!!weather">
@@ -32,7 +32,8 @@
 				</view> -->
 
 				<!-- 财务汇总 -->
-				<view class='timeselect-view' v-if="limitorder.czje||limitorder.hykje||limitorder.all||limitorder.qxddf">
+				<view class='timeselect-view'
+					v-if="limitorder.czje||limitorder.hykje||limitorder.all||limitorder.qxddf">
 					<view class='box-title'>财务汇总</view>
 					<!-- 新增 -->
 					<view class='timeselect' v-if="limitorder.all && isActive1==-1">
@@ -41,8 +42,9 @@
 							<view class='wenzi'>开始</view>
 							<view>{{start_time}}</view>
 						</view>
-						<yu-datetime-picker @confirm="onConfirm1" @canCel='onCancel' @clickOther='onClickother' startYear="2015" ref="dateTime1"
-						 :value=value :isAll="true" :current="false"></yu-datetime-picker>
+						<yu-datetime-picker @confirm="onConfirm1" @canCel='onCancel' @clickOther='onClickother'
+							startYear="2015" ref="dateTime1" :value=value :isAll="true" :current="false">
+						</yu-datetime-picker>
 						<view class='timedetil' @tap="toggleTab1(2)">
 							<view class='wenzi'>结束</view>
 							<view>{{end_time}}</view>
@@ -55,34 +57,46 @@
 						 :key='item'>{{i.name}}</view>
 					</view> -->
 					<view class='timeselect-detil'>
-						<view class='timeselect-inner' @click="active(i,item,1)" :class="{'borderrights':i.val==isActive1}" v-for="(i,item) in timeselect1"
-						 :key='item'>{{i.name}}</view>
+						<view class='timeselect-inner' @click="active(i,item,1)"
+							:class="{'borderrights':i.val==isActive1}" v-for="(i,item) in timeselect1" :key='item'>
+							{{i.name}}</view>
 					</view>
 					<!-- 自定义 -->
 					<view class="data-box">
 						<!-- <view class='box-titles'>自定义</view> -->
 						<view class="data-item" v-if="limitorder.czje">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.user_charge_amount_total/100:monitorv3data.opt_sum_date.user_charge_amount/100}}</view>
+							<view class="data-item-ct1">
+								{{timestate==1?monitorv2.user_charge_amount_total/100:monitorv3data.opt_sum_date.user_charge_amount/100}}
+							</view>
 							<view class="data-item-ct2">充值总金额</view>
 						</view>
 						<view class="data-item" v-if="limitorder.hykje">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.user_membership_amount_total/100:monitorv3data.opt_sum_date.user_membership_amount/100}}</view>
+							<view class="data-item-ct1">
+								{{timestate==1?monitorv2.user_membership_amount_total/100:monitorv3data.opt_sum_date.user_membership_amount/100}}
+							</view>
 							<view class="data-item-ct2">会员总金额</view>
 						</view>
 						<view class="data-item" v-if="limitorder.all">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_paid_amount_total/100:monitorv3data.opt_sum_date.urorder_paid_amount/100}}</view>
+							<view class="data-item-ct1">
+								{{timestate==1?monitorv2.urorder_paid_amount_total/100:monitorv3data.opt_sum_date.urorder_paid_amount/100}}
+							</view>
 							<view class="data-item-ct2">订单总金额</view>
 						</view>
 						<view class="data-item" v-if="limitorder.qxddf">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_repark_amount_total/100:monitorv3data.opt_sum_date.urorder_repark_amount/100}}</view>
+							<view class="data-item-ct1">
+								{{timestate==1?monitorv2.urorder_repark_amount_total/100:monitorv3data.opt_sum_date.urorder_repark_amount/100}}
+							</view>
 							<view class="data-item-ct2">订单调度总金额</view>
 						</view>
 						<view class="data-item" v-if="limitorder.all">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.user_count_total:monitorv3data.opt_sum_date.user_count}}</view>
+							<view class="data-item-ct1">
+								{{timestate==1?monitorv2.user_count_total:monitorv3data.opt_sum_date.user_count}}</view>
 							<view class="data-item-ct2">总用户数</view>
 						</view>
 						<view class="data-item" v-if="limitorder.all">
-							<view class="data-item-ct1">{{timestate==1?monitorv2.urorder_count_per_bike_avg:monitorv3data.opt_sum_date.urorder_count_per_bike_avg}}</view>
+							<view class="data-item-ct1">
+								{{timestate==1?monitorv2.urorder_count_per_bike_avg:monitorv3data.opt_sum_date.urorder_count_per_bike_avg}}
+							</view>
 							<view class="data-item-ct2">平均车效</view>
 						</view>
 					</view>
@@ -100,8 +114,9 @@
 							</view>
 							<view class='inner-line'></view>
 							<view class='inner-son'>
-								<view class='inner-son-detil' v-for="(j,items) in i.dataarr" :key='items' @click='gonewpage(item,j,items)'><text>{{j.name}}</text><text></text><text
-									 style='font-size: 20px;'>{{j.val}}</text></view>
+								<view class='inner-son-detil' v-for="(j,items) in i.dataarr" :key='items'
+									@click='gonewpage(item,j,items)'><text>{{j.name}}</text><text></text><text
+										style='font-size: 20px;'>{{j.val}}</text></view>
 							</view>
 						</view>
 					</view>
@@ -118,7 +133,8 @@
 					<view class="qiun-charts" v-show="limitorder.ddqst && showtx">
 						<text class='titleSpan'>订单趋势图</text>
 						<!--#ifndef MP-ALIPAY -->
-						<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts" @touchstart="touchLineA"></canvas>
+						<canvas canvas-id="canvasLineA" id="canvasLineA" class="charts"
+							@touchstart="touchLineA"></canvas>
 						<!--#endif-->
 					</view>
 
@@ -155,8 +171,9 @@
 							<view class='wenzi'>开始</view>
 							<view>{{start_time}}</view>
 						</view>
-						<yu-datetime-picker @confirm='onConfirm' @canCel='onCancel' @clickOther='onClickother' startYear="2015" ref="dateTime"
-						 :value=value :isAll="true" :current="false"></yu-datetime-picker>
+						<yu-datetime-picker @confirm='onConfirm' @canCel='onCancel' @clickOther='onClickother'
+							startYear="2015" ref="dateTime" :value=value :isAll="true" :current="false">
+						</yu-datetime-picker>
 						<view class='timedetil' @tap="toggleTab(2)">
 							<view class='wenzi'>结束</view>
 							<view>{{end_time}}</view>
@@ -165,20 +182,43 @@
 					</view>
 
 					<view class='timeselect-detil'>
-						<view class='timeselect-inner' @click="active(i,item,0)" :class="{'borderrights':i.val==isActive}" v-for="(i,item) in timeselect"
-						 :key='item'>{{i.name}}</view>
+						<view class='timeselect-inner' @click="active(i,item,0)"
+							:class="{'borderrights':i.val==isActive}" v-for="(i,item) in timeselect" :key='item'>
+							{{i.name}}</view>
 					</view>
 					<view class="qiun-charts" v-show="limitorder.ddjet && showtx">
 						<!-- <text class='titleSpan'>订单金额图</text> -->
 						<!--#ifndef MP-ALIPAY -->
-						<canvas canvas-id="canvasLineC" id="canvasLineC" class="charts" @touchstart="touchLineC"></canvas>
+						<canvas canvas-id="canvasLineC" id="canvasLineC" class="charts"
+							@touchstart="touchLineC"></canvas>
 						<!--#endif-->
 					</view>
 					<view class="qiun-charts" v-show="limitorder.cxt && showtx">
 						<!-- <text class='titleSpan'>车效图</text> -->
 						<!--#ifndef MP-ALIPAY -->
-						<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts" @touchstart="touchLineB"></canvas>
+						<canvas canvas-id="canvasLineB" id="canvasLineB" class="charts"
+							@touchstart="touchLineB"></canvas>
 						<!--#endif-->
+					</view>
+				</view>
+
+
+				<view class='timeselect-view'>
+					<view class='grid-view' v-if="limitorder.ddjet || limitorder.cxt">
+						<view class='flexd-posion'>
+							<view class='view-flexs switch-head'>
+								<view>日期</view>
+								<view class='view-border-letf'>订单数</view>
+								<view class='view-border-letf'>订单金额</view>
+								<view class='view-border-letf'>车效</view>
+							</view>
+						</view>
+						<view v-if="appid=='wxdc267d7512b8f0b0'" class='view-flexs view-border-bottom' v-for="(item,i) in orderlist" :key='i'>
+							<view>{{item.time}}</view>
+							<view class='view-border-letf'>{{item.num}}</view>
+							<view class='view-border-letf'>{{item.money}}</view>
+							<view class='view-border-letf'>{{item.bikeper}}</view>
+						</view>
 					</view>
 				</view>
 
@@ -217,10 +257,12 @@
 			itemCell,
 			yuDatetimePicker
 		},
+		computed: mapState(['appid']),
 		data() {
 			return {
-				base64img:'',
-				canvsheigh:'100vh',
+				orderlist: [],
+				base64img: '',
+				canvsheigh: '100vh',
 				bgheight: '170upx',
 				weather: "",
 				ranklist: [],
@@ -446,10 +488,12 @@
 										break
 									case 15:
 										for (let j = 0; j < acl[i].children.length; j++) {
-											if (acl[i].children[j].uri == 15.1 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri == 15.1 && acl[i].children[j]
+												.visitable) {
 												this.tempobj.chexiao = 1
 											}
-											if (acl[i].children[j].uri == 15.2 && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri == 15.2 && acl[i].children[j]
+												.visitable) {
 												this.tempobj.dingdan = 1
 											}
 										}
@@ -457,47 +501,57 @@
 									case 16:
 										this.timeselect1 = []
 										for (let j = 0; j < acl[i].children.length; j++) {
-											if (acl[i].children[j].uri === '16.1' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.1' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.all = 1
 												this.timeselect1.push({
 													name: '自定义',
 													val: -1
 												})
 											}
-											if (acl[i].children[j].uri === "16.2" && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === "16.2" && acl[i].children[j]
+												.visitable) {
 												this.limitorder.mon = 1
 												this.timeselect1.push({
 													name: '当月',
 													val: 0
 												})
 											}
-											if (acl[i].children[j].uri === '16.3' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.3' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.day = 1
 												this.timeselect1.push({
 													name: '当日',
 													val: 10
 												})
 											}
-											if (acl[i].children[j].uri === '16.4' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.4' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.ddqst = 1
 											}
-											if (acl[i].children[j].uri === '16.5' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.5' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.ddjet = 1
 											}
-											if (acl[i].children[j].uri === '16.6' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.6' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.cxt = 1
 											}
-											if (acl[i].children[j].uri === '16.7' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.7' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.qxddf = 1
 											}
-											if (acl[i].children[j].uri === '16.8' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.8' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.czje = 1
 											}
-											if (acl[i].children[j].uri === '16.9' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.9' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.hykje = 1
 
 											}
-											if (acl[i].children[j].uri === '16.10' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.10' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.yesterday = 1
 												this.timeselect1.push({
 													name: '昨天',
@@ -505,14 +559,16 @@
 												})
 
 											}
-											if (acl[i].children[j].uri === '16.11' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.11' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.aweekago = 1
 												this.timeselect1.push({
 													name: '一周前',
 													val: 12
 												})
 											}
-											if (acl[i].children[j].uri === '16.12' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.12' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.aweekago = 1
 												this.timeselect1.push({
 													name: '上个月',
@@ -547,7 +603,8 @@
 				success(res) {
 					console.log('位置信息', res)
 					const requestTask3 = uni.request({
-						url: "https://apis.map.qq.com/ws/geocoder/v1/?location=" + res.latitude + "," + res.longitude +
+						url: "https://apis.map.qq.com/ws/geocoder/v1/?location=" + res.latitude + "," + res
+							.longitude +
 							"&key=ZVNBZ-ACB3S-UOEO5-6JMQK-4EMKT-XZBUX&get_poi=1",
 						data: {},
 						method: "GET",
@@ -573,7 +630,7 @@
 		methods: {
 			...mapMutations(['setSn', 'setBikeid']),
 			drowsyUserinfo() {
-				var phonenum=''
+				var phonenum = ''
 				try {
 					const value = uni.getStorageSync('userinfo');
 					if (value) {
@@ -584,15 +641,15 @@
 				}
 				var name_xx = phonenum;
 				var ctx = wx.createCanvasContext("myCanvas");
-			
+
 				ctx.rotate(45 * Math.PI / 180); //设置文字的旋转角度，角度为45°；
-			
+
 				//对斜对角线以左部分进行文字的填充
 				for (let j = 1; j < 10; j++) { //用for循环达到重复输出文字的效果，这个for循环代表纵向循环
 					ctx.beginPath();
 					ctx.setFontSize(10);
 					ctx.setFillStyle("rgba(169,169,169,.2)");
-			
+
 					ctx.fillText(name_xx, 0, 30 * j);
 					for (let i = 1; i < 10; i++) { //这个for循环代表横向循环，
 						ctx.beginPath();
@@ -601,13 +658,13 @@
 						ctx.fillText(name_xx, 80 * i, 30 * j);
 					}
 				} //两个for循环的配合，使得文字充满斜对角线的左下部分
-			
+
 				//对斜对角线以右部分进行文字的填充逻辑同上
 				for (let j = 0; j < 10; j++) {
 					ctx.beginPath();
 					ctx.setFontSize(10);
 					ctx.setFillStyle("rgba(169,169,169,.2)");
-			
+
 					ctx.fillText(name_xx, 0, -30 * j);
 					for (let i = 1; i < 10; i++) {
 						ctx.beginPath();
@@ -616,24 +673,24 @@
 						ctx.fillText(name_xx, 80 * i, -30 * j);
 					}
 				}
-				var _this=this
-				ctx.draw(false,()=>{
-					  wx.canvasToTempFilePath({
-					  	canvasId: 'myCanvas',
-					  	success(res) {
-					  		wx.getFileSystemManager().readFile({
-					  			filePath: res.tempFilePath, //图片路径
-					  			encoding: 'base64', //编码格式
-					  			success: res => { //成功的回调
-					  	            _this.canvsheigh=0
-									_this.base64img='data:image/png;base64,' + res.data
+				var _this = this
+				ctx.draw(false, () => {
+					wx.canvasToTempFilePath({
+						canvasId: 'myCanvas',
+						success(res) {
+							wx.getFileSystemManager().readFile({
+								filePath: res.tempFilePath, //图片路径
+								encoding: 'base64', //编码格式
+								success: res => { //成功的回调
+									_this.canvsheigh = 0
+									_this.base64img = 'data:image/png;base64,' + res.data
 								}
-					  		})
-					  	},
-					  	err(err){
-					  		console.log(44444,err)
-					  	}
-					  })
+							})
+						},
+						err(err) {
+							console.log(44444, err)
+						}
+					})
 				});
 			},
 			gonewpage(index, item, indexs) {
@@ -650,10 +707,10 @@
 						break;
 					case 1:
 						spliturl = `&repark_index=${indexs+1}&flag=1`
-						if(indexs==4){
+						if (indexs == 4) {
 							spliturl = `&park_state=21&flag=1`
 						}
-						if(indexs==5){
+						if (indexs == 5) {
 							spliturl = `&park_state=11&flag=1`
 						}
 						break
@@ -665,7 +722,7 @@
 						break
 					case 4:
 						spliturl = `&bus_state=${item.bus_state}`
-						if(indexs==2){
+						if (indexs == 2) {
 							spliturl = `&is_online=0`
 						}
 						break
@@ -737,7 +794,7 @@
 					});
 				}
 			},
-            // 自定义-1，当月0，当日10，昨天11，一周前12，上个月1
+			// 自定义-1，当月0，当日10，昨天11，一周前12，上个月1
 			timecalc(type) {
 				if (type == -1) {
 					return
@@ -747,10 +804,13 @@
 				var seperator2 = ":";
 				var daygetday = date.getDate()
 				// var daygetday=5
-				var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 - type;
+				var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 -
+					type;
 				var startyear = date.getFullYear()
-				if (month0 == '00' || month0 == '0-1' || month0 == '0-2' || month0 == '0-3' || month0 == '0-4' || month0 == '0-5') {
-					month0 = date.getMonth() + 13 - type < 10 ? "0" + (date.getMonth() + 13 - type) : date.getMonth() + 13 - type;
+				if (month0 == '00' || month0 == '0-1' || month0 == '0-2' || month0 == '0-3' || month0 == '0-4' || month0 ==
+					'0-5') {
+					month0 = date.getMonth() + 13 - type < 10 ? "0" + (date.getMonth() + 13 - type) : date.getMonth() +
+						13 - type;
 					startyear = startyear - 1
 				}
 				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
@@ -1088,7 +1148,8 @@
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
 						this.monitorv3data = res
-						this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg = this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg
+						this.monitorv3data.opt_sum_date.urorder_count_per_bike_avg = this.monitorv3data
+							.opt_sum_date.urorder_count_per_bike_avg
 							.toFixed(2)
 						console.log(2222, res)
 					} else {
@@ -1123,7 +1184,7 @@
 						context: '',
 						data: {
 							today: 1,
-							bike:1
+							bike: 1
 						},
 					}
 				} else if (type == 'mon') {
@@ -1166,7 +1227,8 @@
 								}
 								electarr.push(temp)
 							}
-							var allmovecar = res.bike.repark_index_4 + res.bike.repark_index_1 + res.bike.repark_index_2 +
+							var allmovecar = res.bike.repark_index_4 + res.bike.repark_index_1 + res.bike
+								.repark_index_2 +
 								res.bike.repark_index_3
 							this.dailydata = res
 							this.bigcontdetil = [{
@@ -1241,17 +1303,16 @@
 								{
 									lefttitle: '故障',
 									righttitle: '故障总数量：' + res.bike.fault_dist.total,
-									dataarr: [
+									dataarr: [{
+											name: '已入库',
+											val: res.bike.fault_dist.recalled,
+											inv_state: 2
+										},
 										{
-										name: '已入库',
-										val: res.bike.fault_dist.recalled,
-										inv_state:2
-									},
-									{
-										name: '未入库',
-										val: res.bike.fault_dist.total-res.bike.fault_dist.recalled,
-										inv_state:0
-									},
+											name: '未入库',
+											val: res.bike.fault_dist.total - res.bike.fault_dist.recalled,
+											inv_state: 0
+										},
 									]
 								},
 								{
@@ -1329,10 +1390,10 @@
 						} else if (type == 'mon') {
 							this.monitorv2m = res
 							this.monitorv2m.urorder_count_per_bike_avg = res.urorder_count_per_bike_avg.toFixed(2)
-						} 
+						}
 						//all
 						else {
-							var respondata=res.daily
+							var respondata = res.daily
 							var datatimes = []
 							var user_growth = []
 							var user_order_growth = []
@@ -1346,7 +1407,47 @@
 								name: '订单金额',
 								data: []
 							}
+							//1
 							this.orderlist = []
+							var allbikeeffic = 0
+							var allmoney = 0
+							for (var i in respondata.user_count_daily) {
+								var formatetime = i.split('-')
+								var newtimes = formatetime[1] + '-' + formatetime[2]
+								datatimes.push(newtimes)
+								var orderobj = {
+									time: '',
+									num: '',
+									money: '',
+									bikeper: ''
+								}
+								// 车效
+								var bikepers = ''
+								if (respondata.urorder_count_daily[i] == 0 || respondata.bike_count_daily[i] == 0) {
+									bikepers = 0
+								} else {
+									bikepers = parseFloat(respondata.urorder_count_daily[i] / respondata.bike_count_daily[i]).toFixed(1)
+								
+								}
+								// console.log('bikepers',bikepers,typeof(bikepers))
+								allbikeeffic += parseFloat(bikepers)
+								allmoney += parseFloat(respondata.urorder_paid_amount_daily[i] / 100)
+								if (this.chartlimits) {
+									// 订单金额
+									orderobj.money = respondata.urorder_paid_amount_daily[i] / 100
+								} else {
+									orderobj.money = 0
+								}
+
+								// 下方表格使用数据
+								orderobj.time = newtimes
+								orderobj.num = respondata.urorder_count_daily[i]
+
+								orderobj.bikeper = bikepers
+								this.orderlist.push(orderobj)
+							}
+
+							//2
 							var temptime = []
 							for (var i in respondata.bcorder_ok_count_daily) {
 								temptime.push(i)
@@ -1357,13 +1458,16 @@
 								var newtimes = formatetime[1] + '-' + formatetime[2]
 								datatimes.push(newtimes)
 								var bikepers = ''
-								if (respondata.urorder_count_daily[temptime[l]] == 0 || respondata.bike_count_daily[temptime[l]] == 0) {
+								if (respondata.urorder_count_daily[temptime[l]] == 0 || respondata
+									.bike_count_daily[temptime[l]] == 0) {
 									bikepers = 0
 								} else {
-									bikepers = parseFloat(respondata.urorder_count_daily[temptime[l]] / respondata.bike_count_daily[temptime[l]]).toFixed(1)
+									bikepers = parseFloat(respondata.urorder_count_daily[temptime[l]] / respondata
+										.bike_count_daily[temptime[l]]).toFixed(1)
 								}
 								bike_count_daily.push(bikepers)
-								urorder_paid_amount_daily.push(respondata.urorder_paid_amount_daily[temptime[l]] / 100)
+								urorder_paid_amount_daily.push(respondata.urorder_paid_amount_daily[temptime[l]] /
+									100)
 							}
 							bikeeffic.data = bike_count_daily
 							ddje.data = urorder_paid_amount_daily
@@ -1378,12 +1482,12 @@
 							//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
 							LineB.categories = datatimes
 							LineB.series.push(bikeeffic)
-							console.log('bbbb',LineB)
+							console.log('bbbb', LineB)
 							_self.showLineA("canvasLineB", LineB);
 
 							LineC.categories = datatimes
 							LineC.series.push(ddje)
-							console.log('cccc',LineC)
+							console.log('cccc', LineC)
 							_self.showLineA("canvasLineC", LineC);
 
 						}
@@ -1497,47 +1601,57 @@
 										}
 										this.timeselect1 = []
 										for (let j = 0; j < acl[i].children.length; j++) {
-											if (acl[i].children[j].uri === '16.1' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.1' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.all = 1
 												this.timeselect1.push({
 													name: '自定义',
 													val: -1
 												})
 											}
-											if (acl[i].children[j].uri === "16.2" && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === "16.2" && acl[i].children[j]
+												.visitable) {
 												this.limitorder.mon = 1
 												this.timeselect1.push({
 													name: '当月',
 													val: 0
 												})
 											}
-											if (acl[i].children[j].uri === '16.3' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.3' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.day = 1
 												this.timeselect1.push({
 													name: '当日',
 													val: 10
 												})
 											}
-											if (acl[i].children[j].uri === '16.4' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.4' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.ddqst = 1
 											}
-											if (acl[i].children[j].uri === '16.5' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.5' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.ddjet = 1
 											}
-											if (acl[i].children[j].uri === '16.6' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.6' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.cxt = 1
 											}
-											if (acl[i].children[j].uri === '16.7' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.7' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.qxddf = 1
 											}
-											if (acl[i].children[j].uri === '16.8' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.8' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.czje = 1
 											}
-											if (acl[i].children[j].uri === '16.9' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.9' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.hykje = 1
 
 											}
-											if (acl[i].children[j].uri === '16.10' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.10' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.yesterday = 1
 												this.timeselect1.push({
 													name: '昨天',
@@ -1545,14 +1659,16 @@
 												})
 
 											}
-											if (acl[i].children[j].uri === '16.11' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.11' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.aweekago = 1
 												this.timeselect1.push({
 													name: '一周前',
 													val: 12
 												})
 											}
-											if (acl[i].children[j].uri === '16.12' && acl[i].children[j].visitable) {
+											if (acl[i].children[j].uri === '16.12' && acl[i].children[j]
+												.visitable) {
 												this.limitorder.aweekago = 1
 												this.timeselect1.push({
 													name: '上个月',
@@ -1887,6 +2003,7 @@
 		left: 0;
 		/* height: 20px; */
 	}
+
 	.box-title {
 		text-align: center;
 		font-size: 40upx;
@@ -1909,7 +2026,8 @@
 	.index-top {
 		position: relative;
 		padding-top: 10rpx;
-	    heigh:100vh;		   
+		heigh: 100vh;
+
 		.index-top-bg {
 			position: absolute;
 			top: 0;
@@ -1928,6 +2046,42 @@
 				margin: 4upx;
 				border: 2upx solid black;
 				border-radius: 8upx;
+
+				.grid-view {
+					margin-top: 30upx;
+
+					.flexd-posion {
+						background-color: rgb(225, 225, 225);
+					}
+
+					.view-border-bottom {
+						border-bottom: 1upx solid rgb(235, 235, 235);
+					}
+
+					.switch-head {
+						height: 90upx;
+						line-height: 90upx;
+					}
+
+					.view-flexs {
+						display: flex;
+						// left: 0;
+						width: 100%;
+						text-align: center;
+						align-items: center;
+
+						// justify-content: center;
+						.view-border-letf {
+							border-left: 1upx solid rgb(235, 235, 235);
+							height: 60upx;
+						}
+
+						view {
+							width: 30%;
+						}
+					}
+				}
+
 
 				// 新增
 				.timeselect {

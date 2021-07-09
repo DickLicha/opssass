@@ -8,7 +8,7 @@
 				<uni-collapse  accordion="true">
 				    <uni-collapse-item v-for="(i,item) in collapseData" :title="i.name" :key='i'>
 				        <uni-list>
-				            <uni-list-item @click='go(j.url)' v-for="(j,jtem) in i.data" :key="j" :title='j.name' thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"><text>{{j.val}}</text></uni-list-item>												
+				            <uni-list-item @click='go(j.url)' v-for="(j,jtem) in i.data" :key="j" :title='j.name' thumb="../../static/image/cabao.png"><text>{{j.val}}</text></uni-list-item>												
 				        </uni-list>
 				    </uni-collapse-item>
 				</uni-collapse>				
