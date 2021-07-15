@@ -53,6 +53,11 @@
 						val: '',
 						url: '/pageA/mine/mineyhq/mineyhq'
 					},
+					{
+						name: '运维人员管理',
+						val: '',
+						url: '/pageA/mine/peoplemanage/peoplemanage'
+					},
 					// {
 					// 	name: 'test',
 					// 	val: '',

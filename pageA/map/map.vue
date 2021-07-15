@@ -469,7 +469,7 @@
 						console.log('fail', res)
 					}
 				});
-			} else {
+			} else {				
 				this.locationtime = setInterval(() => {
 					this.setBikeid(this.bikeinfo.id)
 					this.getcarinfo()
