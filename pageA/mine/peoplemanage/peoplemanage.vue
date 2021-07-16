@@ -29,8 +29,8 @@
 						</view>
 					</view>
 				</uni-popup>
-				
-				<view  class='bottom-view'>
+
+				<view class='bottom-view'>
 					<view class='create-ops' @tap='createops(2)'><text>创建运维人员</text></view>
 				</view>
 			</view>
@@ -60,12 +60,12 @@
 					<view>
 						<text>账号状态</text>
 					</view>
-					<view  class='bottom-view'>
+					<view class='bottom-view'>
 						<view class='create-ops' @tap='createops(1)'><text>立即提交</text></view>
 					</view>
 				</view>
 			</view>
-			
+
 		</view>
 	</view>
 </template>
@@ -151,7 +151,7 @@
 
 				}
 			},
-			// 换电记录
+			// 运维人员列表
 			openbattery(page, num) {
 				this.setSn('*')
 				var options = {
@@ -182,11 +182,73 @@
 					// 请求失败的回调
 					console.error(err, '捕捉')
 				})
+			},
+			// 运维人员列表
+			add() {
+				var options = {
+					url: '/staff/add', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						cc_role_id:'',
+						idcno: '',
+						ops_role_id:'',
+						phone: ''
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					
+					if (res.status == 0) {
+						
+					} else {
+						uni.showToast({
+							title: res.message?res.message:'添加失败'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 运维角色
+			rolelist(type) {
+				var options = {
+					url: '/role/list', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						// "type": 10,
+						// "bike_id":'test0001',
+						"pno": 1,
+						// "bike_id":this.bikeinfo.id,
+						"psize": 1000,
+						"type": type
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('角色列表', res)
+					if (res.status == 0) {
+
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '列表为空'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
 			}
-		},
-		onLoad() {
-			this.openbattery(this.pageindex, this.pagenum)
-		}
+	},
+	onLoad() {
+		this.openbattery(this.pageindex, this.pagenum)
+		this.rolelist('CC')
+		this.rolelist('OPS')
+	}
 	}
 </script>
 
@@ -289,15 +351,16 @@
 		bottom: 20px;
 		text-align: center;
 		width: 100%;
+
 		.create-ops {
 			border-radius: 10upx;
-			background-color:rgb(57,164,241);
+			background-color: rgb(57, 164, 241);
 			color: white;
 			text-align: center;
 			width: 80%;
 			height: 80upx;
 			line-height: 80upx;
-			margin-left:calc(10% - 22upx);
+			margin-left: calc(10% - 22upx);
 		}
 	}
 </style>
