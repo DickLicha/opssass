@@ -1,0 +1,585 @@
+<template>
+	<view class='wrap'>
+		<view class='view-commons'>
+			<view>
+				<view class='add-info'>
+					<text>员工姓名：</text>
+					<input placeholder="请输入用户姓名" v-model="username" type="text">
+				</view>
+				<view class='add-info'>
+					<text>身份证号：</text>
+					<input placeholder="请输入身份证号" type="text" v-model="idcard">
+				</view>
+				<view class='add-info'>
+					<text>手机号码：</text>
+					<input type="number" placeholder="请输入手机号" v-model="phonenumber">
+				</view>
+				<view class='add-info'>
+					<text>运营角色：</text>
+					<view class='base-line' @tap='showpops(1)'>
+						<view>{{ccrole}}</view>
+						<img src="../../static/image/isxiala.png" alt="">
+					</view>
+					<!-- <input type="text" v-model="ccrole"> -->
+				</view>
+				<view class='add-info'>
+					<text>运维角色：</text>
+					<view class='base-line' @tap='showpops(2)'>
+						<view>{{opsrole}}</view>
+						<img src="../../static/image/isxiala.png" alt="">
+					</view>
+					<!-- <input type="text" v-model="opsrole"> -->
+				</view>
+				<view class='add-info'>
+					<text>账号状态：</text>
+					<view class='openstate'>
+						<text>关闭</text>
+						<switch :checked="!states" @change="changes" />
+						<text>开启</text>
+					</view>
+
+				</view>
+				<view class='bottom-view'>
+					<view class='create-ops' @tap='createops(1)'><text>立即提交</text></view>
+				</view>
+				<!-- cc角色 -->
+				<wzp-picker mode='one' ref='wzpPicker2' :defaultIndex='defaultIndex' :pickerList="popData2"
+					@onConfirm="onConfirm2"></wzp-picker>
+				<!-- ops角色 -->
+				<wzp-picker mode='one' ref='wzpPicker1' :defaultIndex='defaultIndex' :pickerList="popData1"
+					@onConfirm="onConfirm1"></wzp-picker>
+			</view>
+
+		</view>
+	</view>
+</template>
+
+<script>
+	import wzpPicker from '@/components/wzpPicker.vue';
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
+	export default {
+		data() {
+			return {
+				isadd: 1,
+				userinfo: {},
+				defaultIndex: [0],
+				popData1: [],
+				popData2: [],
+				username: '',
+				idcard: '',
+				phonenumber: '',
+				ccrole: '不授权',
+				opsrole: '不授权',
+				ccroleid: '',
+				opsroleid: '',
+				isselect: 1,
+				states: 0,
+				switchdatatotal: [],
+				switchloockdata: [],
+				resquestState: 0,
+				pageindex: 1,
+				pagenum: 20,
+				allnumber: 100,
+				type: '',
+				userid: '',
+				list: [1, 2, 3, 4],
+				itemcells: [{
+						name: '时间:',
+						val: ''
+					},
+					{
+						name: '网络状态:',
+						val: ''
+					},
+					{
+						name: '用户姓名:',
+						val: ''
+					},
+					{
+						name: '用户手机:',
+						val: ''
+					},
+					{
+						name: '失败原因:',
+						val: ''
+					},
+				]
+			}
+		},
+		components: {
+			wzpPicker
+		},
+		computed: mapState(['bikeinfo','opsinfo']),
+		methods: {
+			...mapMutations(['setSn', 'setBikeid']),
+			showpops(type) {
+				if (type == 1) {
+					this.$refs.wzpPicker1.showPicker();
+				} else {
+					this.$refs.wzpPicker2.showPicker();
+				}
+			},
+			// 编辑用户
+			edituser() {
+				this.type = ''
+				this.isadd = false
+				this.isselect = 2
+				this.username = this.userinfo.name
+				this.idcard = this.userinfo.idcno
+				this.phonenumber = this.userinfo.phone
+				this.ccrole = this.userinfo.cc_role_name
+				this.opsrole = this.userinfo.ops_role_name
+				this.states = this.userinfo.state
+				this.ccroleid = this.userinfo.cc_role_id
+				this.opsroleid = this.userinfo.ops_role_id
+			},
+			//删除用户
+			deluser() {
+				uni.showModal({
+					title: '删除',
+					content: '确认删除该用户？',
+					showCancel: true,
+					cancelText: '取消',
+					confirmText: '删除',
+					success: res => {
+						if (res.confirm) {
+							this.setBikeid(this.userinfo.id)
+							var options = {
+								url: '/staff/del', //请求接口
+								method: 'POST', //请求方法全部大写，默认GET
+								context: '',
+								data: {
+									// "id": this.userinfo.id,
+								}
+							}
+							this.$httpReq(options).then((res) => {
+								// 请求成功的回调
+								// res为服务端返回数据的根对象
+								console.log('删除信息', res)
+								this.setBikeid('*')
+								if (res.status == 0) {
+									uni.showToast({
+										title: '删除用户成功'
+									});
+									this.type = ''
+									this.openbattery(this.pageindex, this.pagenum)
+								} else {
+									uni.showToast({
+										title: '删除失败'
+									});
+								}
+							}).catch((err) => {
+								// 请求失败的回调
+								console.error(err, '捕捉')
+							})
+						} else {
+
+						}
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+
+			},
+			togglePopup(type) {
+				this.type = type
+
+			},
+			changes(e) {
+                console.log(4444,e) 
+				if(e.target.value){
+				  this.states=0	
+				}else{
+					this.states=1
+				}
+			},
+			createops(index) { //2是创建运维人员，1是执行add
+				//add接口
+				if (index == 1) {
+					var showtoasts = ''
+					if (this.username == '') {
+						uni.showToast({
+							title: '请输入姓名'
+						})
+						return
+					} else if (this.idcard == '') {
+						uni.showToast({
+							title: '请输入身份证号'
+						})
+						return
+					} else if (this.phonenumber == '') {
+						uni.showToast({
+							title: '请输入手机号'
+						})
+						return
+					} else {
+						this.add()
+					}
+				}
+				if (index == 2) {
+					this.isadd = true
+					this.username = ''
+					this.idcard = ''
+					this.phonenumber = ''
+					this.ccrole = ''
+					this.opsrole = ''
+					this.states = ''
+					this.ccroleid = ''
+					this.opsroleid = ''
+				}
+				this.isselect = index
+			},
+			detilpop(item, i, type) {
+				this.type = type
+				this.userinfo = item
+				// this.itemcells[0].val = item.time
+				// this.itemcells[1].val = item.netstatus
+				// this.itemcells[2].val = item.username
+				// this.itemcells[3].val = item.phone
+				// this.itemcells[4].val = item.errormsg
+			},
+			loadMore() {
+				if (this.resquestState < 2) {
+					if (this.pageindex < parseInt(parseInt(this.allnumber) / this.pageindex) + 1) {
+						// this.getartlist(this.pageindex, 10, 'add')
+						this.openbattery(this.pageindex, this.pagenum)
+						this.pageindex += 1
+					} else {
+						// this.resquestState = res.data.list.length == 10 ? 0 : 2
+						this.resquestState = 2
+						console.log('到底了！！！！')
+					}
+
+				}
+			},
+			// 运维人员列表
+			openbattery(page, num) {
+				this.setSn('*')
+				var options = {
+					url: '/staff/list', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						"pno": 1,
+						"psize": 1000
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('运维人员', res)
+					this.allnumber = res.total
+					if (res.status == 0) {
+						// this.switchdatatotal = this.switchdatatotal.concat(res.list)
+						this.switchdatatotal = res.list
+					} else {
+						uni.showToast({
+							title: '无记录'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 添加或者编辑运维人员
+			add() {
+				var url = ''
+				console.log(2222,this.isadd)
+				if (this.isadd==1) {
+					url = '/staff/add'
+					this.setBikeid("*")
+				} else if(this.isadd==2) {
+					this.setBikeid(this.opsinfo.id)
+					url = '/staff/update'
+				}
+				var options = {
+					url: url, //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						name: this.username,
+						cc_role_id: this.ccroleid,
+						idcno: this.idcard,
+						ops_role_id: this.opsroleid,
+						phone: this.phonenumber,
+						state: this.states
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+
+					if (res.status == 0) {
+						this.openbattery()
+						setTimeout(()=>{
+							uni.navigateBack({
+								delta: 1
+							});
+						},2000)
+						uni.showToast({
+							title: res.message ? res.message : '成功'
+						});
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '失败'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			// 运维角色
+			rolelist(type) {
+				var options = {
+					url: '/role/list', //请求接口
+					method: 'POST', //请求方法全部大写，默认GET
+					context: '',
+					data: {
+						// "type": 10,
+						// "bike_id":'test0001',
+						"pno": 1,
+						// "bike_id":this.bikeinfo.id,
+						"psize": 1000,
+						"type": type
+					}
+				}
+				this.$httpReq(options).then((res) => {
+					// 请求成功的回调
+					// res为服务端返回数据的根对象
+					console.log('角色列表', res)
+					if (res.status == 0) {
+						console.log('type', type)
+						if (type == "OPS") {
+							this.popData2 = res.list.map((item, index) => {
+								return {
+									label: item.name,
+									val: item.id
+								}
+							})
+						} else {
+							this.popData1 = res.list.map((item, index) => {
+								return {
+									label: item.name,
+									val: item.id
+								}
+							})
+						}
+					} else {
+						uni.showToast({
+							title: res.message ? res.message : '列表为空'
+						});
+					}
+				}).catch((err) => {
+					// 请求失败的回调
+					console.error(err, '捕捉')
+				})
+			},
+			onConfirm1(e) {
+				console.log(11111, this.popData1, this.popData2)
+				this.ccroleid = this.popData1[0].val
+				this.ccrole = this.popData1[0].label
+			},
+			onConfirm2(e) {
+				// console.log(2222,this.popData1,this.popData2)
+				this.opsroleid = this.popData2[0].val
+				this.opsrole = this.popData2[0].label
+			},
+		},
+		onLoad(e) {
+			this.isadd=e.type
+			this.openbattery(this.pageindex, this.pagenum)
+			this.rolelist('CC')
+			this.rolelist('OPS')
+			if(e.type==2){
+				this.username =this.opsinfo.name
+				this.idcard =this.opsinfo.idcno
+				this.phonenumber =this.opsinfo.phone
+				this.ccrole =this.opsinfo.cc_role_name
+				this.opsrole =this.opsinfo.ops_role_name
+				this.states =this.opsinfo.state
+				this.ccroleid =this.opsinfo.cc_role_id
+				this.opsroleid =this.opsinfo.ops_role_id
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+	.listscrow {
+		height: calc(100vh - 100upx);
+	}
+
+	.right-view {
+		color: green
+	}
+
+	.wrong-view {
+		color: red
+	}
+
+	.wrap {
+		padding-top: 1upx;
+		// height: 100vh;
+		background-color: rgb(245, 245, 245);
+
+		.sechead {
+			margin-top: 8upx;
+			display: flex;
+			justify-content: space-around;
+
+			.sectitle {
+				border: 2upx solid black;
+				border-radius: 6upx;
+				height: 70upx;
+				line-height: 70upx;
+				width: 120upx;
+				text-align: center;
+				color: rgb(50, 50, 50);
+				border-color: rgb(50, 50, 50);
+			}
+
+			.selectclass {
+				background-color: rgb(26, 173, 25);
+				color: white;
+				border-color: white;
+			}
+		}
+
+		.view-commons {
+			margin: 10upx 22upx;
+			position: relative;
+			background-color: white;
+
+			.switch-head {
+				height: 90upx;
+				line-height: 90upx;
+			}
+
+			.center-box {
+				width: 500upx;
+				// height: 350upx;
+				text-align: left;
+				margin: 40upx;
+
+				.btn-view {
+					display: flex;
+					justify-content: space-between;
+					text-align: center;
+					color: white;
+
+					.edit-btn {
+						background-color: #2479b7;
+					}
+
+					.del-btn {
+						background-color: #9c2323;
+					}
+
+					.pop-btn {
+						// background-color: green;
+						border: 1px solid white;
+						border-radius: 10upx;
+						height: 70upx;
+						width: 40%;
+						line-height: 70upx;
+					}
+				}
+
+
+				.list-item {
+					height: 70upx;
+					line-height: 70upx;
+
+					.second-text {
+						margin-left: 24upx
+					}
+				}
+			}
+
+			.flexd-posion {
+				background-color: rgb(225, 225, 225);
+			}
+
+			.view-border-bottom {
+				border-bottom: 1upx solid rgb(235, 235, 235);
+			}
+
+			.view-flexs {
+				display: flex;
+				// left: 0;
+				width: 100%;
+				text-align: center;
+				align-items: center;
+
+				// justify-content: center;
+				.view-border-letf {
+					border-left: 1upx solid rgb(235, 235, 235);
+				}
+
+				view {
+					width: 30%;
+				}
+			}
+		}
+	}
+
+	.bottom-view {
+		position: fixed;
+		bottom: 20px;
+		text-align: center;
+		width: 100%;
+
+		.create-ops {
+			border-radius: 10upx;
+			background-color: rgb(57, 164, 241);
+			color: white;
+			text-align: center;
+			width: 80%;
+			height: 80upx;
+			line-height: 80upx;
+			margin-left: calc(10% - 22upx);
+		}
+	}
+
+	.add-info {
+		display: flex;
+		margin-top: 24upx;
+
+		text {
+			font-size: 34upx;
+			// color: $erji-biaoti-color;
+		}
+
+		input {
+			margin-left: 30upx;
+		}
+
+		.openstate {
+			margin-left: 30upx;
+
+			text {
+				font-size: 28upx;
+				color: $erji-biaoti-color;
+			}
+		}
+
+		.base-line {
+			color: #515151;
+			display: flex;
+			justify-content: space-between;
+			margin-left: 30upx;
+			border-bottom: solid 1px #515151;
+			width: 200upx;
+
+			image {
+				width: 34upx;
+				height: 34upx;
+			}
+		}
+	}
+</style>
