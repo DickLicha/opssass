@@ -11,21 +11,22 @@
 					</view>
 				</view>
 				<scroll-view>
-					<view class='view-flexs view-border-bottom' v-for="(item,i) in switchdatatotal" :key='i'>
-						<view>{{item.date}}</view>
-						<view class='view-border-letf'>{{item.total_count}}</view>
-						<view class='view-border-letf'>{{item.valid_count}}</view>
-						<view class='view-border-letf'>{{item.offic}}%</view>
+					<view class='view-flexs view-border-bottom' v-for="(item,i) in switchdatatotal" :key='i'
+						@tap="detilpop(item,i,'middle-list')">
+						<view>{{item.name}}</view>
+						<view class='view-border-letf'>{{item.cc_role_name}}</view>
+						<view class='view-border-letf'>{{item.ops_role_name}}</view>
+						<view class='view-border-letf'>{{item.creator_name}}</view>
 					</view>
 					<!-- <uni-load-more :loadingType="resquestState"></uni-load-more> -->
 				</scroll-view>
 
 				<uni-popup :show="type ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
+					<!-- <uni-popup :show="type ==='middle-list'" position="insert"   @hidePopup="togglePopup('')"> -->
 					<view :scroll-y="true" class="uni-center center-box">
-						<view v-for="(item, index) in itemcells" :key="index" class="list-item">
-							<!-- <item-cell :itemdata="faulttype" type='4' :border='borders'></item-cell> -->
-							<text>{{item.name}}</text>
-							<text class='second-text'>{{item.val}}</text>
+						<view class='btn-view'>
+							<view class='pop-btn edit-btn' @tap='edituser'><text>编辑</text></view>
+							<view class='pop-btn del-btn' @tap='deluser'><text>删除</text></view>
 						</view>
 					</view>
 				</uni-popup>
@@ -37,32 +38,52 @@
 
 			<view v-if='isselect==2'>
 				<view>
-					<view>
-						<text>员工姓名</text>
-						<input type="text">
+					<view class='add-info'>
+						<text>员工姓名：</text>
+						<input placeholder="请输入用户姓名" v-model="username" type="text">
 					</view>
-					<view>
-						<text>身份证号</text>
-						<input type="text">
+					<view class='add-info'>
+						<text>身份证号：</text>
+						<input placeholder="请输入身份证号" type="text" v-model="idcard">
 					</view>
-					<view>
-						<text>手机号码</text>
-						<input type="text">
+					<view class='add-info'>
+						<text>手机号码：</text>
+						<input type="number" placeholder="请输入手机号" v-model="phonenumber">
 					</view>
-					<view>
-						<text>运营角色</text>
-						<input type="text">
+					<view class='add-info'>
+						<text>运营角色：</text>
+						<view class='base-line' @tap='showpops(1)'>
+							<view>{{ccrole}}</view>
+							<img src="../../../static/image/isxiala.png" alt="">
+						</view>
+						<!-- <input type="text" v-model="ccrole"> -->
 					</view>
-					<view>
-						<text>运维角色</text>
-						<input type="text">
+					<view class='add-info'>
+						<text>运维角色：</text>
+						<view class='base-line' @tap='showpops(2)'>
+							<view>{{opsrole}}</view>
+							<img src="../../../static/image/isxiala.png" alt="">
+						</view>
+						<!-- <input type="text" v-model="opsrole"> -->
 					</view>
-					<view>
-						<text>账号状态</text>
+					<view class='add-info'>
+						<text>账号状态：</text>
+						<view class='openstate'>
+							<text>关闭</text>
+							<switch :checked="!states" @change="changes" />
+							<text>开启</text>
+						</view>
+
 					</view>
 					<view class='bottom-view'>
 						<view class='create-ops' @tap='createops(1)'><text>立即提交</text></view>
 					</view>
+					<!-- cc角色 -->
+					<wzp-picker mode='one' ref='wzpPicker2' :defaultIndex='defaultIndex' :pickerList="popData2"
+						@onConfirm="onConfirm2"></wzp-picker>
+					<!-- ops角色 -->
+					<wzp-picker mode='one' ref='wzpPicker1' :defaultIndex='defaultIndex' :pickerList="popData1"
+						@onConfirm="onConfirm1"></wzp-picker>
 				</view>
 			</view>
 
@@ -74,6 +95,7 @@
 	import UniLoadMore from '@/components/load-more.vue'
 	import itemCell from '@/components/item-cell/item-cell.vue'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
+	import wzpPicker from '@/components/wzpPicker.vue';
 	import {
 		mapState,
 		mapMutations
@@ -81,7 +103,20 @@
 	export default {
 		data() {
 			return {
+				isadd:true,
+				userinfo: {},
+				defaultIndex: [0],
+				popData1: [],
+				popData2: [],
+				username: '',
+				idcard: '',
+				phonenumber: '',
+				ccrole: '不授权',
+				opsrole: '不授权',
+				ccroleid: '',
+				opsroleid: '',
 				isselect: 1,
+				states: 0,
 				switchdatatotal: [],
 				switchloockdata: [],
 				resquestState: 0,
@@ -117,25 +152,128 @@
 		components: {
 			UniLoadMore,
 			itemCell,
-			uniPopup
+			uniPopup,
+			wzpPicker
 		},
 		computed: mapState(['bikeinfo']),
 		methods: {
-			...mapMutations(['setSn']),
+			...mapMutations(['setSn', 'setBikeid','setOpsinfo']),
+			showpops(type) {
+				if (type == 1) {
+					this.$refs.wzpPicker1.showPicker();
+				} else {
+					this.$refs.wzpPicker2.showPicker();
+				}
+			},
+			// 编辑用户
+			edituser() {
+				this.type=''
+				this.isadd=false
+				uni.navigateTo({
+					url: '/pageA/editaddops/editaddops?type=2',
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
+				// this.isselect = 2
+				// this.username =this.userinfo.name
+				// this.idcard =this.userinfo.idcno
+				// this.phonenumber =this.userinfo.phone
+				// this.ccrole =this.userinfo.cc_role_name
+				// this.opsrole =this.userinfo.ops_role_name
+				// this.states =this.userinfo.state
+				// this.ccroleid =this.userinfo.cc_role_id
+				// this.opsroleid =this.userinfo.ops_role_id
+			},
+			//删除用户
+			deluser() {
+				uni.showModal({
+					title: '删除',
+					content: '确认删除该用户？',
+					showCancel: true,
+					cancelText: '取消',
+					confirmText: '删除',
+					success: res => {
+						if (res.confirm) {
+							this.setBikeid(this.userinfo.id)
+							var options = {
+								url: '/staff/del', //请求接口
+								method: 'POST', //请求方法全部大写，默认GET
+								context: '',
+								data: {
+									// "id": this.userinfo.id,
+								}
+							}
+							this.$httpReq(options).then((res) => {
+								// 请求成功的回调
+								// res为服务端返回数据的根对象
+								console.log('删除信息', res)
+								this.setBikeid('*')
+								if (res.status == 0) {
+									uni.showToast({
+										title: '删除用户成功'
+									});
+									this.type = ''
+									this.openbattery(this.pageindex, this.pagenum)
+								} else {
+									uni.showToast({
+										title: '删除失败'
+									});
+								}
+							}).catch((err) => {
+								// 请求失败的回调
+								console.error(err, '捕捉')
+							})
+						} else {
+
+						}
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+
+			},
 			togglePopup(type) {
 				this.type = type
 
 			},
-			createops(index) {
-				this.isselect = index
+			createops(index) {//2是创建运维人员，1是执行add
+				//add接口
+				if (index == 1) {
+					var showtoasts = ''
+					if (this.username == '') {
+						uni.showToast({
+							title: '请输入姓名'
+						})
+						return
+					} else if (this.idcard == '') {
+						uni.showToast({
+							title: '请输入身份证号'
+						})
+						return
+					} else if (this.phonenumber == '') {
+						uni.showToast({
+							title: '请输入手机号'
+						})
+						return
+					} else {
+						this.add()
+					}
+				}
+				if(index==2){
+					// 1
+                    uni.navigateTo({
+                    	url: '/pageA/editaddops/editaddops?type=1',
+                    	success: res => {},
+                    	fail: () => {},
+                    	complete: () => {}
+                    });
+				}	
 			},
 			detilpop(item, i, type) {
 				this.type = type
-				this.itemcells[0].val = item.time
-				this.itemcells[1].val = item.netstatus
-				this.itemcells[2].val = item.username
-				this.itemcells[3].val = item.phone
-				this.itemcells[4].val = item.errormsg
+				this.userinfo = item
+				this.setOpsinfo(item)
 			},
 			loadMore() {
 				if (this.resquestState < 2) {
@@ -159,11 +297,8 @@
 					method: 'POST', //请求方法全部大写，默认GET
 					context: '',
 					data: {
-						// "type": 10,
-						// "bike_id":'test0001',
-						"pno": page,
-						// "bike_id":this.bikeinfo.id,
-						"psize": num
+						"pno": 1,
+						"psize": 1000
 					}
 				}
 				this.$httpReq(options).then((res) => {
@@ -172,7 +307,8 @@
 					console.log('运维人员', res)
 					this.allnumber = res.total
 					if (res.status == 0) {
-						this.switchloockdata = this.switchloockdata.concat(res.list)
+						// this.switchdatatotal = this.switchdatatotal.concat(res.list)
+						this.switchdatatotal = res.list
 					} else {
 						uni.showToast({
 							title: '无记录'
@@ -183,72 +319,10 @@
 					console.error(err, '捕捉')
 				})
 			},
-			// 运维人员列表
-			add() {
-				var options = {
-					url: '/staff/add', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						cc_role_id:'',
-						idcno: '',
-						ops_role_id:'',
-						phone: ''
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					
-					if (res.status == 0) {
-						
-					} else {
-						uni.showToast({
-							title: res.message?res.message:'添加失败'
-						});
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
-			},
-			// 运维角色
-			rolelist(type) {
-				var options = {
-					url: '/role/list', //请求接口
-					method: 'POST', //请求方法全部大写，默认GET
-					context: '',
-					data: {
-						// "type": 10,
-						// "bike_id":'test0001',
-						"pno": 1,
-						// "bike_id":this.bikeinfo.id,
-						"psize": 1000,
-						"type": type
-					}
-				}
-				this.$httpReq(options).then((res) => {
-					// 请求成功的回调
-					// res为服务端返回数据的根对象
-					console.log('角色列表', res)
-					if (res.status == 0) {
-
-					} else {
-						uni.showToast({
-							title: res.message ? res.message : '列表为空'
-						});
-					}
-				}).catch((err) => {
-					// 请求失败的回调
-					console.error(err, '捕捉')
-				})
-			}
-	},
-	onLoad() {
-		this.openbattery(this.pageindex, this.pagenum)
-		this.rolelist('CC')
-		this.rolelist('OPS')
-	}
+		},
+		onLoad() {
+			this.openbattery(this.pageindex, this.pagenum)
+		}
 	}
 </script>
 
@@ -305,9 +379,34 @@
 
 			.center-box {
 				width: 500upx;
-				height: 350upx;
+				// height: 350upx;
 				text-align: left;
 				margin: 40upx;
+
+				.btn-view {
+					display: flex;
+					justify-content: space-between;
+					text-align: center;
+					color: white;
+
+					.edit-btn {
+						background-color: #2479b7;
+					}
+
+					.del-btn {
+						background-color: #9c2323;
+					}
+
+					.pop-btn {
+						// background-color: green;
+						border: 1px solid white;
+						border-radius: 10upx;
+						height: 70upx;
+						width: 40%;
+						line-height: 70upx;
+					}
+				}
+
 
 				.list-item {
 					height: 70upx;
@@ -361,6 +460,43 @@
 			height: 80upx;
 			line-height: 80upx;
 			margin-left: calc(10% - 22upx);
+		}
+	}
+
+	.add-info {
+		display: flex;
+		margin-top: 24upx;
+
+		text {
+			font-size: 34upx;
+			// color: $erji-biaoti-color;
+		}
+
+		input {
+			margin-left: 30upx;
+		}
+
+		.openstate {
+			margin-left: 30upx;
+
+			text {
+				font-size: 28upx;
+				color: $erji-biaoti-color;
+			}
+		}
+
+		.base-line {
+			color: #515151;
+			display: flex;
+			justify-content: space-between;
+			margin-left: 30upx;
+			border-bottom: solid 1px #515151;
+			width: 200upx;
+
+			image {
+				width: 34upx;
+				height: 34upx;
+			}
 		}
 	}
 </style>

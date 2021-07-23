@@ -211,6 +211,15 @@
                 }
                 
                 }
+                ,{
+                    "path" : "editaddops/editaddops",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "运维人员管理",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 		}, {
 			"root": "pageB",

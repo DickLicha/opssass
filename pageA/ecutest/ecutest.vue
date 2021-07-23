@@ -310,6 +310,7 @@
 						uni.hideLoading()
 					}, 2000)
 					if(this.ecutype == 'WA-209D'){
+						console.log('dowhat',item.oper)
 						ble.openLock('', item.oper, function(res) {
 							console.log('蓝牙操作', res)
 							// loadtime = res.loadtime

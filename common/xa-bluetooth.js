@@ -730,7 +730,8 @@ const _ctrl = (flag) => {
 	else if (flag === 'close') //设防
 		sendData = '03 00 01 01 01';
 	else if (flag === 'dmopen') //撤防
-		sendData = '03 00 01 01 00';
+		// sendData = '03 00 01 01 00';
+		sendData = '03 00 02 01 00';
 	else if (flag === 'dmclose') //电门锁关闭
 		sendData = '03 00 02 01 01';
 	else if (flag === 'gps') //gps

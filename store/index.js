@@ -40,6 +40,7 @@ const store = new Vuex.Store({
 		blueconectstate:0,
 		movebikearr:[],
 		appid:'',
+		opsinfo:{}
 	},
 	mutations: {
 		login(state, provider) {
@@ -136,6 +137,9 @@ const store = new Vuex.Store({
 		},
 		setAppid(state,appid){
 			state.appid=appid
+		},
+		setOpsinfo(state,opsinfo){
+			state.opsinfo=opsinfo
 		}
 		
 	},
