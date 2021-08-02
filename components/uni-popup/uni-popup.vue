@@ -118,6 +118,15 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+	.uni-popup-middles {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 		/* top: 30%; */
 		left: 50%;
 		transform: translate(-50%, -50%);

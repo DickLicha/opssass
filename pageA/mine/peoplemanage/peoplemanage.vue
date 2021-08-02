@@ -21,7 +21,7 @@
 					<!-- <uni-load-more :loadingType="resquestState"></uni-load-more> -->
 				</scroll-view>
 
-				<uni-popup :show="type ==='middle-list'" position="middle" mode="fixed" @hidePopup="togglePopup('')">
+				<uni-popup :show="type ==='middle-list'" position="middles" mode="fixed" @hidePopup="togglePopup('')">
 					<!-- <uni-popup :show="type ==='middle-list'" position="insert"   @hidePopup="togglePopup('')"> -->
 					<view :scroll-y="true" class="uni-center center-box">
 						<view class='btn-view'>
