@@ -668,94 +668,144 @@
 					});
 				}
 			},
-			// 自定义-1，当月0，当日10，昨天11，一周前12，上个月1
+		    // 时间日期相加减			
 			timecalc(type) {
-				if (type == -1) {
-					return
-				}
+				// 当月0，当日10，昨天11，一周前12，上个月1
 				var date = new Date()
 				var seperator1 = "-";
 				var seperator2 = ":";
-				var daygetday = date.getDate()
-				// var daygetday=5
-				console.log('date.getMonth()',date.getMonth())
-				var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 - type;
+				var daygetday = date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
+				var month0 = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()
 				var startyear = date.getFullYear()
-				console.log('month0',month0)
-				if (month0 == '00' || month0 == '0-1' || month0 == '0-2' || month0 == '0-3' || month0 == '0-4' || month0 == '0-5') {
-					month0 = date.getMonth() + 13 - type < 10 ? "0" + (date.getMonth() + 13 - type) : date.getMonth() + 13 - type;
-					startyear = startyear - 1
+				var tadaytemp = startyear + seperator1 + month0 + seperator1 + daygetday
+				var days = ''
+				this.value=tadaytemp
+				switch (type) {
+					case -1:
+					    return;
+					case 0:
+						this.start_time = startyear + seperator1 + month0 + seperator1 + '01'
+						this.end_time = tadaytemp
+						return;
+					case 1:
+						days = 30
+						break;
+					case 10:
+						this.start_time = tadaytemp
+						this.end_time = tadaytemp
+						return;
+					case 11:
+						days = 1
+						break;
+					case 12:
+						days = 7
+						break;
 				}
-				var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-				var strDate = daygetday < 10 ? "0" + daygetday : daygetday;
-				// 上个月的天数
-				var day = new Date(date.getFullYear(), date.getMonth(), 0)
-				if (type == 10 || type == 11 || type == 12 || type == 1) {
-					var month01 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-					// 当日
-					if (type == 10) {
-						var strDate0 = daygetday < 10 ? "0" + daygetday : daygetday;
-						this.start_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate0
-						this.end_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate0
-					}
-					// 昨天
-					if (type == 11) {
-						var strDate0 = daygetday - 1 < 10 ? "0" + (daygetday - 1) : daygetday - 1;
-						var strDate1 = daygetday - 1 < 10 ? "0" + (daygetday - 1) : daygetday - 1;
-						var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-						console.log(33333,startyear)
-						// 如果是这个月1号
-						if (strDate1 == '00') {
-							strDate0 = day.getDate()
-							strDate1 = day.getDate()
-							// 月份减1
-							month02 = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth();
-							// 月份减一,如果是一月份年份在减一
-							if (month02 == '00') {
-								startyear = startyear - 1
-								month02 = 12
-							}
-						}
-						this.end_time = date.getFullYear() + seperator1 + month02 + seperator1 + strDate1
-						this.start_time = date.getFullYear() + seperator1 + month02 + seperator1 + strDate0
-					}
-					// 一周前
-					if (type == 12) {
-						var strDate0 = daygetday - 7 < 10 ? "0" + (daygetday - 7) : daygetday - 7;
-						var strDate1 = daygetday < 10 ? "0" + daygetday : daygetday;
-						this.end_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate1
-						var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-						if (daygetday < 7) {
-							strDate0 = day.getDate() + daygetday - 6
-							month02 = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth();
-							console.log(6666, day.getDate() + daygetday, strDate0)
-							if (month01 == '01') {
-								startyear = startyear - 1
-								month01 = 12
-							}
-						}
-						this.start_time = startyear + seperator1 + month02 + seperator1 + strDate0
-					}
-					if (type == 1) {
-						var month03 = date.getMonth() < 10 ? "0" + (date.getMonth()) : date.getMonth();
-						this.start_time = startyear + seperator1 + month03 + seperator1 + '01'
-						this.end_time = date.getFullYear() + seperator1 + month03 + seperator1 + day.getDate()
-					}
-
-				} else {
-					this.start_time = startyear + seperator1 + month0 + seperator1 + "01"
-					if (type == 0) {
-						this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate
-					} else {
-						this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + "01"
-					}
-				}
-
-				this.value = date.getFullYear() + seperator1 + month1 + seperator1 + '01' +
-					" " + '00' + seperator2 + '00' +
-					seperator2 + '00'
-				console.log('time', this.start_time)
+				// var dateTemp = dateTemp.split("-");
+				var nDate = new Date(month0 + '-' + daygetday + '-' + startyear); //转换为MM-DD-YYYY格式  
+				var millSeconds = Math.abs(nDate) - (days * 24 * 60 * 60 * 1000);
+				var rDate = new Date(millSeconds);
+				var year = rDate.getFullYear();
+				var month = rDate.getMonth() + 1;
+				if (month < 10) month = "0" + month;
+				var date = rDate.getDate();
+				if (date < 10) date = "0" + date;
+				
+				this.end_time = tadaytemp
+				this.start_time = year + "-" + month + "-" + date
+				// return (year + "-" + month + "-" + date);
 			},
+			
+			// 自定义-1，当月0，当日10，昨天11，一周前12，上个月1
+			// timecalcs(type) {
+			// 	// this.getNewDays(type)
+			// 	if (type == -1) {
+			// 		return
+			// 	}
+				
+			// 	var date = new Date()
+			// 	var seperator1 = "-";
+			// 	var seperator2 = ":";
+			// 	var daygetday = date.getDate()
+			// 	// var daygetday=5
+			// 	console.log('date.getMonth()',date.getMonth())
+			// 	var month0 = date.getMonth() + 1 - type < 10 ? "0" + (date.getMonth() + 1 - type) : date.getMonth() + 1 - type;
+			// 	var startyear = date.getFullYear()
+			// 	console.log('month0',month0,startyear)
+			// 	if (month0 == '00' || month0 == '0-1' || month0 == '0-2' || month0 == '0-3' || month0 == '0-4' || month0 == '0-5') {
+			// 		month0 = date.getMonth() + 13 - type < 10 ? "0" + (date.getMonth() + 13 - type) : date.getMonth() + 13 - type;
+			// 		startyear = startyear - 1
+			// 	}
+			// 	var month1 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			// 	var strDate = daygetday < 10 ? "0" + daygetday : daygetday;
+			// 	// 上个月的天数
+			// 	var day = new Date(date.getFullYear(), date.getMonth(), 0)
+			// 	if (type == 10 || type == 11 || type == 12 || type == 1) {
+			// 		var month01 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			// 		// 当日
+			// 		if (type == 10) {
+			// 			var strDate0 = daygetday < 10 ? "0" + daygetday : daygetday;
+			// 			this.start_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate0
+			// 			this.end_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate0
+			// 		}
+			// 		// 昨天
+			// 		if (type == 11) {
+			// 			var strDate0 = daygetday - 1 < 10 ? "0" + (daygetday - 1) : daygetday - 1;
+			// 			var strDate1 = daygetday - 1 < 10 ? "0" + (daygetday - 1) : daygetday - 1;
+			// 			var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			// 			console.log(33333,startyear)
+			// 			// 如果是这个月1号
+			// 			if (strDate1 == '00') {
+			// 				strDate0 = day.getDate()
+			// 				strDate1 = day.getDate()
+			// 				// 月份减1
+			// 				month02 = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth();
+			// 				// 月份减一,如果是一月份年份在减一
+			// 				if (month02 == '00') {
+			// 					startyear = startyear - 1
+			// 					month02 = 12
+			// 				}
+			// 			}
+			// 			this.end_time = date.getFullYear() + seperator1 + month02 + seperator1 + strDate1
+			// 			this.start_time = date.getFullYear() + seperator1 + month02 + seperator1 + strDate0
+			// 		}
+			// 		// 一周前
+			// 		if (type == 12) {
+			// 			var strDate0 = daygetday - 7 < 10 ? "0" + (daygetday - 7) : daygetday - 7;
+			// 			var strDate1 = daygetday < 10 ? "0" + daygetday : daygetday;
+			// 			this.end_time = date.getFullYear() + seperator1 + month01 + seperator1 + strDate1
+			// 			var month02 = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+			// 			if (daygetday < 7) {
+			// 				strDate0 = day.getDate() + daygetday - 6
+			// 				month02 = date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth();
+			// 				console.log(6666, day.getDate() + daygetday, strDate0)
+			// 				if (month01 == '01') {
+			// 					startyear = startyear - 1
+			// 					month01 = 12
+			// 				}
+			// 			}
+			// 			console.log(99999,month01,startyear)
+			// 			this.start_time = startyear + seperator1 + month02 + seperator1 + strDate0
+			// 		}
+			// 		if (type == 1) {
+			// 			var month03 = date.getMonth() < 10 ? "0" + (date.getMonth()) : date.getMonth();
+			// 			this.start_time = startyear + seperator1 + month03 + seperator1 + '01'
+			// 			this.end_time = date.getFullYear() + seperator1 + month03 + seperator1 + day.getDate()
+			// 		}
+
+			// 	} else {
+			// 		this.start_time = startyear + seperator1 + month0 + seperator1 + "01"
+			// 		if (type == 0) {
+			// 			this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + strDate
+			// 		} else {
+			// 			this.end_time = date.getFullYear() + seperator1 + month1 + seperator1 + "01"
+			// 		}
+			// 	}
+			// 	this.value = date.getFullYear() + seperator1 + month1 + seperator1 + '01' +
+			// 		" " + '00' + seperator2 + '00' +
+			// 		seperator2 + '00'
+			// 	console.log('time', this.start_time)
+			// },
 			active(i, item, type) {
 				if (type == 0) {
 					this.isActive = i.val

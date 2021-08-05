@@ -13,18 +13,20 @@
 		onLaunch: function() {
 			const accountInfo = uni.getAccountInfoSync();
 			console.log(accountInfo.miniProgram.appId, '小程序 appId') // 小程序 appId
-			this.$store.commit('setAppid',accountInfo.miniProgram.appId)
-			var bluealldevice=[]
+			this.$store.commit('setAppid', accountInfo.miniProgram.appId)
+			var bluealldevice = []		
+
 			function onBluetoothDeviceFounds() {
 				return new Promise((resolve, reject) => {
 					wx.onBluetoothDeviceFound((res) => {
-						try {		
-							let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0].advertisData).slice(4, 13));
+						try {
+							let machineNO = dataTransition.encrypt(dataTransition.ab2hex(res.devices[0]
+								.advertisData).slice(4, 13));
 							// console.log("success1:", res.devices[0],machineNO);
 							// console.log("success1:", res);
-							res.machineNO=machineNO
+							res.machineNO = machineNO
 							// res.localName=res
-							bluealldevice.push(res)						
+							bluealldevice.push(res)
 						} catch (e) {
 							//TODO handle the exception
 							console.log('error', e)
@@ -35,7 +37,7 @@
 					})
 				})
 			}
-			
+
 			wx.closeBluetoothAdapter({
 				success(res) {
 					console.log('关闭蓝牙成功', res)
@@ -54,30 +56,48 @@
 											console.log(" 开始搜索设备", res);
 											// return onBluetoothDeviceFound;
 											// console.log('onBluetoothDeviceFound',onBluetoothDeviceFound())
-											onBluetoothDeviceFounds().then((val) => {
-												console.log("查询返回结果", val);
-												isok(val)
-											}).catch((err) => {
-												console.log('蓝牙reject', err)
+											onBluetoothDeviceFounds().then(
+												(val) => {
+													console.log(
+														"查询返回结果",
+														val);
+													isok(val)
+												}).catch((err) => {
+												console.log(
+													'蓝牙reject',
+													err)
 											})
-											setTimeout(()=>{
+											setTimeout(() => {
 												wx.stopBluetoothDevicesDiscovery({
-													success: (res) => {
-														console.log("关闭成功");
+													success: (
+														res
+														) => {
+														console
+															.log(
+																"关闭成功"
+																);
 													}
 												})
 												uni.setStorage({
 													key: 'bluealldevice',
 													data: bluealldevice,
 													success: res => {
-														console.log('successputdata',res)
+														console
+															.log(
+																'successputdata',
+																res
+																)
 													},
 													fail: res => {
-												        console.log('errputdata',res)
+														console
+															.log(
+																'errputdata',
+																res
+																)
 													}
-												})	
-											},8000)
-											
+												})
+											}, 8000)
+
 										},
 										fail: (res) => {
 											console.log("搜索设备失败", res);
@@ -109,7 +129,7 @@
 				}
 			})
 			var baseurl = '',
-				realuser = ''		    
+				realuser = ''
 			try {
 				baseurl = uni.getStorageSync('baseurl');
 				realuser = uni.getStorageSync('realuser');
@@ -198,13 +218,13 @@
 		onShow: function() {
 			console.log('App Show')
 		},
-		methods:{
+		methods: {
 			getutctimestring() {
 				var date = new Date()
 				var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
 					date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
 				var strs = new Date(now_utc)
-				console.log('timess',strs.valueOf().toString(16))
+				console.log('timess', strs.valueOf().toString(16))
 				return strs.valueOf().toString(16)
 			}
 		},
@@ -216,5 +236,5 @@
 
 <style>
 	@import './common/uni.css';
-	/*每个页面公共css */	
+	/*每个页面公共css */
 </style>
