@@ -1022,6 +1022,7 @@ case '10':
 								},
 							],
 						]
+						console.log(5555,this.selectcoverdata)
 						this.selectcoverdata[3] = battery_m
 						this.nearbybike(this.longitude, this.latitude)
 						break;
@@ -2274,15 +2275,15 @@ case '10':
 										distancem = 1000
 										break;
 									case 12:
-										distance = 2000
+										distance = 3000
 										distancem = 2000
 										break;
 									case 11:
-										distance = 3000
+										distance = 6000
 										distancem = 5000
 										break;
 									case 10:
-										distance = 5000
+										distance = 8000
 										distancem = 10000
 										break;
 									default:
