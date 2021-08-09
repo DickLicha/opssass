@@ -706,7 +706,20 @@
 		   			break;
 		   	}
 		   	// var dateTemp = dateTemp.split("-");
-		   	var nDate = new Date(month0 + '-' + daygetday + '-' + startyear); //转换为MM-DD-YYYY格式  
+			var iosandroid='-'
+			uni.getSystemInfo({
+				success:(res)=>{
+					if(res.platform=='android'){
+						iosandroid='-'
+					}else{
+						iosandroid='/'
+					}
+				},
+				err:(err)=>{
+					console.log(333,res)
+				}
+			})
+		   	var nDate = new Date(month0 + iosandroid + daygetday + iosandroid + startyear); //转换为MM-DD-YYYY格式  
 		   	var millSeconds = Math.abs(nDate) - (days * 24 * 60 * 60 * 1000);
 		   	var rDate = new Date(millSeconds);
 		   	var year = rDate.getFullYear();
@@ -717,7 +730,6 @@
 		   	
 		   	this.end_time = tadaytemp
 		   	this.start_time = year + "-" + month + "-" + date
-		   	// return (year + "-" + month + "-" + date);
 		   },
 			
 			// 自定义-1，当月0，当日10，昨天11，一周前12，上个月1
