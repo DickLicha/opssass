@@ -258,6 +258,13 @@
 		mapMutations
 	} from 'vuex'
 	import ble from '../common/xa-bluetooth.js'
+	
+	var QQMapWX = require('@/sdk/qqmap-wx-jssdk.min.js');
+	 
+	// 实例化API核心类
+	var qqmapsdk = new QQMapWX({
+	    key: 'FM6BZ-EVOW2-PCHUM-C4GIO-NURX7-5UB25' // 必填
+	});
 
 
 	export default {
@@ -496,10 +503,11 @@
 					}
 				});
 			} else {
-				this.locationtime = setInterval(() => {
-					this.setBikeid(this.bikeinfo.id)
-					this.getcarinfo()
-				}, 5000)
+				this.setBikeid(this.bikeinfo.id)
+				this.getcarinfo()
+				// this.locationtime = setInterval(() => {
+				// 	this.getcarinfo()
+				// }, 8000)
 			}
 			try {
 				const value = uni.getStorageSync('userinfo');
@@ -615,7 +623,10 @@
 						}
 						break;
 					case '0.3':
-						this.hidebutton = true
+						this.hidebutton = false
+						this.mapheihts = '100vh'
+						this.actives=false
+						this.scanbuttonname='导航'
 						// this.covers[0].name = res.parks[j].name
 						let tembikeinfo = {}
 						tembikeinfo.latitude = this.bikeinfo.coordinate[1]
@@ -628,8 +639,8 @@
 						this.covers[0] = tembikeinfo
 						// 设置corver初始状态
 						this.showcorverview = {
-							head: true,
-							bottom: true
+							head: false,
+							bottom: false
 						}
 						// 多边形						
 						// this.covers = []
@@ -1068,6 +1079,52 @@
 			...mapMutations(['setSn', 'setBikeid', 'setBikeinfo', 'setLongitude', 'setLatitude', 'setOrderfirstid',
 				'setOrderinfo', 'setMapcovers', 'setInginfo'
 			]),
+			routeplan(){
+				var _this=this
+				uni.getLocation({
+					type: 'wgs84',
+					success: res => {
+						qqmapsdk.direction({
+						     sig: '2FaA645Ba8IabcQYCAmxlrbqR4cX0PGb',
+						     mode: 'bicycling',
+						     from : {
+						      latitude:_this.latitude,
+						      longitude: _this.longitude,
+						     },
+						     to: {
+						      latitude: res.latitude,
+						      longitude: res.longitude,
+						     },
+						     success: function (res) {
+								 console.log('routeplan',res)
+								 var ret = res;
+								 var coors = ret.result.routes[0].polyline, pl = [];
+								 //坐标解压（返回的点串坐标，通过前向差分进行压缩）
+								 var kr = 1000000;
+								 for (var i = 2; i < coors.length; i++) {
+								   coors[i] = Number(coors[i - 2]) + Number(coors[i]) / kr;
+								 }
+								 //将解压后的坐标放入点串数组pl中
+								 for (var i = 0; i < coors.length; i += 2) {
+								   pl.push({ latitude: coors[i], longitude: coors[i + 1] })
+								 }
+								 
+								 var temppolyline={
+									 points: pl,
+									 color: '#FF0000DD',
+									 width: 4,
+									 arrowLine:true
+								 }
+								 console.log('p111',pl,_this.polyline)
+								 _this.polyline.push(temppolyline)
+							 }
+							 })
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+				
+			},
 			toggleTab(item) {
 				this.timeflag = item
 				this.$refs.dateTime.show();
@@ -1851,6 +1908,10 @@
 			},
 			// 点击创建车站
 			creatStop() {
+				if(this.type=='0.3'){
+					this.routeplan()
+					return
+				}
 				this.actives = true
 				if (this.type == '9') {
 					this.mapheihts = '35vh'

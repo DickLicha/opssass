@@ -22,7 +22,7 @@ Vue.prototype.$httpReq = request
 Vue.prototype.$store = store
 
 if (uni.getSystemInfoSync().platform !== "devtools") {
-	console.log = () => {}
+	// console.log = () => {}
 }
 
 Vue.prototype.$formatetimes = function(timestamp) {
