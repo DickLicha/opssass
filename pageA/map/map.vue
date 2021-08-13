@@ -6,46 +6,62 @@
 		<view class="page-body">
 			<view class="page-section page-section-gap">
 				<!-- <map class='map-base-view' :class="{activemap:actives}" :style="{height:(!showcorverview.bottom&&!actives&&!hidebutton||type==0.1?'100vh':'84vh')}" -->
-				<map class='map-base-view' :style="{height:mapheihts}" :scale="scale" id='firstmap' :latitude="latitude" :longitude="longitude"
-				 :markers="covers" :show-location='showLocation' :circles='circles' :include-points='includepoints' :polyline="polyline"
-				 @markertap='markclick' @controltap='mapcentionloc' :polygons='polygon' @regionchange="functionNames" @end="functionName"
-				 :controls='maploc' @tap='creatStopServ'>
+				<map class='map-base-view' :style="{height:mapheihts}" :scale="scale" id='firstmap' :latitude="latitude"
+					:longitude="longitude" :markers="covers" :show-location='showLocation' :circles='circles'
+					:include-points='includepoints' :polyline="polyline" @markertap='markclick'
+					@controltap='mapcentionloc' :polygons='polygon' @regionchange="functionNames" @end="functionName"
+					:controls='maploc' @tap='creatStopServ'>
 					<cover-image src='../../static/mapicon/center.png' class='cover-imgs'></cover-image>
 					<!-- <cover-view v-if="actives" class='movecar-view'>拖动地图选择车站</cover-view> -->
 					<cover-view v-if="showmapselect" class='map-select-view'>
 
 						<cover-view class='select-list'>
 							<!-- <cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)" :class="{'borderrights':i===isActive0}" :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view> -->
-							<cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)" :class="{'borderrights':item.issleect && i===isActive0}"
-							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[0]" :key='i' @click="active(i,item,0)"
+								:class="{'borderrights':item.issleect && i===isActive0}"
+								:style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">
+								{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[1]" :key='i' @click="active(i,item,1)" :class="{'borderrights':item.issleect && i===isActive1}"
-							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[1]" :key='i' @click="active(i,item,1)"
+								:class="{'borderrights':item.issleect && i===isActive1}"
+								:style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">
+								{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[2]" :key='i' @click="active(i,item,2)" :class="{'borderrights':item.issleect && i===isActive2}"
-							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[2]" :key='i' @click="active(i,item,2)"
+								:class="{'borderrights':item.issleect && i===isActive2}"
+								:style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">
+								{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[3]" :key='i' @click="active(i,item,3)" :class="{'borderrights':item.issleect && i===isActive3}"
-							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[3]" :key='i' @click="active(i,item,3)"
+								:class="{'borderrights':item.issleect && i===isActive3}"
+								:style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">
+								{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[4]" :key='i' @click="active(i,item,4)" :class="{'borderrights':item.issleect && i===isActive4}"
-							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[4]" :key='i' @click="active(i,item,4)"
+								:class="{'borderrights':item.issleect && i===isActive4}"
+								:style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">
+								{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[5]" :key='i' @click="active(i,item,5)" :class="{'borderrights':item.issleect && i===isActive5}"
-							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[5]" :key='i' @click="active(i,item,5)"
+								:class="{'borderrights':item.issleect && i===isActive5}"
+								:style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">
+								{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-list'>
-							<cover-view v-for="(item,i) in selectcoverdata[6]" :key='i' @click="active(i,item,6)" :class="{'borderrights':item.issleect && i===isActive6}"
-							 :style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">{{item.name}}</cover-view>
+							<cover-view v-for="(item,i) in selectcoverdata[6]" :key='i' @click="active(i,item,6)"
+								:class="{'borderrights':item.issleect && i===isActive6}"
+								:style="{color:menutitle(i,'color'),'font-weight':menutitle(i,'size'),'text-align':menutitle(i,'align')}">
+								{{item.name}}</cover-view>
 						</cover-view>
 						<cover-view class='select-sure' @click.native="selectsure">确定</cover-view>
 					</cover-view>
-					<cover-view v-show="(type==3.1 || type==3 || type==0) && inglength>0" class='movecar-view' @click='goingview'>{{ingtext}}</cover-view>
+					<cover-view v-show="(type==3.1 || type==3 || type==0) && inglength>0" class='movecar-view'
+						@click='goingview'>{{ingtext}}</cover-view>
 					<cover-view class='map-cover-view' v-if="!showcorverview.bottom&&!actives&&!hidebutton">
 						<cover-view class='scan-button-big' @click="creatStop">{{scanbuttonname}}</cover-view>
 					</cover-view>
@@ -83,9 +99,11 @@
 						</view>
 
 					</view>
-					<uni-popup :show="poptype ==='middle-list'" position="bottom" mode="fixed" @hidePopup="togglePopup('')">
+					<uni-popup :show="poptype ==='middle-list'" position="bottom" mode="fixed"
+						@hidePopup="togglePopup('')">
 						<view :scroll-y="true" class="uni-center center-box">
-							<view v-for="(item, index) in itemcells" :key="index" @click="selectLev(item)" style="width:180upx;height: 70upx;">
+							<view v-for="(item, index) in itemcells" :key="index" @click="selectLev(item)"
+								style="width:180upx;height: 70upx;">
 								<text>{{item}}</text>
 							</view>
 						</view>
@@ -147,7 +165,7 @@
 								<!-- </view> -->
 							</view>
 						</view>
-				
+
 						<view class='edit-area'>
 							<view class='edit-wh'>
 								<view class='edit-area-inner'>
@@ -168,7 +186,7 @@
 									<img src="../../static/image/jian.png" alt="" @tap='calcsize(3)'>
 								</view>
 							</view>
-				
+
 							<view class='creatStopServ'>
 								<view class='leftBtn btn' @tap='editbtnname(100,1)'>{{stop1name}}</view>
 								<!-- <button type='primary' class='leftBtn btn' @click="cleanPoint">清空锚点</button> -->
@@ -178,8 +196,8 @@
 								<view class='create-btn-text' @tap='finishstop'>完成创建</view>
 							</view>
 						</view>
-				
-				
+
+
 					</view>
 				</view>
 				<!-- 地图时间选择 -->
@@ -188,8 +206,8 @@
 						<view class='wenzi'>开始</view>
 						<view>{{start_time}}</view>
 					</view>
-					<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" value="2020-01-01 00:00:00" :isAll="true"
-					 :current="false"></yu-datetime-picker>
+					<yu-datetime-picker @confirm="onConfirm" startYear="2015" ref="dateTime" value="2020-01-01 00:00:00"
+						:isAll="true" :current="false"></yu-datetime-picker>
 					<view class='timedetil' @tap="toggleTab(2)">
 						<view class='wenzi'>结束</view>
 						<view>{{end_time}}</view>
@@ -197,7 +215,8 @@
 					<!-- <calendar @change="change" :startDate="initStartDate" :endDate="initEndDate" :daysCount="daysCount"></calendar> -->
 				</view>
 				<view v-if="showcorverview.bottom" style='margin-top: 10upx;'>
-					<base-input @scanCode='scanCode(1)' @goPage='goNewPage' :title='inputval' @hidekeygo='manualsgo'></base-input>
+					<base-input @scanCode='scanCode(1)' @goPage='goNewPage' :title='inputval' @hidekeygo='manualsgo'>
+					</base-input>
 				</view>
 
 			</view>
@@ -210,7 +229,13 @@
 		loadtime = 1000,
 		distancem = 10,
 		distance = 200,
-		str0='',str1='',str2='',str3='',str4='',str5='',str6=''
+		str0 = '',
+		str1 = '',
+		str2 = '',
+		str3 = '',
+		str4 = '',
+		str5 = '',
+		str6 = ''
 	import scanbutton from '@/components/scanbutton.vue'
 	import baseheader from '@/components/basehead/basehead.vue'
 	import baseInput from '@/components/baseinput/baseinput.vue'
@@ -227,6 +252,12 @@
 	} from 'vuex'
 	import ble from '../../common/xa-bluetooth.js'
 
+	var QQMapWX = require('@/sdk/qqmap-wx-jssdk.min.js');
+
+	// 实例化API核心类
+	var qqmapsdk = new QQMapWX({
+		key: 'FM6BZ-EVOW2-PCHUM-C4GIO-NURX7-5UB25' // 必填
+	});
 
 	export default {
 		components: {
@@ -242,6 +273,8 @@
 		]),
 		data() {
 			return {
+				dhlongitude:'',
+				dhlatitude:'',
 				morestop: false,
 				anglecenter1: [], //用户站的中心点坐标
 				anglecenter2: [], //运维站的中心点坐标
@@ -256,8 +289,8 @@
 				stoprealheigh1: 1, //当前用户站高度
 				stoprealwidth2: 1, //当前运维站宽度
 				stoprealheigh2: 1, //当前运维站高度
-				includepoints:[],
-				timeflag:0,
+				includepoints: [],
+				timeflag: 0,
 				start_time: '2020-03-20 00:00:00',
 				end_time: "2020-03-20 23:00:00",
 				mapheihts: '50vh',
@@ -310,59 +343,6 @@
 				mapinfo: null,
 				scale: '18', //缩放级别5-18
 				showLocation: true,
-				// selectcoverdata: [
-				// 	[{
-				// 			name: '全部换电',
-				// 			id: '0',
-				// 			val: 100,
-				// 		},
-				// 		{
-				// 			name: '35%以下',
-				// 			id: '1',
-				// 			val: 35,
-				// 		},
-				// 		{
-				// 			name: '30%以下',
-				// 			id: '2',
-				// 			val: 30,
-				// 		},
-				// 		{
-				// 			name: '20%以下',
-				// 			id: '3',
-				// 			val: 20,
-				// 		},
-				// 		{
-				// 			name: '10%以下',
-				// 			id: '4',
-				// 			val: 10,
-				// 		},
-				// 		// {
-				// 		// 	name: '低于可用里程',
-				// 		// 	id: '5',
-				// 		// 	active: false
-				// 		// },
-				// 		{
-				// 			name: '欠压车辆',
-				// 			id: '6',
-				// 			val: 0,
-				// 		},
-				// 		{
-				// 			name: '离线车辆',
-				// 			id: '7',
-				// 			val: 7,
-				// 		},
-				// 		{
-				// 			name: '预警车辆',
-				// 			id: '8',
-				// 			val: 8,
-				// 		},
-				// 		{
-				// 			name: '疑似故障',
-				// 			id: '9',
-				// 			val: 9,
-				// 		},
-				// 	]
-				// ],
 				selectcoverdata: [],
 				covers: [],
 				circles: [],
@@ -418,7 +398,7 @@
 			this.stoprealheigh1 = 10 * 0.000008983152841195214
 			this.stoprealwidth2 = 30 * 0.000009405717451407729
 			this.stoprealheigh2 = 10 * 0.000008983152841195214
-            this.onloaddata = e
+			this.onloaddata = e
 			this.type = e.type
 			this.mapheihts = '85vh'
 			this.polylinePoint = []
@@ -437,7 +417,8 @@
 						this.tempweidu = res.latitude
 						setTimeout(() => {
 							var citycenter = this.userinfo.cities[0].coordinate
-							var distances = this.getFlatternDistance(parseFloat(citycenter[0]), parseFloat(citycenter[1]), res.longitude,
+							var distances = this.getFlatternDistance(parseFloat(citycenter[0]),
+								parseFloat(citycenter[1]), res.longitude,
 								res.latitude)
 							// var distances=this.getFlatternDistance(119.283383,26.131703,119.285615,26.123959)
 							console.log('juli', distances)
@@ -469,11 +450,22 @@
 						console.log('fail', res)
 					}
 				});
-			} else {				
-				this.locationtime = setInterval(() => {
-					this.setBikeid(this.bikeinfo.id)
-					this.getcarinfo()
-				}, 5000)
+			} else {
+				uni.getLocation({
+					type: 'wgs84',
+					success: res => {
+						this.dhlatitude=res.latitude
+						this.dhlongitude=res.longitude
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+				this.setBikeid(this.bikeinfo.id)
+				this.getcarinfo()
+				// this.locationtime = setInterval(() => {
+				// 	this.setBikeid(this.bikeinfo.id)
+				// 	this.getcarinfo()
+				// }, 5000)
 			}
 			try {
 				const value = uni.getStorageSync('userinfo');
@@ -589,7 +581,10 @@
 						}
 						break;
 					case '0.3':
-						this.hidebutton = true
+						this.hidebutton = false
+						this.mapheihts = '100vh'
+						this.actives = false
+						this.scanbuttonname = '导航'
 						// this.covers[0].name = res.parks[j].name
 						let tembikeinfo = {}
 						tembikeinfo.latitude = this.bikeinfo.coordinate[1]
@@ -602,8 +597,8 @@
 						this.covers[0] = tembikeinfo
 						// 设置corver初始状态
 						this.showcorverview = {
-							head: true,
-							bottom: true
+							head: false,
+							bottom: false
 						}
 						// 多边形						
 						// this.covers = []
@@ -796,7 +791,7 @@
 							},
 						]
 						break;
-case '10':
+					case '10':
 						console.log(222, this.onloaddata)
 						if (!!this.onloaddata.alert_state) {
 							this.bikestate.alert_state = parseInt(this.onloaddata.alert_state)
@@ -1022,7 +1017,7 @@ case '10':
 								},
 							],
 						]
-						console.log(5555,this.selectcoverdata)
+						console.log(5555, this.selectcoverdata)
 						this.selectcoverdata[3] = battery_m
 						this.nearbybike(this.longitude, this.latitude)
 						break;
@@ -1055,6 +1050,82 @@ case '10':
 				}
 				return ''
 			},
+			routeplan() {
+				var _this = this
+				console.log(2222, _this.latitude, _this.longitude,)
+				qqmapsdk.direction({
+					sig: '2FaA645Ba8IabcQYCAmxlrbqR4cX0PGb',
+					mode: 'bicycling',
+					from: {
+						// latitude: _this.latitude,
+						// longitude: _this.longitude,
+						latitude: _this.dhlatitude,
+						longitude: _this.dhlongitude,
+					},
+					to: {
+						latitude: _this.latitude,
+						longitude: _this.longitude,
+						// latitude: 26.035873,
+						// longitude: 119.239297,
+					},
+					success: function(res) {
+						console.log('routeplan', res)
+						if(res.status==0){
+							var ret = res;
+							var coors = ret.result.routes[0].polyline,
+								pl = [];
+							//坐标解压（返回的点串坐标，通过前向差分进行压缩）
+							var kr = 1000000;
+							for (var i = 2; i < coors.length; i++) {
+								coors[i] = Number(coors[i - 2]) + Number(coors[i]) / kr;
+							}
+							//将解压后的坐标放入点串数组pl中
+							for (var i = 0; i < coors.length; i += 2) {
+								pl.push({
+									latitude: coors[i],
+									longitude: coors[i + 1]
+								})
+							}
+							
+							var temppolyline = {
+								points: pl,
+								color: '#FF0000DD',
+								width: 5,
+								arrowLine: true
+							}
+							console.log('p111', pl, _this.polyline)
+							_this.polyline.push(temppolyline)
+						}else{
+							uni.showToast({
+								title: res.message?res.message:'获取线路失败'
+							});
+						}
+						
+					},
+					  fail: function (error) {
+					        console.error('error',error);
+							uni.showToast({
+								title: error.message?error.message:'获取线路失败'
+							});
+					      },
+					      complete: function (res) {
+					        console.log('com',res);
+					      }
+				})
+				// uni.getLocation({
+				// 	type: 'wgs84',
+				// 	success: res => {
+					
+				// 	},
+				// 	fail: (err) => {
+				// 		console.log('err',err)
+				// 	},
+				// 	complete: (com) => {
+				// 		console.log('complete',com)
+				// 	}
+				// });
+
+			},
 			showmore() {
 				this.morestop = !this.morestop
 			},
@@ -1078,7 +1149,7 @@ case '10':
 							mask.push(temp)
 						})
 						mask.push([item.points[0].longitude, item.points[0].latitude])
-			
+
 					}
 				})
 				if (marks.length < 1) {
@@ -1117,17 +1188,17 @@ case '10':
 				var y1 = parseFloat(this.tempjindu)
 				var x1 = parseFloat(this.tempweidu)
 				var yunweixs = 1 //运维系数，运维站比用户站大一些
-				console.log('jinweidu1',this.latitude,this.longitude,num)
+				console.log('jinweidu1', this.latitude, this.longitude, num)
 				if (num == 1) {
 					this.edit1or2 = 1
-					this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
-					this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
-				
+					this.stopwidth = (this.stoprealwidth1 / 0.000009405717451407729).toFixed(0)
+					this.stopheigh = (this.stoprealheigh1 / 0.000008983152841195214).toFixed(0)
+
 					// 创建获取中心点坐标
 					if (this.stop1name == '创建用户站') {
 						this.anglecenter1 = [x1, y1]
 					}
-					if (this.stop1name == '编辑中..') {	
+					if (this.stop1name == '编辑中..') {
 						return
 					}
 					fillColor = '#2784F04D'
@@ -1135,7 +1206,7 @@ case '10':
 					this.stop1name = '编辑中..'
 					this.setLatitude(this.anglecenter1[0])
 					this.setLongitude(this.anglecenter1[1])
-					console.log('jinweidu2',this.latitude,this.longitude,num)
+					console.log('jinweidu2', this.latitude, this.longitude, num)
 					if (this.stop2name != '创建运维站') {
 						this.stop2name = '编辑运维站'
 						// return
@@ -1153,8 +1224,8 @@ case '10':
 					}
 				} else {
 					this.edit1or2 = 2
-					this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
-					this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+					this.stopwidth = (this.stoprealwidth2 / 0.000009405717451407729).toFixed(0)
+					this.stopheigh = (this.stoprealheigh2 / 0.000008983152841195214).toFixed(0)
 					// 创建获取中心点坐标
 					if (this.stop2name == '创建运维站') {
 						this.anglecenter2 = [x1, y1]
@@ -1166,7 +1237,7 @@ case '10':
 					yunweixs = 1
 					this.setLatitude(this.anglecenter2[0])
 					this.setLongitude(this.anglecenter2[1])
-					console.log('jinweidu2',this.latitude,this.longitude,num)
+					console.log('jinweidu2', this.latitude, this.longitude, num)
 					this.stop2name = '编辑中..'
 					fillColor = '#FFFF004D'
 					if (this.stop1name != '创建用户站') {
@@ -1184,7 +1255,7 @@ case '10':
 					if (pdympoints) {
 						return
 					}
-			
+
 				}
 				this.initstop(type, num, fillColor, yunweixs)
 			},
@@ -1199,13 +1270,13 @@ case '10':
 				var center = [parseFloat(this.tempweidu), parseFloat(this.tempjindu)]
 				var hudu = (2 * Math.PI / 360 * this.xuanzhuanangle)
 				if (type == 100) {
-					this.stopwidth=30
-					this.stopheigh=10
+					this.stopwidth = 30
+					this.stopheigh = 10
 					var points = []
 					if (this.edit1or2 == 1) {
 						points = this.rotateangle(0, 0, center, h, w)
 					} else {
-						points = this.rotateangle(0, 0, center, h , w)
+						points = this.rotateangle(0, 0, center, h, w)
 					}
 					setTimeout(() => {
 						this.polygon.push({
@@ -1225,7 +1296,7 @@ case '10':
 									latitude: points[3][0],
 									longitude: points[3][1]
 								},
-			
+
 							],
 							fillColor: fillColor,
 							color: "#FF9F0040",
@@ -1260,37 +1331,37 @@ case '10':
 					case 0:
 						if (this.edit1or2 == 1) {
 							this.stoprealwidth1 += rx
-							this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
+							this.stopwidth = (this.stoprealwidth1 / 0.000009405717451407729).toFixed(0)
 						} else {
 							this.stoprealwidth2 += rx
-							this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
+							this.stopwidth = (this.stoprealwidth2 / 0.000009405717451407729).toFixed(0)
 						}
 						break;
 					case 1:
 						if (this.edit1or2 == 1) {
 							this.stoprealwidth1 -= rx
-							this.stopwidth=(this.stoprealwidth1/0.000009405717451407729).toFixed(0)
+							this.stopwidth = (this.stoprealwidth1 / 0.000009405717451407729).toFixed(0)
 						} else {
 							this.stoprealwidth2 -= rx
-							this.stopwidth=(this.stoprealwidth2/0.000009405717451407729).toFixed(0)
+							this.stopwidth = (this.stoprealwidth2 / 0.000009405717451407729).toFixed(0)
 						}
 						break;
 					case 2:
 						if (this.edit1or2 == 1) {
 							this.stoprealheigh1 += ry
-							this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
+							this.stopheigh = (this.stoprealheigh1 / 0.000008983152841195214).toFixed(0)
 						} else {
 							this.stoprealheigh2 += ry
-							this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+							this.stopheigh = (this.stoprealheigh2 / 0.000008983152841195214).toFixed(0)
 						}
 						break;
 					case 3:
 						if (this.edit1or2 == 1) {
 							this.stoprealheigh1 -= ry
-							this.stopheigh=(this.stoprealheigh1/0.000008983152841195214).toFixed(0)
+							this.stopheigh = (this.stoprealheigh1 / 0.000008983152841195214).toFixed(0)
 						} else {
 							this.stoprealheigh2 -= ry
-							this.stopheigh=(this.stoprealheigh2/0.000008983152841195214).toFixed(0)
+							this.stopheigh = (this.stoprealheigh2 / 0.000008983152841195214).toFixed(0)
 						}
 						break;
 				}
@@ -1321,7 +1392,7 @@ case '10':
 									latitude: points[3][0],
 									longitude: points[3][1]
 								},
-			
+
 							],
 							fillColor: fillColor,
 							color: "#FF9F0040",
@@ -1348,14 +1419,14 @@ case '10':
 				var c = Math.sqrt(Math.pow(h, 2) + Math.pow(w, 2))
 				var t = Math.asin(h / c)
 				var t1 = Math.PI / 2 - t - alpha
-			
+
 				var p1 = [c * Math.sin(t1), c * Math.cos(t1)];
 				var p3 = [0 - c * Math.sin(t1), 0 - c * Math.cos(t1)];
-			
+
 				var t2 = alpha - t; //p2-中点连线，与Y轴夹角
 				var p2 = [c * Math.cos(t2), c * Math.sin(t2)];
 				var p4 = [0 - c * Math.cos(t2), 0 - c * Math.sin(t2)];
-			
+
 				// var ym=0.000008983152841195214
 				// var xm= ym / Math.cos(2*Math.PI/360*ry0)
 				var arr = [p1, p2, p3, p4]
@@ -1369,10 +1440,10 @@ case '10':
 				} else {
 					return ''
 				}
-			
+
 			},
-			
-			
+
+
 			toggleTab(item) {
 				this.timeflag = item
 				this.$refs.dateTime.show();
@@ -1678,7 +1749,7 @@ case '10':
 				this.creatStopurl(0, 1, "*", this.polylinePoints)
 			},
 			markclick(e) {
-				console.log(444,this.type,e)
+				console.log(444, this.type, e)
 				var pointtype = '',
 					bickcount = '',
 					allkcount = '',
@@ -1797,20 +1868,20 @@ case '10':
 			mapcentionloc(e) {
 				if (e.controlId == 88) {
 					this.mapinfo.moveToLocation()
-				}else if (e.controlId == 878) {
+				} else if (e.controlId == 878) {
 					if (this.edit1or2 == 1) {
 						this.xuanzhuanangle1 += 3
 					} else {
 						this.xuanzhuanangle2 += 3
 					}
 					this.initstop(101)
-				} else if(e.controlId == 879){
-                    if (this.edit1or2 == 1) {
-                    	this.xuanzhuanangle1 -= 3
-                    } else {
-                    	this.xuanzhuanangle2 -= 3
-                    }
-                    this.initstop(101)
+				} else if (e.controlId == 879) {
+					if (this.edit1or2 == 1) {
+						this.xuanzhuanangle1 -= 3
+					} else {
+						this.xuanzhuanangle2 -= 3
+					}
+					this.initstop(101)
 				}
 
 			},
@@ -1840,6 +1911,10 @@ case '10':
 			},
 			// 点击创建车站
 			creatStop() {
+				if (this.type == '0.3') {
+					this.routeplan()
+					return
+				}
 				this.actives = true
 				if (this.type == '9') {
 					this.mapheihts = '35vh'
@@ -2093,14 +2168,14 @@ case '10':
 				}
 
 			},
-			active(index, item, num) {				
+			active(index, item, num) {
 				if (index == 0 && this.type == 10) {
 					return
 				}
 				item.issleect = !item.issleect
 				// 换电
 				if (num == 0) {
-					str0=''
+					str0 = ''
 					this.isActive0 = index
 					this.bikestate.battery_level_max = "*"
 					this.bikestate.is_under_volt = '*'
@@ -2108,7 +2183,7 @@ case '10':
 					this.selectvals = item.val
 					// 选中赋值
 					if (item.issleect) {
-						str0=item.val+'%|'
+						str0 = item.val + '%|'
 						if (item.val == 0) {
 							this.bikestate.is_under_volt = 1
 						} else {
@@ -2131,75 +2206,74 @@ case '10':
 				if (this.type == 10) {
 					// 欠压
 					if (num == 1) {
-						str1=''
+						str1 = ''
 						this.isActive1 = index
 						this.bikestate.is_under_volt = '*'
 						if (index == 1 && item.issleect) {
 							this.bikestate.is_under_volt = 1
-							str1='欠压|'
+							str1 = '欠压|'
 						}
 					}
 					// 离线
 					else if (num == 2) {
-						str2=''
+						str2 = ''
 						this.isActive2 = index
 						this.bikestate.is_online = '*'
 						if (index == 1 && item.issleect) {
 							this.bikestate.is_online = 0
-							str2='离线|'
+							str2 = '离线|'
 						}
 					}
 					// 电池型号
 					else if (num == 3) {
 						this.isActive3 = index
-						str3=''
+						str3 = ''
 						this.bikestate.battery_model = "*"
 						if (item.issleect) {
 							this.bikestate.battery_model = item.val
-							str3=item.name+'|'
+							str3 = item.name + '|'
 						}
 					}
 					// 业务状态
 					else if (num == 4) {
 						this.isActive4 = index
 						this.bikestate.bus_state = '*'
-						str4=''
+						str4 = ''
 						if (item.issleect) {
 							this.bikestate.bus_state = item.text
-							str4=item.name+'|'
+							str4 = item.name + '|'
 						}
 					}
 					// 差车
 					else if (num == 5) {
 						this.isActive5 = index
-						str5=''
+						str5 = ''
 						this.bikestate.repark_index = "*"
 						if (item.issleect) {
 							if (index == 1) {
-								str5='差车'+'|'
+								str5 = '差车' + '|'
 								this.bikestate.repark_index = 1
 							} else {
 								this.bikestate.repark_index = index - 1
-								str5=item.name+'|'
+								str5 = item.name + '|'
 							}
-							
+
 						}
 					}
 					// 预警
 					else if (num == 6) {
 						this.isActive6 = index
 						this.bikestate.alert_state = "*"
-						str6=''
-						if (item.issleect) {							
+						str6 = ''
+						if (item.issleect) {
 							this.bikestate.alert_state = item.text
-							
-							if(index==1){
-								str6='预警|'
-							}
-							else if(index==2){
-								str6='离线预警|'
-							}else{
-								str6=item.name
+
+							if (index == 1) {
+								str6 = '预警|'
+							} else if (index == 2) {
+								str6 = '离线预警|'
+							} else {
+								str6 = item.name
 							}
 						}
 
@@ -2208,21 +2282,21 @@ case '10':
 
 				// 电池型号
 				if (this.type != 10 && num == 1) {
-					
+
 					this.isActive1 = index
-					console.log(999,item,this.isActive1)
+					console.log(999, item, this.isActive1)
 					this.bikestate.battery_model = "*"
 					if (item.issleect) {
 						this.bikestate.battery_model = item.val
 					}
 
 				}
-                if(this.type==10){					
-					this.headviewtext=str0+str1+str2+str3+str4+str5+str6
-				}else{
+				if (this.type == 10) {
+					this.headviewtext = str0 + str1 + str2 + str3 + str4 + str5 + str6
+				} else {
 					this.headviewtext = item.name
 				}
-				
+
 			},
 			functionNames() {},
 			// 移动地图获取中心点坐标
@@ -2310,87 +2384,88 @@ case '10':
 									if (this.edit1or2 == 1) {
 										fillColor = '#2784F04D'
 										this.anglecenter1 = center
-										if(this.stop1name!='创建用户站'){
+										if (this.stop1name != '创建用户站') {
 											points = this.rotateangle(this.xuanzhuanangle1, 0, center, this
 												.stoprealheigh1, this.stoprealwidth1)
-												for (var a = 0; a < this.polygon.length; a++) {
-													if (this.polygon[a].type == this.edit1or2) {
-														var item = this.polygon[a].points
-														this.polygon.splice(a, 1)
-														this.polygon.push({
-															points: [{
-																	latitude: points[0][0],
-																	longitude: points[0][1]
-																},
-																{
-																	latitude: points[1][0],
-																	longitude: points[1][1]
-																},
-																{
-																	latitude: points[2][0],
-																	longitude: points[2][1]
-																},
-																{
-																	latitude: points[3][0],
-																	longitude: points[3][1]
-																},
-																				
-															],
-															fillColor: fillColor,
-															color: "#FF9F0040",
-															strokeWidth: 1,
-															type: this.edit1or2
-														})
-													}
-												}	
+											for (var a = 0; a < this.polygon.length; a++) {
+												if (this.polygon[a].type == this.edit1or2) {
+													var item = this.polygon[a].points
+													this.polygon.splice(a, 1)
+													this.polygon.push({
+														points: [{
+																latitude: points[0][0],
+																longitude: points[0][1]
+															},
+															{
+																latitude: points[1][0],
+																longitude: points[1][1]
+															},
+															{
+																latitude: points[2][0],
+																longitude: points[2][1]
+															},
+															{
+																latitude: points[3][0],
+																longitude: points[3][1]
+															},
+
+														],
+														fillColor: fillColor,
+														color: "#FF9F0040",
+														strokeWidth: 1,
+														type: this.edit1or2
+													})
+												}
+											}
 										}
-										
+
 									} else {
 										fillColor = '#FFFF004D'
 										this.anglecenter2 = center
-										if(this.stop2name!='创建运维站'){
+										if (this.stop2name != '创建运维站') {
 											points = this.rotateangle(this.xuanzhuanangle2, 0, center, this
 												.stoprealheigh2, this.stoprealwidth2)
-												for (var a = 0; a < this.polygon.length; a++) {
-													if (this.polygon[a].type == this.edit1or2) {
-														var item = this.polygon[a].points
-														this.polygon.splice(a, 1)
-														this.polygon.push({
-															points: [{
-																	latitude: points[0][0],
-																	longitude: points[0][1]
-																},
-																{
-																	latitude: points[1][0],
-																	longitude: points[1][1]
-																},
-																{
-																	latitude: points[2][0],
-																	longitude: points[2][1]
-																},
-																{
-																	latitude: points[3][0],
-																	longitude: points[3][1]
-																},
-																				
-															],
-															fillColor: fillColor,
-															color: "#FF9F0040",
-															strokeWidth: 1,
-															type: this.edit1or2
-														})
-													}
+											for (var a = 0; a < this.polygon.length; a++) {
+												if (this.polygon[a].type == this.edit1or2) {
+													var item = this.polygon[a].points
+													this.polygon.splice(a, 1)
+													this.polygon.push({
+														points: [{
+																latitude: points[0][0],
+																longitude: points[0][1]
+															},
+															{
+																latitude: points[1][0],
+																longitude: points[1][1]
+															},
+															{
+																latitude: points[2][0],
+																longitude: points[2][1]
+															},
+															{
+																latitude: points[3][0],
+																longitude: points[3][1]
+															},
+
+														],
+														fillColor: fillColor,
+														color: "#FF9F0040",
+														strokeWidth: 1,
+														type: this.edit1or2
+													})
 												}
+											}
 										}
-									}									
-								}								
+									}
+								}
 								switch (self.type) {
 									case '0':
 										var undervolt = '*'
 										if (this.selectvals == 0) {
 											undervolt = 1
 										}
-										self.nearbyshortpower(this.selectvals, res.longitude, res.latitude, undervolt, dis, this.gobeltimestr)
+										self.nearbyshortpower(this.selectvals, res.longitude, res.latitude,
+											undervolt, dis, this.gobeltimestr)
 										break
 									case '1.1':
 										var setectval = (this.selectvals == 100) ? "*" : this.selectvals
@@ -2402,12 +2477,15 @@ case '10':
 										break
 									case '3.1':
 										if (this.selectvals == 100) {
-											self.nearbymovecar(res.longitude, res.latitude, "*", '*', dis, this.gobeltimestr)
+											self.nearbymovecar(res.longitude, res.latitude, "*", '*', dis,
+												this.gobeltimestr)
 										} else {
 											if (this.selectvals == 21 || this.selectvals == 11) {
-												this.nearbymovecar(res.longitude, res.latitude, '*', parseInt(this.selectvals), dis, this.gobeltimestr)
+												this.nearbymovecar(res.longitude, res.latitude, '*',
+													parseInt(this.selectvals), dis, this.gobeltimestr)
 											} else {
-												this.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals), '*', dis, this.gobeltimestr)
+												this.nearbymovecar(res.longitude, res.latitude, parseInt(
+													this.selectvals), '*', dis, this.gobeltimestr)
 											}
 											// self.nearbymovecar(res.longitude, res.latitude, parseInt(this.selectvals))
 										}
@@ -2584,48 +2662,52 @@ case '10':
 							]
 						}
 						if (!!res.parks) {
-							this.polygon=[]
+							this.polygon = []
 							for (let j = 0; j < res.parks.length; j++) {
 								let tmpObjs = {}
 								let circlesObj = {}
 								tmpObjs.id = res.parks[j].id
 								//新增多边形车站显示
-									if(res.parks[j].polygon_type==1 && res.parks[j].coordinates.length>0){
-										var polygonpoint={points:[],
+								if (res.parks[j].polygon_type == 1 && res.parks[j].coordinates.length > 0) {
+									var polygonpoint = {
+										points: [],
 										fillColor: '#2784F04D',
 										color: "#FF9F0040",
-										strokeWidth: 1}
-										res.parks[j].coordinates.forEach((item)=>{
-											polygonpoint.points.push({latitude:item[1],longitude:item[0]})
+										strokeWidth: 1
+									}
+									res.parks[j].coordinates.forEach((item) => {
+										polygonpoint.points.push({
+											latitude: item[1],
+											longitude: item[0]
 										})
-										this.polygon.push(polygonpoint)
-									}
-									else if(!!res.parks[j].coordinate) {
-										circlesObj.latitude = res.parks[j].coordinate[1]
-										circlesObj.longitude = res.parks[j].coordinate[0]
-										circlesObj.radius = parseInt(res.parks[j].radius)
-										circlesObj.fillColor = "#FF9F0040"
-										circlesObj.color = "#FF9F0040"
-										circlesObj.strokeWidth = 1								
-										circles.push(circlesObj)		
-									}
-									tmpObjs.latitude = res.parks[j].coordinate[1]
-									tmpObjs.longitude = res.parks[j].coordinate[0]
-									tmpObjs.name = res.parks[j].name
-									// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
-									var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
-									tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum, res.parks[j]
-										.grade)
-									tmpObjs.type = 'stop'
-									tmpObjs.bickcount = res.parks[j].bike_count
-									tmpObjs.allkcount = res.parks[j].capacity
-									tmpObjs.remark = res.parks[j].remark
-									tmpObjs.grade = res.parks[j].grade
-									tmpObjs.width = 39
-									tmpObjs.height = 48
-									tmpObjs.parkid = res.parks[j].id
-									temparr.push(tmpObjs)	
+									})
+									this.polygon.push(polygonpoint)
+								} else if (!!res.parks[j].coordinate) {
+									circlesObj.latitude = res.parks[j].coordinate[1]
+									circlesObj.longitude = res.parks[j].coordinate[0]
+									circlesObj.radius = parseInt(res.parks[j].radius)
+									circlesObj.fillColor = "#FF9F0040"
+									circlesObj.color = "#FF9F0040"
+									circlesObj.strokeWidth = 1
+									circles.push(circlesObj)
 								}
+								tmpObjs.latitude = res.parks[j].coordinate[1]
+								tmpObjs.longitude = res.parks[j].coordinate[0]
+								tmpObjs.name = res.parks[j].name
+								// tmpObjs.iconPath = '../../static/mapicon/stop_0.png'
+								var bikenum = parseInt(res.parks[j].capacity) - parseInt(res.parks[j].bike_count)
+								tmpObjs.iconPath = this.$imagepath(res.parks[j], 'stop', bikenum, res.parks[j]
+									.grade)
+								tmpObjs.type = 'stop'
+								tmpObjs.bickcount = res.parks[j].bike_count
+								tmpObjs.allkcount = res.parks[j].capacity
+								tmpObjs.remark = res.parks[j].remark
+								tmpObjs.grade = res.parks[j].grade
+								tmpObjs.width = 39
+								tmpObjs.height = 48
+								tmpObjs.parkid = res.parks[j].id
+								temparr.push(tmpObjs)
+							}
 						}
 						this.covers = temparr
 						this.circles = circles
@@ -2768,7 +2850,7 @@ case '10':
 					console.log('服务区', res)
 					if (res.status == 0) {
 						this.polyline = []
-						if(!!res.svcas){
+						if (!!res.svcas) {
 							for (let i = 0; i < res.svcas.length; i++) {
 								let temobj = {}
 								var temparr = []
@@ -2787,7 +2869,7 @@ case '10':
 									this.polyline.push(temobj)
 							}
 						}
-						
+
 					}
 				}).catch((err) => {
 					// 请求失败的回调
@@ -2843,7 +2925,7 @@ case '10':
 					var battery_level_to_change_steps = this.userinfo.city.battery_level_to_change_steps
 					for (var i = 0; i < battery_level_to_change_steps.length; i++) {
 						var tempobj = {
-							name: '<'+battery_level_to_change_steps[i] + '%',
+							name: '<' + battery_level_to_change_steps[i] + '%',
 							id: battery_level_to_change_steps[i],
 							val: battery_level_to_change_steps[i],
 							num: 0
@@ -2870,7 +2952,8 @@ case '10':
 							}
 						}
 						for (var q = 0; q < battery_step_arr.length; q++) {
-							battery_step_arr[q].name = battery_step_arr[q].name + '(' + battery_step_arr[q].num + ')'
+							battery_step_arr[q].name = battery_step_arr[q].name + '(' + battery_step_arr[q].num +
+								')'
 						}
 						this.selectcoverdata[0] = [{
 								name: '全部换电',
@@ -3222,7 +3305,7 @@ case '10':
 						// 	this.coorDinates.lat
 						// ],
 						"coordinate": coordinate,
-						"coordinates":coordinates_mask,
+						"coordinates": coordinates_mask,
 						"radius": parseInt(this.stopRadius) ? parseInt(this.stopRadius) : 0,
 						"capacity": parseInt(this.stopVolume),
 						"state": 0,
@@ -3239,7 +3322,7 @@ case '10':
 					// 请求成功的回调
 					// res为服务端返回数据的根对象
 					if (res.status == 0) {
-			
+
 						if (type == 0) {
 							uni.showToast({
 								title: '创建车站成功',
@@ -3479,16 +3562,52 @@ case '10':
 				// background: yellow;
 			}
 		}
+
 		.more-view {
 			color: #8a8a8a;
 			display: flex;
-		
+
 			img {
 				width: 50upx;
 				height: 46upx;
 			}
 		}
-		.edit-area {			.edit-wh {				display: flex;				justify-content: space-between;				.edit-area-inner {					height: 60upx;					margin-left: 20upx;					text {						width: 60upx;					}                    .innernum{						width:100upx;						margin-left: 36upx;					}					input {						width: 80upx;						margin-left: 20upx;						margin-right: 20upx;					}					display: flex;					margin-top: 24upx;					img {						width: 50upx;						height: 50upx;					}				}			}		}
+
+		.edit-area {
+			.edit-wh {
+				display: flex;
+				justify-content: space-between;
+
+				.edit-area-inner {
+					height: 60upx;
+					margin-left: 20upx;
+
+					text {
+						width: 60upx;
+					}
+
+					.innernum {
+						width: 100upx;
+						margin-left: 36upx;
+					}
+
+					input {
+						width: 80upx;
+						margin-left: 20upx;
+						margin-right: 20upx;
+					}
+
+					display: flex;
+					margin-top: 24upx;
+
+					img {
+						width: 50upx;
+						height: 50upx;
+					}
+				}
+			}
+
+		}
 	}
 
 	.map-base-view {
@@ -3609,35 +3728,36 @@ case '10':
 		justify-content: space-between;
 		height: 80upx;
 		margin-top: 28upx;
-	
+
 		.leftBtn {
 			color: black;
 			background-color: #2784F0;
 			// color: #FFFFFF;
 			// height: 80upx;
 		}
-	
+
 		.rightBtn {
 			// height: 80upx;
 			background-color: #FFFF00;
 		}
-	
+
 		// color:#FFFFFF;
-	
+
 		.btn {
 			width: 45% !important;
 			line-height: 80upx;
 			text-align: center;
 			border-radius: 12upx;
 		}
-	
+
 	}
+
 	.create-btn {
 		margin-top: 8upx;
 		text-align: center;
 		height: 80upx;
 		margin-top: 20upx;
-	
+
 		.create-btn-text {
 			line-height: 80upx;
 			text-align: center;
@@ -3646,6 +3766,7 @@ case '10':
 			color: #FFFFFF;
 		}
 	}
+
 	.timeselect {
 		margin-top: 12upx;
 		margin-bottom: 12upx;

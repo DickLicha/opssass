@@ -794,11 +794,84 @@
 					});
 				}
 			},
-			// 时间日期相加减						timecalc(type) {				// 当月0，当日10，昨天11，一周前12，上个月1
+			// 时间日期相加减
+			timecalc(type) {
+				// 当月0，当日10，昨天11，一周前12，上个月1
 				if (type == -1) {
 					return
-				}				var date = new Date()				var seperator1 = "-";				var seperator2 = ":";
-				var datemonth = date.getMonth() +1				var daygetday = date.getDate() < 10 ? "0" + date.getDate() : date.getDate()				var month0 = datemonth < 10 ? "0" + datemonth : datemonth				var startyear = date.getFullYear()				var tadaytemp = startyear + seperator1 + month0 + seperator1 + daygetday				var days = ''				this.value=tadaytemp				switch (type) {					case -1:					    return;					case 0:						this.start_time = startyear + seperator1 + month0 + seperator1 + '01'						this.end_time = tadaytemp						return;					case 1:						days = 30						break;					case 10:						this.start_time = tadaytemp						this.end_time = tadaytemp						return;					case 11:						days = 1						break;					case 12:						days = 7						break;				}				// var dateTemp = dateTemp.split("-");				var nDate = new Date(month0 + '-' + daygetday + '-' + startyear); //转换为MM-DD-YYYY格式  				var millSeconds = Math.abs(nDate) - (days * 24 * 60 * 60 * 1000);				var rDate = new Date(millSeconds);				var year = rDate.getFullYear();				var month = rDate.getMonth() + 1;				if (month < 10) month = "0" + month;				var date = rDate.getDate();				if (date < 10) date = "0" + date;								this.end_time = tadaytemp				this.start_time = year + "-" + month + "-" + date				// return (year + "-" + month + "-" + date);			},
+				}
+				var date = new Date()
+				var seperator1 = "-";
+				var seperator2 = ":";
+				var datemonth = date.getMonth() +1
+				var daygetday = date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
+				var month0 = datemonth < 10 ? "0" + datemonth : datemonth
+				var startyear = date.getFullYear()
+				var tadaytemp = startyear + seperator1 + month0 + seperator1 + daygetday
+				var days = 0,yeday=0 //days是开始时间需要扣除的，yeday是结束时间是今天还是昨天
+				this.value=tadaytemp
+				
+						var iosandroid='-'
+						uni.getSystemInfo({
+							success:(res)=>{
+								if(res.platform=='android'){
+									iosandroid='-'
+								}else{
+									iosandroid='/'
+								}
+							},
+							err:(err)=>{
+							}
+						})
+				
+						
+						switch (type) {
+							case -1:
+							    return;
+							case 0:
+								this.start_time = startyear + seperator1 + month0 + seperator1 + '01'
+								this.end_time = tadaytemp
+								return;
+							case 1:
+								// days = 30
+								// 上个月的天数
+								var day = new Date(date.getFullYear(), date.getMonth(), 0)
+								days=daygetday+day.getDate()-1
+								yeday=daygetday
+								break;
+							case 10:
+								this.start_time = tadaytemp
+								this.end_time = tadaytemp
+								return;
+							case 11:
+								days = 1
+								yeday = 1
+								break;
+							case 12:
+								days = 7
+								break;
+						}
+						
+						var nDate = new Date(month0 + iosandroid + daygetday + iosandroid + startyear); //转换为MM-DD-YYYY格式
+						var millSeconds = Math.abs(nDate) - (days * 24 * 60 * 60 * 1000);//开始时间戳
+						var endmillSeconds = Math.abs(nDate) - (yeday * 24 * 60 * 60 * 1000);//结束时间戳
+						var rDate = new Date(millSeconds);
+						var year = rDate.getFullYear();
+						var month = rDate.getMonth() + 1;
+						var endrDate=new Date(endmillSeconds)
+						var endyear = endrDate.getFullYear();
+						var endmonth = endrDate.getMonth() + 1;
+						if (month < 10) month = "0" + month;
+						if (endmonth < 10) endmonth = "0" + endmonth;
+						var date = rDate.getDate();
+						var endate=endrDate.getDate();
+						if (date < 10) date = "0" + date;
+						if (endate < 10) endate = "0" + endate;
+						
+						// this.end_time = tadaytemp
+						this.end_time = endyear+"-"+endmonth+'-'+endate
+						this.start_time = year + "-" + month + "-" + date
+			},
 			// 自定义-1，当月0，当日10，昨天11，一周前12，上个月1
 			timecalcs(type) {
 				if (type == -1) {
